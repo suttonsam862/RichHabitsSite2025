@@ -1,0 +1,206 @@
+Create a modern, high-end e-commerce website for Rich Habits, a clothing company targeting athletes and fitness enthusiasts in high school and college. The website should have a minimal, art gallery-inspired aesthetic with a mysterious vibe similar to the TV show Severance and tech companies like Google, OpenAI, and Microsoft.
+Core Requirements
+<technical_requirements>
+
+Full Shopify integration with existing store (both Admin API and Storefront API)
+Modern React frontend using Next.js for SEO optimization
+Responsive design optimized for all devices
+Fast loading speeds with optimized image loading
+Support for 3D model/animation embedding capability
+User authentication system that redirects to Shopify customer accounts
+Form functionality for event registrations that connects to Shopify products
+</technical_requirements>
+
+<design_aesthetic>
+
+Primary color scheme: White background with light grey and grey shadows
+Accent elements: Bold black lines and desaturated chromatic color scale details
+Minimal, clean layout with ample white space
+Modern typography with strong hierarchy
+Gallery-like presentation of products and past work
+Mysterious, premium feel inspired by Severance's organized, clinical aesthetic
+Subtle animations and transitions that enhance user experience without overwhelming
+Support for embedding 3D elements and animations (for future implementation)
+</design_aesthetic>
+
+Site Structure and Key Pages
+<site_structure>
+
+Homepage
+
+Hero section with bold brand statement and featured collections
+Featured events section highlighting upcoming sports clinics
+Quick overview of custom clothing service with AI benefits
+Featured products section pulling from Shopify
+Newsletter signup
+
+
+Shop Page
+
+Fully integrated with Shopify storefront
+Clean, minimal product grid with hover effects
+Advanced filtering options for product categories
+Seamless checkout process via Shopify
+
+
+Custom Clothing Service Page
+
+Explanation of the AI-assisted design process
+Showcase of capabilities (fabric suggestions, design generation, measurement charts)
+Portfolio of past custom projects
+Benefits of working with Rich Habits for custom clothing
+Clear call-to-action for team/organization inquiries
+Login/redirect to customer portal for order tracking
+
+
+Events Page
+
+Calendar of upcoming sports clinics and events
+Featured high-profile clinicians
+Registration system integrated with Shopify products
+Custom form for gathering participant information during checkout
+Gallery of past events with testimonials
+
+
+Gallery/Portfolio
+
+Showcase of all past gear and collections
+High-quality imagery in a minimal, art gallery presentation
+Filtering options by collection/year
+No e-commerce functionality needed here - purely showcase
+
+
+About Page
+
+Brand story and mission
+Team introduction
+What sets Rich Habits apart from competitors
+Focus on quality, design innovation, and community
+
+
+Contact Page
+
+Contact form
+Customer service information
+FAQ section for common questions
+</site_structure>
+
+
+
+Specific Functionality Requirements
+<functionality_details>
+
+Shopify Integration
+
+Pull products, collections, and inventory from existing Shopify store
+Maintain consistent product information and pricing
+Seamless checkout process back to Shopify
+Order history and customer account integration
+
+
+Custom Clothing Service
+
+Explanation of the AI-assisted design process
+Clear information about how teams/organizations can request custom gear
+Login system that redirects to customer portal for tracking orders
+Showcase of the custom design process stages
+
+
+Event Registration
+
+Display upcoming sports clinics and events
+Registration through Shopify product purchase
+Custom form attached to event products to collect participant information
+Ability to export participant information for event management
+Gallery of past events with testimonials
+
+
+3D Model Support
+
+Framework to support future embedding of 3D models and animations
+Placeholder sections where 3D content can be added later
+Optimized loading for these elements to maintain site performance
+
+
+SEO Optimization
+
+Focus on keywords for teams/clubs/organizations seeking custom gear
+Optimized metadata for all pages
+Fast loading speeds and mobile responsiveness
+Proper heading structure and semantic HTML
+Structured data for products and events
+</functionality_details>
+
+
+
+Technical Implementation Details
+<implementation_guidance>
+
+Frontend Framework
+
+Use React with Next.js for optimal SEO and performance
+Implement a component-based architecture for maintainability
+Use Tailwind CSS for styling to maintain the minimal aesthetic
+
+
+Shopify Integration
+
+Implement Shopify Storefront API for product display and checkout
+Use Shopify Admin API for order management functionality
+Ensure proper handling of product variants, options, and inventory
+
+
+Authentication
+
+Implement user authentication that connects with Shopify customer accounts
+Secure redirect flow for accessing order information
+
+
+Form Handling
+
+Create custom forms for event registration that attach to Shopify checkout
+Implement data export functionality for event management
+
+
+Performance Optimization
+
+Implement image optimization and lazy loading
+Ensure fast initial page load and time to interactive
+Optimize for Core Web Vitals
+</implementation_guidance>
+
+
+
+Visual References and Inspiration
+<visual_inspiration>
+
+Aesthetic: Combine the clean, minimal design of tech companies like Google and OpenAI with the mysterious, organized vibe of the TV show Severance.
+Layout: Gallery-like presentation with ample white space, minimal distractions, and focus on product imagery.
+Color Scheme: Primarily white with light grey and grey shadows, black bold lines, and subtle desaturated chromatic accents.
+Typography: Clean, modern fonts with clear hierarchy.
+Animation: Subtle, purposeful animations that enhance the user experience without being distracting.
+</visual_inspiration>
+
+Priority Features and Implementation Order
+<priority_order>
+
+Core Shopify integration for products and checkout
+Overall site structure and responsive design implementation
+Custom clothing service section with login redirect
+Events page with registration functionality
+Gallery/portfolio section
+SEO optimization across all pages
+3D model embedding framework
+Performance optimization and testing
+</priority_order>
+
+Content Placeholders and Future Expansion
+<content_and_expansion>
+
+Implement placeholder sections where uploaded imagery, logos, and videos can be easily added
+Create a framework for future 3D model integration
+Design with scalability in mind for adding new product lines or features
+Include documentation on how to update and maintain the site
+</content_and_expansion>
+
+Please build this website focusing first on core functionality and the distinctive minimal, gallery-like aesthetic. The site should feel premium, mysterious yet approachable, and should effectively showcase both the retail products and custom clothing services while driving users toward event registration.
