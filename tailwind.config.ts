@@ -7,7 +7,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Montserrat", "sans-serif"],
-        serif: ["Lazord Slab Serif", "serif"],
+        serif: ["Glamour", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

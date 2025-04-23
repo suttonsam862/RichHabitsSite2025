@@ -44,10 +44,8 @@ export function CustomClothingService() {
                 <p className="text-gray-700">Full-service approach from initial consultation to final delivery with comprehensive measurement guides.</p>
               </div>
               
-              <Link href="/custom-apparel">
-                <a className="inline-block bg-primary text-white py-3 px-8 font-medium tracking-wide hover:bg-opacity-90 transition-colors">
-                  Request Custom Design
-                </a>
+              <Link href="/custom-apparel" className="inline-block bg-primary text-white py-3 px-8 font-medium tracking-wide hover:bg-opacity-90 transition-colors">
+                Request Custom Design
               </Link>
             </motion.div>
             
