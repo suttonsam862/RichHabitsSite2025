@@ -1,0 +1,333 @@
+import { Container } from "@/components/ui/container";
+import { AnimatedUnderline } from "@/components/ui/animated-underline";
+import { motion } from "framer-motion";
+import { Link } from "wouter";
+import { Helmet } from "react-helmet";
+
+export default function CustomApparel() {
+  return (
+    <>
+      <Helmet>
+        <title>Custom Team Apparel | Rich Habits</title>
+        <meta name="description" content="AI-enhanced custom athletic apparel design for teams and organizations." />
+      </Helmet>
+      
+      <div className="bg-white">
+        {/* Hero Section */}
+        <section className="relative h-[70vh] flex items-center">
+          <div className="absolute inset-0 w-full h-full">
+            <img 
+              src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" 
+              alt="Custom jersey design" 
+              className="object-cover w-full h-full"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+          </div>
+          
+          <Container className="relative z-10 text-white">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-2xl"
+            >
+              <h1 className="text-5xl font-serif font-bold mb-4">Custom Team Apparel</h1>
+              <p className="text-xl mb-8">AI-enhanced design process tailored to your team's identity and performance needs.</p>
+              <Link href="#contactForm">
+                <a className="bg-white text-primary py-3 px-8 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block">
+                  Request a Consultation
+                </a>
+              </Link>
+            </motion.div>
+          </Container>
+        </section>
+        
+        {/* Process Section */}
+        <section className="py-20">
+          <Container>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-serif font-semibold mb-4 group">
+                <AnimatedUnderline>
+                  Our Design Process
+                </AnimatedUnderline>
+              </h2>
+              <p className="text-lg max-w-3xl mx-auto">We combine cutting-edge AI technology with expert craftsmanship to create custom apparel that perfectly represents your team's identity.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-2xl font-medium">1</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Consultation</h3>
+                <p className="text-gray-700">We begin with understanding your team's needs, identity, and performance requirements through a detailed consultation.</p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-2xl font-medium">2</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">AI-Assisted Design</h3>
+                <p className="text-gray-700">Our AI system generates design options based on your preferences, colors, and performance needs while our designers refine the concepts.</p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-2xl font-medium">3</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Production & Delivery</h3>
+                <p className="text-gray-700">Once designs are approved, we craft your apparel with premium materials and deliver them ready for competition.</p>
+              </motion.div>
+            </div>
+          </Container>
+        </section>
+        
+        {/* Features Section */}
+        <section className="py-20 bg-[hsl(var(--secondary))]">
+          <Container>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-serif font-semibold mb-6 group">
+                  <AnimatedUnderline>
+                    Smart Design Features
+                  </AnimatedUnderline>
+                </h2>
+                
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="mb-6"
+                >
+                  <h3 className="text-xl font-medium mb-3">Material Recommendations</h3>
+                  <p className="text-gray-700">Our AI analyzes your sport, climate, and usage patterns to suggest optimal fabrics that balance comfort, performance, and durability.</p>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="mb-6"
+                >
+                  <h3 className="text-xl font-medium mb-3">Design Generation</h3>
+                  <p className="text-gray-700">Generate multiple design concepts that align with your team's identity while staying at the forefront of athletic apparel aesthetics.</p>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="mb-6"
+                >
+                  <h3 className="text-xl font-medium mb-3">Size Optimization</h3>
+                  <p className="text-gray-700">Comprehensive sizing guides and recommendations to ensure every team member has properly fitted gear for optimal performance.</p>
+                </motion.div>
+              </div>
+              
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="grid grid-cols-2 gap-4"
+              >
+                <div className="aspect-square bg-white p-4">
+                  <img 
+                    src="https://images.unsplash.com/photo-1516826957135-700dedea698c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                    alt="Custom jersey" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="aspect-square bg-white p-4">
+                  <img 
+                    src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                    alt="Team uniforms" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="aspect-square bg-white p-4">
+                  <img 
+                    src="https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                    alt="Material samples" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="aspect-square bg-white p-4">
+                  <img 
+                    src="https://images.unsplash.com/photo-1535483102974-fa1e64d0ca86?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                    alt="Design process" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </Container>
+        </section>
+        
+        {/* Portfolio Section */}
+        <section className="py-20">
+          <Container>
+            <h2 className="text-3xl font-serif font-semibold mb-12 group text-center">
+              <AnimatedUnderline>
+                Past Custom Projects
+              </AnimatedUnderline>
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white shadow-sm hover:shadow-md transition-shadow"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  alt="Metro High School Basketball" 
+                  className="w-full h-64 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-medium mb-2">Metro High School Basketball</h3>
+                  <p className="text-gray-700 mb-4">Complete team uniform redesign featuring moisture-wicking technology and custom embroidery.</p>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="bg-white shadow-sm hover:shadow-md transition-shadow"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1607962837359-5e7e89f86776?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  alt="Riverside College Football" 
+                  className="w-full h-64 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-medium mb-2">Riverside College Football</h3>
+                  <p className="text-gray-700 mb-4">Performance-focused practice gear with climate-adaptive fabrics for all-season training.</p>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="bg-white shadow-sm hover:shadow-md transition-shadow"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  alt="Valley Soccer Club" 
+                  className="w-full h-64 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-medium mb-2">Valley Soccer Club</h3>
+                  <p className="text-gray-700 mb-4">Custom kits with advanced cooling technology and ergonomic designs for maximum mobility.</p>
+                </div>
+              </motion.div>
+            </div>
+            
+            <div className="mt-12 text-center">
+              <Link href="/gallery">
+                <a className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+                  View More Projects
+                </a>
+              </Link>
+            </div>
+          </Container>
+        </section>
+        
+        {/* Contact Form Section */}
+        <section id="contactForm" className="py-20 bg-[hsl(var(--secondary))]">
+          <Container>
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl font-serif font-semibold mb-6 text-center">Request a Consultation</h2>
+              <p className="text-lg mb-8 text-center">Fill out the form below to discuss your team's custom apparel needs.</p>
+              
+              <form className="space-y-6 bg-white p-8 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Your Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email Address</label>
+                    <input 
+                      type="email" 
+                      className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Organization/Team Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Sport/Activity</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2">Project Details</label>
+                  <textarea 
+                    className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none min-h-[150px]"
+                    placeholder="Tell us about your team, your design ideas, timeline, and any specific requirements."
+                    required
+                  ></textarea>
+                </div>
+                
+                <div className="text-center">
+                  <button 
+                    type="submit" 
+                    className="bg-primary text-white py-3 px-8 font-medium hover:bg-opacity-90 transition-colors"
+                  >
+                    Submit Request
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Container>
+        </section>
+      </div>
+    </>
+  );
+}
