@@ -1,16 +1,42 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 export function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // When the component mounts, play the video
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.error("Video autoplay failed:", error);
+      });
+    }
+  }, []);
+
   return (
     <section className="w-full h-screen bg-white flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
-        <img 
-          src="https://images.unsplash.com/photo-1556906781-9a412961c28c?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" 
-          alt="Athlete in minimal setting" 
-          className="object-cover w-full h-full opacity-90"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        {/* Video background placeholder - you'll need to add the video file */}
+        <video
+          ref={videoRef}
+          className="object-cover w-full h-full opacity-30"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="https://images.unsplash.com/photo-1556906781-9a412961c28c?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+        >
+          {/* The video source will be added when the user uploads the wrestling highlights video */}
+          <source src="/path-to-your-video.mp4" type="video/mp4" />
+          {/* Fallback image in case video doesn't load */}
+          <img 
+            src="https://images.unsplash.com/photo-1556906781-9a412961c28c?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" 
+            alt="Athlete in minimal setting" 
+            className="object-cover w-full h-full"
+          />
+        </video>
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       </div>
       
       <motion.div 
