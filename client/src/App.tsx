@@ -9,6 +9,7 @@ import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
 import CustomApparel from "@/pages/CustomApparel";
 import Events from "@/pages/Events";
+import EventDetail from "@/pages/EventDetail";
 import Gallery from "@/pages/Gallery";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/shop" component={Shop} />
       <Route path="/custom-apparel" component={CustomApparel} />
       <Route path="/events" component={Events} />
+      <Route path="/event/:id" component={EventDetail} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />

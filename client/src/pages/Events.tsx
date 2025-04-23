@@ -200,12 +200,20 @@ export default function Events() {
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price}</p>
                     </div>
                     <p className="text-gray-700 mb-6">{events[0].description}</p>
-                    <button 
-                      onClick={() => handleRegister(events[0])}
-                      className="bg-[hsl(var(--accent))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
-                    >
-                      Register Now
-                    </button>
+                    <div className="flex space-x-4">
+                      <a 
+                        href={`/event/${events[0].id}`}
+                        className="bg-[hsl(var(--accent))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                      >
+                        View Details
+                      </a>
+                      <button 
+                        onClick={() => handleRegister(events[0])}
+                        className="border border-[hsl(var(--accent))] text-[hsl(var(--accent))] py-2 px-6 font-medium tracking-wide hover:bg-[hsl(var(--accent)_/_0.1)] transition-colors inline-block rounded-sm"
+                      >
+                        Register Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -260,12 +268,20 @@ export default function Events() {
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price}</p>
                     </div>
                     <p className="text-gray-700 mb-6">{events[1].description}</p>
-                    <button 
-                      onClick={() => handleRegister(events[1])}
-                      className="bg-[hsl(var(--accent2))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
-                    >
-                      Register Now
-                    </button>
+                    <div className="flex space-x-4">
+                      <a 
+                        href={`/event/${events[1].id}`}
+                        className="bg-[hsl(var(--accent2))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                      >
+                        View Details
+                      </a>
+                      <button 
+                        onClick={() => handleRegister(events[1])}
+                        className="border border-[hsl(var(--accent2))] text-[hsl(var(--accent2))] py-2 px-6 font-medium tracking-wide hover:bg-[hsl(var(--accent2)_/_0.1)] transition-colors inline-block rounded-sm"
+                      >
+                        Register Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -336,12 +352,20 @@ export default function Events() {
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
                     </div>
                     <p className="text-gray-700 mb-6">{events[2].description}</p>
-                    <button 
-                      onClick={() => handleRegister(events[2])}
-                      className="bg-[hsl(var(--accent3))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
-                    >
-                      Register Now
-                    </button>
+                    <div className="flex space-x-4">
+                      <a 
+                        href={`/event/${events[2].id}`}
+                        className="bg-[hsl(var(--accent3))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                      >
+                        View Details
+                      </a>
+                      <button 
+                        onClick={() => handleRegister(events[2])}
+                        className="border border-[hsl(var(--accent3))] text-[hsl(var(--accent3))] py-2 px-6 font-medium tracking-wide hover:bg-[hsl(var(--accent3)_/_0.1)] transition-colors inline-block rounded-sm"
+                      >
+                        Register Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
