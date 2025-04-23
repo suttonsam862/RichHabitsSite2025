@@ -139,82 +139,213 @@ export default function Events() {
       </Helmet>
       
       <div className="bg-white">
-        {/* Hero Section */}
-        <section className="relative h-[50vh] flex items-center">
-          <div className="absolute inset-0 w-full h-full">
-            <img 
-              src="https://images.unsplash.com/photo-1547941126-3d5322b218b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" 
-              alt="Sports clinic" 
-              className="object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-          </div>
-          
-          <Container className="relative z-10 text-white">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="text-5xl font-serif font-bold mb-4">Events & Clinics</h1>
-              <p className="text-xl">Elite training opportunities for dedicated athletes.</p>
-            </motion.div>
-          </Container>
-        </section>
-        
-        {/* Events Calendar Section */}
+        {/* Events Section */}
         <section className="py-16">
           <Container>
             <div className="mb-12">
-              <h2 className="text-3xl font-serif font-semibold mb-6 group">
+              <h2 className="text-4xl font-serif font-semibold mb-6 group text-center">
                 <AnimatedUnderline>
                   Upcoming Events
                 </AnimatedUnderline>
               </h2>
-              <p className="text-lg">Register for our sports clinics and training events to take your skills to the next level.</p>
+              <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {events.map((event, index) => (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="event-card bg-white border border-[hsl(var(--shadow))]"
-                >
-                  <div className="h-48 overflow-hidden">
+            {/* Event Row 1 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-24 relative"
+            >
+              {/* Animated Edge Top Left */}
+              <motion.div 
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[hsl(var(--accent))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+              />
+              
+              {/* Animated Edge Bottom Right */}
+              <motion.div 
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[hsl(var(--accent))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                viewport={{ once: true }}
+              />
+              
+              <div className="relative overflow-hidden bg-white border border-[hsl(var(--shadow))] shadow-lg rounded-sm p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                  <div className="h-64 overflow-hidden rounded-sm">
                     <img 
-                      src={event.image} 
-                      alt={event.title} 
-                      className="w-full h-full object-cover"
+                      src={events[0].image} 
+                      alt={events[0].title} 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                   </div>
-                  <div className="p-6">
+                  <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className={`inline-block ${event.categoryClass} text-xs font-medium px-3 py-1`}>
-                        {event.category}
+                      <span className={`inline-block ${events[0].categoryClass} text-xs font-medium px-3 py-1 rounded-sm`}>
+                        {events[0].category}
                       </span>
                     </div>
-                    <h3 className="text-xl font-medium mb-2">{event.title}</h3>
-                    <p className="text-sm text-gray-600 mb-1">{event.date}</p>
-                    <p className="text-sm text-gray-600 mb-1">{event.time}</p>
-                    <p className="text-sm text-gray-600 mb-4">{event.location}</p>
-                    <p className="text-gray-700 mb-4">{event.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-primary font-medium">{event.price}</span>
-                      <button 
-                        onClick={() => handleRegister(event)}
-                        className="text-sm font-medium underline hover:text-[hsl(var(--accent))]"
-                      >
-                        Register Now
-                      </button>
+                    <h3 className="text-2xl font-medium mb-3">{events[0].title}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price}</p>
                     </div>
+                    <p className="text-gray-700 mb-6">{events[0].description}</p>
+                    <button 
+                      onClick={() => handleRegister(events[0])}
+                      className="bg-[hsl(var(--accent))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                    >
+                      Register Now
+                    </button>
                   </div>
-                </motion.div>
-              ))}
-            </div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Event Row 2 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mb-24 relative"
+            >
+              {/* Animated Edge Top Right */}
+              <motion.div 
+                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[hsl(var(--accent2))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+              />
+              
+              {/* Animated Edge Bottom Left */}
+              <motion.div 
+                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[hsl(var(--accent2))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                viewport={{ once: true }}
+              />
+              
+              <div className="relative overflow-hidden bg-white border border-[hsl(var(--shadow))] shadow-lg rounded-sm p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                  <div className="h-64 overflow-hidden rounded-sm order-1 md:order-2">
+                    <img 
+                      src={events[1].image} 
+                      alt={events[1].title} 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                  </div>
+                  <div className="md:col-span-2 order-2 md:order-1">
+                    <div className="mb-4">
+                      <span className={`inline-block ${events[1].categoryClass} text-xs font-medium px-3 py-1 rounded-sm`}>
+                        {events[1].category}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-medium mb-3">{events[1].title}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[1].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price}</p>
+                    </div>
+                    <p className="text-gray-700 mb-6">{events[1].description}</p>
+                    <button 
+                      onClick={() => handleRegister(events[1])}
+                      className="bg-[hsl(var(--accent2))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                    >
+                      Register Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Event Row 3 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="mb-16 relative"
+            >
+              {/* Animated Edge Top Left and Top Right */}
+              <motion.div 
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[hsl(var(--accent3))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                viewport={{ once: true }}
+              />
+              
+              <motion.div 
+                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[hsl(var(--accent3))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                viewport={{ once: true }}
+              />
+              
+              {/* Animated Edge Bottom Left and Bottom Right */}
+              <motion.div 
+                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[hsl(var(--accent3))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                viewport={{ once: true }}
+              />
+              
+              <motion.div 
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[hsl(var(--accent3))] z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                viewport={{ once: true }}
+              />
+              
+              <div className="relative overflow-hidden bg-white border border-[hsl(var(--shadow))] shadow-lg rounded-sm p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                  <div className="h-64 overflow-hidden rounded-sm">
+                    <img 
+                      src={events[2].image} 
+                      alt={events[2].title} 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="mb-4">
+                      <span className={`inline-block ${events[2].categoryClass} text-xs font-medium px-3 py-1 rounded-sm`}>
+                        {events[2].category}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-medium mb-3">{events[2].title}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[2].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
+                    </div>
+                    <p className="text-gray-700 mb-6">{events[2].description}</p>
+                    <button 
+                      onClick={() => handleRegister(events[2])}
+                      className="bg-[hsl(var(--accent3))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                    >
+                      Register Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </Container>
         </section>
         
