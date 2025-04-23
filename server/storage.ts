@@ -1,105 +1,15 @@
-import { users, type User, type InsertUser } from "@shared/schema";
-import type { Product, Collection } from "../client/src/types/shopify";
-
-// Sample data for development
-const sampleProducts: Product[] = [
-  {
-    id: "prod_1",
-    title: "Performance Training Tee",
-    handle: "performance-training-tee",
-    color: "Black",
-    price: "$45.00",
-    image: "https://images.unsplash.com/photo-1565693413579-8a73ffa6de14?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-    availableForSale: true,
-    variants: [],
-    collection: "performance"
-  },
-  {
-    id: "prod_2",
-    title: "Minimal Track Shorts",
-    handle: "minimal-track-shorts",
-    color: "Slate Gray",
-    price: "$38.00",
-    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-    availableForSale: true,
-    variants: [],
-    collection: "essentials"
-  },
-  {
-    id: "prod_3",
-    title: "Premium Workout Hoodie",
-    handle: "premium-workout-hoodie",
-    color: "Deep Navy",
-    price: "$75.00",
-    image: "https://images.unsplash.com/photo-1618354691249-18772bbac3a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-    availableForSale: true,
-    variants: [],
-    collection: "competition"
-  },
-  {
-    id: "prod_4",
-    title: "Tech Compression Leggings",
-    handle: "tech-compression-leggings",
-    color: "Black",
-    price: "$65.00",
-    image: "https://images.unsplash.com/photo-1525171254930-643fc658b64e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-    availableForSale: true,
-    variants: [],
-    collection: "performance"
-  },
-  {
-    id: "prod_5",
-    title: "Athletic Performance Jacket",
-    handle: "athletic-performance-jacket",
-    color: "Gray",
-    price: "$120.00",
-    image: "https://images.unsplash.com/photo-1519931861629-54ee7ee2ec4f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-    availableForSale: true,
-    variants: [],
-    collection: "essentials"
-  },
-  {
-    id: "prod_6",
-    title: "Training Sweatpants",
-    handle: "training-sweatpants",
-    color: "Black",
-    price: "$65.00",
-    image: "https://images.unsplash.com/photo-1552902881-3a2dd2c0eeab?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-    availableForSale: true,
-    variants: [],
-    collection: "essentials"
-  }
-];
-
-const sampleCollections: Collection[] = [
-  {
-    id: "collection_1",
-    title: "Performance Collection",
-    handle: "performance",
-    description: "Technical fabrics for intense training",
-    image: "https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Performance Collection"
-  },
-  {
-    id: "collection_2",
-    title: "Essentials Line",
-    handle: "essentials",
-    description: "Minimal design for everyday athletes",
-    image: "https://images.unsplash.com/photo-1483721310020-03333e577078?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Essentials Line"
-  },
-  {
-    id: "collection_3",
-    title: "Competition Series",
-    handle: "competition",
-    description: "Elite gear for peak performance",
-    image: "https://images.unsplash.com/photo-1616257460024-b12a0c4c8333?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80",
-    imageAlt: "Competition Series"
-  }
-];
-
-// modify the interface with any CRUD methods
-// you might need
+import { 
+  users, type User, type InsertUser,
+  products, type Product, type InsertProduct,
+  collections, type Collection, type InsertCollection,
+  events, type Event, type InsertEvent,
+  eventRegistrations, type EventRegistration, type InsertEventRegistration,
+  customApparelInquiries, type CustomApparelInquiry, type InsertCustomApparelInquiry,
+  contactSubmissions, type ContactSubmission, type InsertContactSubmission,
+  newsletterSubscribers, type NewsletterSubscriber, type InsertNewsletterSubscriber
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -116,119 +26,107 @@ export interface IStorage {
   getCollections(): Promise<Collection[]>;
   
   // Event methods
-  getEvents(): Promise<any[]>;
-  getEvent(id: number): Promise<any | undefined>;
-  createEventRegistration(data: any): Promise<any>;
+  getEvents(): Promise<Event[]>;
+  getEvent(id: number): Promise<Event | undefined>;
+  createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
   
   // Custom apparel methods
-  createCustomApparelInquiry(data: any): Promise<any>;
+  createCustomApparelInquiry(data: InsertCustomApparelInquiry): Promise<CustomApparelInquiry>;
   
   // Contact methods
-  createContactSubmission(data: any): Promise<any>;
+  createContactSubmission(data: InsertContactSubmission): Promise<ContactSubmission>;
   
   // Newsletter methods
-  getNewsletterSubscriberByEmail(email: string): Promise<any | undefined>;
-  createNewsletterSubscriber(data: any): Promise<any>;
+  getNewsletterSubscriberByEmail(email: string): Promise<NewsletterSubscriber | undefined>;
+  createNewsletterSubscriber(data: InsertNewsletterSubscriber): Promise<NewsletterSubscriber>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private products: Product[];
-  private collections: Collection[];
-  private events: any[];
-  private eventRegistrations: any[];
-  private customApparelInquiries: any[];
-  private contactSubmissions: any[];
-  private newsletterSubscribers: any[];
-  currentId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.currentId = 1;
-    
-    // Initialize with sample data
-    this.products = [...sampleProducts];
-    this.collections = [...sampleCollections];
-    this.events = [];
-    this.eventRegistrations = [];
-    this.customApparelInquiries = [];
-    this.contactSubmissions = [];
-    this.newsletterSubscribers = [];
-  }
-
-  // User methods
+// Database-backed storage implementation
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
-  
-  // Product methods
+
   async getProducts(collection?: string): Promise<Product[]> {
     if (collection) {
-      return this.products.filter(product => product.collection === collection);
+      return await db.select().from(products).where(eq(products.collection, collection));
     }
-    return this.products;
+    return await db.select().from(products);
   }
-  
+
   async getFeaturedProducts(): Promise<Product[]> {
-    // For simplicity, just return the first 4 products as featured
-    return this.products.slice(0, 4);
+    return await db.select().from(products).where(eq(products.featured, true)).limit(4);
   }
-  
+
   async getProductByHandle(handle: string): Promise<Product | undefined> {
-    return this.products.find(product => product.handle === handle);
+    const [product] = await db.select().from(products).where(eq(products.handle, handle));
+    return product;
   }
-  
-  // Collection methods
+
   async getCollections(): Promise<Collection[]> {
-    return this.collections;
+    return await db.select().from(collections);
   }
-  
-  // Event methods - simplified stubs
-  async getEvents(): Promise<any[]> {
-    return [];
+
+  async getEvents(): Promise<Event[]> {
+    return await db.select().from(events).orderBy(desc(events.date));
   }
-  
-  async getEvent(id: number): Promise<any | undefined> {
-    return undefined;
+
+  async getEvent(id: number): Promise<Event | undefined> {
+    const [event] = await db.select().from(events).where(eq(events.id, id));
+    return event;
   }
-  
-  async createEventRegistration(data: any): Promise<any> {
-    return { id: Date.now(), ...data };
+
+  async createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration> {
+    const [registration] = await db
+      .insert(eventRegistrations)
+      .values(data)
+      .returning();
+    return registration;
   }
-  
-  // Custom apparel methods - simplified stubs
-  async createCustomApparelInquiry(data: any): Promise<any> {
-    return { id: Date.now(), ...data };
+
+  async createCustomApparelInquiry(data: InsertCustomApparelInquiry): Promise<CustomApparelInquiry> {
+    const [inquiry] = await db
+      .insert(customApparelInquiries)
+      .values(data)
+      .returning();
+    return inquiry;
   }
-  
-  // Contact methods - simplified stubs
-  async createContactSubmission(data: any): Promise<any> {
-    return { id: Date.now(), ...data };
+
+  async createContactSubmission(data: InsertContactSubmission): Promise<ContactSubmission> {
+    const [submission] = await db
+      .insert(contactSubmissions)
+      .values(data)
+      .returning();
+    return submission;
   }
-  
-  // Newsletter methods - simplified stubs
-  async getNewsletterSubscriberByEmail(email: string): Promise<any | undefined> {
-    return this.newsletterSubscribers.find(sub => sub.email === email);
+
+  async getNewsletterSubscriberByEmail(email: string): Promise<NewsletterSubscriber | undefined> {
+    const [subscriber] = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.email, email));
+    return subscriber;
   }
-  
-  async createNewsletterSubscriber(data: any): Promise<any> {
-    const subscriber = { id: Date.now(), ...data };
-    this.newsletterSubscribers.push(subscriber);
+
+  async createNewsletterSubscriber(data: InsertNewsletterSubscriber): Promise<NewsletterSubscriber> {
+    const [subscriber] = await db
+      .insert(newsletterSubscribers)
+      .values(data)
+      .returning();
     return subscriber;
   }
 }
 
-export const storage = new MemStorage();
+// Initialize database storage
+export const storage = new DatabaseStorage();

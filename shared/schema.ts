@@ -32,8 +32,11 @@ export const products = pgTable("products", {
   productType: text("product_type"),
   image: text("image"),
   price: text("price"),
+  collection: text("collection"),
+  color: text("color"),
   data: jsonb("data"), // Store the full Shopify product data
   featured: boolean("featured").default(false),
+  availableForSale: boolean("available_for_sale").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
@@ -46,8 +49,11 @@ export const insertProductSchema = createInsertSchema(products).pick({
   productType: true,
   image: true,
   price: true,
+  collection: true,
+  color: true,
   data: true,
-  featured: true
+  featured: true,
+  availableForSale: true
 });
 
 // Collections table (for storing local cache of Shopify collections)
