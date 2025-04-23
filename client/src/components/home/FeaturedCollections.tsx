@@ -46,28 +46,24 @@ export function FeaturedCollections() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="product-card bg-white"
             >
-              <Link href={collection.link}>
-                <a className="block group">
-                  <div className="relative overflow-hidden mb-4">
-                    <img 
-                      src={collection.image} 
-                      alt={collection.title} 
-                      className="w-full h-96 object-cover transform transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <h3 className="text-lg font-medium mb-1">{collection.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{collection.description}</p>
-                </a>
+              <Link href={collection.link} className="block group">
+                <div className="relative overflow-hidden mb-4">
+                  <img 
+                    src={collection.image} 
+                    alt={collection.title} 
+                    className="w-full h-96 object-cover transform transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-lg font-medium mb-1">{collection.title}</h3>
+                <p className="text-sm text-gray-600 mb-2">{collection.description}</p>
               </Link>
             </motion.div>
           ))}
         </div>
         
         <div className="mt-12 text-center">
-          <Link href="/shop">
-            <a className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-              View All Collections
-            </a>
+          <Link href="/shop" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+            View All Collections
           </Link>
         </div>
       </Container>

@@ -135,8 +135,14 @@ export default function Shop() {
     return true;
   });
 
+  // Define collection type
+  interface CollectionFilter {
+    id: string;
+    name: string;
+  }
+  
   // Available collections for filter
-  const collections = [
+  const collections: CollectionFilter[] = [
     { id: "performance", name: "Performance Collection" },
     { id: "essentials", name: "Essentials Line" },
     { id: "competition", name: "Competition Series" }
@@ -163,7 +169,7 @@ export default function Shop() {
                 All Products
               </button>
               
-              {collections.map(collection => (
+              {collections.map((collection: CollectionFilter) => (
                 <button
                   key={collection.id}
                   className={`px-4 py-2 text-sm font-medium ${activeFilter === collection.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
@@ -185,7 +191,7 @@ export default function Shop() {
                 <div className="py-12 text-center">No products found.</div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {filteredProducts.map((product, index) => (
+                  {filteredProducts.map((product: ShopProduct, index: number) => (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}
