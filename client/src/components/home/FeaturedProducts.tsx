@@ -26,7 +26,10 @@ const staticProducts: StaticProduct[] = [
     handle: "performance-training-tee",
     color: "Black",
     price: "$45.00",
-    image: "https://images.unsplash.com/photo-1565693413579-8a73ffa6de14?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1565693413579-8a73ffa6de14?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    imageAlt: "Performance Training Tee",
+    availableForSale: true,
+    variants: []
   },
   {
     id: "prod_2",
@@ -34,7 +37,10 @@ const staticProducts: StaticProduct[] = [
     handle: "minimal-track-shorts",
     color: "Slate Gray",
     price: "$38.00",
-    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    imageAlt: "Minimal Track Shorts",
+    availableForSale: true,
+    variants: []
   },
   {
     id: "prod_3",
@@ -42,7 +48,10 @@ const staticProducts: StaticProduct[] = [
     handle: "premium-workout-hoodie",
     color: "Deep Navy",
     price: "$75.00",
-    image: "https://images.unsplash.com/photo-1618354691249-18772bbac3a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1618354691249-18772bbac3a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    imageAlt: "Premium Workout Hoodie",
+    availableForSale: true,
+    variants: []
   },
   {
     id: "prod_4",
@@ -50,7 +59,10 @@ const staticProducts: StaticProduct[] = [
     handle: "tech-compression-leggings",
     color: "Black",
     price: "$65.00",
-    image: "https://images.unsplash.com/photo-1525171254930-643fc658b64e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1525171254930-643fc658b64e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+    imageAlt: "Tech Compression Leggings",
+    availableForSale: true,
+    variants: []
   }
 ];
 
@@ -85,7 +97,7 @@ export function FeaturedProducts() {
               <Link href={`/shop/product/${product.handle}`} className="block group">
                 <div className="relative overflow-hidden mb-4">
                   <img 
-                    src={product.image} 
+                    src={product.image || ''} 
                     alt={product.title} 
                     className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
                   />
