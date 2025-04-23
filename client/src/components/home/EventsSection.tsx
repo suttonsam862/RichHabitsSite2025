@@ -74,8 +74,8 @@ export function EventsSection() {
               <p className="text-gray-700 mb-4">{event.description}</p>
               <div className="flex justify-between items-center">
                 <span className="text-primary font-medium">{event.price}</span>
-                <Link href={event.link}>
-                  <a className="text-sm font-medium underline">Register Now</a>
+                <Link href={event.link} className="text-sm font-medium underline">
+                  Register Now
                 </Link>
               </div>
             </motion.div>
@@ -83,10 +83,8 @@ export function EventsSection() {
         </div>
         
         <div className="mt-12 text-center">
-          <Link href="/events">
-            <a className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-              View All Events
-            </a>
+          <Link href="/events" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+            View All Events
           </Link>
         </div>
       </Container>
