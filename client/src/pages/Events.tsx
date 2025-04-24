@@ -205,7 +205,9 @@ export default function Events() {
                         {events[0].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3 fire-title">{events[0].title}</h3>
+                    <h3 className="text-3xl font-bold mb-3 fire-title">
+                      <span className="birmingham-title">BIRMINGHAM</span> SLAM CAMP
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>

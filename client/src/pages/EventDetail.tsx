@@ -200,7 +200,14 @@ export default function EventDetail() {
         <meta name="description" content={event.description} />
       </Helmet>
       
-      <div className="bg-white py-16">
+      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : ''}`}>
+        {event.id === 1 && (
+          <>
+            <div className="heat-wave heat-wave-1"></div>
+            <div className="heat-wave heat-wave-2"></div>
+            <div className="heat-wave heat-wave-3"></div>
+          </>
+        )}
         <Container>
           {/* Event Header */}
           <div className="mb-12">
@@ -217,7 +224,13 @@ export default function EventDetail() {
                 <span className={`inline-block ${event.id === 1 ? "fire-gradient-btn text-white" : event.categoryClass} text-xs font-medium px-3 py-1 rounded-sm mb-4`}>
                   {event.category}
                 </span>
-                <h1 className={`text-4xl font-serif font-bold mb-4 tracking-wide ${event.id === 1 ? "fire-title" : ""}`}>{event.title}</h1>
+                {event.id === 1 ? (
+                  <h1 className="text-4xl font-serif font-bold mb-4 tracking-wide fire-title">
+                    <span className="birmingham-title">BIRMINGHAM</span> SLAM CAMP
+                  </h1>
+                ) : (
+                  <h1 className="text-4xl font-serif font-bold mb-4 tracking-wide">{event.title}</h1>
+                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div className="flex items-center">

@@ -178,6 +178,95 @@
   }
 }
 
+/* Animated Flame Background */
+@keyframes flame-animation {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.03;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.07;
+  }
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.03;
+  }
+}
+
+@keyframes heat-wave {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.01;
+  }
+  50% {
+    transform: translateY(-15px) scaleX(1.05);
+    opacity: 0.03;
+  }
+  100% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.01;
+  }
+}
+
+.flame-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.flame-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #ff4e0008, #ff9a0006, #ffd70004);
+  background-size: 400% 400%;
+  animation: flame-animation 12s ease infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.heat-wave {
+  position: absolute;
+  height: 140px;
+  width: 110%;
+  left: -5%;
+  background: linear-gradient(180deg, transparent, rgba(255, 120, 0, 0.02), transparent);
+  border-radius: 50% / 20%;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.heat-wave-1 {
+  top: 15%;
+  animation: heat-wave 12s ease-in-out infinite;
+}
+
+.heat-wave-2 {
+  top: 40%;
+  animation: heat-wave 15s ease-in-out infinite 2s;
+}
+
+.heat-wave-3 {
+  top: 65%;
+  animation: heat-wave 10s ease-in-out infinite 1s;
+}
+
+/* Birmingham title styling */
+.birmingham-title {
+  color: white;
+  text-shadow: 
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    0 0 10px rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
