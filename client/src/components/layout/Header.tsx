@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import logoImage from "../../assets/logo.png";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,7 +32,9 @@ export function Header() {
   return (
     <header className={`fixed top-0 w-full bg-white z-50 border-b border-shadow transition-shadow ${hasScrolled ? 'shadow-md' : ''}`}>
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-3xl font-serif font-semibold tracking-tight">Rich Habits</Link>
+        <Link href="/" className="flex items-center">
+          <img src={logoImage} alt="Rich Habits Logo" className="h-12" />
+        </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">

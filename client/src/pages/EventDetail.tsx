@@ -208,14 +208,17 @@ export default function EventDetail() {
         <meta name="description" content={event.description} />
       </Helmet>
       
-      {/* New Banner at the top */}
+      {/* New Banner at the top with lighting effects */}
       {event.id === 1 && (
-        <div className="w-full overflow-hidden">
+        <div className="w-full overflow-hidden banner-container">
           <img 
             src="/src/assets/events/slam_camp_banner.png" 
             alt="Birmingham Wrestling Camp Banner"
-            className="w-full object-contain"
+            className="w-full object-contain relative z-10"
           />
+          <div className="sun-glow"></div>
+          <div className="neon-highlight mt-1"></div>
+          <div className="w-full h-1 bg-gradient-to-r from-orange-500/20 via-orange-500/40 to-orange-500/20 mt-1"></div>
         </div>
       )}
       
