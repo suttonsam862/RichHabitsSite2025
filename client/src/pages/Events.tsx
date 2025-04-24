@@ -18,14 +18,14 @@ import event3Image from "../assets/events/event3.png";
 const events = [
   {
     id: 1,
-    title: "Elite Point Guard Clinic",
-    category: "Basketball",
+    title: "USA Wrestling Championship Camp",
+    category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "August 15, 2023",
-    time: "9:00 AM - 2:00 PM",
-    location: "Riverfront Sports Complex",
-    description: "Intensive training for high school point guards focusing on ball handling, vision, and leadership. Led by former professional players and collegiate coaches.",
-    price: "$89.00",
+    date: "May 20, 2023",
+    time: "9:00 AM - 4:00 PM",
+    location: "National Wrestling Training Center",
+    description: "Intensive championship-level training for elite wrestlers. Train with Olympic coaches and national team members to perfect your technique and prepare for high-level competition.",
+    price: "$125.00",
     image: event1Image
   },
   {

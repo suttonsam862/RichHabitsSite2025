@@ -18,39 +18,40 @@ import event3Image from "../assets/events/event3.png";
 const events = [
   {
     id: 1,
-    title: "Elite Point Guard Clinic",
-    category: "Basketball",
+    title: "USA Wrestling Championship Camp",
+    category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "August 15, 2023",
-    time: "9:00 AM - 2:00 PM",
-    location: "Riverfront Sports Complex",
-    description: "Intensive training for high school point guards focusing on ball handling, vision, and leadership. Led by former professional players and collegiate coaches.",
-    fullDescription: "This intensive one-day clinic focuses exclusively on developing elite point guard skills for serious high school basketball players. Our coaching staff includes former professional players and current collegiate coaches who specialize in guard development.\n\nParticipants will work through a series of drills and scenarios designed to improve ball handling under pressure, court vision, leadership communication, pick and roll decision making, and defensive techniques specific to the point guard position.\n\nThe clinic maintains a 6:1 player-to-coach ratio to ensure personalized feedback. Players will receive video analysis of their form and a personalized development plan to continue their improvement after the clinic.",
-    price: "$89.00",
+    date: "May 20, 2023",
+    time: "9:00 AM - 4:00 PM",
+    location: "National Wrestling Training Center",
+    description: "Intensive championship-level training for elite wrestlers. Train with Olympic coaches and national team members to perfect your technique and prepare for high-level competition.",
+    fullDescription: "Join us for an intensive championship-level training camp designed specifically for elite wrestlers looking to compete at the highest levels. This full-day camp brings together Olympic-level coaches and USA National Team members to provide world-class instruction in an intimate training environment.\n\nParticipants will work through advanced technique development, strategic match planning, conditioning principles specific to wrestling performance, and mental preparation tactics used by world champions. The camp includes both technical instruction and live situation drilling.\n\nWith a 5:1 wrestler-to-coach ratio, you'll receive personalized feedback throughout the day. Participants will also receive video analysis of their technique and a customized development plan to continue progress after the camp.",
+    price: "$125.00",
     image: event1Image,
     gallery: [
-      "https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1577471489310-7031584568dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      "https://images.unsplash.com/photo-1565992441121-4367c2967103?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1613731587979-67f4e59cc19d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1562771379-eafdca7a02f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
     ],
     coaches: [
       {
-        name: "Marcus Johnson",
-        title: "Former NBA Point Guard",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+        name: "David Valencia",
+        title: "Olympic Gold Medalist",
+        image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
       },
       {
-        name: "Sarah Williams",
-        title: "Division I Assistant Coach",
-        image: "https://images.unsplash.com/photo-1545912452-8aea7e25a3d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+        name: "Michael Torres",
+        title: "USA National Team Coach",
+        image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
       }
     ],
     schedule: [
       { time: "8:30 AM - 9:00 AM", activity: "Check-in and warm-up" },
-      { time: "9:00 AM - 10:30 AM", activity: "Ball handling and dribbling drills" },
-      { time: "10:30 AM - 12:00 PM", activity: "Passing and court vision development" },
+      { time: "9:00 AM - 10:30 AM", activity: "Advanced technique development" },
+      { time: "10:30 AM - 12:00 PM", activity: "Strategic match planning and situational drilling" },
       { time: "12:00 PM - 12:45 PM", activity: "Lunch break (provided)" },
-      { time: "12:45 PM - 2:00 PM", activity: "Game situations and decision making" }
+      { time: "12:45 PM - 2:30 PM", activity: "Mental preparation and competition tactics" },
+      { time: "2:30 PM - 4:00 PM", activity: "Live wrestling and personalized coaching" }
     ]
   },
   {
