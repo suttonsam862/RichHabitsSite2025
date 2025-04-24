@@ -115,8 +115,9 @@ export const eventRegistrations = pgTable("event_registrations", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
-  age: text("age"),
+  ageGroup: text("age_group"),
   experience: text("experience"),
+  registrationType: text("registration_type"),
   shopifyOrderId: text("shopify_order_id"),
   createdAt: timestamp("created_at").defaultNow()
 });
@@ -126,8 +127,9 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   name: true,
   email: true,
   phone: true,
-  age: true,
+  ageGroup: true,
   experience: true,
+  registrationType: true,
   shopifyOrderId: true
 });
 

@@ -27,7 +27,7 @@ export async function getProductById(productId: string) {
       throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { product: any };
     return data.product;
   } catch (error) {
     console.error('Error fetching product from Shopify:', error);
@@ -66,7 +66,7 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
       throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { checkout: any };
     return data.checkout;
   } catch (error) {
     console.error('Error creating checkout in Shopify:', error);

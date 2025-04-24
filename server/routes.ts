@@ -8,6 +8,7 @@ import {
   insertNewsletterSubscriberSchema
 } from "@shared/schema";
 import { z } from "zod";
+import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData } from "./shopify";
 
 // Shopify configuration - in a real app, store these in environment variables
 const SHOPIFY_ADMIN_API_KEY = process.env.SHOPIFY_ADMIN_API_KEY || "";
@@ -103,17 +104,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Event not found" });
       }
       
-      // Create event registration
+      // Create event registration in our database
       const registration = await storage.createEventRegistration(validatedData);
       
-      // For a real app, you would call Shopify API to create a checkout or order
-      // For now, we'll just return a success response
+      // For Birmingham Slam Camp, connect to Shopify
+      let checkoutUrl = null;
+      if (event.id === 1) { // Birmingham Slam Camp
+        try {
+          // Format the registration data for Shopify
+          const registrationData: EventRegistrationData = {
+            name: validatedData.name,
+            email: validatedData.email,
+            phone: validatedData.phone || '',
+            ageGroup: validatedData.ageGroup || '',
+            experience: validatedData.experience || '',
+            option: validatedData.registrationType === 'full' ? 'full' : 'single'
+          };
+          
+          // Determine which product variant to use based on registration type
+          let variantId = '';
+          if (validatedData.registrationType === 'full') {
+            variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
+          } else {
+            variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.singleDay?.variantId || '';
+          }
+          
+          // If we have a valid variantId, create a checkout in Shopify
+          if (variantId) {
+            const checkout = await createEventRegistrationCheckout(
+              eventId.toString(),
+              variantId,
+              registrationData
+            );
+            
+            if (checkout && checkout.webUrl) {
+              checkoutUrl = checkout.webUrl;
+            }
+          } else {
+            console.warn('No Shopify variant ID configured for this event registration type');
+          }
+        } catch (shopifyError) {
+          console.error('Error creating Shopify checkout:', shopifyError);
+          // Continue with registration process even if Shopify checkout fails
+        }
+      }
+      
       res.status(201).json({
         message: "Registration successful",
         registration,
-        checkoutUrl: event.shopifyProductId 
-          ? `https://${SHOPIFY_STORE_DOMAIN}/cart/${event.shopifyProductId}:1` 
-          : null
+        checkoutUrl
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
