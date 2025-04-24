@@ -1,28 +1,22 @@
 import React from 'react';
 
-interface VideoSectionProps {
+interface FruitSectionProps {
   src: string;
   alt: string;
   title: string;
   description: string;
 }
 
-const VideoSection: React.FC<VideoSectionProps> = ({ src, alt, title, description }) => {
+const FruitSection: React.FC<FruitSectionProps> = ({ src, alt, title, description }) => {
   return (
     <div className="fruit-video-section">
       <div className="relative overflow-hidden h-full bg-gray-100">
-        {/* Video element for looping MP4 videos */}
-        <video 
+        {/* Image for fruit section */}
+        <img 
+          src={src} 
+          alt={alt}
           className="w-full h-full object-cover"
-          autoPlay 
-          muted 
-          loop 
-          playsInline
-          aria-label={alt}
-        >
-          <source src={src} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
           <h3 className="text-white text-xs font-bold">{title}</h3>
           <p className="text-white/80 text-[10px] mt-0.5 line-clamp-1">{description}</p>
@@ -33,41 +27,41 @@ const VideoSection: React.FC<VideoSectionProps> = ({ src, alt, title, descriptio
 };
 
 export function FruitHuntersBanner() {
-  // Video paths for the MP4 files - replace these with actual MP4 files
+  // Image paths for the fruit sections
   const fruitSections = [
     {
-      src: "/videos/dragon-fruit.mp4", // Replace with actual MP4 file
-      alt: "Dragon fruit being sliced", 
+      src: "/images/fruits/0E28DDF2-9BF4-4256-BE3B-E3D1367A5740_1_102_o.jpeg",
+      alt: "Dragon fruit", 
       title: "Dragon Fruit",
       description: "Rich in antioxidants & vitamin C"
     },
     {
-      src: "/videos/mangosteen.mp4", // Replace with actual MP4 file
-      alt: "Fresh mangosteen",
+      src: "/images/fruits/10F83FC8-8626-4870-BBD7-8A2205E5ADD1_1_102_o.jpeg",
+      alt: "Mangosteen",
       title: "Mangosteen",
       description: "The 'queen of fruits' with immune benefits"
     },
     {
-      src: "/videos/passion-fruit.mp4", // Replace with actual MP4 file
-      alt: "Passion fruit on the vine",
+      src: "/images/fruits/50C705BD-6E71-453B-A059-36DF8A4A5E04_1_102_o.jpeg",
+      alt: "Passion fruit",
       title: "Passion Fruit",
       description: "Perfect post-workout recovery fruit"
     },
     {
-      src: "/videos/jackfruit.mp4", // Replace with actual MP4 file
-      alt: "Jackfruit being prepared",
+      src: "/images/fruits/50DE3461-8B8B-4B94-972D-99A7C403443D_1_102_o.jpeg",
+      alt: "Jackfruit",
       title: "Jackfruit",
       description: "Nutrient-dense for muscle recovery"
     },
     {
-      src: "/videos/star-fruit.mp4", // Replace with actual MP4 file
-      alt: "Star fruit slices arranged",
+      src: "/images/fruits/B7585903-4E2F-40FE-AAF5-466F61CE7DB4_1_102_o.jpeg",
+      alt: "Star fruit",
       title: "Star Fruit",
       description: "Hydrating and rich in potassium"
     },
     {
-      src: "/videos/rambutan.mp4", // Replace with actual MP4 file
-      alt: "Rambutan fruit display",
+      src: "/images/fruits/F9FFD4F6-37A8-4F2B-AEEC-FF61C7E4481E_1_102_o.jpeg",
+      alt: "Rambutan",
       title: "Rambutan",
       description: "Energy-boosting tropical delight"
     }
@@ -97,7 +91,7 @@ export function FruitHuntersBanner() {
         
         <div className="flex overflow-hidden h-[240px] gap-1 rounded-lg shadow-md">
           {fruitSections.map((section, index) => (
-            <VideoSection
+            <FruitSection
               key={index}
               src={section.src}
               alt={section.alt}
