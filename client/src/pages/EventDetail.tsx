@@ -206,6 +206,9 @@ export default function EventDetail() {
             <div className="heat-wave heat-wave-1"></div>
             <div className="heat-wave heat-wave-2"></div>
             <div className="heat-wave heat-wave-3"></div>
+            <div className="heat-wave heat-wave-1" style={{top: '25%', animationDelay: '1s'}}></div>
+            <div className="heat-wave heat-wave-2" style={{top: '55%', animationDelay: '3s'}}></div>
+            <div className="heat-wave heat-wave-3" style={{top: '80%', animationDelay: '2s'}}></div>
           </>
         )}
         <Container>
