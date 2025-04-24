@@ -267,6 +267,19 @@ export default function EventDetail() {
                         <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
                       </div>
                     </div>
+                    
+                    <div className="my-6 flex flex-col items-center">
+                      <div className="relative max-w-md w-full">
+                        <img 
+                          src="/src/assets/events/slam_camp_title.png" 
+                          alt="Birmingham Slam Camp" 
+                          className="w-full animate-[titleGlow_3s_ease-in-out_infinite]"
+                        />
+                        <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
+                      </div>
+                      <div className="golden-glass-bar h-1 w-full max-w-md mt-1"></div>
+                    </div>
+                    
                     <div className="text-center mb-4">
                       <div className="text-lg font-medium mb-1">Clay-Chalkville Middle School</div>
                       <div className="text-sm text-gray-700">6700 Trussville Clay Rd, Trussville AL 35173</div>

@@ -73,6 +73,18 @@
   }
 }
 
+@keyframes titleGlow {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.7));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.5));
+  }
+}
+
 .golden-glass-bar {
   background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.6), rgba(255, 215, 0, 0.2));
   background-size: 200% 200%;
