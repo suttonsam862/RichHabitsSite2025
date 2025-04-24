@@ -675,35 +675,132 @@ export default function EventDetail() {
                     </div>
                   </div>
                   
-                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
-                    <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-                      <h3 className="text-lg font-bold text-gray-800">Registration Details</h3>
-                    </div>
-                    <div className="p-6">
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                          <span className="font-medium text-gray-700">Full Camp (3 Days)</span>
-                          <span className="text-lg font-bold text-gray-700">$249</span>
+                  {/* Full-width Registration Section with Pricing Cards */}
+                  <div className="mb-8 w-full bg-gray-50 border-t border-b border-gray-200 py-12">
+                    <div className="max-w-7xl mx-auto px-4">
+                      <div className="text-center mb-10">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2">Registration Plans</h3>
+                        <p className="text-gray-600 max-w-2xl mx-auto">Choose the registration option that works best for you. All plans include expert coaching, a camp t-shirt, and Fruit Hunters nutrition packs.</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        {/* Full Camp Plan */}
+                        <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-105">
+                          <div className="p-6 border-b border-gray-100">
+                            <div className="flex justify-between items-center">
+                              <h4 className="text-xl font-bold text-gray-800">Full Camp</h4>
+                              <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Most Popular</span>
+                            </div>
+                            <div className="mt-4 flex items-end">
+                              <span className="text-4xl font-bold text-gray-800">$249</span>
+                              <span className="text-gray-500 ml-2 pb-1">/ 3 days</span>
+                            </div>
+                          </div>
+                          <div className="p-6">
+                            <ul className="space-y-4">
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Complete 3-day intensive training experience</span>
+                              </li>
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Learn from all featured coaches</span>
+                              </li>
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Exclusive Rich Habits camp t-shirt</span>
+                              </li>
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Daily Fruit Hunters nutrition packs</span>
+                              </li>
+                            </ul>
+                            <div className="mt-8">
+                              <button 
+                                onClick={() => setShowRegistrationDialog(true)}
+                                className="bg-gray-800 text-white py-3 px-6 font-medium tracking-wide inline-block rounded-lg w-full transition duration-200 hover:bg-gray-900"
+                              >
+                                Register for Full Camp
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                          <span className="font-medium text-gray-700">Single Day Pass</span>
-                          <span className="text-lg font-bold text-gray-700">$149</span>
+                        
+                        {/* Single Day Plan */}
+                        <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-105">
+                          <div className="p-6 border-b border-gray-100">
+                            <div className="flex justify-between items-center">
+                              <h4 className="text-xl font-bold text-gray-800">Single Day</h4>
+                              <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Flexible Option</span>
+                            </div>
+                            <div className="mt-4 flex items-end">
+                              <span className="text-4xl font-bold text-gray-800">$149</span>
+                              <span className="text-gray-500 ml-2 pb-1">/ day</span>
+                            </div>
+                          </div>
+                          <div className="p-6">
+                            <ul className="space-y-4">
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Attend any one day of your choice</span>
+                              </li>
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Train with featured coach of the day</span>
+                              </li>
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Rich Habits camp t-shirt</span>
+                              </li>
+                              <li className="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-gray-700">Fruit Hunters nutrition pack</span>
+                              </li>
+                            </ul>
+                            <div className="mt-8">
+                              <button 
+                                onClick={() => setShowRegistrationDialog(true)}
+                                className="bg-white text-gray-800 border-2 border-gray-800 py-3 px-6 font-medium tracking-wide inline-block rounded-lg w-full transition duration-200 hover:bg-gray-50"
+                              >
+                                Register for Single Day
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                          <span className="font-medium text-gray-700">Age Groups</span>
-                          <span className="text-gray-600">2nd Grade - Senior</span>
-                        </div>
-                        <div className="flex justify-between items-center py-2">
-                          <span className="font-medium text-gray-700">Capacity</span>
-                          <span className="text-gray-600">Limited to 200 wrestlers</span>
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-gray-100">
-                          <button 
-                            onClick={() => setShowRegistrationDialog(true)}
-                            className="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-6 font-medium tracking-wide inline-block rounded-md w-full transition duration-200 hover:from-gray-700 hover:to-gray-800"
-                          >
-                            Register Now
-                          </button>
+                      </div>
+                      
+                      <div className="mt-10 bg-white p-5 rounded-lg shadow-sm max-w-4xl mx-auto border border-gray-200">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                          <div className="mb-4 md:mb-0">
+                            <h4 className="font-bold text-gray-800 mb-1">Group Discount Available</h4>
+                            <p className="text-gray-600 text-sm">Programs bringing 10+ wrestlers receive 10% off next Rich Habits custom gear order</p>
+                          </div>
+                          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg py-2 px-4">
+                              <div className="text-xs text-gray-500 uppercase tracking-wide">Age Groups</div>
+                              <div className="font-medium">2nd Grade - Senior</div>
+                            </div>
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg py-2 px-4">
+                              <div className="text-xs text-gray-500 uppercase tracking-wide">Capacity</div>
+                              <div className="font-medium">Limited to 200 wrestlers</div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
