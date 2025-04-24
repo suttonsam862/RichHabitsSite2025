@@ -223,6 +223,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test endpoint for Shopify
+  app.get("/api/test-shopify-checkout", async (req, res) => {
+    try {
+      console.log('Testing Shopify checkout...');
+      const testRegistrationData: EventRegistrationData = {
+        firstName: "Test",
+        lastName: "User",
+        contactName: "Test Contact",
+        email: "test@example.com",
+        phone: "123-456-7890",
+        tShirtSize: "AL",
+        grade: "10th",
+        schoolName: "Test School",
+        clubName: "Test Club",
+        medicalReleaseAccepted: true,
+        option: "full"
+      };
+      
+      const variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
+      console.log('Using variant ID:', variantId);
+      
+      if (!variantId) {
+        return res.status(400).json({ message: "No valid variant ID found" });
+      }
+      
+      const checkout = await createEventRegistrationCheckout(
+        "1", // test event ID
+        variantId,
+        testRegistrationData
+      );
+      
+      res.json({
+        message: "Test checkout created",
+        checkout: checkout
+      });
+    } catch (error) {
+      console.error('Error testing Shopify checkout:', error);
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      res.status(500).json({ 
+        message: "Error testing Shopify checkout", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+  
   // API routes for newsletter
   app.post("/api/newsletter/subscribe", async (req, res) => {
     try {

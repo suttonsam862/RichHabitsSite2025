@@ -848,10 +848,17 @@ export default function EventDetail() {
               });
               
               if (!response.ok) {
-                throw new Error('Registration failed. Please try again.');
+                const errorText = await response.text();
+                console.error('Registration response error:', {
+                  status: response.status,
+                  statusText: response.statusText,
+                  body: errorText
+                });
+                throw new Error(`Registration failed: ${response.status} ${response.statusText}. ${errorText}`);
               }
               
               const data = await response.json();
+              console.log('Registration success response:', data);
               
               // Show success message
               toast({

@@ -2,18 +2,20 @@ import fetch from 'node-fetch';
 
 // Environment variables for Shopify API
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY; // This is the Storefront API access token
+const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY; // This is the Admin API key
 const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // This is the Admin API access token
+const SHOPIFY_STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN; // This is the Storefront API access token
 
 // Log available environment variables
 console.log('Shopify environment vars:', 
   'SHOPIFY_STORE_DOMAIN:', SHOPIFY_STORE_DOMAIN ? 'Set' : 'Not set',
   'SHOPIFY_API_KEY:', SHOPIFY_API_KEY ? 'Set' : 'Not set', 
-  'SHOPIFY_ACCESS_TOKEN:', SHOPIFY_ACCESS_TOKEN ? 'Set' : 'Not set'
+  'SHOPIFY_ACCESS_TOKEN:', SHOPIFY_ACCESS_TOKEN ? 'Set' : 'Not set',
+  'SHOPIFY_STOREFRONT_TOKEN:', SHOPIFY_STOREFRONT_TOKEN ? 'Set' : 'Not set'
 );
 
 // Validate required environment variables are set
-if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_API_KEY || !SHOPIFY_ACCESS_TOKEN) {
+if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_API_KEY || !SHOPIFY_ACCESS_TOKEN || !SHOPIFY_STOREFRONT_TOKEN) {
   console.error('Missing required Shopify environment variables');
 }
 
@@ -94,7 +96,7 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
     
     console.log('Making Shopify Storefront API request with:', {
       endpoint: `https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`,
-      tokenPresent: SHOPIFY_API_KEY ? 'yes' : 'no'
+      tokenPresent: SHOPIFY_STOREFRONT_TOKEN ? 'yes' : 'no'
     });
 
     // Call the Storefront API
@@ -103,7 +105,7 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
       {
         method: 'POST',
         headers: {
-          'X-Shopify-Storefront-Access-Token': SHOPIFY_API_KEY as string,
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN as string,
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
