@@ -804,7 +804,7 @@ export default function EventDetail() {
                   <div className="p-6">
                     <ul className="space-y-4">
                       <li className="flex items-start">
-                        <div className="bg-amber-100 p-1.5 rounded-md mr-3 text-amber-600 flex-shrink-0">
+                        <div className="bg-gray-100 p-1.5 rounded-md mr-3 text-gray-600 flex-shrink-0">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -815,7 +815,7 @@ export default function EventDetail() {
                         </div>
                       </li>
                       <li className="flex items-start">
-                        <div className="bg-amber-100 p-1.5 rounded-md mr-3 text-amber-600 flex-shrink-0">
+                        <div className="bg-gray-100 p-1.5 rounded-md mr-3 text-gray-600 flex-shrink-0">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -826,7 +826,7 @@ export default function EventDetail() {
                         </div>
                       </li>
                       <li className="flex items-start">
-                        <div className="bg-amber-100 p-1.5 rounded-md mr-3 text-amber-600 flex-shrink-0">
+                        <div className="bg-gray-100 p-1.5 rounded-md mr-3 text-gray-600 flex-shrink-0">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -837,7 +837,7 @@ export default function EventDetail() {
                         </div>
                       </li>
                       <li className="flex items-start">
-                        <div className="bg-amber-100 p-1.5 rounded-md mr-3 text-amber-600 flex-shrink-0">
+                        <div className="bg-gray-100 p-1.5 rounded-md mr-3 text-gray-600 flex-shrink-0">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -900,13 +900,13 @@ export default function EventDetail() {
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <button 
                     onClick={() => setShowRegistrationDialog(true)}
-                    className="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-8 font-medium tracking-wide rounded-md transition duration-200 hover:from-amber-600 hover:to-orange-600 shadow-md"
+                    className="bg-gray-800 text-white py-3 px-8 font-medium tracking-wide rounded-md transition duration-200 hover:bg-gray-900 shadow-md"
                   >
                     Register Now
                   </button>
                   <a 
                     href="#" 
-                    className="border border-amber-500 text-amber-600 py-3 px-8 font-medium tracking-wide rounded-md transition duration-200 hover:bg-amber-50"
+                    className="border border-gray-300 text-gray-700 py-3 px-8 font-medium tracking-wide rounded-md transition duration-200 hover:bg-gray-50"
                   >
                     Download Information Packet
                   </a>
@@ -938,29 +938,29 @@ export default function EventDetail() {
             <DialogDescription>
               {event.id === 1 ? (
                 <div className="mt-3">
-                  <div className="bg-amber-50 p-4 rounded-md mb-4 border-l-4 border-amber-500">
-                    <h4 className="font-bold text-amber-800 mb-2">REGISTRATION OPTIONS</h4>
+                  <div className="bg-white p-4 rounded-md mb-4 border-l-4 border-gray-300 shadow-sm">
+                    <h4 className="font-bold text-gray-800 mb-2">REGISTRATION OPTIONS</h4>
                     <ul className="space-y-2">
                       <li className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                         <div>
                           <span className="font-medium">Full Camp (3 Days)</span>
-                          <span className="text-amber-700 font-bold ml-2">$249</span>
+                          <span className="text-gray-700 font-bold ml-2">$249</span>
                         </div>
                       </li>
                       <li className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                         <div>
                           <span className="font-medium">Single Day Pass</span>
-                          <span className="text-amber-700 font-bold ml-2">$149</span>
+                          <span className="text-gray-700 font-bold ml-2">$149</span>
                         </div>
                       </li>
                     </ul>
-                    <p className="text-amber-700 text-sm mt-2">Open to wrestlers from 2nd grade through graduating seniors</p>
+                    <p className="text-gray-700 text-sm mt-2">Open to wrestlers from 2nd grade through graduating seniors</p>
                   </div>
                   <p className="text-gray-600 mb-2">
                     Complete the form below to secure your spot. All fields are required.
@@ -1067,12 +1067,12 @@ export default function EventDetail() {
                     </div>
                   </div>
                   
-                  <div className="bg-amber-50 p-3 rounded-md border border-amber-100 mt-2">
+                  <div className="bg-white p-3 rounded-md border border-gray-200 shadow-sm mt-2">
                     <div className="flex items-start">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="text-sm text-amber-800">
+                      <p className="text-sm text-gray-700">
                         Camp includes daily nutrition packs from our partner Fruit Hunters, America's premier exotic fruits company.
                       </p>
                     </div>
@@ -1109,7 +1109,7 @@ export default function EventDetail() {
             <DialogFooter className="mt-6 pt-4 border-t border-gray-100">
               <Button 
                 type="submit"
-                className={event.id === 1 ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" : ""}
+                className={event.id === 1 ? "bg-gray-800 hover:bg-gray-900" : ""}
               >
                 {event.id === 1 ? "Proceed to Checkout" : "Proceed to Payment"}
               </Button>
