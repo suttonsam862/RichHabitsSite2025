@@ -10,123 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
-// Sample events data, to be replaced with API data later
-const eventsData = [
-  {
-    id: 1,
-    title: "Birmingham Slam Camp",
-    slug: "birmingham-slam-camp",
-    date: "June 19-21, 2025",
-    category: "Wrestling Camp",
-    categoryClass: "bg-blue-100 text-blue-800",
-    location: "Clay-Chalkville Middle School, Birmingham, AL",
-    time: "9:00 AM - 4:00 PM",
-    image: "/src/assets/events/SlamCampSiteBanner.png",
-    shortDescription: "An intensive 3-day wrestling camp featuring elite coaching from NCAA champions and Olympic-level athletes.",
-    fullDescription: "Join us for the inaugural Birmingham Slam Camp, featuring world-class instruction from some of wrestling's elite competitors.\n\nAttendees will learn advanced techniques, strategy, and mental preparation from NCAA champions and Olympic-level athletes. This camp is designed for wrestlers of all levels who want to take their skills to the next level.\n\nEach day focuses on different aspects of wrestling excellence, with personalized instruction, live drilling, and competitive scenarios. Don't miss this rare opportunity to train with the best in the sport!",
-    isFeatured: true,
-    coaches: [
-      {
-        name: "Zahid Valencia",
-        title: "2x NCAA Champion",
-        image: "/src/assets/coaches/VALENCIA_Zahid-headshot.jpg",
-        bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat. Currently training for international competition, he continues to compete at the highest levels while sharing his knowledge with the next generation."
-      },
-      {
-        name: "Josh Shields",
-        title: "NCAA All-American",
-        image: "/src/assets/coaches/josh_shields.jpg",
-        bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit. Josh specializes in neutral position attacks and defensive strategy, helping wrestlers develop complete skill sets."
-      },
-      {
-        name: "Brandon Courtney",
-        title: "NCAA Finalist",
-        image: "/src/assets/coaches/brandon_courtney.webp",
-        bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat. His focus on detailed technical execution makes him an invaluable instructor for wrestlers looking to perfect their craft."
-      },
-      {
-        name: "Michael McGee",
-        title: "NCAA All-American",
-        image: "/src/assets/coaches/Michael_McGee_JouQS.jpg",
-        bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness. His comprehensive approach helps wrestlers develop the complete package needed for success at all levels."
-      }
-    ],
-    schedule: [
-      {
-        time: "9:00 AM - 9:15 AM",
-        activity: "Registration and Gear Distribution"
-      },
-      {
-        time: "9:15 AM - 11:00 AM",
-        activity: "Fun Warmup, Games, and Technical Session"
-      },
-      {
-        time: "11:00 AM - 11:30 AM",
-        activity: "Break (PlayStation Station Available)"
-      },
-      {
-        time: "11:30 AM - 12:30 PM",
-        activity: "Live Wrestling Sessions and Spotlight Matches"
-      },
-      {
-        time: "12:30 PM - 1:30 PM",
-        activity: "Lunch Break and Rich Habits Gear Shop"
-      },
-      {
-        time: "1:30 PM - 3:00 PM",
-        activity: "Second Technical Session"
-      },
-      {
-        time: "3:00 PM - 4:00 PM",
-        activity: "Q&A with Clinician and Closing Activities"
-      }
-    ],
-    price: "$249 (full camp) / $149 (single day)",
-    buttonLabel: "Register Now",
-    ageGroups: "2nd Grade - Senior",
-    capacity: "Limited to 200 wrestlers"
-  },
-  {
-    id: 2,
-    title: "Rich Habits Showcase Tournament",
-    slug: "rich-habits-showcase",
-    date: "August 5, 2025",
-    category: "Competition",
-    categoryClass: "bg-red-100 text-red-800",
-    location: "Birmingham CrossPlex",
-    time: "8:00 AM - 6:00 PM",
-    image: "/src/assets/events/showcase_tournament.jpg",
-    shortDescription: "A premier freestyle wrestling tournament featuring top talent from across the Southeast region.",
-    fullDescription: "The Rich Habits Showcase Tournament brings together the Southeast's top wrestling talent for a day of high-level competition.\n\nThis freestyle event offers divisions for youth, high school, and open wrestlers, with medals awarded to top performers in each weight class. The tournament will be run on four mats with professional officials and electronic scoring.\n\nAll participants receive a Rich Habits tournament shirt, and winners in each division earn exclusive Rich Habits championship gear. This is a perfect opportunity to test your skills against elite competition!",
-    isFeatured: true,
-    schedule: [
-      {
-        time: "8:00 AM - 9:00 AM",
-        activity: "Check-in and Weigh-ins"
-      },
-      {
-        time: "9:30 AM",
-        activity: "Youth Division Begins"
-      },
-      {
-        time: "12:00 PM",
-        activity: "High School Division Begins"
-      },
-      {
-        time: "3:00 PM",
-        activity: "Open Division Begins"
-      },
-      {
-        time: "5:30 PM",
-        activity: "Awards Ceremony"
-      }
-    ],
-    price: "$45 (pre-registration) / $55 (day of event)",
-    buttonLabel: "Register Now",
-    ageGroups: "8U through Open Division",
-    capacity: "Limited to 64 wrestlers per division"
-  }
-];
+// Event data comes from the API
 
 export default function EventDetail() {
   const [location] = useLocation();
@@ -150,15 +34,125 @@ export default function EventDetail() {
   // Extract the event ID from the URL
   const eventId = parseInt(location.split('/').pop() || "0", 10);
   
-  // Find the event by ID
-  const event = eventsData.find(event => event.id === eventId);
+  // State for loading event data
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // If event not found, return basic error message
-  if (!event) {
+  // Fetch event data from API
+  useEffect(() => {
+    async function fetchEvent() {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/events/${eventId}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Event not found');
+          } else {
+            throw new Error('Failed to fetch event data');
+          }
+          return;
+        }
+        
+        const data = await response.json();
+        
+        // For the demo, add in coach data which would normally come from the API
+        if (data.id === 1) {
+          data.coaches = [
+            {
+              name: "Zahid Valencia",
+              title: "2x NCAA Champion",
+              image: "/src/assets/coaches/VALENCIA_Zahid-headshot.jpg",
+              bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat. Currently training for international competition, he continues to compete at the highest levels while sharing his knowledge with the next generation."
+            },
+            {
+              name: "Josh Shields",
+              title: "NCAA All-American",
+              image: "/src/assets/coaches/josh_shields.jpg",
+              bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit. Josh specializes in neutral position attacks and defensive strategy, helping wrestlers develop complete skill sets."
+            },
+            {
+              name: "Brandon Courtney",
+              title: "NCAA Finalist",
+              image: "/src/assets/coaches/brandon_courtney.webp",
+              bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat. His focus on detailed technical execution makes him an invaluable instructor for wrestlers looking to perfect their craft."
+            },
+            {
+              name: "Michael McGee",
+              title: "NCAA All-American",
+              image: "/src/assets/coaches/Michael_McGee_JouQS.jpg",
+              bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness. His comprehensive approach helps wrestlers develop the complete package needed for success at all levels."
+            }
+          ];
+          
+          data.schedule = [
+            {
+              time: "9:00 AM - 9:15 AM",
+              activity: "Registration and Gear Distribution"
+            },
+            {
+              time: "9:15 AM - 11:00 AM",
+              activity: "Fun Warmup, Games, and Technical Session"
+            },
+            {
+              time: "11:00 AM - 11:30 AM",
+              activity: "Break (PlayStation Station Available)"
+            },
+            {
+              time: "11:30 AM - 12:30 PM",
+              activity: "Live Wrestling Sessions and Spotlight Matches"
+            },
+            {
+              time: "12:30 PM - 1:30 PM",
+              activity: "Lunch Break and Rich Habits Gear Shop"
+            },
+            {
+              time: "1:30 PM - 3:00 PM",
+              activity: "Second Technical Session"
+            },
+            {
+              time: "3:00 PM - 4:00 PM",
+              activity: "Q&A with Clinician and Closing Activities"
+            }
+          ];
+          
+          // Adding other required fields
+          data.categoryClass = "bg-blue-100 text-blue-800";
+          data.buttonLabel = "Register Now";
+          data.ageGroups = "2nd Grade - Senior";
+          data.capacity = "Limited to 200 wrestlers";
+          data.shortDescription = "An intensive 3-day wrestling camp featuring elite coaching from NCAA champions and Olympic-level athletes.";
+        }
+        
+        setEvent(data);
+      } catch (err) {
+        console.error('Error fetching event:', err);
+        setError('Could not load event data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchEvent();
+  }, [eventId]);
+  
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] py-12">
+        <div className="animate-spin h-8 w-8 border-4 border-gray-300 rounded-full border-t-primary"></div>
+        <p className="mt-4 text-gray-600">Loading event details...</p>
+      </div>
+    );
+  }
+  
+  // Error state
+  if (error || !event) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] py-12">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Event Not Found</h1>
-        <p className="text-gray-600 mb-6">The event you're looking for doesn't exist or has been removed.</p>
+        <p className="text-gray-600 mb-6">{error || "The event you're looking for doesn't exist or has been removed."}</p>
         <a href="/events" className="text-primary underline">Return to Events</a>
       </div>
     );
