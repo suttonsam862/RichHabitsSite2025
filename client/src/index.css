@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.cdnfonts.com/css/highrise');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -34,6 +34,7 @@
   --fire-gradient: linear-gradient(135deg, #ff4e00, #ff9a00, #ffd700);
   --fire-gradient-hover: linear-gradient(135deg, #ff3c00, #ff8500, #ffc700);
   --fire-border-gradient: linear-gradient(45deg, #ff4e00, #ffc400, #ff4e00);
+  --fire-text-shadow: 0 0 10px rgba(255, 78, 0, 0.5), 0 0 20px rgba(255, 154, 0, 0.3);
 }
 
 .dark {
@@ -68,7 +69,13 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif uppercase font-normal tracking-normal;
+    @apply font-serif uppercase font-medium tracking-wide;
+  }
+  
+  .fire-title {
+    color: #ff6b00;
+    text-shadow: var(--fire-text-shadow);
+    letter-spacing: 0.05em;
   }
 }
 

@@ -7,7 +7,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Montserrat", "sans-serif"],
-        serif: ["Highrise", "Impact", "Arial Black", "sans-serif"],
+        serif: ["Oswald", "Impact", "Arial Black", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

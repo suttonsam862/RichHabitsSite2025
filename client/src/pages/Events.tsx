@@ -18,14 +18,14 @@ import event3Image from "../assets/events/event3.png";
 const events = [
   {
     id: 1,
-    title: "USA Wrestling Championship Camp",
+    title: "BIRMINGHAM SLAM CAMP",
     category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "May 20, 2023",
-    time: "9:00 AM - 4:00 PM",
-    location: "National Wrestling Training Center",
-    description: "Intensive championship-level training for elite wrestlers. Train with Olympic coaches and national team members to perfect your technique and prepare for high-level competition.",
-    price: "$125.00",
+    date: "June 19th-21st",
+    time: "9:00 AM - 3:00 PM",
+    location: "Clay Chalkville Middle School",
+    description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
+    price: "$249",
     image: event1Image
   },
   {
@@ -148,9 +148,9 @@ export default function Events() {
         <section className="py-16">
           <Container>
             <div className="mb-12">
-              <h2 className="text-4xl font-serif font-semibold mb-6 group text-center">
+              <h2 className="text-5xl font-serif font-medium mb-6 group text-center tracking-wide">
                 <AnimatedUnderline>
-                  Upcoming Events
+                  <span className="fire-title">UPCOMING EVENTS</span>
                 </AnimatedUnderline>
               </h2>
               <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
@@ -205,14 +205,14 @@ export default function Events() {
                         {events[0].category}
                       </span>
                     </div>
-                    <h3 className="text-2xl font-medium mb-3">{events[0].title}</h3>
+                    <h3 className="text-3xl font-bold mb-3 fire-title">{events[0].title}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
                       <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price}</p>
                     </div>
-                    <p className="text-gray-700 mb-6">{events[0].description}</p>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
                     <div className="flex space-x-4">
                       <a 
                         href={`/event/${events[0].id}`}
