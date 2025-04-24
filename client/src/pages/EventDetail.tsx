@@ -259,7 +259,7 @@ export default function EventDetail() {
                 </span>
                 {event.id === 1 ? (
                   <>
-                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-md border-l-4 border-amber-500 mb-4">
+                    <div className="bg-white p-4 rounded-md border-l-4 border-amber-500 mb-4 shadow-sm">
                       <div className="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
@@ -448,9 +448,9 @@ export default function EventDetail() {
                       Our curriculum is designed for wrestlers from 2nd grade through graduating seniors. With enrollment capped at 200 participants, each athlete receives personalized coaching during our daily sessions from 9 AM to 4 PM, featuring technique development, competitive scenarios, and strategic training.
                     </p>
                     
-                    <div className="bg-amber-50 border-l-4 border-amber-500 p-4 my-6 rounded-r-md">
-                      <h4 className="font-bold text-amber-800 mb-2">EXCLUSIVE PARTNERSHIP: FRUIT HUNTERS</h4>
-                      <p className="text-amber-700 mb-0">
+                    <div className="bg-white border-l-4 border-amber-500 p-4 my-6 rounded-r-md shadow-sm">
+                      <h4 className="font-bold text-gray-800 mb-2">EXCLUSIVE PARTNERSHIP: FRUIT HUNTERS</h4>
+                      <p className="text-gray-700 mb-0">
                         We're excited to announce our exclusive partnership with Fruit Hunters, America's premier exotic fruit company! All participants will receive daily fresh fruit nutrition packs, and our nutrition seminars will feature custom recipes designed by their expert team specifically for wrestlers.
                       </p>
                     </div>
@@ -555,7 +555,7 @@ export default function EventDetail() {
               {event.id === 1 ? (
                 <>
                   <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
-                    <div className="border-b border-gray-100 bg-gradient-to-r from-amber-500/10 to-orange-500/10 px-6 py-4">
+                    <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
                       <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Josh Shields</h3>
                     </div>
                     <div className="p-6">
@@ -678,7 +678,7 @@ export default function EventDetail() {
                     <div className="p-6">
                       <div className="space-y-4">
                         <div className="flex items-start">
-                          <div className="bg-amber-100 p-2 rounded-md mr-3 text-amber-600 flex-shrink-0">
+                          <div className="bg-gray-100 p-2 rounded-md mr-3 text-gray-600 flex-shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -689,7 +689,7 @@ export default function EventDetail() {
                           </div>
                         </div>
                         <div className="flex items-start">
-                          <div className="bg-amber-100 p-2 rounded-md mr-3 text-amber-600 flex-shrink-0">
+                          <div className="bg-gray-100 p-2 rounded-md mr-3 text-gray-600 flex-shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
@@ -872,8 +872,8 @@ export default function EventDetail() {
                       </p>
                     </div>
                     
-                    <div className="flex items-center bg-amber-50 p-4 rounded-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-amber-500 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="flex items-center bg-white p-4 rounded-md shadow-sm border border-gray-100">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
                       <div>
