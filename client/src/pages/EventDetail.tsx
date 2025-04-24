@@ -137,8 +137,9 @@ export default function EventDetail() {
     phone: '',
     ageGroup: '',
     experience: '',
-    option: 'full', // 'full' or 'single'
+    registrationType: 'full', // 'full' or 'single'
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   // Extract the event ID from the URL
@@ -795,14 +796,70 @@ export default function EventDetail() {
             <p className="text-sm text-gray-500 mt-1">{event.date} at {event.location}</p>
           </div>
           
-          <form onSubmit={(e) => {
+          <form onSubmit={async (e) => {
             e.preventDefault();
-            // Simulate form submission
-            toast({
-              title: "Registration submitted",
-              description: "We'll email you confirmation details shortly.",
-            });
-            setShowRegistrationDialog(false);
+            
+            // Validate form
+            if (!registrationForm.name || !registrationForm.email || !registrationForm.ageGroup) {
+              toast({
+                title: "Missing information",
+                description: "Please fill in all required fields.",
+                variant: "destructive"
+              });
+              return;
+            }
+            
+            try {
+              setIsSubmitting(true);
+              
+              // Prepare the data for the API
+              const formData = {
+                name: registrationForm.name,
+                email: registrationForm.email,
+                phone: registrationForm.phone,
+                ageGroup: registrationForm.ageGroup,
+                experience: registrationForm.experience,
+                registrationType: registrationForm.registrationType
+              };
+              
+              // Submit to API endpoint
+              const response = await fetch(`/api/events/${event.id}/register`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+              });
+              
+              if (!response.ok) {
+                throw new Error('Registration failed. Please try again.');
+              }
+              
+              const data = await response.json();
+              
+              // Show success message
+              toast({
+                title: "Registration successful",
+                description: "Check your email for confirmation details.",
+              });
+              
+              // If there's a checkout URL, redirect to Shopify checkout
+              if (data.checkoutUrl) {
+                window.location.href = data.checkoutUrl;
+              } else {
+                // If no checkout URL, just close the dialog
+                setShowRegistrationDialog(false);
+              }
+            } catch (error) {
+              console.error('Registration error:', error);
+              toast({
+                title: "Registration failed",
+                description: error instanceof Error ? error.message : "Please try again later.",
+                variant: "destructive"
+              });
+            } finally {
+              setIsSubmitting(false);
+            }
           }}>
             <div className="grid gap-4 mb-5">
               <div>
@@ -862,10 +919,10 @@ export default function EventDetail() {
                     <label className="flex items-center space-x-2 cursor-pointer">
                       <input 
                         type="radio" 
-                        name="option" 
+                        name="registrationType" 
                         value="full" 
-                        checked={registrationForm.option === 'full'} 
-                        onChange={() => setRegistrationForm({...registrationForm, option: 'full'})}
+                        checked={registrationForm.registrationType === 'full'} 
+                        onChange={() => setRegistrationForm({...registrationForm, registrationType: 'full'})}
                         className="rounded-full"
                       />
                       <span>Full Camp ($249)</span>
