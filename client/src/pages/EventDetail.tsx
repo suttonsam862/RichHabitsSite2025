@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Container } from '@/components/ui/container';
 import { FruitHuntersBanner } from '@/components/home/FruitHuntersBanner';
 import { FruitHuntersCompact } from '@/components/home/FruitHuntersCompact';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -795,11 +795,12 @@ export default function EventDetail() {
       
       {/* Registration Dialog */}
       <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
-        <DialogContent className="sm:max-w-[500px]">
-          <div className="pb-3 mb-4 border-b">
-            <h3 className="text-lg font-bold">Register for {event.title}</h3>
-            <p className="text-sm text-gray-500 mt-1">{event.date} at {event.location}</p>
-          </div>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+          <DialogTitle className="text-lg font-bold">Register for {event.title}</DialogTitle>
+          <DialogDescription className="text-sm text-gray-500">
+            {event.date} at {event.location}
+          </DialogDescription>
+          <div className="pb-3 mb-4 border-b"></div>
           
           <form onSubmit={async (e) => {
             e.preventDefault();
