@@ -21,7 +21,7 @@ const eventsData = [
     categoryClass: "bg-blue-100 text-blue-800",
     location: "Clay-Chalkville Middle School, Birmingham, AL",
     time: "9:00 AM - 4:00 PM",
-    image: "/src/assets/SlamCampSiteBanner.png",
+    image: "/src/assets/events/SlamCampSiteBanner.png",
     shortDescription: "An intensive 3-day wrestling camp featuring elite coaching from NCAA champions and Olympic-level athletes.",
     fullDescription: "Join us for the inaugural Birmingham Slam Camp, featuring world-class instruction from some of wrestling's elite competitors.\n\nAttendees will learn advanced techniques, strategy, and mental preparation from NCAA champions and Olympic-level athletes. This camp is designed for wrestlers of all levels who want to take their skills to the next level.\n\nEach day focuses on different aspects of wrestling excellence, with personalized instruction, live drilling, and competitive scenarios. Don't miss this rare opportunity to train with the best in the sport!",
     isFeatured: true,
