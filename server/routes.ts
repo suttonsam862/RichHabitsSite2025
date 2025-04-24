@@ -230,7 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = await listProducts();
       
       // Extract variant information for easier reference
-      const productsWithVariants = products.map(product => {
+      const productsWithVariants = products.map((product: any) => {
         return {
           id: product.id,
           title: product.title,
