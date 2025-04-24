@@ -226,6 +226,24 @@
   overflow: hidden;
 }
 
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 0;
+  }
+  20%, 24%, 55% {
+    opacity: 1;
+  }
+}
+
+@keyframes flame-lick {
+  0%, 100% {
+    clip-path: polygon(0% 100%, 50% 90%, 100% 100%, 90% 70%, 100% 40%, 70% 30%, 100% 0%, 50% 20%, 0% 0%, 30% 30%, 0% 40%, 10% 70%);
+  }
+  50% {
+    clip-path: polygon(0% 100%, 40% 80%, 100% 100%, 80% 60%, 100% 30%, 60% 20%, 100% 0%, 60% 10%, 0% 0%, 20% 30%, 0% 30%, 20% 60%);
+  }
+}
+
 .flame-bg::before {
   content: "";
   position: absolute;
@@ -233,7 +251,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #f9f9f9, #f3f3f3, #f8f8f8);
+  background: linear-gradient(135deg, #fffaf7, #f8f2ee, #fff8f5);
   background-size: 400% 400%;
   animation: flame-animation 12s ease infinite;
   z-index: 0;
@@ -248,13 +266,126 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 20% 30%, #f2f2f2 0%, transparent 20%),
-    radial-gradient(circle at 70% 60%, #efefef 0%, transparent 20%),
-    radial-gradient(circle at 40% 80%, #f1f1f1 0%, transparent 20%),
-    radial-gradient(circle at 80% 10%, #f0f0f0 0%, transparent 20%);
+    radial-gradient(circle at 15% 25%, rgba(255, 210, 180, 0.3) 0%, transparent 15%),
+    radial-gradient(circle at 85% 30%, rgba(255, 180, 150, 0.25) 0%, transparent 20%),
+    radial-gradient(circle at 40% 50%, rgba(255, 220, 190, 0.25) 0%, transparent 15%),
+    radial-gradient(circle at 60% 75%, rgba(255, 230, 200, 0.2) 0%, transparent 20%),
+    radial-gradient(circle at 25% 85%, rgba(255, 200, 170, 0.25) 0%, transparent 15%),
+    radial-gradient(circle at 75% 15%, rgba(255, 205, 175, 0.25) 0%, transparent 20%);
   z-index: 0;
   pointer-events: none;
   opacity: 0.8;
+}
+
+/* Hot spots */
+.flame-bg .hot-spot {
+  position: absolute;
+  z-index: 2;
+  background: radial-gradient(circle at center, rgba(255, 100, 50, 0.3) 0%, transparent 70%);
+  filter: blur(8px);
+  width: 40px;
+  height: 40px;
+  animation: glow-pulse 3s ease-in-out infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.flame-bg .hot-spot:nth-child(1) {
+  top: 20%;
+  left: 15%;
+  animation-delay: 0.5s;
+}
+
+.flame-bg .hot-spot:nth-child(2) {
+  top: 35%;
+  left: 65%;
+  animation-delay: 1s;
+}
+
+.flame-bg .hot-spot:nth-child(3) {
+  top: 60%;
+  left: 25%;
+  animation-delay: 1.5s;
+}
+
+.flame-bg .hot-spot:nth-child(4) {
+  top: 75%;
+  left: 80%;
+  animation-delay: 2s;
+}
+
+.flame-bg .hot-spot:nth-child(5) {
+  top: 15%;
+  left: 45%;
+  animation-delay: 2.5s;
+}
+
+.flame-bg .hot-spot:nth-child(6) {
+  top: 40%;
+  left: 85%;
+  animation-delay: 3s;
+}
+
+.flame-bg .hot-spot:nth-child(7) {
+  top: 65%;
+  left: 55%;
+  animation-delay: 3.5s;
+}
+
+@keyframes glow-pulse {
+  0% {
+    filter: blur(5px) brightness(1);
+  }
+  50% {
+    filter: blur(7px) brightness(1.1);
+  }
+  100% {
+    filter: blur(5px) brightness(1);
+  }
+}
+
+/* Neon flame licks */
+.flame-bg .neon-lick-1,
+.flame-bg .neon-lick-2,
+.flame-bg .neon-lick-3 {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(5px);
+}
+
+.flame-bg .neon-lick-1 {
+  height: 180px;
+  width: 120px;
+  bottom: 0;
+  left: 15%;
+  background: radial-gradient(ellipse at center, rgba(255, 60, 20, 0.45) 0%, transparent 75%);
+  animation: neon-flicker 8s infinite, flame-lick 3s ease-in-out infinite, glow-pulse 4s ease-in-out infinite;
+  animation-delay: 1s;
+  mix-blend-mode: overlay;
+}
+
+.flame-bg .neon-lick-2 {
+  height: 220px;
+  width: 160px;
+  bottom: 0;
+  left: 45%;
+  background: radial-gradient(ellipse at center, rgba(255, 160, 0, 0.5) 0%, transparent 75%);
+  animation: neon-flicker 15s infinite, flame-lick 4s ease-in-out infinite, glow-pulse 5s ease-in-out infinite;
+  animation-delay: 5s;
+  mix-blend-mode: overlay;
+}
+
+.flame-bg .neon-lick-3 {
+  height: 200px;
+  width: 140px;
+  bottom: 0;
+  right: 20%;
+  background: radial-gradient(ellipse at center, rgba(255, 100, 0, 0.5) 0%, transparent 75%);
+  animation: neon-flicker 12s infinite, flame-lick 3.5s ease-in-out infinite, glow-pulse 6s ease-in-out infinite;
+  animation-delay: 2s;
+  mix-blend-mode: overlay;
 }
 
 .heat-wave {
@@ -262,43 +393,77 @@
   height: 180px;
   width: 120%;
   left: -10%;
-  background: linear-gradient(180deg, transparent, #e0e0e0, transparent);
+  background: linear-gradient(180deg, transparent, rgba(255, 240, 230, 0.45), transparent);
   border-radius: 40% / 20%;
   z-index: 1;
   pointer-events: none;
   transform-origin: center;
   animation: heat-wave 12s ease-in-out infinite, ripple 8s ease-in-out infinite;
-  box-shadow: 0 0 40px 10px rgba(240, 240, 240, 0.5);
+  box-shadow: 0 0 50px 15px rgba(255, 240, 230, 0.3);
+  mix-blend-mode: overlay;
 }
 
 .heat-wave-1 {
   top: 15%;
+  background: linear-gradient(180deg, transparent, rgba(255, 230, 200, 0.4), transparent);
   animation: heat-wave 12s ease-in-out infinite, ripple 7s ease-in-out infinite;
+  box-shadow: 0 0 50px 15px rgba(255, 230, 200, 0.25);
 }
 
 .heat-wave-2 {
   top: 40%;
+  background: linear-gradient(180deg, transparent, rgba(255, 220, 190, 0.4), transparent);
   animation: heat-wave 15s ease-in-out infinite 2s, ripple 9s ease-in-out infinite 1s;
+  box-shadow: 0 0 50px 15px rgba(255, 220, 190, 0.25);
 }
 
 .heat-wave-3 {
   top: 65%;
+  background: linear-gradient(180deg, transparent, rgba(255, 210, 180, 0.4), transparent);
   animation: heat-wave 10s ease-in-out infinite 1s, ripple 8s ease-in-out infinite 2s;
+  box-shadow: 0 0 50px 15px rgba(255, 210, 180, 0.25);
+}
+
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow: 
+      -1.5px -1.5px 0 #000,
+      1.5px -1.5px 0 #000,
+      -1.5px 1.5px 0 #000,
+      1.5px 1.5px 0 #000,
+      0 0 15px rgba(255, 255, 255, 0.9),
+      0 0 25px rgba(255, 230, 200, 0.4);
+  }
+  50% {
+    text-shadow: 
+      -1.5px -1.5px 0 #000,
+      1.5px -1.5px 0 #000,
+      -1.5px 1.5px 0 #000,
+      1.5px 1.5px 0 #000,
+      0 0 20px rgba(255, 255, 255, 0.95),
+      0 0 35px rgba(255, 200, 150, 0.5);
+  }
 }
 
 /* Birmingham title styling */
 .birmingham-title {
   color: white;
-  text-shadow: 
-    -1.5px -1.5px 0 #000,
-    1.5px -1.5px 0 #000,
-    -1.5px 1.5px 0 #000,
-    1.5px 1.5px 0 #000,
-    0 0 15px rgba(255, 255, 255, 0.9);
   letter-spacing: 0.08em;
   font-weight: 800;
   position: relative;
   display: inline-block;
+  animation: title-glow 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 1px rgba(255, 160, 100, 0.8));
+}
+
+.birmingham-title::before {
+  content: "BIRMINGHAM";
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: rgba(255, 200, 150, 0.15);
+  z-index: -1;
+  filter: blur(4px);
 }
 
 .birmingham-title::after {
@@ -307,7 +472,7 @@
   top: 0;
   left: 0;
   color: transparent;
-  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.5);
+  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.6);
   z-index: -1;
 }
 

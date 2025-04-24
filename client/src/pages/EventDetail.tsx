@@ -203,12 +203,29 @@ export default function EventDetail() {
       <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : ''}`}>
         {event.id === 1 && (
           <>
+            {/* Heat waves */}
             <div className="heat-wave heat-wave-1"></div>
             <div className="heat-wave heat-wave-2"></div>
             <div className="heat-wave heat-wave-3"></div>
             <div className="heat-wave heat-wave-1" style={{top: '25%', animationDelay: '1s'}}></div>
             <div className="heat-wave heat-wave-2" style={{top: '55%', animationDelay: '3s'}}></div>
             <div className="heat-wave heat-wave-3" style={{top: '80%', animationDelay: '2s'}}></div>
+            
+            {/* Neon flame licks */}
+            <div className="neon-lick-1"></div>
+            <div className="neon-lick-2"></div>
+            <div className="neon-lick-3"></div>
+            <div className="neon-lick-1" style={{left: '75%', animationDelay: '3s'}}></div>
+            <div className="neon-lick-2" style={{left: '25%', animationDelay: '7s'}}></div>
+            
+            {/* Hot spots */}
+            <div className="hot-spot"></div>
+            <div className="hot-spot"></div>
+            <div className="hot-spot"></div>
+            <div className="hot-spot"></div>
+            <div className="hot-spot"></div>
+            <div className="hot-spot"></div>
+            <div className="hot-spot"></div>
           </>
         )}
         <Container>
