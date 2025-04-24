@@ -403,15 +403,15 @@ export default function EventDetail() {
                 <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 transition-transform hover:shadow-lg">
                   <div className="h-56 overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1614632537197-38a17061c2bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                      src="/src/assets/coaches/josh_shields.webp" 
                       alt="Josh Shields" 
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Josh Shields</h3>
-                    <div className="text-amber-600 text-sm font-medium mb-2">All-American</div>
-                    <p className="text-gray-600 text-sm">Strategy and mental preparation coach specializing in match psychology and training periodization.</p>
+                    <div className="text-amber-600 text-sm font-medium mb-2">Three-Time All-American</div>
+                    <p className="text-gray-600 text-sm">Three-time NCAA All-American and Pac-12 Champion with over 100 career wins at Arizona State University.</p>
                   </div>
                 </div>
               </div>
@@ -429,7 +429,7 @@ export default function EventDetail() {
                   </div>
                   <div className="prose max-w-none text-gray-700">
                     <p className="mb-4">
-                      The Birmingham Wrestling Camp returns to Clay-Chalkville Middle School from June 19–21, 2025, offering three comprehensive days of elite instruction. Wrestlers will train with 2-time NCAA champion Zahid Valencia and All-Americans Michael McGee, Brandon Courtney, and Josh Shields.
+                      The Birmingham Wrestling Camp returns to Clay-Chalkville Middle School from June 19–21, 2025, offering three comprehensive days of elite instruction. Wrestlers will train with 2-time NCAA champion Zahid Valencia and All-Americans Michael McGee, Brandon Courtney, and Josh Shields - a three-time NCAA All-American and three-time Pac-12 Champion who surpassed 100 career victories at Arizona State University.
                     </p>
                     <p className="mb-4">
                       Our curriculum is designed for wrestlers from 2nd grade through graduating seniors. With enrollment capped at 200 participants, each athlete receives personalized coaching during our daily sessions from 9 AM to 4 PM, featuring technique development, competitive scenarios, and strategic training.
@@ -541,6 +541,34 @@ export default function EventDetail() {
             <div>
               {event.id === 1 ? (
                 <>
+                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
+                    <div className="border-b border-gray-100 bg-gradient-to-r from-amber-500/10 to-orange-500/10 px-6 py-4">
+                      <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Josh Shields</h3>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-amber-500">
+                          <img 
+                            src="/src/assets/coaches/josh_shields.webp" 
+                            alt="Josh Shields" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-800">Josh Shields</div>
+                          <div className="text-amber-600 text-sm font-medium">Three-Time NCAA All-American</div>
+                          <div className="text-gray-600 text-xs">Arizona State University</div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">
+                        Josh Shields is a three-time NCAA All-American and three-time Pac-12 Champion, competing at both 157 and 165 lbs during his collegiate career. He surpassed 100 career victories at Arizona State University, showcasing his consistency and dedication. Shields is committed to sharing his knowledge and experience with aspiring wrestlers.
+                      </p>
+                      <div className="text-right">
+                        <span className="text-amber-600 text-sm cursor-pointer">Read more</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
                     <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
                       <h3 className="text-lg font-bold text-gray-800">Camp Highlights</h3>
