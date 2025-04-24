@@ -4,6 +4,7 @@ import { CustomClothingService } from "@/components/home/CustomClothingService";
 import { EventsSection } from "@/components/home/EventsSection";
 import { GallerySection } from "@/components/home/GallerySection";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
+import { FruitHuntersBanner } from "@/components/home/FruitHuntersBanner";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Helmet } from "react-helmet";
 
@@ -20,6 +21,7 @@ export default function Home() {
       <CustomClothingService />
       <EventsSection />
       <GallerySection />
+      <FruitHuntersBanner />
       <FeaturedProducts />
       <Newsletter />
     </>

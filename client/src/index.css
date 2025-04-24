@@ -412,6 +412,56 @@
   z-index: 2;
 }
 
+/* Fruit Hunters Banner */
+.fruit-video-section {
+  height: 100%;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.fruit-video-section:hover {
+  transform: translateY(-5px) scale(1.02);
+  z-index: 10;
+  box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.15);
+}
+
+.fruit-video-section:hover .play-button {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.fruit-video-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.7) 100%);
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
+.play-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  animation: pulse-glow 2s infinite;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
