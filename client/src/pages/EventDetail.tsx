@@ -218,7 +218,7 @@ export default function EventDetail() {
           />
           <div className="sun-glow"></div>
           <div className="neon-highlight mt-1"></div>
-          <div className="w-full h-1 bg-gradient-to-r from-orange-500/20 via-orange-500/40 to-orange-500/20 mt-1"></div>
+          <div className="w-full h-2 golden-glass-bar mt-1"></div>
         </div>
       )}
       
@@ -253,7 +253,7 @@ export default function EventDetail() {
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              <div>
+              <div className="lg:col-span-2">
                 <span className={`inline-block ${event.id === 1 ? "fire-gradient-btn text-white" : event.categoryClass} text-xs font-medium px-3 py-1 rounded-sm mb-4`}>
                   {event.category}
                 </span>
@@ -342,14 +342,6 @@ export default function EventDetail() {
                     Register Now
                   </Button>
                 )}
-              </div>
-              
-              <div className="h-[400px] rounded-md overflow-hidden">
-                <img 
-                  src={event.image} 
-                  alt={event.title} 
-                  className="w-full h-full object-cover"
-                />
               </div>
             </div>
           </div>
