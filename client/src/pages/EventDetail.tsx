@@ -370,7 +370,7 @@ export default function EventDetail() {
                 <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 transition-transform hover:shadow-lg">
                   <div className="h-56 overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                      src="/src/assets/coaches/zahid_valencia.jpg" 
                       alt="Zahid Valencia" 
                       className="w-full h-full object-cover"
                     />
@@ -378,7 +378,7 @@ export default function EventDetail() {
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Zahid Valencia</h3>
                     <div className="text-gray-600 text-sm font-medium mb-2">2-Time NCAA Champion</div>
-                    <p className="text-gray-600 text-sm">Elite technique specialist known for aggressive, high-scoring matches and masterful wrestling IQ.</p>
+                    <p className="text-gray-600 text-sm">Two-time NCAA Champion and three-time Pac-12 Wrestler of the Year with international success.</p>
                   </div>
                 </div>
                 
@@ -553,6 +553,34 @@ export default function EventDetail() {
             <div>
               {event.id === 1 ? (
                 <>
+                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
+                    <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
+                      <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Zahid Valencia</h3>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-gray-300">
+                          <img 
+                            src="/src/assets/coaches/zahid_valencia.jpg" 
+                            alt="Zahid Valencia" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-800">Zahid Valencia</div>
+                          <div className="text-gray-600 text-sm font-medium">Two-Time NCAA Champion</div>
+                          <div className="text-gray-600 text-xs">Arizona State University</div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">
+                        A two-time NCAA Division I National Champion at 174 lbs (2018, 2019) and three-time Pac-12 Wrestler of the Year, Zahid Valencia is one of the most decorated wrestlers in Arizona State University history. He has also achieved success on the international stage, including a gold medal at the 2025 Zagreb Open at 86 kg. Valencia brings elite technique, championship experience, and a passion for mentoring the next generation of wrestlers.
+                      </p>
+                      <div className="text-right">
+                        <span className="text-gray-600 text-sm cursor-pointer">Read more</span>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
                     <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
                       <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Michael McGee</h3>
