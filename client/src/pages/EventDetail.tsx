@@ -8,6 +8,8 @@ import { Helmet } from "react-helmet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Import event images 
 import event1Image from "../assets/events/event1.png";
@@ -138,7 +140,10 @@ export default function EventDetail() {
     email: "",
     phone: "",
     age: "",
-    experience: ""
+    experience: "",
+    package: "full",
+    grade: "",
+    waiver: false
   });
   
   const { toast } = useToast();
@@ -177,7 +182,10 @@ export default function EventDetail() {
       email: "",
       phone: "",
       age: "",
-      experience: ""
+      experience: "",
+      package: "full",
+      grade: "",
+      waiver: false
     });
   };
   
