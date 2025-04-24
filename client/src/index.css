@@ -476,6 +476,136 @@
   z-index: -1;
 }
 
+/* Banner container and mountain clips */
+.banner-container {
+  position: relative;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.banner-image {
+  transition: transform 1s ease;
+}
+
+.banner-container:hover .banner-image {
+  transform: scale(1.03);
+}
+
+.mountain-clip-left {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 30%;
+  height: 25%;
+  background: #fff;
+  clip-path: polygon(0 100%, 100% 100%, 0 0);
+  z-index: 2;
+}
+
+.mountain-clip-right {
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 40%;
+  height: 35%;
+  background: #fff;
+  clip-path: polygon(100% 100%, 0 100%, 100% 0);
+  z-index: 2;
+}
+
+/* Spark animations */
+@keyframes spark-animation {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.spark-container {
+  position: relative;
+  height: 50px;
+}
+
+.spark {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 120, 0, 0.8) 0%, rgba(255, 200, 0, 0.5) 80%, transparent 100%);
+  filter: blur(1px);
+  box-shadow: 0 0 6px 2px rgba(255, 165, 0, 0.6);
+  z-index: 2;
+  animation: spark-animation 3s ease-out infinite;
+}
+
+.spark-1 {
+  left: 20%;
+  bottom: 0;
+}
+
+.spark-2 {
+  left: 50%;
+  bottom: 0;
+  animation-delay: 0.7s;
+}
+
+.spark-3 {
+  left: 80%;
+  bottom: 0;
+  animation-delay: 1.4s;
+}
+
+/* Coach highlight section */
+.coach-highlight {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.coach-highlight:hover {
+  transform: translateY(-5px);
+}
+
+.coach-highlight::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
+  z-index: 1;
+}
+
+.coach-name {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: white;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.coach-accolade {
+  position: absolute;
+  bottom: 30px;
+  left: 10px;
+  color: rgba(255, 165, 0, 0.9);
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

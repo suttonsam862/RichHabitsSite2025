@@ -245,9 +245,30 @@ export default function EventDetail() {
                   {event.category}
                 </span>
                 {event.id === 1 ? (
-                  <h1 className="text-4xl font-serif font-bold mb-4 tracking-wide fire-title">
-                    <span className="birmingham-title">BIRMINGHAM</span> SLAM CAMP
-                  </h1>
+                  <>
+                    <div className="overflow-hidden rounded-lg mb-6 relative banner-container">
+                      <div className="absolute top-0 left-0 w-full h-full z-10 flex items-center justify-center">
+                        <h1 className="text-5xl font-serif font-bold tracking-wide fire-title px-6 py-3 bg-black bg-opacity-40 rounded-lg">
+                          <span className="birmingham-title">BIRMINGHAM</span> SLAM CAMP
+                          <div className="text-base font-normal mt-2 text-white">Returning for its second year!</div>
+                        </h1>
+                      </div>
+                      <img 
+                        src="https://images.unsplash.com/photo-1565108010726-a955cca8d67e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                        alt="Birmingham Slam Camp Banner"
+                        className="w-full h-48 object-cover banner-image"
+                      />
+                      <div className="mountain-clip-left"></div>
+                      <div className="mountain-clip-right"></div>
+                    </div>
+                    <div className="spark-container mb-3">
+                      <div className="spark spark-1"></div>
+                      <div className="spark spark-2"></div>
+                      <div className="spark spark-3"></div>
+                      <div className="text-lg font-medium text-center mb-2">June 19-21, 2025 • Clay-Chalkville Middle School</div>
+                      <div className="text-sm text-center text-gray-700">6700 Trussville Clay Rd, Trussville AL 35173</div>
+                    </div>
+                  </>
                 ) : (
                   <h1 className="text-4xl font-serif font-bold mb-4 tracking-wide">{event.title}</h1>
                 )}
@@ -330,94 +351,291 @@ export default function EventDetail() {
             </div>
           </div>
           
+          {/* Featured Coaches */}
+          {event.id === 1 && (
+            <div className="mb-12 relative">
+              <div className="fire-title-container mb-8">
+                <h2 className="text-3xl font-serif font-semibold">Elite Coaching Staff</h2>
+                <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-1 w-40 mt-2"></div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="coach-highlight h-64">
+                  <img 
+                    src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                    alt="Zahid Valencia" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="coach-accolade">2-Time NCAA Champion</div>
+                  <div className="coach-name">Zahid Valencia</div>
+                </div>
+                <div className="coach-highlight h-64">
+                  <img 
+                    src="https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                    alt="Michael McGee" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="coach-accolade">All-American</div>
+                  <div className="coach-name">Michael McGee</div>
+                </div>
+                <div className="coach-highlight h-64">
+                  <img 
+                    src="https://images.unsplash.com/photo-1576678927484-cc907957088c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                    alt="Brandon Courtney" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="coach-accolade">All-American</div>
+                  <div className="coach-name">Brandon Courtney</div>
+                </div>
+                <div className="coach-highlight h-64">
+                  <img 
+                    src="https://images.unsplash.com/photo-1614632537197-38a17061c2bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                    alt="Josh Shields" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="coach-accolade">All-American</div>
+                  <div className="coach-name">Josh Shields</div>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Event Description */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-medium mb-6">About This Event</h2>
-              <div className="prose max-w-none">
-                {event.fullDescription.split('\n\n').map((paragraph: string, index: number) => (
-                  <p key={index} className="mb-4">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-              
-              {/* Event Schedule */}
-              {event.schedule && (
-                <div className="mt-10">
-                  <h3 className="text-xl font-medium mb-4">Event Schedule</h3>
-                  <div className="border border-[hsl(var(--shadow))] rounded-md overflow-hidden">
-                    {event.schedule.map((item: any, index: number) => (
-                      <div 
-                        key={index} 
-                        className={`grid grid-cols-3 p-4 ${
-                          index % 2 === 0 ? 'bg-[hsl(var(--secondary)_/_0.05)]' : 'bg-white'
-                        }`}
-                      >
-                        <div className="font-medium">{item.time}</div>
-                        <div className="col-span-2">{item.activity}</div>
+              {event.id === 1 ? (
+                <>
+                  <div className="fire-title-container mb-6">
+                    <h2 className="text-3xl font-serif font-semibold">About Birmingham Slam Camp</h2>
+                    <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-1 w-40 mt-2"></div>
+                  </div>
+                  <div className="prose max-w-none">
+                    <p className="mb-4">
+                      Returning for its second year, Birmingham Slam Camp storms back to Clay-Chalkville Middle School from June 19 – 21, 2025, delivering three electrifying days of elite coaching from 2-time NCAA champion Zahid Valencia alongside All-Americans Michael McGee, Brandon Courtney, and Josh Shields.
+                    </p>
+                    <p className="mb-4">
+                      Open to wrestlers from 2nd grade through graduating seniors, the camp caps enrollment at 200 athletes and loads each day—9 AM – 4 PM—with high-intensity technique sessions, live goes, and Q&A.
+                    </p>
+                    <p className="mb-4">
+                      Every camper scores a limited-edition Slam Camp tee, pro-shot highlight footage for college recruiting, and access to our Coach Bonus: bring 10+ wrestlers and your program gets 10% off its next Rich Habits custom-gear order.
+                    </p>
+                    <p className="mb-4">
+                      Pricing is simple—$249 for the full three-day experience or $149 for a one-day pass—and anyone needing to cancel can just contact us directly for refunds. All participants (or their parents) must sign a medical-release waiver acknowledging that Rich Habits is not liable for injuries.
+                    </p>
+                    <p className="mb-4">
+                      Registration flows through our site via a Shopify checkout that will automatically load the correct product—just one click to lock in your spot and train with some of the nation's best at Alabama's premier summer wrestling clinic.
+                    </p>
+                  </div>
+                  
+                  <div className="mt-10">
+                    <div className="fire-title-container mb-6">
+                      <h3 className="text-2xl font-serif font-semibold">Daily Schedule</h3>
+                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-1 w-32 mt-2"></div>
+                    </div>
+                    <div className="border border-[hsl(var(--shadow))] rounded-md overflow-hidden">
+                      <div className="grid grid-cols-3 p-4 bg-[hsl(var(--secondary)_/_0.05)]">
+                        <div className="font-medium">9:00 AM - 11:30 AM</div>
+                        <div className="col-span-2">Morning Technique Sessions</div>
                       </div>
+                      <div className="grid grid-cols-3 p-4 bg-white">
+                        <div className="font-medium">11:30 AM - 12:30 PM</div>
+                        <div className="col-span-2">Lunch Break</div>
+                      </div>
+                      <div className="grid grid-cols-3 p-4 bg-[hsl(var(--secondary)_/_0.05)]">
+                        <div className="font-medium">12:30 PM - 2:30 PM</div>
+                        <div className="col-span-2">Afternoon Training & Live Goes</div>
+                      </div>
+                      <div className="grid grid-cols-3 p-4 bg-white">
+                        <div className="font-medium">2:30 PM - 3:30 PM</div>
+                        <div className="col-span-2">Q&A with Coaches</div>
+                      </div>
+                      <div className="grid grid-cols-3 p-4 bg-[hsl(var(--secondary)_/_0.05)]">
+                        <div className="font-medium">3:30 PM - 4:00 PM</div>
+                        <div className="col-span-2">Cool Down & Wrap-up</div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-medium mb-6">About This Event</h2>
+                  <div className="prose max-w-none">
+                    {event.fullDescription.split('\n\n').map((paragraph: string, index: number) => (
+                      <p key={index} className="mb-4">
+                        {paragraph}
+                      </p>
                     ))}
                   </div>
-                </div>
+                  
+                  {/* Event Schedule */}
+                  {event.schedule && (
+                    <div className="mt-10">
+                      <h3 className="text-xl font-medium mb-4">Event Schedule</h3>
+                      <div className="border border-[hsl(var(--shadow))] rounded-md overflow-hidden">
+                        {event.schedule.map((item: any, index: number) => (
+                          <div 
+                            key={index} 
+                            className={`grid grid-cols-3 p-4 ${
+                              index % 2 === 0 ? 'bg-[hsl(var(--secondary)_/_0.05)]' : 'bg-white'
+                            }`}
+                          >
+                            <div className="font-medium">{item.time}</div>
+                            <div className="col-span-2">{item.activity}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
             
             <div>
-              {/* Coaches / Instructors */}
-              {event.coaches && (
-                <div className="mb-8">
-                  <h3 className="text-xl font-medium mb-4">Instructors</h3>
-                  <div className="space-y-4">
-                    {event.coaches.map((coach: any, index: number) => (
-                      <div key={index} className="flex items-center p-4 border border-[hsl(var(--shadow))] rounded-md">
-                        <div className="w-14 h-14 rounded-full overflow-hidden mr-4">
-                          <img 
-                            src={coach.image} 
-                            alt={coach.name} 
-                            className="w-full h-full object-cover"
-                          />
+              {event.id === 1 ? (
+                <>
+                  <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8 border border-[hsl(var(--shadow))]">
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold mb-4 fire-title">Camp Highlights</h3>
+                      <ul className="space-y-4">
+                        <li className="flex items-start">
+                          <div className="bg-gradient-to-br from-amber-500 to-red-500 p-2 rounded-full mr-3 text-white flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium">Elite Coaching Staff</span>
+                            <p className="text-sm text-gray-600">Train with NCAA champions and All-Americans</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="bg-gradient-to-br from-amber-500 to-red-500 p-2 rounded-full mr-3 text-white flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium">Limited-Edition Tee</span>
+                            <p className="text-sm text-gray-600">Every camper receives an exclusive Slam Camp shirt</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="bg-gradient-to-br from-amber-500 to-red-500 p-2 rounded-full mr-3 text-white flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium">Pro-Shot Highlights</span>
+                            <p className="text-sm text-gray-600">Recruitment footage for your college portfolio</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="bg-gradient-to-br from-amber-500 to-red-500 p-2 rounded-full mr-3 text-white flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17A3 3 0 015 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd" />
+                              <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium">Group Discount</span>
+                            <p className="text-sm text-gray-600">Bring 10+ wrestlers for 10% off custom gear</p>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8 border border-[hsl(var(--shadow))]">
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold mb-4">Registration Details</h3>
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <span className="font-medium">Full Camp (3 Days)</span>
+                          <span className="text-xl font-bold">$249</span>
                         </div>
-                        <div>
-                          <h4 className="font-medium">{coach.name}</h4>
-                          <p className="text-sm text-gray-600">{coach.title}</p>
+                        <div className="flex justify-between">
+                          <span className="font-medium">Single Day Pass</span>
+                          <span className="text-xl font-bold">$149</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium">Age Groups</span>
+                          <span>2nd Grade - Senior</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium">Capacity</span>
+                          <span>Limited to 200 wrestlers</span>
+                        </div>
+                        <div className="pt-4">
+                          <button 
+                            onClick={() => setShowRegistrationDialog(true)}
+                            className="fire-gradient-btn text-white py-3 px-6 font-medium tracking-wide inline-block rounded-sm w-full"
+                          >
+                            Register Now
+                          </button>
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
+                </>
+              ) : (
+                <>
+                  {/* Coaches / Instructors */}
+                  {event.coaches && (
+                    <div className="mb-8">
+                      <h3 className="text-xl font-medium mb-4">Instructors</h3>
+                      <div className="space-y-4">
+                        {event.coaches.map((coach: any, index: number) => (
+                          <div key={index} className="flex items-center p-4 border border-[hsl(var(--shadow))] rounded-md">
+                            <div className="w-14 h-14 rounded-full overflow-hidden mr-4">
+                              <img 
+                                src={coach.image} 
+                                alt={coach.name} 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <h4 className="font-medium">{coach.name}</h4>
+                              <p className="text-sm text-gray-600">{coach.title}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* What to Bring */}
+                  <div className="mb-8 p-6 bg-[hsl(var(--secondary)_/_0.1)] rounded-md">
+                    <h3 className="text-xl font-medium mb-4">What to Bring</h3>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Appropriate athletic attire</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Water bottle</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Sport-specific equipment (if applicable)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Notebook and pen</span>
+                      </li>
+                    </ul>
+                  </div>
+                </>
               )}
-              
-              {/* What to Bring */}
-              <div className="mb-8 p-6 bg-[hsl(var(--secondary)_/_0.1)] rounded-md">
-                <h3 className="text-xl font-medium mb-4">What to Bring</h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Appropriate athletic attire</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Water bottle</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Sport-specific equipment (if applicable)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Notebook and pen</span>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
           
@@ -441,6 +659,66 @@ export default function EventDetail() {
                     />
                   </motion.div>
                 ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Important Information */}
+          {event.id === 1 && (
+            <div className="mb-12">
+              <div className="fire-title-container mb-8">
+                <h2 className="text-3xl font-serif font-semibold">Important Information</h2>
+                <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-1 w-40 mt-2"></div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-[hsl(var(--shadow))]">
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-4">Registration Policy</h3>
+                    <ul className="space-y-3">
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Registration through our website via Shopify checkout</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Limited to 200 wrestlers</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Cancellations: Contact us directly for refunds</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Group Discount: Bring 10+ wrestlers for 10% off custom gear orders</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-[hsl(var(--shadow))]">
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-4">Medical & Liability</h3>
+                    <p className="mb-4 text-sm">All participants (or their parents/guardians if under 18) must sign a medical-release waiver acknowledging that Rich Habits is not liable for injuries sustained during the camp.</p>
+                    <div className="flex items-center mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-amber-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      <div>
+                        <h4 className="font-medium">Safety First</h4>
+                        <p className="text-sm text-gray-600">Proper medical staff will be on-site throughout the camp</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -474,7 +752,28 @@ export default function EventDetail() {
           <DialogHeader>
             <DialogTitle>Register for {event.title}</DialogTitle>
             <DialogDescription>
-              Fill out the form below to register for this event. Payment will be processed through our secure checkout.
+              {event.id === 1 ? (
+                <div className="mt-2">
+                  <p>Fill out this form to register for Birmingham Slam Camp. Choose from:</p>
+                  <ul className="mt-2 mb-2">
+                    <li className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-medium">Full Camp (3 Days): $249</span>
+                    </li>
+                    <li className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-medium">Single Day Pass: $149</span>
+                    </li>
+                  </ul>
+                  <p className="text-sm text-gray-600">Open to wrestlers from 2nd grade through graduating seniors</p>
+                </div>
+              ) : (
+                "Complete the form below to register for the event. Payment will be processed through our secure checkout."
+              )}
             </DialogDescription>
           </DialogHeader>
           
@@ -511,32 +810,93 @@ export default function EventDetail() {
                   required
                 />
               </div>
-              <div>
-                <Label htmlFor="age">Age</Label>
-                <Input
-                  id="age"
-                  name="age"
-                  type="number"
-                  value={registrationForm.age}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="experience">Experience Level</Label>
-                <Input
-                  id="experience"
-                  name="experience"
-                  placeholder="Beginner, Intermediate, Advanced"
-                  value={registrationForm.experience}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
+              
+              {event.id === 1 ? (
+                <>
+                  <div>
+                    <Label htmlFor="package">Registration Type</Label>
+                    <Select 
+                      name="package"
+                      value={registrationForm.package || "full"}
+                      onValueChange={(value) => setRegistrationForm({...registrationForm, package: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your package" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="full">Full Camp (3 Days) - $249</SelectItem>
+                        <SelectItem value="single">Single Day Pass - $149</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="grade">Grade Level</Label>
+                    <Select 
+                      name="grade"
+                      value={registrationForm.grade || ""}
+                      onValueChange={(value) => setRegistrationForm({...registrationForm, grade: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select grade level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="elementary">Elementary (2nd-5th)</SelectItem>
+                        <SelectItem value="middle">Middle School (6th-8th)</SelectItem>
+                        <SelectItem value="high">High School (9th-12th)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="mt-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="waiver" 
+                        checked={registrationForm.waiver === true}
+                        onCheckedChange={(checked) => 
+                          setRegistrationForm({...registrationForm, waiver: checked === true})
+                        }
+                        required
+                      />
+                      <label
+                        htmlFor="waiver"
+                        className="text-sm leading-none"
+                      >
+                        I acknowledge that Rich Habits is not liable for injuries and that a medical-release waiver must be signed
+                      </label>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <Label htmlFor="age">Age</Label>
+                    <Input
+                      id="age"
+                      name="age"
+                      type="number"
+                      value={registrationForm.age}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="experience">Experience Level</Label>
+                    <Input
+                      id="experience"
+                      name="experience"
+                      placeholder="Beginner, Intermediate, Advanced"
+                      value={registrationForm.experience}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </>
+              )}
             </div>
             
             <DialogFooter>
-              <Button type="submit">Proceed to Payment</Button>
+              <Button type="submit">
+                {event.id === 1 ? "Proceed to Checkout" : "Proceed to Payment"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
