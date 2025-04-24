@@ -250,12 +250,13 @@ export interface EventRegistrationData {
 export const EVENT_PRODUCTS = {
   'birmingham-slam-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8837251555611', // Birmingham Slam Camp - Full Camp Product ID
-      variantId: 'gid://shopify/ProductVariant/47327434186011', // Birmingham Slam Camp - Full Camp Variant ID
+      productId: 'gid://shopify/Product/8949406105837', // Birmingham Slam Camp Product ID
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Birmingham Slam Camp Variant ID
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8837251588379', // Birmingham Slam Camp - Single Day Product ID
-      variantId: 'gid://shopify/ProductVariant/47327434218779', // Birmingham Slam Camp - Single Day Variant ID
+      // Using the same product for now since there's only one variant for the camp
+      productId: 'gid://shopify/Product/8949406105837', // Birmingham Slam Camp Product ID 
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Birmingham Slam Camp Variant ID
     }
   }
 };
