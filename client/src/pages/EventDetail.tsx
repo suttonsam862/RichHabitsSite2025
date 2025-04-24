@@ -208,6 +208,17 @@ export default function EventDetail() {
         <meta name="description" content={event.description} />
       </Helmet>
       
+      {/* New Banner at the top */}
+      {event.id === 1 && (
+        <div className="w-full overflow-hidden">
+          <img 
+            src="/src/assets/events/slam_camp_banner.png" 
+            alt="Birmingham Wrestling Camp Banner"
+            className="w-full object-contain"
+          />
+        </div>
+      )}
+      
       <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : ''}`}>
         {event.id === 1 && (
           <>
@@ -225,15 +236,6 @@ export default function EventDetail() {
             <div className="neon-lick-3"></div>
             <div className="neon-lick-1" style={{left: '75%', animationDelay: '3s'}}></div>
             <div className="neon-lick-2" style={{left: '25%', animationDelay: '7s'}}></div>
-            
-            {/* Hot spots */}
-            <div className="hot-spot"></div>
-            <div className="hot-spot"></div>
-            <div className="hot-spot"></div>
-            <div className="hot-spot"></div>
-            <div className="hot-spot"></div>
-            <div className="hot-spot"></div>
-            <div className="hot-spot"></div>
           </>
         )}
         <Container>
@@ -254,23 +256,6 @@ export default function EventDetail() {
                 </span>
                 {event.id === 1 ? (
                   <>
-                    <div className="overflow-hidden rounded-lg mb-6 relative banner-container">
-                      <img 
-                        src="https://images.unsplash.com/photo-1565108010726-a955cca8d67e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-                        alt="Birmingham Wrestling Camp Banner"
-                        className="w-full h-48 object-cover banner-image"
-                      />
-                      <div className="mountain-clip-left"></div>
-                      <div className="mountain-clip-right"></div>
-                      <div className="absolute top-0 left-0 w-full h-full z-10 flex items-center justify-center">
-                        <div className="bg-black bg-opacity-60 px-8 py-6 rounded-md text-center">
-                          <h1 className="text-4xl font-bold tracking-tight text-white">
-                            BIRMINGHAM WRESTLING CAMP
-                          </h1>
-                          <div className="text-base font-medium mt-2 text-amber-300">JUNE 19-21, 2025 • EXCELLENCE IN TRAINING</div>
-                        </div>
-                      </div>
-                    </div>
                     <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-md border-l-4 border-amber-500 mb-4">
                       <div className="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
