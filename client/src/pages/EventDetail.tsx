@@ -141,11 +141,11 @@ export default function EventDetail() {
   });
   const { toast } = useToast();
 
-  // Extract the event slug from the URL
-  const slug = location.split('/').pop();
+  // Extract the event ID from the URL
+  const eventId = parseInt(location.split('/').pop() || "0", 10);
   
-  // Find the event by slug
-  const event = eventsData.find(event => event.slug === slug);
+  // Find the event by ID
+  const event = eventsData.find(event => event.id === eventId);
   
   // If event not found, return basic error message
   if (!event) {
@@ -627,11 +627,11 @@ export default function EventDetail() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {/* Full Camp Plan */}
-                <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-105">
+                <div className="bg-white rounded-sm overflow-hidden shadow-lg fire-border transition-transform duration-300 hover:scale-105">
                   <div className="p-6 border-b border-gray-100">
                     <div className="flex justify-between items-center">
-                      <h4 className="text-xl font-bold text-gray-800">Full Camp</h4>
-                      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Most Popular</span>
+                      <h4 className="text-xl font-bold fire-title">Full Camp</h4>
+                      <span className="fire-gradient-btn text-white px-3 py-1 rounded-full text-sm font-medium">Most Popular</span>
                     </div>
                     <div className="mt-4 flex items-end">
                       <span className="text-4xl font-bold text-gray-800">$249</span>
@@ -668,7 +668,7 @@ export default function EventDetail() {
                     <div className="mt-8">
                       <button 
                         onClick={() => setShowRegistrationDialog(true)}
-                        className="bg-gray-800 text-white py-3 px-6 font-medium tracking-wide inline-block rounded-lg w-full transition duration-200 hover:bg-gray-900"
+                        className="fire-gradient-btn text-white py-3 px-6 font-medium tracking-wide inline-block rounded-sm w-full transition duration-200 hover:brightness-110"
                       >
                         Register for Full Camp
                       </button>
@@ -677,11 +677,11 @@ export default function EventDetail() {
                 </div>
                 
                 {/* Single Day Plan */}
-                <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 transition-transform duration-300 hover:scale-105">
+                <div className="bg-white rounded-sm overflow-hidden shadow-lg fire-border-secondary transition-transform duration-300 hover:scale-105">
                   <div className="p-6 border-b border-gray-100">
                     <div className="flex justify-between items-center">
-                      <h4 className="text-xl font-bold text-gray-800">Single Day</h4>
-                      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Flexible Option</span>
+                      <h4 className="text-xl font-bold fire-title">Single Day</h4>
+                      <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-medium">Flexible Option</span>
                     </div>
                     <div className="mt-4 flex items-end">
                       <span className="text-4xl font-bold text-gray-800">$149</span>
@@ -718,7 +718,7 @@ export default function EventDetail() {
                     <div className="mt-8">
                       <button 
                         onClick={() => setShowRegistrationDialog(true)}
-                        className="bg-white text-gray-800 border-2 border-gray-800 py-3 px-6 font-medium tracking-wide inline-block rounded-lg w-full transition duration-200 hover:bg-gray-50"
+                        className="fire-outline-btn py-3 px-6 font-medium tracking-wide inline-block rounded-sm w-full transition duration-200 hover:bg-gray-50"
                       >
                         Register for Single Day
                       </button>
@@ -756,8 +756,8 @@ export default function EventDetail() {
           
           {event.id === 1 && (
             <div className="mb-16">
-              <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-                <h3 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h3>
+              <div className="bg-white p-6 rounded-sm shadow-md fire-border">
+                <h3 className="text-2xl font-bold text-center mb-8 fire-title">Frequently Asked Questions</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="font-bold text-lg mb-2">What should I bring to camp?</h4>
