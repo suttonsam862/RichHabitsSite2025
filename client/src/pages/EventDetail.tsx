@@ -259,9 +259,9 @@ export default function EventDetail() {
                 </span>
                 {event.id === 1 ? (
                   <>
-                    <div className="bg-white p-4 rounded-md border-l-4 border-amber-500 mb-4 shadow-sm">
+                    <div className="bg-white p-4 rounded-md border-l-4 border-gray-500 mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-2" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                         </svg>
                         <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
@@ -269,7 +269,7 @@ export default function EventDetail() {
                     </div>
                     
                     <div className="my-6 flex flex-col items-center">
-                      <div className="relative max-w-md w-full">
+                      <div className="relative w-[70%] mx-auto">
                         <img 
                           src="/src/assets/events/slam_camp_title.png" 
                           alt="Birmingham Slam Camp" 
@@ -277,7 +277,7 @@ export default function EventDetail() {
                         />
                         <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
                       </div>
-                      <div className="golden-glass-bar h-1 w-full max-w-md mt-1"></div>
+                      <div className="golden-glass-bar h-1 w-[70%] mx-auto mt-1"></div>
                     </div>
                     
                     <div className="text-center mb-4">
