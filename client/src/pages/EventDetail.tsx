@@ -210,15 +210,14 @@ export default function EventDetail() {
       
       {/* New Banner at the top with lighting effects */}
       {event.id === 1 && (
-        <div className="w-full overflow-hidden banner-container">
+        <div className="w-full overflow-hidden banner-container relative">
           <img 
             src="/src/assets/events/slam_camp_banner.png" 
             alt="Birmingham Wrestling Camp Banner"
             className="w-full object-contain relative z-10"
           />
           <div className="sun-glow"></div>
-          <div className="neon-highlight mt-1"></div>
-          <div className="w-full h-2 golden-glass-bar mt-1"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
         </div>
       )}
       
@@ -401,15 +400,15 @@ export default function EventDetail() {
                 <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 transition-transform hover:shadow-lg">
                   <div className="h-56 overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1576678927484-cc907957088c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                      src="/src/assets/coaches/brandon_courtney.webp" 
                       alt="Brandon Courtney" 
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Brandon Courtney</h3>
-                    <div className="text-gray-600 text-sm font-medium mb-2">All-American</div>
-                    <p className="text-gray-600 text-sm">Ground position expert with exceptional mat control and transition techniques.</p>
+                    <div className="text-gray-600 text-sm font-medium mb-2">Four-Time All-American</div>
+                    <p className="text-gray-600 text-sm">Four-time NCAA All-American and three-time Pac-12 Champion with relentless pace and technical precision.</p>
                   </div>
                 </div>
                 
@@ -442,7 +441,7 @@ export default function EventDetail() {
                   </div>
                   <div className="prose max-w-none text-gray-700">
                     <p className="mb-4">
-                      The Birmingham Wrestling Camp returns to Clay-Chalkville Middle School from June 19–21, 2025, offering three comprehensive days of elite instruction. Wrestlers will train with 2-time NCAA champion Zahid Valencia and All-Americans Michael McGee, Brandon Courtney, and Josh Shields - a three-time NCAA All-American and three-time Pac-12 Champion who surpassed 100 career victories at Arizona State University.
+                      The Birmingham Wrestling Camp returns to Clay-Chalkville Middle School from June 19–21, 2025, offering three comprehensive days of elite instruction. Wrestlers will train with 2-time NCAA champion Zahid Valencia and All-Americans including four-time NCAA All-American Brandon Courtney, who was named Pac-12 Wrestler of the Year in 2023, and Josh Shields - a three-time NCAA All-American and three-time Pac-12 Champion who surpassed 100 career victories at Arizona State University.
                     </p>
                     <p className="mb-4">
                       Our curriculum is designed for wrestlers from 2nd grade through graduating seniors. With enrollment capped at 200 participants, each athlete receives personalized coaching during our daily sessions from 9 AM to 4 PM, featuring technique development, competitive scenarios, and strategic training.
@@ -556,25 +555,25 @@ export default function EventDetail() {
                 <>
                   <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
                     <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-                      <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Josh Shields</h3>
+                      <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Brandon Courtney</h3>
                     </div>
                     <div className="p-6">
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-gray-300">
                           <img 
-                            src="/src/assets/coaches/josh_shields.webp" 
-                            alt="Josh Shields" 
+                            src="/src/assets/coaches/brandon_courtney.webp" 
+                            alt="Brandon Courtney" 
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <div>
-                          <div className="font-bold text-gray-800">Josh Shields</div>
-                          <div className="text-gray-600 text-sm font-medium">Three-Time NCAA All-American</div>
+                          <div className="font-bold text-gray-800">Brandon Courtney</div>
+                          <div className="text-gray-600 text-sm font-medium">Four-Time All-American</div>
                           <div className="text-gray-600 text-xs">Arizona State University</div>
                         </div>
                       </div>
                       <p className="text-sm text-gray-700 mb-4">
-                        Josh Shields is a three-time NCAA All-American and three-time Pac-12 Champion, competing at both 157 and 165 lbs during his collegiate career. He surpassed 100 career victories at Arizona State University, showcasing his consistency and dedication. Shields is committed to sharing his knowledge and experience with aspiring wrestlers.
+                        Brandon Courtney is a four-time NCAA All-American and three-time Pac-12 Champion at 125 lbs. Known for his relentless pace and technical precision, he reached the NCAA finals in 2021 and was named Pac-12 Wrestler of the Year in 2023. Courtney's commitment to excellence and his dynamic style make him an inspiring clinician for young athletes.
                       </p>
                       <div className="text-right">
                         <span className="text-gray-600 text-sm cursor-pointer">Read more</span>
