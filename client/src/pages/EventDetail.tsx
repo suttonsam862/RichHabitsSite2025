@@ -448,7 +448,7 @@ export default function EventDetail() {
                       Our curriculum is designed for wrestlers from 2nd grade through graduating seniors. With enrollment capped at 200 participants, each athlete receives personalized coaching during our daily sessions from 9 AM to 4 PM, featuring technique development, competitive scenarios, and strategic training.
                     </p>
                     
-                    <div className="bg-white border-l-4 border-amber-500 p-4 my-6 rounded-r-md shadow-sm">
+                    <div className="bg-white border-l-4 border-gray-500 p-4 my-6 rounded-r-md shadow-sm">
                       <h4 className="font-bold text-gray-800 mb-2">EXCLUSIVE PARTNERSHIP: FRUIT HUNTERS</h4>
                       <p className="text-gray-700 mb-0">
                         We're excited to announce our exclusive partnership with Fruit Hunters, America's premier exotic fruit company! All participants will receive daily fresh fruit nutrition packs, and our nutrition seminars will feature custom recipes designed by their expert team specifically for wrestlers.
@@ -600,7 +600,7 @@ export default function EventDetail() {
                           </div>
                         </li>
                         <li className="flex items-start">
-                          <div className="bg-amber-500 p-2 rounded-md mr-3 text-white flex-shrink-0">
+                          <div className="bg-gray-600 p-2 rounded-md mr-3 text-white flex-shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
                             </svg>
@@ -611,7 +611,7 @@ export default function EventDetail() {
                           </div>
                         </li>
                         <li className="flex items-start">
-                          <div className="bg-amber-500 p-2 rounded-md mr-3 text-white flex-shrink-0">
+                          <div className="bg-gray-600 p-2 rounded-md mr-3 text-white flex-shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M6.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm6 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM13 10a3 3 0 11-6 0 3 3 0 016 0zm-9 3a3 3 0 100 6 3 3 0 000-6zm9 0a3 3 0 100 6 3 3 0 000-6z" />
                             </svg>
@@ -622,7 +622,7 @@ export default function EventDetail() {
                           </div>
                         </li>
                         <li className="flex items-start">
-                          <div className="bg-amber-500 p-2 rounded-md mr-3 text-white flex-shrink-0">
+                          <div className="bg-gray-600 p-2 rounded-md mr-3 text-white flex-shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17A3 3 0 015 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd" />
                               <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
@@ -645,11 +645,11 @@ export default function EventDetail() {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center py-2 border-b border-gray-100">
                           <span className="font-medium text-gray-700">Full Camp (3 Days)</span>
-                          <span className="text-lg font-bold text-amber-600">$249</span>
+                          <span className="text-lg font-bold text-gray-700">$249</span>
                         </div>
                         <div className="flex justify-between items-center py-2 border-b border-gray-100">
                           <span className="font-medium text-gray-700">Single Day Pass</span>
-                          <span className="text-lg font-bold text-amber-600">$149</span>
+                          <span className="text-lg font-bold text-gray-700">$149</span>
                         </div>
                         <div className="flex justify-between items-center py-2 border-b border-gray-100">
                           <span className="font-medium text-gray-700">Age Groups</span>
@@ -662,7 +662,7 @@ export default function EventDetail() {
                         <div className="mt-4 pt-4 border-t border-gray-100">
                           <button 
                             onClick={() => setShowRegistrationDialog(true)}
-                            className="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-6 font-medium tracking-wide inline-block rounded-md w-full transition duration-200 hover:from-amber-600 hover:to-orange-600"
+                            className="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-6 font-medium tracking-wide inline-block rounded-md w-full transition duration-200 hover:from-gray-700 hover:to-gray-800"
                           >
                             Register Now
                           </button>
