@@ -113,11 +113,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           // Format the registration data for Shopify
           const registrationData: EventRegistrationData = {
-            name: validatedData.name,
+            firstName: validatedData.firstName,
+            lastName: validatedData.lastName,
+            contactName: validatedData.contactName,
             email: validatedData.email,
             phone: validatedData.phone || '',
-            ageGroup: validatedData.ageGroup || '',
-            experience: validatedData.experience || '',
+            tShirtSize: validatedData.tShirtSize || '',
+            grade: validatedData.grade || '',
+            schoolName: validatedData.schoolName || '',
+            clubName: validatedData.clubName || '',
+            medicalReleaseAccepted: validatedData.medicalReleaseAccepted || false,
             option: validatedData.registrationType === 'full' ? 'full' : 'single'
           };
           

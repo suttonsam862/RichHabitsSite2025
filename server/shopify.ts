@@ -82,11 +82,16 @@ export async function createEventRegistrationCheckout(
 ) {
   const customAttributes = [
     { key: 'Event_ID', value: eventId },
-    { key: 'Attendee_Name', value: registrationData.name },
-    { key: 'Attendee_Email', value: registrationData.email },
-    { key: 'Attendee_Phone', value: registrationData.phone || 'Not provided' },
-    { key: 'Attendee_Age_Group', value: registrationData.ageGroup },
-    { key: 'Attendee_Experience', value: registrationData.experience || 'Not provided' },
+    { key: 'Camper_First_Name', value: registrationData.firstName },
+    { key: 'Camper_Last_Name', value: registrationData.lastName },
+    { key: 'Contact_Name', value: registrationData.contactName },
+    { key: 'Contact_Email', value: registrationData.email },
+    { key: 'Contact_Phone', value: registrationData.phone || 'Not provided' },
+    { key: 'T_Shirt_Size', value: registrationData.tShirtSize },
+    { key: 'Grade', value: registrationData.grade },
+    { key: 'School_Name', value: registrationData.schoolName },
+    { key: 'Club_Name', value: registrationData.clubName || 'Not provided' },
+    { key: 'Medical_Release_Accepted', value: registrationData.medicalReleaseAccepted ? 'Yes' : 'No' },
     { key: 'Registration_Type', value: registrationData.option },
   ];
 
@@ -95,11 +100,16 @@ export async function createEventRegistrationCheckout(
 
 // Types
 export interface EventRegistrationData {
-  name: string;
+  firstName: string;
+  lastName: string;
+  contactName: string;
   email: string;
   phone?: string;
-  ageGroup: string;
-  experience?: string;
+  tShirtSize: string;
+  grade: string;
+  schoolName: string;
+  clubName?: string;
+  medicalReleaseAccepted: boolean;
   option: 'full' | 'single';
 }
 

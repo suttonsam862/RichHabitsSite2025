@@ -132,11 +132,16 @@ export default function EventDetail() {
   const [location] = useLocation();
   const [showRegistrationDialog, setShowRegistrationDialog] = useState(false);
   const [registrationForm, setRegistrationForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
+    contactName: '',
     email: '',
     phone: '',
-    ageGroup: '',
-    experience: '',
+    tShirtSize: '',
+    grade: '',
+    schoolName: '',
+    clubName: '',
+    medicalReleaseAccepted: false,
     registrationType: 'full', // 'full' or 'single'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -800,10 +805,21 @@ export default function EventDetail() {
             e.preventDefault();
             
             // Validate form
-            if (!registrationForm.name || !registrationForm.email || !registrationForm.ageGroup) {
+            if (!registrationForm.firstName || !registrationForm.lastName || !registrationForm.contactName || 
+                !registrationForm.email || !registrationForm.tShirtSize || !registrationForm.grade || 
+                !registrationForm.schoolName || !registrationForm.medicalReleaseAccepted) {
               toast({
                 title: "Missing information",
                 description: "Please fill in all required fields.",
+                variant: "destructive"
+              });
+              return;
+            }
+            
+            if (!registrationForm.medicalReleaseAccepted) {
+              toast({
+                title: "Medical Release Required",
+                description: "You must accept the medical release waiver to continue.",
                 variant: "destructive"
               });
               return;
@@ -814,11 +830,16 @@ export default function EventDetail() {
               
               // Prepare the data for the API
               const formData = {
-                name: registrationForm.name,
+                firstName: registrationForm.firstName,
+                lastName: registrationForm.lastName,
+                contactName: registrationForm.contactName,
                 email: registrationForm.email,
                 phone: registrationForm.phone,
-                ageGroup: registrationForm.ageGroup,
-                experience: registrationForm.experience,
+                tShirtSize: registrationForm.tShirtSize,
+                grade: registrationForm.grade,
+                schoolName: registrationForm.schoolName,
+                clubName: registrationForm.clubName,
+                medicalReleaseAccepted: registrationForm.medicalReleaseAccepted,
                 registrationType: registrationForm.registrationType
               };
               
@@ -862,18 +883,39 @@ export default function EventDetail() {
             }
           }}>
             <div className="grid gap-4 mb-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName">Camper First Name</Label>
+                  <Input 
+                    id="firstName" 
+                    value={registrationForm.firstName} 
+                    onChange={(e) => setRegistrationForm({...registrationForm, firstName: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Camper Last Name</Label>
+                  <Input 
+                    id="lastName" 
+                    value={registrationForm.lastName} 
+                    onChange={(e) => setRegistrationForm({...registrationForm, lastName: e.target.value})}
+                    required
+                  />
+                </div>
+              </div>
+              
               <div>
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="contactName">Contact Full Name (Parent/Guardian)</Label>
                 <Input 
-                  id="name" 
-                  value={registrationForm.name} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, name: e.target.value})}
+                  id="contactName" 
+                  value={registrationForm.contactName} 
+                  onChange={(e) => setRegistrationForm({...registrationForm, contactName: e.target.value})}
                   required
                 />
               </div>
               
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Contact Email</Label>
                 <Input 
                   id="email" 
                   type="email" 
@@ -884,32 +926,87 @@ export default function EventDetail() {
               </div>
               
               <div>
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Contact Phone Number</Label>
                 <Input 
                   id="phone" 
                   value={registrationForm.phone} 
                   onChange={(e) => setRegistrationForm({...registrationForm, phone: e.target.value})}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="ageGroup">Age Group / Grade</Label>
-                <Input 
-                  id="ageGroup" 
-                  value={registrationForm.ageGroup} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, ageGroup: e.target.value})}
                   required
                 />
               </div>
               
               <div>
-                <Label htmlFor="experience">Wrestling Experience</Label>
+                <Label htmlFor="tShirtSize">T-Shirt Size</Label>
+                <select 
+                  id="tShirtSize" 
+                  value={registrationForm.tShirtSize} 
+                  onChange={(e) => setRegistrationForm({...registrationForm, tShirtSize: e.target.value})}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                >
+                  <option value="">Select a size</option>
+                  <option value="YS">Youth Small</option>
+                  <option value="YM">Youth Medium</option>
+                  <option value="YL">Youth Large</option>
+                  <option value="YXL">Youth XL</option>
+                  <option value="AS">Adult Small</option>
+                  <option value="AM">Adult Medium</option>
+                  <option value="AL">Adult Large</option>
+                  <option value="AXL">Adult XL</option>
+                  <option value="A2XL">Adult 2XL</option>
+                </select>
+              </div>
+              
+              <div>
+                <Label htmlFor="grade">Grade (Finishing)</Label>
                 <Input 
-                  id="experience" 
-                  value={registrationForm.experience} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, experience: e.target.value})}
-                  placeholder="Years of experience, achievements, etc."
+                  id="grade" 
+                  value={registrationForm.grade} 
+                  onChange={(e) => setRegistrationForm({...registrationForm, grade: e.target.value})}
+                  placeholder="e.g., 8th, 10th, etc."
+                  required
                 />
+              </div>
+              
+              <div>
+                <Label htmlFor="schoolName">School Name</Label>
+                <Input 
+                  id="schoolName" 
+                  value={registrationForm.schoolName} 
+                  onChange={(e) => setRegistrationForm({...registrationForm, schoolName: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="clubName">Club Name (Optional)</Label>
+                <Input 
+                  id="clubName" 
+                  value={registrationForm.clubName} 
+                  onChange={(e) => setRegistrationForm({...registrationForm, clubName: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mt-2">
+                  <h4 className="font-bold mb-2">Medical Release Waiver</h4>
+                  <p className="text-sm text-gray-700 mb-3">
+                    I hereby authorize the camp coaching staff to act for me according to their best judgment in any 
+                    emergency requiring medical attention. I hereby waive and release the camp from any and all liability 
+                    for any injuries or illnesses incurred while at camp. I have no knowledge of any physical impairment 
+                    that would be affected by participation in the camp program as outlined.
+                  </p>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={registrationForm.medicalReleaseAccepted} 
+                      onChange={(e) => setRegistrationForm({...registrationForm, medicalReleaseAccepted: e.target.checked})}
+                      className="rounded"
+                      required
+                    />
+                    <span className="text-sm font-medium">I accept the medical release waiver</span>
+                  </label>
+                </div>
               </div>
               
               {event.id === 1 && (

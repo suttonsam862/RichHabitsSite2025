@@ -112,11 +112,16 @@ export const insertEventSchema = createInsertSchema(events).pick({
 export const eventRegistrations = pgTable("event_registrations", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull(),
-  name: text("name").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  contactName: text("contact_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
-  ageGroup: text("age_group"),
-  experience: text("experience"),
+  tShirtSize: text("t_shirt_size"),
+  grade: text("grade"),
+  schoolName: text("school_name"),
+  clubName: text("club_name"),
+  medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
   registrationType: text("registration_type"),
   shopifyOrderId: text("shopify_order_id"),
   createdAt: timestamp("created_at").defaultNow()
@@ -124,11 +129,16 @@ export const eventRegistrations = pgTable("event_registrations", {
 
 export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
   eventId: true,
-  name: true,
+  firstName: true,
+  lastName: true,
+  contactName: true,
   email: true,
   phone: true,
-  ageGroup: true,
-  experience: true,
+  tShirtSize: true,
+  grade: true,
+  schoolName: true,
+  clubName: true,
+  medicalReleaseAccepted: true,
   registrationType: true,
   shopifyOrderId: true
 });
