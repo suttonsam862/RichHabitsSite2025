@@ -35,39 +35,100 @@ export async function getProductById(productId: string) {
   }
 }
 
-// Function to create a checkout with a product variant
+// Function to create a checkout with a product variant using Storefront API
 export async function createCheckout(variantId: string, quantity: number = 1, customAttributes?: any[]) {
   try {
-    const checkoutData = {
-      checkout: {
-        line_items: [
+    // Prepare custom attributes if provided
+    const formattedAttributes = customAttributes ? 
+      customAttributes.map(attr => ({ key: attr.key, value: String(attr.value) })) : [];
+    
+    // Create checkout mutation for Storefront API
+    const mutation = `
+      mutation checkoutCreate($input: CheckoutCreateInput!) {
+        checkoutCreate(input: $input) {
+          checkout {
+            id
+            webUrl
+            subtotalPriceV2 {
+              amount
+              currencyCode
+            }
+            totalPriceV2 {
+              amount
+              currencyCode
+            }
+          }
+          checkoutUserErrors {
+            code
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        lineItems: [
           {
-            variant_id: variantId,
-            quantity: quantity,
-          },
+            variantId: variantId,
+            quantity: quantity
+          }
         ],
-        ...(customAttributes && { custom_attributes: customAttributes }),
-      },
+        customAttributes: formattedAttributes
+      }
     };
 
+    // Call the Storefront API
     const response = await fetch(
-      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/checkouts.json`,
+      `https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`,
       {
         method: 'POST',
         headers: {
-          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_API_KEY as string,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(checkoutData),
+        body: JSON.stringify({
+          query: mutation,
+          variables: variables
+        }),
       }
     );
 
     if (!response.ok) {
-      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    const data = await response.json() as { checkout: any };
-    return data.checkout;
+    const data = await response.json() as {
+      data?: {
+        checkoutCreate?: {
+          checkout?: {
+            id: string;
+            webUrl: string;
+            subtotalPriceV2: { amount: string; currencyCode: string };
+            totalPriceV2: { amount: string; currencyCode: string };
+          };
+          checkoutUserErrors?: Array<{ code: string; field: string; message: string }>;
+        }
+      };
+      errors?: Array<{ message: string }>;
+    };
+    
+    // Check for errors in the response
+    if (data.errors && data.errors.length > 0) {
+      throw new Error(`GraphQL Error: ${data.errors[0].message}`);
+    }
+    
+    if (data.data?.checkoutCreate?.checkoutUserErrors && data.data.checkoutCreate.checkoutUserErrors.length > 0) {
+      throw new Error(`Checkout Error: ${data.data.checkoutCreate.checkoutUserErrors[0].message}`);
+    }
+    
+    if (!data.data?.checkoutCreate?.checkout) {
+      throw new Error('No checkout data returned from Shopify');
+    }
+    
+    return data.data.checkoutCreate.checkout;
   } catch (error) {
     console.error('Error creating checkout in Shopify:', error);
     throw error;
@@ -115,15 +176,16 @@ export interface EventRegistrationData {
 
 // Maps for Shopify product and variant IDs related to events
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
+// For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})
 export const EVENT_PRODUCTS = {
   'birmingham-slam-camp': {
     fullCamp: {
-      productId: '8837251555611', // Birmingham Slam Camp - Full Camp Product ID
-      variantId: '47327434186011', // Birmingham Slam Camp - Full Camp Variant ID
+      productId: 'gid://shopify/Product/8837251555611', // Birmingham Slam Camp - Full Camp Product ID
+      variantId: 'gid://shopify/ProductVariant/47327434186011', // Birmingham Slam Camp - Full Camp Variant ID
     },
     singleDay: {
-      productId: '8837251588379', // Birmingham Slam Camp - Single Day Product ID
-      variantId: '47327434218779', // Birmingham Slam Camp - Single Day Variant ID
+      productId: 'gid://shopify/Product/8837251588379', // Birmingham Slam Camp - Single Day Product ID
+      variantId: 'gid://shopify/ProductVariant/47327434218779', // Birmingham Slam Camp - Single Day Variant ID
     }
   }
 };
