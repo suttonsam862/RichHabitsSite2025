@@ -343,7 +343,7 @@ export default function EventDetail() {
                 {event.id === 1 ? (
                   <button 
                     onClick={() => setShowRegistrationDialog(true)}
-                    className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm w-full md:w-auto"
+                    className="bg-gray-800 hover:bg-gray-900 text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm w-full md:w-auto shadow-sm"
                   >
                     Register Now
                   </button>
@@ -378,7 +378,7 @@ export default function EventDetail() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Zahid Valencia</h3>
-                    <div className="text-amber-600 text-sm font-medium mb-2">2-Time NCAA Champion</div>
+                    <div className="text-gray-600 text-sm font-medium mb-2">2-Time NCAA Champion</div>
                     <p className="text-gray-600 text-sm">Elite technique specialist known for aggressive, high-scoring matches and masterful wrestling IQ.</p>
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export default function EventDetail() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Michael McGee</h3>
-                    <div className="text-amber-600 text-sm font-medium mb-2">All-American</div>
+                    <div className="text-gray-600 text-sm font-medium mb-2">All-American</div>
                     <p className="text-gray-600 text-sm">Tactical takedown specialist focusing on perfect timing and exceptional leverage mechanics.</p>
                   </div>
                 </div>
@@ -408,7 +408,7 @@ export default function EventDetail() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Brandon Courtney</h3>
-                    <div className="text-amber-600 text-sm font-medium mb-2">All-American</div>
+                    <div className="text-gray-600 text-sm font-medium mb-2">All-American</div>
                     <p className="text-gray-600 text-sm">Ground position expert with exceptional mat control and transition techniques.</p>
                   </div>
                 </div>
@@ -423,7 +423,7 @@ export default function EventDetail() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1">Josh Shields</h3>
-                    <div className="text-amber-600 text-sm font-medium mb-2">Three-Time All-American</div>
+                    <div className="text-gray-600 text-sm font-medium mb-2">Three-Time All-American</div>
                     <p className="text-gray-600 text-sm">Three-time NCAA All-American and Pac-12 Champion with over 100 career wins at Arizona State University.</p>
                   </div>
                 </div>
@@ -560,7 +560,7 @@ export default function EventDetail() {
                     </div>
                     <div className="p-6">
                       <div className="flex items-center mb-4">
-                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-amber-500">
+                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-gray-300">
                           <img 
                             src="/src/assets/coaches/josh_shields.webp" 
                             alt="Josh Shields" 
@@ -569,7 +569,7 @@ export default function EventDetail() {
                         </div>
                         <div>
                           <div className="font-bold text-gray-800">Josh Shields</div>
-                          <div className="text-amber-600 text-sm font-medium">Three-Time NCAA All-American</div>
+                          <div className="text-gray-600 text-sm font-medium">Three-Time NCAA All-American</div>
                           <div className="text-gray-600 text-xs">Arizona State University</div>
                         </div>
                       </div>
@@ -577,7 +577,7 @@ export default function EventDetail() {
                         Josh Shields is a three-time NCAA All-American and three-time Pac-12 Champion, competing at both 157 and 165 lbs during his collegiate career. He surpassed 100 career victories at Arizona State University, showcasing his consistency and dedication. Shields is committed to sharing his knowledge and experience with aspiring wrestlers.
                       </p>
                       <div className="text-right">
-                        <span className="text-amber-600 text-sm cursor-pointer">Read more</span>
+                        <span className="text-gray-600 text-sm cursor-pointer">Read more</span>
                       </div>
                     </div>
                   </div>
@@ -589,7 +589,7 @@ export default function EventDetail() {
                     <div className="p-6">
                       <ul className="space-y-4">
                         <li className="flex items-start">
-                          <div className="bg-amber-500 p-2 rounded-md mr-3 text-white flex-shrink-0">
+                          <div className="bg-gray-600 p-2 rounded-md mr-3 text-white flex-shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                             </svg>
