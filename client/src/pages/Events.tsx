@@ -10,9 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 
 // Import event images
-import event1Image from "../assets/events/event1.jpg";
-import event2Image from "../assets/events/event2.jpg";
-import event3Image from "../assets/events/event3.jpg";
+import event1Image from "../assets/events/event1.svg";
+import event2Image from "../assets/events/event2.svg";
+import event3Image from "../assets/events/event3.svg";
 
 // Static events data
 const events = [
