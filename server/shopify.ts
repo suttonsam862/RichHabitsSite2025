@@ -104,15 +104,16 @@ export interface EventRegistrationData {
 }
 
 // Maps for Shopify product and variant IDs related to events
+// Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 export const EVENT_PRODUCTS = {
   'birmingham-slam-camp': {
     fullCamp: {
-      productId: 'REPLACE_WITH_ACTUAL_PRODUCT_ID', // Placeholder - will be replaced with real ID
-      variantId: 'REPLACE_WITH_ACTUAL_VARIANT_ID', // Placeholder - will be replaced with real ID
+      productId: '8837251555611', // Birmingham Slam Camp - Full Camp Product ID
+      variantId: '47327434186011', // Birmingham Slam Camp - Full Camp Variant ID
     },
     singleDay: {
-      productId: 'REPLACE_WITH_ACTUAL_PRODUCT_ID', // Placeholder - will be replaced with real ID
-      variantId: 'REPLACE_WITH_ACTUAL_VARIANT_ID', // Placeholder - will be replaced with real ID
+      productId: '8837251588379', // Birmingham Slam Camp - Single Day Product ID
+      variantId: '47327434218779', // Birmingham Slam Camp - Single Day Variant ID
     }
   }
 };
