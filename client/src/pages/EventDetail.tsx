@@ -474,38 +474,52 @@ export default function EventDetail() {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                           <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">9:00 AM - 11:30 AM</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">9:00 AM - 9:15 AM</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Morning Technique Sessions</div>
-                              <div className="text-xs text-gray-500 mt-1">Position-specific drills and mechanics training</div>
+                              <div className="font-medium">Registration & Gear Pickup</div>
+                              <div className="text-xs text-gray-500 mt-1">Check in, get your gear, put shoes on and get ready</div>
+                            </td>
+                          </tr>
+                          <tr className="bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">9:15 AM - 11:00 AM</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                              <div className="font-medium">Fun Warmup & Intro Technique</div>
+                              <div className="text-xs text-gray-500 mt-1">Games and fundamental technique instruction</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">11:00 AM - 11:30 AM</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                              <div className="font-medium">Water Break & Recreation</div>
+                              <div className="text-xs text-gray-500 mt-1">Hang out with friends, play PlayStation and other fun games</div>
                             </td>
                           </tr>
                           <tr className="bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">11:30 AM - 12:30 PM</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Lunch Break</div>
-                              <div className="text-xs text-gray-500 mt-1">Featuring Fruit Hunters nutrition stations</div>
+                              <div className="font-medium">Live Session & Spotlight Matches</div>
+                              <div className="text-xs text-gray-500 mt-1">Competitive wrestling and featured demonstration matches</div>
                             </td>
                           </tr>
                           <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">12:30 PM - 2:30 PM</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">12:30 PM - 1:30 PM</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Afternoon Training & Live Goes</div>
-                              <div className="text-xs text-gray-500 mt-1">Competitive matches with direct coaching feedback</div>
+                              <div className="font-medium">Lunch Break & Gear Shop</div>
+                              <div className="text-xs text-gray-500 mt-1">Featuring Fruit Hunters nutrition stations and Rich Habits gear booth</div>
                             </td>
                           </tr>
                           <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2:30 PM - 3:30 PM</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1:30 PM - 3:00 PM</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Q&A with Coaches</div>
-                              <div className="text-xs text-gray-500 mt-1">Strategy discussions and personalized advice</div>
+                              <div className="font-medium">Second Technique Session</div>
+                              <div className="text-xs text-gray-500 mt-1">Advanced techniques and drilling</div>
                             </td>
                           </tr>
                           <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3:30 PM - 4:00 PM</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3:00 PM - 3:30 PM</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Cool Down & Wrap-up</div>
-                              <div className="text-xs text-gray-500 mt-1">Recovery techniques and daily review</div>
+                              <div className="font-medium">Q&A & Closing Activities</div>
+                              <div className="text-xs text-gray-500 mt-1">Q&A with the clinician of the day and end-of-day activities</div>
                             </td>
                           </tr>
                         </tbody>
