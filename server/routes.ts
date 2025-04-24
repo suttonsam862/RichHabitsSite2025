@@ -111,6 +111,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let checkoutUrl = null;
       if (event.id === 1) { // Birmingham Slam Camp
         try {
+          console.log('Creating Shopify checkout for Birmingham Slam Camp...');
           // Format the registration data for Shopify
           const registrationData: EventRegistrationData = {
             firstName: validatedData.firstName,
@@ -125,31 +126,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
             medicalReleaseAccepted: validatedData.medicalReleaseAccepted || false,
             option: validatedData.registrationType === 'full' ? 'full' : 'single'
           };
+          console.log('Registration data prepared:', JSON.stringify(registrationData));
           
           // Determine which product variant to use based on registration type
           let variantId = '';
           if (validatedData.registrationType === 'full') {
             variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
+            console.log('Using full camp variant ID:', variantId);
           } else {
             variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.singleDay?.variantId || '';
+            console.log('Using single day variant ID:', variantId);
           }
           
           // If we have a valid variantId, create a checkout in Shopify
           if (variantId) {
+            console.log('Creating checkout with variant ID:', variantId);
             const checkout = await createEventRegistrationCheckout(
               eventId.toString(),
               variantId,
               registrationData
             );
             
+            console.log('Checkout response received:', JSON.stringify(checkout));
+            
             if (checkout && checkout.webUrl) {
               checkoutUrl = checkout.webUrl;
+              console.log('Checkout URL created:', checkoutUrl);
+            } else {
+              console.warn('No webUrl in checkout response');
             }
           } else {
             console.warn('No Shopify variant ID configured for this event registration type');
           }
         } catch (shopifyError) {
           console.error('Error creating Shopify checkout:', shopifyError);
+          if (shopifyError instanceof Error) {
+            console.error('Error message:', shopifyError.message);
+            console.error('Error stack:', shopifyError.stack);
+          }
           // Continue with registration process even if Shopify checkout fails
         }
       }

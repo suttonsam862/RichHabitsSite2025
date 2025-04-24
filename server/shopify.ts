@@ -2,12 +2,17 @@ import fetch from 'node-fetch';
 
 // Environment variables for Shopify API
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY;
-const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN;
+const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY; // This is the Storefront API access token
+const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // This is the Admin API access token
 
 // Validate required environment variables are set
 if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_API_KEY || !SHOPIFY_ACCESS_TOKEN) {
   console.error('Missing required Shopify environment variables');
+  console.log('Available environment vars:', 
+    'SHOPIFY_STORE_DOMAIN:', SHOPIFY_STORE_DOMAIN ? 'Set' : 'Not set',
+    'SHOPIFY_API_KEY:', SHOPIFY_API_KEY ? 'Set' : 'Not set',
+    'SHOPIFY_ACCESS_TOKEN:', SHOPIFY_ACCESS_TOKEN ? 'Set' : 'Not set'
+  );
 }
 
 // Function to fetch a product by ID
@@ -79,6 +84,12 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
       }
     };
 
+    console.log('Making Shopify Storefront API request with:', {
+      endpoint: `https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`,
+      token: SHOPIFY_API_KEY ? 'Token is set' : 'Token is missing',
+      variables
+    });
+    
     // Call the Storefront API
     const response = await fetch(
       `https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`,
@@ -87,6 +98,7 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
         headers: {
           'X-Shopify-Storefront-Access-Token': SHOPIFY_API_KEY as string,
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           query: mutation,
@@ -97,23 +109,37 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Shopify API response not OK:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
       throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    const data = await response.json() as {
-      data?: {
-        checkoutCreate?: {
-          checkout?: {
-            id: string;
-            webUrl: string;
-            subtotalPriceV2: { amount: string; currencyCode: string };
-            totalPriceV2: { amount: string; currencyCode: string };
-          };
-          checkoutUserErrors?: Array<{ code: string; field: string; message: string }>;
-        }
+    const responseText = await response.text();
+    console.log('Raw response from Shopify:', responseText);
+    
+    let data;
+    try {
+      data = JSON.parse(responseText) as {
+        data?: {
+          checkoutCreate?: {
+            checkout?: {
+              id: string;
+              webUrl: string;
+              subtotalPriceV2: { amount: string; currencyCode: string };
+              totalPriceV2: { amount: string; currencyCode: string };
+            };
+            checkoutUserErrors?: Array<{ code: string; field: string; message: string }>;
+          }
+        };
+        errors?: Array<{ message: string }>;
       };
-      errors?: Array<{ message: string }>;
-    };
+    } catch (parseError) {
+      console.error('Error parsing Shopify response:', parseError);
+      throw new Error(`Failed to parse Shopify response: ${responseText.substring(0, 200)}...`);
+    }
     
     // Check for errors in the response
     if (data.errors && data.errors.length > 0) {
@@ -131,6 +157,10 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
     return data.data.checkoutCreate.checkout;
   } catch (error) {
     console.error('Error creating checkout in Shopify:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     throw error;
   }
 }
