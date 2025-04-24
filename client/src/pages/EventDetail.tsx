@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { FruitHuntersBanner } from "@/components/home/FruitHuntersBanner";
 
 // Import event images 
 import event1Image from "../assets/events/event1.png";
@@ -357,6 +358,13 @@ export default function EventDetail() {
               </div>
             </div>
           </div>
+          
+          {/* Fruit Hunters Collaboration Banner */}
+          {event.id === 1 && (
+            <div className="mb-12 relative">
+              <FruitHuntersBanner />
+            </div>
+          )}
           
           {/* Featured Coaches */}
           {event.id === 1 && (
