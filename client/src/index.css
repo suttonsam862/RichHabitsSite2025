@@ -29,6 +29,11 @@
   --destructive-foreground: 60 9.1% 97.8%;
   --ring: 20 14.3% 4.1%;
   --radius: 0rem;
+  
+  /* Fire gradients for wrestling card */
+  --fire-gradient: linear-gradient(135deg, #ff4e00, #ff9a00, #ffd700);
+  --fire-gradient-hover: linear-gradient(135deg, #ff3c00, #ff8500, #ffc700);
+  --fire-border-gradient: linear-gradient(45deg, #ff4e00, #ffc400, #ff4e00);
 }
 
 .dark {
@@ -103,6 +108,66 @@
   
   .event-card:hover {
     @apply translate-y-[-3px] shadow-md;
+  }
+  
+  /* Wrestling event styles */
+  .fire-gradient-btn {
+    background: var(--fire-gradient);
+    transition: background 0.3s ease;
+  }
+  
+  .fire-gradient-btn:hover {
+    background: var(--fire-gradient-hover);
+  }
+  
+  .fire-outline-btn {
+    position: relative;
+    border: none;
+    color: #ff6b00;
+    z-index: 1;
+  }
+  
+  .fire-outline-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    margin: 2px;
+    z-index: -1;
+    border-radius: 2px;
+  }
+  
+  .fire-outline-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--fire-border-gradient);
+    z-index: -2;
+    border-radius: 2px;
+    transition: opacity 0.3s ease;
+  }
+  
+  .fire-outline-btn:hover {
+    color: #ff5500;
+  }
+  
+  .fire-outline-btn:hover::after {
+    opacity: 0.8;
+  }
+  
+  .fire-border {
+    position: relative;
+    border: none !important;
+    overflow: visible !important;
+  }
+  
+  .fire-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: var(--fire-border-gradient);
+    z-index: -1;
+    border-radius: 2px;
   }
 }
 

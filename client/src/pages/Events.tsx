@@ -166,23 +166,31 @@ export default function Events() {
             >
               {/* Animated Edge Top Left */}
               <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[hsl(var(--accent))] z-10"
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[#ff4e00] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 viewport={{ once: true }}
+                style={{ 
+                  borderImage: 'var(--fire-border-gradient) 1',
+                  borderImageSlice: 1
+                }}
               />
               
               {/* Animated Edge Bottom Right */}
               <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[hsl(var(--accent))] z-10"
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[#ffc400] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
+                style={{ 
+                  borderImage: 'var(--fire-border-gradient) 1',
+                  borderImageSlice: 1
+                }}
               />
               
-              <div className="relative overflow-hidden bg-white border border-[hsl(var(--shadow))] shadow-lg rounded-sm p-6">
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 fire-border">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm">
                     <img 
@@ -193,7 +201,7 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className={`inline-block ${events[0].categoryClass} text-xs font-medium px-3 py-1 rounded-sm`}>
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm fire-gradient-btn text-white">
                         {events[0].category}
                       </span>
                     </div>
@@ -208,13 +216,13 @@ export default function Events() {
                     <div className="flex space-x-4">
                       <a 
                         href={`/event/${events[0].id}`}
-                        className="bg-[hsl(var(--accent))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                        className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[0])}
-                        className="border border-[hsl(var(--accent))] text-[hsl(var(--accent))] py-2 px-6 font-medium tracking-wide hover:bg-[hsl(var(--accent)_/_0.1)] transition-colors inline-block rounded-sm"
+                        className="fire-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         Register Now
                       </button>
