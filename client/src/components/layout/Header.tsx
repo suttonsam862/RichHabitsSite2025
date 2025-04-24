@@ -36,7 +36,7 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           <Link href="/shop" className={`nav-link text-sm font-medium ${isActive("/shop")}`}>Shop</Link>
-          <Link href="/custom-apparel" className={`nav-link text-sm font-medium ${isActive("/custom-apparel")}`}>Custom Apparel</Link>
+          <Link href="/custom-apparel" className={`nav-link text-sm font-medium whitespace-nowrap ${isActive("/custom-apparel")}`}>Custom Apparel</Link>
           <Link href="/events" className={`nav-link text-sm font-medium ${isActive("/events")}`}>Events</Link>
           <Link href="/gallery" className={`nav-link text-sm font-medium ${isActive("/gallery")}`}>Gallery</Link>
           <Link href="/about" className={`nav-link text-sm font-medium ${isActive("/about")}`}>About</Link>

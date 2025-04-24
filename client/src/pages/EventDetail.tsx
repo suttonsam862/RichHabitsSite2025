@@ -18,15 +18,15 @@ import event3Image from "../assets/events/event3.png";
 const events = [
   {
     id: 1,
-    title: "USA Wrestling Championship Camp",
+    title: "BIRMINGHAM SLAM CAMP",
     category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "May 20, 2023",
-    time: "9:00 AM - 4:00 PM",
-    location: "National Wrestling Training Center",
-    description: "Intensive championship-level training for elite wrestlers. Train with Olympic coaches and national team members to perfect your technique and prepare for high-level competition.",
-    fullDescription: "Join us for an intensive championship-level training camp designed specifically for elite wrestlers looking to compete at the highest levels. This full-day camp brings together Olympic-level coaches and USA National Team members to provide world-class instruction in an intimate training environment.\n\nParticipants will work through advanced technique development, strategic match planning, conditioning principles specific to wrestling performance, and mental preparation tactics used by world champions. The camp includes both technical instruction and live situation drilling.\n\nWith a 5:1 wrestler-to-coach ratio, you'll receive personalized feedback throughout the day. Participants will also receive video analysis of their technique and a customized development plan to continue progress after the camp.",
-    price: "$125.00",
+    date: "June 19th-21st",
+    time: "9:00 AM - 3:00 PM",
+    location: "Clay Chalkville Middle School",
+    description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
+    fullDescription: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.\n\nAt Birmingham Slam Camp, athletes will experience high-intensity training sessions led by championship-caliber coaches who understand what it takes to compete at the elite level. Our program focuses on advanced technique development, strategic match planning, and mental toughness training.\n\nEach day features specialized training blocks that build on each other, creating a comprehensive wrestling development experience that will transform your approach to the sport. With a limited athlete-to-coach ratio, you'll receive the personalized attention needed to identify and correct technical issues that may be holding you back.",
+    price: "$249",
     image: event1Image,
     gallery: [
       "https://images.unsplash.com/photo-1565992441121-4367c2967103?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
@@ -50,8 +50,8 @@ const events = [
       { time: "9:00 AM - 10:30 AM", activity: "Advanced technique development" },
       { time: "10:30 AM - 12:00 PM", activity: "Strategic match planning and situational drilling" },
       { time: "12:00 PM - 12:45 PM", activity: "Lunch break (provided)" },
-      { time: "12:45 PM - 2:30 PM", activity: "Mental preparation and competition tactics" },
-      { time: "2:30 PM - 4:00 PM", activity: "Live wrestling and personalized coaching" }
+      { time: "12:45 PM - 2:00 PM", activity: "Mental preparation and competition tactics" },
+      { time: "2:00 PM - 3:00 PM", activity: "Live wrestling and personalized coaching" }
     ]
   },
   {
@@ -214,10 +214,10 @@ export default function EventDetail() {
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               <div>
-                <span className={`inline-block ${event.categoryClass} text-xs font-medium px-3 py-1 rounded-sm mb-4`}>
+                <span className={`inline-block ${event.id === 1 ? "fire-gradient-btn text-white" : event.categoryClass} text-xs font-medium px-3 py-1 rounded-sm mb-4`}>
                   {event.category}
                 </span>
-                <h1 className="text-4xl font-serif font-semibold mb-4">{event.title}</h1>
+                <h1 className={`text-4xl font-serif font-bold mb-4 tracking-wide ${event.id === 1 ? "fire-title" : ""}`}>{event.title}</h1>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div className="flex items-center">
@@ -270,12 +270,21 @@ export default function EventDetail() {
                   </div>
                 </div>
                 
-                <Button 
-                  onClick={() => setShowRegistrationDialog(true)}
-                  className="w-full md:w-auto"
-                >
-                  Register Now
-                </Button>
+                {event.id === 1 ? (
+                  <button 
+                    onClick={() => setShowRegistrationDialog(true)}
+                    className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm w-full md:w-auto"
+                  >
+                    Register Now
+                  </button>
+                ) : (
+                  <Button 
+                    onClick={() => setShowRegistrationDialog(true)}
+                    className="w-full md:w-auto"
+                  >
+                    Register Now
+                  </Button>
+                )}
               </div>
               
               <div className="h-[400px] rounded-md overflow-hidden">
@@ -404,15 +413,24 @@ export default function EventDetail() {
           )}
           
           {/* Registration CTA */}
-          <div className="bg-[hsl(var(--accent)_/_0.05)] p-8 rounded-lg text-center">
-            <h2 className="text-2xl font-serif font-semibold mb-2">Ready to join us?</h2>
-            <p className="text-gray-700 mb-6 max-w-2xl mx-auto">Secure your spot now for this exclusive event. Spaces are limited and registration closes one week before the event date.</p>
-            <Button 
-              onClick={() => setShowRegistrationDialog(true)}
-              size="lg"
-            >
-              Register for {event.title}
-            </Button>
+          <div className={`${event.id === 1 ? 'bg-gradient-to-r from-[rgba(255,60,0,0.05)] via-[rgba(255,150,0,0.07)] to-[rgba(255,190,0,0.05)]' : 'bg-[hsl(var(--accent)_/_0.05)]'} p-8 rounded-lg text-center`}>
+            <h2 className={`text-2xl font-serif font-semibold mb-2 ${event.id === 1 ? 'fire-title' : ''}`}>Ready to join us?</h2>
+            <p className="text-gray-700 mb-6 max-w-2xl mx-auto font-medium">Secure your spot now for this exclusive event. Spaces are limited and registration closes one week before the event date.</p>
+            {event.id === 1 ? (
+              <button 
+                onClick={() => setShowRegistrationDialog(true)}
+                className="fire-gradient-btn text-white py-3 px-8 font-medium tracking-wide inline-block rounded-sm"
+              >
+                Register for {event.title}
+              </button>
+            ) : (
+              <Button 
+                onClick={() => setShowRegistrationDialog(true)}
+                size="lg"
+              >
+                Register for {event.title}
+              </Button>
+            )}
           </div>
         </Container>
       </div>
