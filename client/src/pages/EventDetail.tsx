@@ -9,6 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
+// Import event images 
+import event1Image from "../assets/events/event1.jpg";
+import event2Image from "../assets/events/event2.jpg";
+import event3Image from "../assets/events/event3.jpg";
+
 // Type for events with static data (will be replaced with API data later)
 const events = [
   {
@@ -22,7 +27,7 @@ const events = [
     description: "Intensive training for high school point guards focusing on ball handling, vision, and leadership. Led by former professional players and collegiate coaches.",
     fullDescription: "This intensive one-day clinic focuses exclusively on developing elite point guard skills for serious high school basketball players. Our coaching staff includes former professional players and current collegiate coaches who specialize in guard development.\n\nParticipants will work through a series of drills and scenarios designed to improve ball handling under pressure, court vision, leadership communication, pick and roll decision making, and defensive techniques specific to the point guard position.\n\nThe clinic maintains a 6:1 player-to-coach ratio to ensure personalized feedback. Players will receive video analysis of their form and a personalized development plan to continue their improvement after the clinic.",
     price: "$89.00",
-    image: "https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    image: event1Image,
     gallery: [
       "https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1577471489310-7031584568dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
@@ -59,7 +64,7 @@ const events = [
     description: "Professional training methods to improve acceleration, lateral movement, and game speed. This camp is designed for football players looking to enhance their athletic performance.",
     fullDescription: "Our Speed & Agility Camp brings professional-level training methods to serious football players looking to gain a competitive edge. Using science-based approaches derived from Olympic and professional sports training, participants will learn techniques to dramatically improve their first-step explosiveness, directional changes, and overall game speed.\n\nThe camp covers acceleration mechanics, deceleration control, footwork precision, and sport-specific movement patterns. Athletes will undergo video analysis to identify their movement inefficiencies, followed by customized drills to address their specific development needs.\n\nThis camp is led by certified strength and conditioning specialists with experience training collegiate and professional football players. The techniques taught are applicable to all positions and will translate directly to improved on-field performance.",
     price: "$125.00",
-    image: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    image: event2Image,
     gallery: [
       "https://images.unsplash.com/photo-1541252260730-0412e8e2108e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
@@ -96,7 +101,7 @@ const events = [
     description: "Essential guidance for athletes and parents navigating the college recruitment process. Learn about eligibility requirements, communication strategies, and scholarship opportunities.",
     fullDescription: "The college recruiting process can be overwhelming for athletes and parents alike. Our comprehensive workshop cuts through the confusion and provides a clear roadmap for student-athletes looking to compete at the collegiate level.\n\nLed by former college coaches and current recruiting consultants, this workshop covers all aspects of the recruitment journey: understanding NCAA, NAIA, and NJCAA eligibility requirements; creating effective highlight videos and athletic resumes; initiating and maintaining communication with coaches; navigating scholarship offers and financial aid; and preparing for campus visits and interviews.\n\nAttendees will receive a detailed workbook with timelines, templates, and checklists to guide them through each step of the process. Parents and athletes will leave with actionable strategies to increase visibility to college programs and maximize opportunities for athletic scholarships.",
     price: "$45.00",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    image: event3Image,
     gallery: [
       "https://images.unsplash.com/photo-1523289333742-be1143f6b766?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1579389083078-4e7018379f7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"

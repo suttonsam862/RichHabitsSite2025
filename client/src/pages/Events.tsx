@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 
+// Import event images
+import event1Image from "../assets/events/event1.jpg";
+import event2Image from "../assets/events/event2.jpg";
+import event3Image from "../assets/events/event3.jpg";
+
 // Static events data
 const events = [
   {
@@ -21,7 +26,7 @@ const events = [
     location: "Riverfront Sports Complex",
     description: "Intensive training for high school point guards focusing on ball handling, vision, and leadership. Led by former professional players and collegiate coaches.",
     price: "$89.00",
-    image: "https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+    image: event1Image
   },
   {
     id: 2,
@@ -33,7 +38,7 @@ const events = [
     location: "Metro Athletic Fields",
     description: "Professional training methods to improve acceleration, lateral movement, and game speed. This camp is designed for football players looking to enhance their athletic performance.",
     price: "$125.00",
-    image: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+    image: event2Image
   },
   {
     id: 3,
@@ -45,7 +50,7 @@ const events = [
     location: "Community Center Auditorium",
     description: "Essential guidance for athletes and parents navigating the college recruitment process. Learn about eligibility requirements, communication strategies, and scholarship opportunities.",
     price: "$45.00",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+    image: event3Image
   },
   {
     id: 4,
