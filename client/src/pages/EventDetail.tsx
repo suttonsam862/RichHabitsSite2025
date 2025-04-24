@@ -359,13 +359,6 @@ export default function EventDetail() {
             </div>
           </div>
           
-          {/* Fruit Hunters Collaboration Banner */}
-          {event.id === 1 && (
-            <div className="mb-12 relative">
-              <FruitHuntersBanner />
-            </div>
-          )}
-          
           {/* Featured Coaches */}
           {event.id === 1 && (
             <div className="mb-12 relative">
@@ -454,13 +447,6 @@ export default function EventDetail() {
                     <p className="mb-4">
                       Our curriculum is designed for wrestlers from 2nd grade through graduating seniors. With enrollment capped at 200 participants, each athlete receives personalized coaching during our daily sessions from 9 AM to 4 PM, featuring technique development, competitive scenarios, and strategic training.
                     </p>
-                    
-                    <div className="bg-white border-l-4 border-gray-500 p-4 my-6 rounded-r-md shadow-sm">
-                      <h4 className="font-bold text-gray-800 mb-2">EXCLUSIVE PARTNERSHIP: FRUIT HUNTERS</h4>
-                      <p className="text-gray-700 mb-0">
-                        We're excited to announce our exclusive partnership with Fruit Hunters, America's premier exotic fruit company! All participants will receive daily fresh fruit nutrition packs, and our nutrition seminars will feature custom recipes designed by their expert team specifically for wrestlers.
-                      </p>
-                    </div>
                     
                     <p className="mb-4">
                       Every camper receives a limited-edition camp t-shirt and access to our Coach Bonus program: bring 10+ wrestlers from your program and receive 10% off your next Rich Habits custom gear order.
@@ -958,6 +944,13 @@ export default function EventDetail() {
               >
                 Register for {event.title}
               </Button>
+            </div>
+          )}
+          
+          {/* Fruit Hunters Banner - Positioned at the bottom of the page */}
+          {event.id === 1 && (
+            <div className="mt-16 mb-8">
+              <FruitHuntersBanner />
             </div>
           )}
         </Container>
