@@ -5,17 +5,19 @@ const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY; // This is the Storefront API access token
 const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // This is the Admin API access token
 
+// Log available environment variables
+console.log('Shopify environment vars:', 
+  'SHOPIFY_STORE_DOMAIN:', SHOPIFY_STORE_DOMAIN ? 'Set' : 'Not set',
+  'SHOPIFY_API_KEY:', SHOPIFY_API_KEY ? 'Set' : 'Not set', 
+  'SHOPIFY_ACCESS_TOKEN:', SHOPIFY_ACCESS_TOKEN ? 'Set' : 'Not set'
+);
+
 // Validate required environment variables are set
 if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_API_KEY || !SHOPIFY_ACCESS_TOKEN) {
   console.error('Missing required Shopify environment variables');
-  console.log('Available environment vars:', 
-    'SHOPIFY_STORE_DOMAIN:', SHOPIFY_STORE_DOMAIN ? 'Set' : 'Not set',
-    'SHOPIFY_API_KEY:', SHOPIFY_API_KEY ? 'Set' : 'Not set',
-    'SHOPIFY_ACCESS_TOKEN:', SHOPIFY_ACCESS_TOKEN ? 'Set' : 'Not set'
-  );
 }
 
-// Function to fetch a product by ID
+// Function to fetch a product by ID using Admin API
 export async function getProductById(productId: string) {
   try {
     const response = await fetch(
@@ -46,6 +48,12 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
     // Prepare custom attributes if provided
     const formattedAttributes = customAttributes ? 
       customAttributes.map(attr => ({ key: attr.key, value: String(attr.value) })) : [];
+    
+    console.log('Creating checkout with data:', {
+      variantId,
+      quantity,
+      customAttributes: formattedAttributes.length
+    });
     
     // Create checkout mutation for Storefront API
     const mutation = `
@@ -83,13 +91,12 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
         customAttributes: formattedAttributes
       }
     };
-
+    
     console.log('Making Shopify Storefront API request with:', {
       endpoint: `https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`,
-      token: SHOPIFY_API_KEY ? 'Token is set' : 'Token is missing',
-      variables
+      tokenPresent: SHOPIFY_API_KEY ? 'yes' : 'no'
     });
-    
+
     // Call the Storefront API
     const response = await fetch(
       `https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`,
@@ -107,53 +114,49 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
       }
     );
 
+    // Parse response
+    const responseText = await response.text();
+    
+    // Handle non-200 responses
     if (!response.ok) {
-      const errorText = await response.text();
       console.error('Shopify API response not OK:', {
         status: response.status,
         statusText: response.statusText,
-        body: errorText
+        body: responseText
       });
-      throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${responseText}`);
     }
-
-    const responseText = await response.text();
-    console.log('Raw response from Shopify:', responseText);
     
+    // Parse JSON response
     let data;
     try {
-      data = JSON.parse(responseText) as {
-        data?: {
-          checkoutCreate?: {
-            checkout?: {
-              id: string;
-              webUrl: string;
-              subtotalPriceV2: { amount: string; currencyCode: string };
-              totalPriceV2: { amount: string; currencyCode: string };
-            };
-            checkoutUserErrors?: Array<{ code: string; field: string; message: string }>;
-          }
-        };
-        errors?: Array<{ message: string }>;
-      };
+      data = JSON.parse(responseText);
+      console.log('Checkout response received:', JSON.stringify(data, null, 2));
     } catch (parseError) {
       console.error('Error parsing Shopify response:', parseError);
       throw new Error(`Failed to parse Shopify response: ${responseText.substring(0, 200)}...`);
     }
     
-    // Check for errors in the response
+    // Check for GraphQL errors
     if (data.errors && data.errors.length > 0) {
+      console.error('GraphQL errors in response:', data.errors);
       throw new Error(`GraphQL Error: ${data.errors[0].message}`);
     }
     
-    if (data.data?.checkoutCreate?.checkoutUserErrors && data.data.checkoutCreate.checkoutUserErrors.length > 0) {
+    // Check for checkout user errors
+    if (data.data?.checkoutCreate?.checkoutUserErrors && 
+        data.data.checkoutCreate.checkoutUserErrors.length > 0) {
+      console.error('Checkout user errors:', data.data.checkoutCreate.checkoutUserErrors);
       throw new Error(`Checkout Error: ${data.data.checkoutCreate.checkoutUserErrors[0].message}`);
     }
     
+    // Check for missing checkout data
     if (!data.data?.checkoutCreate?.checkout) {
+      console.error('No checkout data in response:', data);
       throw new Error('No checkout data returned from Shopify');
     }
     
+    // Return checkout data
     return data.data.checkoutCreate.checkout;
   } catch (error) {
     console.error('Error creating checkout in Shopify:', error);
