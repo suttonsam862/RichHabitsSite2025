@@ -8,7 +8,7 @@ import {
   insertNewsletterSubscriberSchema
 } from "@shared/schema";
 import { z } from "zod";
-import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData } from "./shopify";
+import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
 
 // Shopify configuration - in a real app, store these in environment variables
 const SHOPIFY_ADMIN_API_KEY = process.env.SHOPIFY_ADMIN_API_KEY || "";
@@ -223,6 +223,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API route to list products from Shopify
+  app.get("/api/shopify/products", async (req, res) => {
+    try {
+      console.log('Listing products from Shopify...');
+      const products = await listProducts();
+      
+      // Extract variant information for easier reference
+      const productsWithVariants = products.map(product => {
+        return {
+          id: product.id,
+          title: product.title,
+          variants: product.variants.map((variant: any) => ({
+            id: variant.id,
+            title: variant.title,
+            price: variant.price,
+            globalId: `gid://shopify/ProductVariant/${variant.id}`
+          }))
+        };
+      });
+      
+      res.json({
+        products: productsWithVariants
+      });
+    } catch (error) {
+      console.error('Error listing Shopify products:', error);
+      res.status(500).json({ 
+        message: "Error listing Shopify products", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+  
   // Test endpoint for Shopify
   app.get("/api/test-shopify-checkout", async (req, res) => {
     try {

@@ -44,6 +44,33 @@ export async function getProductById(productId: string) {
   }
 }
 
+// Function to list products using Admin API
+export async function listProducts() {
+  try {
+    console.log('Fetching products from Shopify Admin API');
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=10`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { products: any[] };
+    console.log(`Found ${data.products.length} products`);
+    return data.products;
+  } catch (error) {
+    console.error('Error listing products from Shopify:', error);
+    throw error;
+  }
+}
+
 // Function to create a checkout with a product variant using Storefront API
 export async function createCheckout(variantId: string, quantity: number = 1, customAttributes?: any[]) {
   try {
@@ -57,23 +84,25 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
       customAttributes: formattedAttributes.length
     });
     
-    // Create checkout mutation for Storefront API
+    // Create cart using the latest Shopify Storefront API
     const mutation = `
-      mutation checkoutCreate($input: CheckoutCreateInput!) {
-        checkoutCreate(input: $input) {
-          checkout {
+      mutation cartCreate($input: CartInput!) {
+        cartCreate(input: $input) {
+          cart {
             id
-            webUrl
-            subtotalPriceV2 {
-              amount
-              currencyCode
-            }
-            totalPriceV2 {
-              amount
-              currencyCode
+            checkoutUrl
+            cost {
+              subtotalAmount {
+                amount
+                currencyCode
+              }
+              totalAmount {
+                amount
+                currencyCode
+              }
             }
           }
-          checkoutUserErrors {
+          userErrors {
             code
             field
             message
@@ -84,13 +113,13 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
 
     const variables = {
       input: {
-        lineItems: [
+        lines: [
           {
-            variantId: variantId,
+            merchandiseId: variantId,
             quantity: quantity
           }
         ],
-        customAttributes: formattedAttributes
+        attributes: formattedAttributes
       }
     };
     
@@ -145,21 +174,27 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
       throw new Error(`GraphQL Error: ${data.errors[0].message}`);
     }
     
-    // Check for checkout user errors
-    if (data.data?.checkoutCreate?.checkoutUserErrors && 
-        data.data.checkoutCreate.checkoutUserErrors.length > 0) {
-      console.error('Checkout user errors:', data.data.checkoutCreate.checkoutUserErrors);
-      throw new Error(`Checkout Error: ${data.data.checkoutCreate.checkoutUserErrors[0].message}`);
+    // Check for cart user errors
+    if (data.data?.cartCreate?.userErrors && 
+        data.data.cartCreate.userErrors.length > 0) {
+      console.error('Cart user errors:', data.data.cartCreate.userErrors);
+      throw new Error(`Cart Error: ${data.data.cartCreate.userErrors[0].message}`);
     }
     
-    // Check for missing checkout data
-    if (!data.data?.checkoutCreate?.checkout) {
-      console.error('No checkout data in response:', data);
-      throw new Error('No checkout data returned from Shopify');
+    // Check for missing cart data
+    if (!data.data?.cartCreate?.cart) {
+      console.error('No cart data in response:', data);
+      throw new Error('No cart data returned from Shopify');
     }
     
-    // Return checkout data
-    return data.data.checkoutCreate.checkout;
+    // Create checkout object with the structure our app expects
+    const cart = data.data.cartCreate.cart;
+    return {
+      id: cart.id,
+      webUrl: cart.checkoutUrl,
+      subtotalPrice: cart.cost?.subtotalAmount?.amount,
+      totalPrice: cart.cost?.totalAmount?.amount
+    };
   } catch (error) {
     console.error('Error creating checkout in Shopify:', error);
     if (error instanceof Error) {
