@@ -1,37 +1,31 @@
 import React from 'react';
-import { Play } from 'lucide-react';
 
 interface VideoSectionProps {
-  image: string;
+  src: string;
   alt: string;
   title: string;
   description: string;
 }
 
-const VideoSection: React.FC<VideoSectionProps> = ({ image, alt, title, description }) => {
+const VideoSection: React.FC<VideoSectionProps> = ({ src, alt, title, description }) => {
   return (
     <div className="fruit-video-section">
-      <div className="relative overflow-hidden rounded-md h-full bg-gray-100">
-        {/* Image placeholder with play icon - to be replaced with video later */}
-        <div className="relative h-full">
-          <div 
-            className="w-full h-full bg-gray-200 flex items-center justify-center"
-            style={{
-              backgroundImage: image ? `url(${image})` : 'none',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="play-button">
-                <Play className="h-6 w-6 text-gray-700" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-          <h3 className="text-white text-sm font-bold">{title}</h3>
-          <p className="text-white/80 text-xs mt-1">{description}</p>
+      <div className="relative overflow-hidden h-full bg-gray-100">
+        {/* Video element for looping MP4 videos */}
+        <video 
+          className="w-full h-full object-cover"
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+          aria-label={alt}
+        >
+          <source src={src} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+          <h3 className="text-white text-xs font-bold">{title}</h3>
+          <p className="text-white/80 text-[10px] mt-0.5 line-clamp-1">{description}</p>
         </div>
       </div>
     </div>
@@ -39,40 +33,40 @@ const VideoSection: React.FC<VideoSectionProps> = ({ image, alt, title, descript
 };
 
 export function FruitHuntersBanner() {
-  // Placeholder fruit sections - will be replaced with actual video content
+  // Video paths for the MP4 files - replace these with actual MP4 files
   const fruitSections = [
     {
-      image: "https://images.unsplash.com/photo-1603833665858-e61d17a86224?q=80&w=2627&auto=format&fit=crop",
+      src: "/videos/dragon-fruit.mp4", // Replace with actual MP4 file
       alt: "Dragon fruit being sliced", 
       title: "Dragon Fruit",
       description: "Rich in antioxidants & vitamin C"
     },
     {
-      image: "https://images.unsplash.com/photo-1620413808828-7d1908920395?q=80&w=2629&auto=format&fit=crop",
+      src: "/videos/mangosteen.mp4", // Replace with actual MP4 file
       alt: "Fresh mangosteen",
       title: "Mangosteen",
       description: "The 'queen of fruits' with immune benefits"
     },
     {
-      image: "https://images.unsplash.com/photo-1604495772146-0fec7e9adbdc?q=80&w=2574&auto=format&fit=crop",
+      src: "/videos/passion-fruit.mp4", // Replace with actual MP4 file
       alt: "Passion fruit on the vine",
       title: "Passion Fruit",
       description: "Perfect post-workout recovery fruit"
     },
     {
-      image: "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?q=80&w=2670&auto=format&fit=crop",
+      src: "/videos/jackfruit.mp4", // Replace with actual MP4 file
       alt: "Jackfruit being prepared",
       title: "Jackfruit",
       description: "Nutrient-dense for muscle recovery"
     },
     {
-      image: "https://images.unsplash.com/photo-1553279756-bad5d12533dd?q=80&w=2574&auto=format&fit=crop",
+      src: "/videos/star-fruit.mp4", // Replace with actual MP4 file
       alt: "Star fruit slices arranged",
       title: "Star Fruit",
       description: "Hydrating and rich in potassium"
     },
     {
-      image: "https://images.unsplash.com/photo-1617112848923-cc2234396a8d?q=80&w=2574&auto=format&fit=crop",
+      src: "/videos/rambutan.mp4", // Replace with actual MP4 file
       alt: "Rambutan fruit display",
       title: "Rambutan",
       description: "Energy-boosting tropical delight"
@@ -101,11 +95,11 @@ export function FruitHuntersBanner() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[500px]">
+        <div className="flex overflow-hidden h-[240px] gap-1 rounded-lg shadow-md">
           {fruitSections.map((section, index) => (
             <VideoSection
               key={index}
-              image={section.image}
+              src={section.src}
               alt={section.alt}
               title={section.title}
               description={section.description}
