@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FruitHuntersBanner } from "@/components/home/FruitHuntersBanner";
+import { FruitHuntersCompact } from "@/components/home/FruitHuntersCompact";
 
 // Import event images 
 import event1Image from "../assets/events/event1.png";
@@ -454,6 +455,8 @@ export default function EventDetail() {
                     <p className="mb-4">
                       Pricing is straightforward—$249 for the full three-day experience or $149 for a single-day pass. Cancellations can be addressed directly with our team for refund processing. All participants (or parents/guardians for minors) must sign a medical release waiver.
                     </p>
+                    
+                    <FruitHuntersCompact />
                   </div>
                   
                   <div className="mt-10">
