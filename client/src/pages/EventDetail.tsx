@@ -860,17 +860,25 @@ export default function EventDetail() {
               const data = await response.json();
               console.log('Registration success response:', data);
               
-              // Show success message
-              toast({
-                title: "Registration successful",
-                description: "Check your email for confirmation details.",
-              });
-              
-              // If there's a checkout URL, redirect to Shopify checkout
+              // Show success message with redirection info if checkout URL exists
               if (data.checkoutUrl) {
-                window.location.href = data.checkoutUrl;
+                toast({
+                  title: "Registration successful",
+                  description: "You're being redirected to complete payment. Please wait...",
+                  duration: 5000,
+                });
+                
+                // Short delay before redirecting to give the toast time to display
+                setTimeout(() => {
+                  window.location.href = data.checkoutUrl;
+                }, 1500);
               } else {
-                // If no checkout URL, just close the dialog
+                toast({
+                  title: "Registration successful",
+                  description: "Check your email for confirmation details.",
+                });
+                
+                // Close the dialog if no checkout needed
                 setShowRegistrationDialog(false);
               }
             } catch (error) {
