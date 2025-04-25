@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet";
 
 // Import event images
 import event1Image from "../assets/events/event1.png";
-import event2Image from "../assets/events/event2.png";
+import event2Image from "../assets/events/cenzo.png";
 import event3Image from "../assets/events/event3.png";
 
 // Static events data
@@ -208,7 +208,7 @@ export default function Events() {
             >
               {/* Animated Edge Top Right */}
               <motion.div 
-                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[hsl(var(--accent2))] z-10"
+                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[#041e42] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
@@ -217,14 +217,14 @@ export default function Events() {
               
               {/* Animated Edge Bottom Left */}
               <motion.div 
-                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[hsl(var(--accent2))] z-10"
+                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[#1e88e5] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
                 viewport={{ once: true }}
               />
               
-              <div className="relative overflow-hidden bg-white border border-[hsl(var(--shadow))] shadow-lg rounded-sm p-6">
+              <div className="relative overflow-hidden bg-white border-2 border-[#041e42] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(30, 136, 229, 0.15)' }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm order-1 md:order-2">
                     <img 
@@ -235,11 +235,11 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2 order-2 md:order-1">
                     <div className="mb-4">
-                      <span className={`inline-block ${events[1].categoryClass} text-xs font-medium px-3 py-1 rounded-sm`}>
+                      <span className="inline-block bg-[#041e42]/10 text-[#041e42] text-xs font-medium px-3 py-1 rounded-sm">
                         {events[1].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #c79c00, #ffcf40)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                       {events[1].title}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -252,13 +252,13 @@ export default function Events() {
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[1].id}`}
-                        className="bg-[hsl(var(--accent2))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                        className="bg-[#041e42] text-white py-2 px-6 font-medium tracking-wide hover:bg-[#0c2a5c] transition-colors inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[1])}
-                        className="border border-[hsl(var(--accent2))] text-[hsl(var(--accent2))] py-2 px-6 font-medium tracking-wide hover:bg-[hsl(var(--accent2)_/_0.1)] transition-colors inline-block rounded-sm"
+                        className="border border-[#041e42] text-[#041e42] py-2 px-6 font-medium tracking-wide hover:bg-[#e6f2ff] transition-colors inline-block rounded-sm"
                       >
                         Register Now
                       </button>
@@ -462,11 +462,12 @@ export default function Events() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white p-6 shadow-sm"
+                className="bg-white p-6 shadow-md"
+                style={{ border: '1px solid #041e42', boxShadow: '0 2px 10px rgba(30, 136, 229, 0.15)' }}
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[hsl(var(--secondary))] rounded-full flex items-center justify-center mr-4">
-                    <span className="text-lg font-medium">SM</span>
+                  <div className="w-12 h-12 bg-[#041e42] text-white rounded-full flex items-center justify-center mr-4">
+                    <span className="text-lg font-medium">MC</span>
                   </div>
                   <div>
                     <h4 className="font-medium">Mike Chen</h4>
