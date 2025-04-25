@@ -3,11 +3,55 @@ import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { fetchProducts } from "@/lib/shopify";
 import { Product } from "@/types/shopify";
+import { apiRequest } from "@/lib/queryClient";
 
 // Retail Collection ID from your Shopify store
-const RETAIL_COLLECTION_ID = "gid://shopify/Collection/444853616877";
+const RETAIL_COLLECTION_ID = "444853616877";
+
+// Sample retail products for when API fails
+const retailProducts: Product[] = [
+  {
+    id: "1",
+    title: "Performance Track Jacket",
+    handle: "performance-track-jacket",
+    description: "Lightweight and breathable",
+    image: "/images/wrestlers/DSC09491.JPG",
+    price: "$65.00",
+    availableForSale: true,
+    variants: []
+  },
+  {
+    id: "2",
+    title: "Competition Singlet",
+    handle: "competition-singlet",
+    description: "Professional grade wrestling gear",
+    image: "/images/wrestlers/DSC09374--.JPG",
+    price: "$85.00",
+    availableForSale: true,
+    variants: []
+  },
+  {
+    id: "3",
+    title: "Training Shorts",
+    handle: "training-shorts",
+    description: "Durable and comfortable",
+    image: "/images/wrestlers/DSC07386.JPG",
+    price: "$45.00",
+    availableForSale: true,
+    variants: []
+  },
+  {
+    id: "4",
+    title: "Team Warmup Pullover",
+    handle: "team-warmup-pullover",
+    description: "Stay warm before competition",
+    image: "/images/wrestlers/DSC00423.JPG",
+    price: "$75.00",
+    availableForSale: true,
+    variants: []
+  }
+];
 
 export function FeaturedCollections() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -20,21 +64,13 @@ export function FeaturedCollections() {
     async function loadRetailProducts() {
       try {
         setIsLoading(true);
-        // Try to use the Shopify API integration directly
-        try {
-          const fetchedShopifyProducts = await fetchProducts(RETAIL_COLLECTION_ID);
-          if (fetchedShopifyProducts && fetchedShopifyProducts.length > 0) {
-            setProducts(fetchedShopifyProducts);
-            setIsLoading(false);
-            return; // Exit early if we successfully got products
-          }
-        } catch (shopifyError) {
-          console.error("Shopify API error:", shopifyError);
-          // Continue to fallback method
-        }
         
-        // Fallback: Try using the server API
-        const response = await fetch(`/api/products?collection=444853616877`);
+        // Use a direct fetch to avoid the error
+        const response = await fetch(`/api/products?collection=${RETAIL_COLLECTION_ID}`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.statusText}`);
         }
@@ -46,97 +82,15 @@ export function FeaturedCollections() {
         } else {
           // For development, use dummy data
           setError("No products found in the Retail Collection");
-          // Set some dummy products for development
-          setProducts([
-            {
-              id: "1",
-              title: "Performance Track Jacket",
-              handle: "performance-track-jacket",
-              description: "Lightweight and breathable",
-              image: "/images/wrestlers/DSC09491.JPG",
-              price: "$65.00",
-              availableForSale: true,
-              variants: []
-            },
-            {
-              id: "2",
-              title: "Competition Singlet",
-              handle: "competition-singlet",
-              description: "Professional grade wrestling gear",
-              image: "/images/wrestlers/DSC09374--.JPG",
-              price: "$85.00",
-              availableForSale: true,
-              variants: []
-            },
-            {
-              id: "3",
-              title: "Training Shorts",
-              handle: "training-shorts",
-              description: "Durable and comfortable",
-              image: "/images/wrestlers/DSC07386.JPG",
-              price: "$45.00",
-              availableForSale: true,
-              variants: []
-            },
-            {
-              id: "4",
-              title: "Team Warmup Pullover",
-              handle: "team-warmup-pullover",
-              description: "Stay warm before competition",
-              image: "/images/wrestlers/DSC00423.JPG",
-              price: "$75.00",
-              availableForSale: true,
-              variants: []
-            }
-          ]);
+          // Set retail products for development/demo purposes
+          setProducts(retailProducts);
         }
       } catch (err) {
         console.error("Failed to fetch retail products:", err);
         setError("Failed to load products");
         
-        // Set fallback products for demo purposes
-        setProducts([
-          {
-            id: "1",
-            title: "Performance Track Jacket",
-            handle: "performance-track-jacket",
-            description: "Lightweight and breathable",
-            image: "/images/wrestlers/DSC09491.JPG",
-            price: "$65.00",
-            availableForSale: true,
-            variants: []
-          },
-          {
-            id: "2",
-            title: "Competition Singlet",
-            handle: "competition-singlet",
-            description: "Professional grade wrestling gear",
-            image: "/images/wrestlers/DSC09374--.JPG",
-            price: "$85.00",
-            availableForSale: true,
-            variants: []
-          },
-          {
-            id: "3",
-            title: "Training Shorts",
-            handle: "training-shorts",
-            description: "Durable and comfortable",
-            image: "/images/wrestlers/DSC07386.JPG",
-            price: "$45.00",
-            availableForSale: true,
-            variants: []
-          },
-          {
-            id: "4",
-            title: "Team Warmup Pullover",
-            handle: "team-warmup-pullover",
-            description: "Stay warm before competition",
-            image: "/images/wrestlers/DSC00423.JPG",
-            price: "$75.00",
-            availableForSale: true,
-            variants: []
-          }
-        ]);
+        // Set retail products for development/demo purposes
+        setProducts(retailProducts);
       } finally {
         setIsLoading(false);
       }
