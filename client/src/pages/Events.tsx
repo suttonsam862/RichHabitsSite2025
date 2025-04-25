@@ -9,10 +9,11 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 
-// Import event images
+// Import event images and videos
 import event1Image from "../assets/events/event1.png";
 import event2Image from "../assets/events/cenzo.png";
 import event3Image from "../assets/events/event3.png";
+import birminghamVideo from "@assets/0424.mov";
 
 // Static events data
 const events = [
@@ -156,11 +157,15 @@ export default function Events() {
               
               <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 fire-border">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm">
-                    <img 
-                      src={events[0].image} 
-                      alt={events[0].title} 
+                  <div className="h-64 overflow-hidden rounded-sm relative">
+                    <video 
+                      src={birminghamVideo} 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      style={{ position: "absolute", top: 0, left: 0 }}
                     />
                   </div>
                   <div className="md:col-span-2">
