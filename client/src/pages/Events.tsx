@@ -14,6 +14,7 @@ import event1Image from "../assets/events/event1.png";
 import event2Image from "../assets/events/cenzo.png";
 import event3Image from "../assets/events/event3.png";
 import birminghamVideo from "@assets/0424.mov";
+import champCampVideo from "@assets/04243.mov";
 
 // Static events data
 const events = [
@@ -236,12 +237,22 @@ export default function Events() {
               
               <div className="relative overflow-hidden bg-white border-2 border-[#041e42] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(30, 136, 229, 0.15)' }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm order-1 md:order-2">
-                    <img 
-                      src={events[1].image} 
-                      alt={events[1].title} 
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                    />
+                  <div className="h-64 overflow-hidden rounded-sm order-1 md:order-2 relative">
+                    <video
+                      src={champCampVideo}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover absolute inset-0"
+                      style={{ filter: 'brightness(1.1) contrast(1.1)' }}
+                    >
+                      <img 
+                        src={events[1].image} 
+                        alt={events[1].title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </video>
                   </div>
                   <div className="md:col-span-2 order-2 md:order-1">
                     <div className="mb-4">
