@@ -263,6 +263,7 @@
   font-weight: 800;
   position: relative;
   display: inline-block;
+  -webkit-text-stroke: 1px black;
   animation: title-glow 3s ease-in-out infinite;
   filter: drop-shadow(0 0 1px rgba(255, 160, 100, 0.8));
 }
