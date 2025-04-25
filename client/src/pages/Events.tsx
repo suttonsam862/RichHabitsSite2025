@@ -21,7 +21,7 @@ const events = [
     title: "BIRMINGHAM SLAM CAMP",
     category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "June 19th-21st",
+    date: "June 19th-21st, 2025",
     time: "9:00 AM - 3:00 PM",
     location: "Clay Chalkville Middle School",
     description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
@@ -30,63 +30,27 @@ const events = [
   },
   {
     id: 2,
-    title: "Speed & Agility Camp",
-    category: "Football",
+    title: "NATIONAL CHAMP CAMP",
+    category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent2)_/_0.1)] text-[hsl(var(--accent2))]",
-    date: "September 3, 2023",
-    time: "10:00 AM - 3:00 PM",
-    location: "Metro Athletic Fields",
-    description: "Professional training methods to improve acceleration, lateral movement, and game speed. This camp is designed for football players looking to enhance their athletic performance.",
-    price: "$125.00",
+    date: "July 8th-10th, 2025",
+    time: "9:00 AM - 4:00 PM",
+    location: "Las Vegas, NV",
+    description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
+    price: "$349",
     image: event2Image
   },
   {
     id: 3,
-    title: "College Recruiting Workshop",
-    category: "Multi-Sport",
+    title: "RICH HABITS RECRUITING CLINIC",
+    category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent3)_/_0.1)] text-[hsl(var(--accent3))]",
-    date: "October 12, 2023",
-    time: "6:00 PM - 8:30 PM",
-    location: "Community Center Auditorium",
-    description: "Essential guidance for athletes and parents navigating the college recruitment process. Learn about eligibility requirements, communication strategies, and scholarship opportunities.",
-    price: "$45.00",
+    date: "August 15th-16th, 2025",
+    time: "10:00 AM - 5:00 PM",
+    location: "Arlington, TX",
+    description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, and professional video profiling to enhance recruitment portfolios.",
+    price: "$195",
     image: event3Image
-  },
-  {
-    id: 4,
-    title: "Volleyball Skills Clinic",
-    category: "Volleyball",
-    categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "November 5, 2023",
-    time: "9:00 AM - 4:00 PM",
-    location: "Central High School Gymnasium",
-    description: "Comprehensive skills development for intermediate to advanced volleyball players. Focus on serving, passing, setting, hitting, and defensive techniques.",
-    price: "$95.00",
-    image: "https://images.unsplash.com/photo-1576171482655-5134264394b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 5,
-    title: "Winter Basketball League",
-    category: "Basketball",
-    categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "December 10, 2023 - February 25, 2024",
-    time: "Games on Saturdays",
-    location: "Regional Sports Center",
-    description: "Competitive basketball league for high school players looking to stay sharp during the off-season. Teams will play 10 regular season games plus playoffs.",
-    price: "$250 per team",
-    image: "https://images.unsplash.com/photo-1518650868927-5d1f17c7de7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 6,
-    title: "Track & Field Fundamentals",
-    category: "Track",
-    categoryClass: "bg-[hsl(var(--accent3)_/_0.1)] text-[hsl(var(--accent3))]",
-    date: "January 15, 2024",
-    time: "10:00 AM - 3:00 PM",
-    location: "University Indoor Track Facility",
-    description: "Introduction to track and field events with specialized coaching for sprints, jumps, and throws. Perfect for beginners looking to explore the sport.",
-    price: "$75.00",
-    image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
   }
 ];
 
@@ -275,7 +239,9 @@ export default function Events() {
                         {events[1].category}
                       </span>
                     </div>
-                    <h3 className="text-2xl font-medium mb-3">{events[1].title}</h3>
+                    <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #c79c00, #ffcf40)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                      {events[1].title}
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
@@ -359,7 +325,9 @@ export default function Events() {
                         {events[2].category}
                       </span>
                     </div>
-                    <h3 className="text-2xl font-medium mb-3">{events[2].title}</h3>
+                    <h3 className="text-3xl font-bold mb-3" style={{ color: 'hsl(var(--accent3))' }}>
+                      {events[2].title}
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
@@ -482,11 +450,11 @@ export default function Events() {
                     <span className="text-lg font-medium">JD</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Jason Davis</h4>
-                    <p className="text-sm text-gray-600">High School Point Guard</p>
+                    <h4 className="font-medium">Ryan Thompson</h4>
+                    <p className="text-sm text-gray-600">High School Wrestler, 152lbs</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">"The Elite Point Guard Clinic was exactly what I needed to elevate my game. The coaches provided personalized feedback that I've been able to apply immediately."</p>
+                <p className="text-gray-700 italic">"The Birmingham Slam Camp transformed my wrestling. Coach Valencia's techniques completely changed my approach to the sport. I'm more confident and technically sound on the mat."</p>
               </motion.div>
               
               <motion.div
@@ -501,11 +469,11 @@ export default function Events() {
                     <span className="text-lg font-medium">SM</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Sarah Martinez</h4>
-                    <p className="text-sm text-gray-600">College Soccer Player</p>
+                    <h4 className="font-medium">Mike Chen</h4>
+                    <p className="text-sm text-gray-600">College Wrestler, Arizona State</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">"The Speed & Agility Camp helped me improve my first-step quickness significantly. I'm much more explosive on the field now and my coaches have noticed."</p>
+                <p className="text-gray-700 italic">"The National Champ Camp in Las Vegas was a game-changer. Training with Olympic-level coaches gave me insights I couldn't get anywhere else. My neutral position has improved tremendously."</p>
               </motion.div>
               
               <motion.div
@@ -520,11 +488,11 @@ export default function Events() {
                     <span className="text-lg font-medium">TJ</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Tom Johnson</h4>
-                    <p className="text-sm text-gray-600">Parent of High School Athlete</p>
+                    <h4 className="font-medium">Jennifer Baker</h4>
+                    <p className="text-sm text-gray-600">Parent of High School Wrestler</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">"The College Recruiting Workshop provided invaluable information about the recruitment process. My son now has a clear roadmap for pursuing collegiate athletics."</p>
+                <p className="text-gray-700 italic">"The Rich Habits Recruiting Clinic in Arlington was worth every penny. My son connected with three college coaches who are now actively recruiting him. The video profile they created was professional and impressive."</p>
               </motion.div>
             </div>
           </Container>
