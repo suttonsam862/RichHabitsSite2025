@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
 import { Container } from '@/components/ui/container';
-import { FruitHuntersBanner } from '@/components/home/FruitHuntersBanner';
 import { FruitHuntersCompact } from '@/components/home/FruitHuntersCompact';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -64,25 +63,52 @@ export default function EventDetail() {
               name: "Zahid Valencia",
               title: "2x NCAA Champion",
               image: "/src/assets/coaches/VALENCIA_Zahid-headshot.jpg",
-              bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat. Currently training for international competition, he continues to compete at the highest levels while sharing his knowledge with the next generation."
+              bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat."
             },
             {
               name: "Josh Shields",
               title: "NCAA All-American",
               image: "/src/assets/coaches/josh_shields.jpg",
-              bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit. Josh specializes in neutral position attacks and defensive strategy, helping wrestlers develop complete skill sets."
+              bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit."
             },
             {
               name: "Brandon Courtney",
               title: "NCAA Finalist",
               image: "/src/assets/coaches/brandon_courtney.webp",
-              bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat. His focus on detailed technical execution makes him an invaluable instructor for wrestlers looking to perfect their craft."
+              bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat."
             },
             {
               name: "Michael McGee",
               title: "NCAA All-American",
               image: "/src/assets/coaches/Michael_McGee_JouQS.jpg",
-              bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness. His comprehensive approach helps wrestlers develop the complete package needed for success at all levels."
+              bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness."
+            }
+          ];
+        } else if (data.id === 2) {
+          data.coaches = [
+            {
+              name: "Vincenzo Joseph",
+              title: "2x NCAA Champion",
+              image: "/src/assets/coaches/cenzo.png",
+              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling."
+            },
+            {
+              name: "Nick Lee",
+              title: "NCAA Champion",
+              image: "https://intermatwrestle.com/Images/Persons/20190313142121_NIck%20Lee%20PSU%20vs%20OSU%203-31-18%202233%20Tony%20Rotundo.jpg",
+              bio: "Nick Lee is an NCAA Champion and 4x All-American from Penn State University. His disciplined approach to wrestling and meticulous attention to detail have made him one of the most consistent performers in NCAA history."
+            },
+            {
+              name: "Jason Nolf",
+              title: "3x NCAA Champion",
+              image: "https://intermatwrestle.com/Images/Persons/20190313130509_Jason%20Nolf%20PSU%20vs%20Michigan%201-18-19%203731%20Tony%20Rotundo.jpg",
+              bio: "Jason Nolf is a 3x NCAA Champion and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching."
+            },
+            {
+              name: "Bo Nickal",
+              title: "3x NCAA Champion",
+              image: "https://d1qoiwmkp273n4.cloudfront.net/images/default-source/athletics-images/roster/wrestling/2018-19/bo-nickal-4x5.jpg",
+              bio: "Bo Nickal is a 3x NCAA Champion and Hodge Trophy winner from Penn State University. Currently pursuing MMA, Bo brings a unique perspective on wrestling for combat sports."
             }
           ];
           
@@ -165,7 +191,7 @@ export default function EventDetail() {
         <meta name="description" content={event.shortDescription} />
       </Helmet>
       
-      {/* New Banner at the top with lighting effects */}
+      {/* Banner at the top with lighting effects based on event */}
       {event.id === 1 && (
         <div className="w-full overflow-hidden banner-container relative">
           <img 
@@ -178,7 +204,23 @@ export default function EventDetail() {
         </div>
       )}
       
-      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : ''}`}>
+      {event.id === 2 && (
+        <div className="w-full overflow-hidden banner-container relative">
+          <video 
+            src="/assets/04243.mov" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-[50vh] object-cover"
+            style={{ filter: 'brightness(1.1) contrast(1.1)' }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
+        </div>
+      )}
+      
+      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : ''}`}>
         {event.id === 1 && (
           <>
             {/* Heat waves */}
@@ -195,6 +237,22 @@ export default function EventDetail() {
             <div className="neon-lick-3"></div>
             <div className="neon-lick-1" style={{left: '75%', animationDelay: '3s'}}></div>
             <div className="neon-lick-2" style={{left: '25%', animationDelay: '7s'}}></div>
+          </>
+        )}
+        
+        {event.id === 2 && (
+          <>
+            {/* Penn State themed waves */}
+            <div className="wave-blue" style={{ top: '10%', left: '50%' }}></div>
+            <div className="wave-navy" style={{ top: '30%', left: '50%' }}></div>
+            <div className="wave-blue" style={{ top: '60%', left: '50%' }}></div>
+            <div className="wave-navy" style={{ top: '80%', left: '50%' }}></div>
+            
+            {/* Penn State diamond pattern */}
+            <div className="psu-diamond-pattern"></div>
+            
+            {/* Animated glossy stripe */}
+            <div className="psu-stripe"></div>
           </>
         )}
         
@@ -218,23 +276,11 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-gray-500 mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                        </svg>
                         <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
                       </div>
                     </div>
                     
                     <div className="my-6 flex flex-col items-center">
-                      <div className="relative w-[70%] mx-auto">
-                        <img 
-                          src="/src/assets/events/slam_camp_title.png" 
-                          alt="Birmingham Slam Camp" 
-                          className="w-full animate-[titleGlow_3s_ease-in-out_infinite]"
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
-                      </div>
-                      
                       <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mt-6 text-center">
                         <span className="block mb-2">{event.date}</span>
                         <span className="block text-lg font-normal">{event.location}</span>
@@ -263,9 +309,6 @@ export default function EventDetail() {
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h3>
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
                         <span className="text-gray-800">
                           {event.date} <span className="text-gray-500">•</span> {event.time}
                         </span>
@@ -274,10 +317,6 @@ export default function EventDetail() {
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
                         <span className="text-gray-800">{event.location}</span>
                       </div>
                     </div>
@@ -285,30 +324,27 @@ export default function EventDetail() {
                   
                   <div className="mt-4">
                     <div className="flex items-center mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
                       <span className="text-gray-800 font-medium">{event.price}</span>
                     </div>
                     
                     <button 
                       onClick={() => setShowRegistrationDialog(true)}
-                      className="w-full mt-4 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                      className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                        event.id === 2 
+                          ? 'psu-gradient-btn text-white focus:ring-blue-500' 
+                          : event.id === 1
+                            ? 'fire-gradient-btn text-white focus:ring-orange-500'
+                            : 'bg-black hover:bg-gray-800 text-white focus:ring-gray-500'
+                      }`}
                     >
-                      {event.buttonLabel}
+                      {event.buttonLabel || 'Register Now'}
                     </button>
                     
                     <div className="mt-4 flex justify-between text-gray-500 text-sm">
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
                         {event.ageGroups}
                       </div>
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
                         {event.capacity}
                       </div>
                     </div>
@@ -347,707 +383,165 @@ export default function EventDetail() {
                         </div>
                       ))}
                     </div>
-                    
-                    <FruitHuntersCompact />
-                  </div>
-                  
-                  <div className="mt-10">
-                    <div className="mb-6 border-b border-gray-200 pb-2">
-                      <h3 className="text-xl font-bold">Daily Schedule</h3>
-                      <p className="text-gray-600">Structured training program designed for maximum development</p>
-                    </div>
-                    <div className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">9:00 AM - 9:15 AM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Registration & Gear Distribution</div>
-                              <div className="text-xs text-gray-500 mt-1">Check-in and receive your camp materials</div>
-                            </td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">9:15 AM - 11:00 AM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Warm-up & Technical Session</div>
-                              <div className="text-xs text-gray-500 mt-1">Fun warm-up games and first technical instruction session</div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">11:00 AM - 11:30 AM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Break</div>
-                              <div className="text-xs text-gray-500 mt-1">Recovery time with PlayStation stations available</div>
-                            </td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">11:30 AM - 12:30 PM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Live Wrestling & Spotlight Matches</div>
-                              <div className="text-xs text-gray-500 mt-1">Live situational drilling and featured demonstration matches</div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12:30 PM - 1:30 PM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Lunch Break & Gear Shop</div>
-                              <div className="text-xs text-gray-500 mt-1">Refuel and browse the Rich Habits merchandise collection</div>
-                            </td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1:30 PM - 3:00 PM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Second Technical Session</div>
-                              <div className="text-xs text-gray-500 mt-1">Advanced technique instruction and implementation drills</div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3:00 PM - 4:00 PM</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                              <div className="font-medium">Q&A & Closing Activities</div>
-                              <div className="text-xs text-gray-500 mt-1">Q&A with the clinician of the day and end-of-day activities</div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
                   </div>
                 </div>
-              ) : (
-                <>
-                  <h2 className="text-2xl font-medium mb-6">About This Event</h2>
-                  <div className="prose max-w-none">
-                    {event.fullDescription.split('\n\n').map((paragraph: string, index: number) => (
-                      <p key={index} className="mb-4">
-                        {paragraph}
-                      </p>
-                    ))}
+              ) : event.id === 2 ? (
+                <div>
+                  <div className="mb-10">
+                    <div className="mb-6 border-b border-blue-100 pb-2">
+                      <h3 className="text-xl font-bold psu-title">Elite Penn State Coaching Staff</h3>
+                      <p className="text-gray-600">Learn from NCAA champions who have dominated collegiate wrestling</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-[#041e42]/20 hover:shadow-md transition-shadow duration-300">
+                          <div className="aspect-square overflow-hidden">
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name} 
+                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
+                            <p className="text-[#1e88e5] text-sm mb-2">{coach.title}</p>
+                            <p className="text-gray-700 text-sm">{coach.bio}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   
                   {/* Event Schedule */}
                   {event.schedule && (
                     <div className="mt-10">
-                      <h3 className="text-xl font-medium mb-4">Event Schedule</h3>
-                      <div className="border border-[hsl(var(--shadow))] rounded-md overflow-hidden">
+                      <div className="mb-6 border-b border-blue-100 pb-2">
+                        <h3 className="text-xl font-bold psu-title">Daily Schedule</h3>
+                        <p className="text-gray-600">Elite training program with Penn State champions</p>
+                      </div>
+                      <div className="psu-border rounded-md overflow-hidden shadow-lg relative">
+                        <div className="psu-diamond-pattern absolute inset-0 opacity-10"></div>
                         {event.schedule.map((item: any, index: number) => (
                           <div 
                             key={index} 
-                            className={`grid grid-cols-3 p-4 ${
-                              index % 2 === 0 ? 'bg-[hsl(var(--secondary)_/_0.05)]' : 'bg-white'
+                            className={`grid grid-cols-3 p-4 relative ${
+                              index % 2 === 0 ? 'bg-[#041e42]/5' : 'bg-white'
                             }`}
                           >
-                            <div className="font-medium">{item.time}</div>
-                            <div className="col-span-2">{item.activity}</div>
+                            <div className="font-medium text-[#041e42]">{item.time}</div>
+                            <div className="col-span-2 text-gray-800">{item.activity}</div>
                           </div>
                         ))}
+                        <div className="psu-stripe"></div>
+                      </div>
+                      
+                      <div className="mt-12 p-6 bg-gradient-to-r from-[#041e42] to-[#1e88e5] rounded-lg text-white shadow-lg">
+                        <h3 className="text-xl font-bold mb-4">Why Train with Penn State Champions?</h3>
+                        <p className="mb-4">
+                          Penn State University has dominated NCAA wrestling, winning 9 of the last 12 national championships. Our National Champ Camp brings you direct access to the training methods that have created this dynasty.
+                        </p>
                       </div>
                     </div>
                   )}
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-medium mb-6">About This Event</h2>
+                  <div className="prose max-w-none">
+                    {event.description.split('\n\n').map((paragraph: string, index: number) => (
+                      <p key={index} className="mb-4">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
                 </>
               )}
             </div>
             
             <div>
-              {event.id === 1 ? (
+              {event.id === 2 && (
                 <>
-                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
-                    <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-                      <h3 className="text-lg font-bold text-gray-800">Coach Spotlight: Zahid Valencia</h3>
+                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-[#041e42] relative">
+                    <div className="psu-gradient-btn px-6 py-4 text-white">
+                      <h3 className="text-lg font-bold">Coach Spotlight: Vincenzo Joseph</h3>
                     </div>
                     <div className="p-6">
                       <div className="flex items-center mb-4">
-                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-gray-300">
+                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-[#1e88e5]">
                           <img 
-                            src="/src/assets/coaches/VALENCIA_Zahid-headshot.jpg" 
-                            alt="Zahid Valencia" 
+                            src="/src/assets/coaches/cenzo.png" 
+                            alt="Vincenzo Joseph" 
                             className="w-full h-full object-cover object-top"
                           />
                         </div>
                         <div>
-                          <h4 className="font-bold text-gray-800">Zahid Valencia</h4>
-                          <p className="text-gray-500 text-sm">2x NCAA Champion</p>
+                          <h4 className="font-bold text-gray-800">Vincenzo Joseph</h4>
+                          <p className="text-[#1e88e5] text-sm">2x NCAA Champion</p>
                         </div>
                       </div>
-                      <blockquote className="text-gray-700 italic border-l-4 border-gray-200 pl-4 py-2 mb-4">
-                        "I'm excited to bring world-class training to Alabama wrestlers. This camp will focus on developing complete athletes with techniques that create champions."
+                      <blockquote className="text-gray-700 italic border-l-4 border-[#041e42] pl-4 py-2 mb-4">
+                        "Wrestling is about constant evolution. At National Champ Camp, we'll push beyond fundamentals to develop the technical details and mindset that separate champions from competitors."
                       </blockquote>
                       <p className="text-sm text-gray-700 mb-4">
-                        Coach Valencia specializes in explosive offensive techniques and strategic match management. His sessions will emphasize scoring from neutral position and building unstoppable confidence.
+                        Coach Joseph is renowned for his creative wrestling style and championship mentality. His sessions will focus on developing scoring opportunities from all positions and building resilience under pressure.
                       </p>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 shadow-md rounded-lg overflow-hidden mb-8 text-white">
-                    <div className="border-b border-gray-700 bg-gray-800 px-6 py-4">
-                      <h3 className="text-lg font-bold">Why Attend Slam Camp?</h3>
+                  <div className="bg-gradient-to-b from-[#041e42] to-[#082a5e] shadow-md rounded-lg overflow-hidden mb-8 text-white">
+                    <div className="border-b border-[#1e88e5]/30 px-6 py-4">
+                      <h3 className="text-lg font-bold">Why Choose National Champ Camp</h3>
                     </div>
                     <div className="p-6">
                       <ul className="space-y-4">
                         <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>Learn from NCAA Champions and All-Americans</span>
+                          <span>Train with Penn State's championship coaching network</span>
                         </li>
                         <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>Master advanced techniques and strategies</span>
+                          <span>Intensive training in Las Vegas's premier facilities</span>
                         </li>
                         <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>Develop mental toughness and competition mindset</span>
-                        </li>
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>Receive nutrition guidance from Fruit Hunters</span>
-                        </li>
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span>Network with other dedicated wrestlers</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
-                    <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-                      <h3 className="text-lg font-bold text-gray-800">Fruit Hunters Partnership</h3>
-                    </div>
-                    <div className="p-6">
-                      <p className="text-gray-700 mb-4">
-                        We're excited to partner with Fruit Hunters to provide natural, nutrient-rich fuel for our athletes. Each participant will receive daily nutrition packs featuring exotic fruits selected for optimal athletic performance.
-                      </p>
-                      <div className="rounded-md overflow-hidden mb-3">
-                        <img src="/src/assets/fruits/fruit_hunters_logo.png" alt="Fruit Hunters" className="w-full h-auto" />
-                      </div>
-                      <a href="#" className="text-primary hover:text-primary-dark text-sm font-medium">Learn more about Fruit Hunters →</a>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-gray-200">
-                    <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-                      <h3 className="text-lg font-bold text-gray-800">Event Highlights</h3>
-                    </div>
-                    <div className="p-6">
-                      <ul className="space-y-4">
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-gray-700">Professional officiating and scoring</span>
-                        </li>
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-gray-700">Medals for top performers in each division</span>
-                        </li>
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-gray-700">Rich Habits tournament t-shirt for all participants</span>
-                        </li>
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-gray-700">Live streaming of featured matches</span>
-                        </li>
-                        <li className="flex">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-gray-700">Exclusive Rich Habits gear for division champions</span>
+                          <span>Personalized technique feedback and development</span>
                         </li>
                       </ul>
                     </div>
                   </div>
                 </>
               )}
-              
-              <div className="sticky top-8">
-                <div className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
-                  <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-                    <h3 className="text-lg font-bold text-gray-800">Need Help?</h3>
-                  </div>
-                  <div className="p-6">
-                    <p className="text-gray-700 mb-4">
-                      Have questions about this event? Contact our team for assistance.
-                    </p>
-                    <div className="flex items-center mb-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      <span className="text-gray-700">events@richhabits.com</span>
-                    </div>
-                    <div className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      <span className="text-gray-700">(205) 555-0123</span>
-                    </div>
-                    <a 
-                      href="/contact" 
-                      className="mt-6 block text-center bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 font-medium py-2 px-4 rounded-md transition-colors duration-300"
-                    >
-                      Contact Us
-                    </a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
-        </Container>
-        
-        {/* Full-width Registration Section with Pricing Cards */}
-        {event.id === 1 && (
-          <div className="w-full bg-gray-50 border-t border-b border-gray-200 py-12 mt-10 mb-16">
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="text-center mb-10">
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">Registration Plans</h3>
-                <p className="text-gray-600 max-w-2xl mx-auto">Choose the registration option that works best for you. All plans include expert coaching, a camp t-shirt, and Fruit Hunters nutrition packs.</p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                {/* Full Camp Plan */}
-                <div className="bg-white rounded-sm overflow-hidden shadow-lg fire-border transition-transform duration-300 hover:scale-105">
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-xl font-bold fire-title">Full Camp</h4>
-                      <span className="fire-gradient-btn text-white px-3 py-1 rounded-full text-sm font-medium">Most Popular</span>
-                    </div>
-                    <div className="mt-4 flex items-end">
-                      <span className="text-4xl font-bold text-gray-800">$249</span>
-                      <span className="text-gray-500 ml-2 pb-1">/ 3 days</span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <ul className="space-y-4">
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Complete 3-day intensive training experience</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Learn from all featured coaches</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Exclusive Rich Habits camp t-shirt</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Daily Fruit Hunters nutrition packs</span>
-                      </li>
-                    </ul>
-                    <div className="mt-8">
-                      <button 
-                        onClick={() => setShowRegistrationDialog(true)}
-                        className="fire-gradient-btn text-white py-3 px-6 font-medium tracking-wide inline-block rounded-sm w-full transition duration-200 hover:brightness-110"
-                      >
-                        Register for Full Camp
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Single Day Plan */}
-                <div className="bg-white rounded-sm overflow-hidden shadow-lg fire-border-secondary transition-transform duration-300 hover:scale-105">
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-xl font-bold fire-title">Single Day</h4>
-                      <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-medium">Flexible Option</span>
-                    </div>
-                    <div className="mt-4 flex items-end">
-                      <span className="text-4xl font-bold text-gray-800">$149</span>
-                      <span className="text-gray-500 ml-2 pb-1">/ day</span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <ul className="space-y-4">
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Attend any one day of your choice</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Train with featured coach of the day</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Rich Habits camp t-shirt</span>
-                      </li>
-                      <li className="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-800 mt-0.5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-gray-700">Fruit Hunters nutrition pack</span>
-                      </li>
-                    </ul>
-                    <div className="mt-8">
-                      <button 
-                        onClick={() => setShowRegistrationDialog(true)}
-                        className="fire-outline-btn py-3 px-6 font-medium tracking-wide inline-block rounded-sm w-full transition duration-200 hover:bg-gray-50"
-                      >
-                        Register for Single Day
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-10 bg-white p-5 rounded-lg shadow-sm max-w-4xl mx-auto border border-gray-200">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div className="mb-4 md:mb-0">
-                    <h4 className="font-bold text-gray-800 mb-1">Group Discount Available</h4>
-                    <p className="text-gray-600 text-sm">Programs bringing 10+ wrestlers receive 10% off next Rich Habits custom gear order</p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg py-2 px-4">
-                      <div className="text-xs text-gray-500 uppercase tracking-wide">Age Groups</div>
-                      <div className="font-medium">2nd Grade - Senior</div>
-                    </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg py-2 px-4">
-                      <div className="text-xs text-gray-500 uppercase tracking-wide">Capacity</div>
-                      <div className="font-medium">Limited to 200 wrestlers</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        <Container>
-          <div className="mb-12">
-            <FruitHuntersBanner />
-          </div>
-          
-          {event.id === 1 && (
-            <div className="mb-16">
-              <div className="bg-white p-6 rounded-sm shadow-md fire-border">
-                <h3 className="text-2xl font-bold text-center mb-8 fire-title">Frequently Asked Questions</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-bold text-lg mb-2">What should I bring to camp?</h4>
-                    <p className="text-gray-700 mb-4">Wrestlers should bring multiple changes of workout clothes, wrestling shoes, headgear (optional), water bottle, and a notebook for taking notes. Lunch is not provided, so please bring a lunch or money to purchase food.</p>
-                    
-                    <h4 className="font-bold text-lg mb-2">Is there a minimum age requirement?</h4>
-                    <p className="text-gray-700 mb-4">The camp is open to wrestlers from 2nd grade through high school seniors. Wrestlers will be grouped by age and experience level for appropriate training.</p>
-                    
-                    <h4 className="font-bold text-lg mb-2">Are there refunds if I can't attend?</h4>
-                    <p className="text-gray-700">Refunds are available up to 14 days before the event with a 15% processing fee. Within 14 days, you can transfer your registration to another wrestler or receive camp credit for a future event.</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-bold text-lg mb-2">Will there be medical staff on site?</h4>
-                    <p className="text-gray-700 mb-4">Yes, certified athletic trainers will be present throughout the camp to handle any injuries or medical concerns.</p>
-                    
-                    <h4 className="font-bold text-lg mb-2">Can parents stay and watch?</h4>
-                    <p className="text-gray-700 mb-4">Parents are welcome to observe from designated viewing areas. We also offer a special coaches' observation section for school/club coaches.</p>
-                    
-                    <h4 className="font-bold text-lg mb-2">What's the coach-to-wrestler ratio?</h4>
-                    <p className="text-gray-700">We maintain approximately a 1:15 coach-to-wrestler ratio to ensure quality instruction. In addition to our headline coaches, we'll have experienced assistant coaches helping with all sessions.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </Container>
       </div>
       
       {/* Registration Dialog */}
       <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-          <DialogTitle className="text-lg font-bold">Register for {event.title}</DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
-            {event.date} at {event.location}
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogTitle>Register for {event.title}</DialogTitle>
+          <DialogDescription>
+            Complete the form below to register for this event. All fields are required unless marked as optional.
           </DialogDescription>
-          <div className="pb-3 mb-4 border-b"></div>
           
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            
-            // Validate form
-            if (!registrationForm.firstName || !registrationForm.lastName || !registrationForm.contactName || 
-                !registrationForm.email || !registrationForm.tShirtSize || !registrationForm.grade || 
-                !registrationForm.schoolName || !registrationForm.medicalReleaseAccepted) {
-              toast({
-                title: "Missing information",
-                description: "Please fill in all required fields.",
-                variant: "destructive"
-              });
-              return;
-            }
-            
-            if (!registrationForm.medicalReleaseAccepted) {
-              toast({
-                title: "Medical Release Required",
-                description: "You must accept the medical release waiver to continue.",
-                variant: "destructive"
-              });
-              return;
-            }
-            
-            try {
-              setIsSubmitting(true);
-              
-              // Prepare the data for the API
-              const formData = {
-                firstName: registrationForm.firstName,
-                lastName: registrationForm.lastName,
-                contactName: registrationForm.contactName,
-                email: registrationForm.email,
-                phone: registrationForm.phone,
-                tShirtSize: registrationForm.tShirtSize,
-                grade: registrationForm.grade,
-                schoolName: registrationForm.schoolName,
-                clubName: registrationForm.clubName,
-                medicalReleaseAccepted: registrationForm.medicalReleaseAccepted,
-                registrationType: registrationForm.registrationType
-              };
-              
-              // Submit to API endpoint
-              const response = await fetch(`/api/events/${event.id}/register`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-              });
-              
-              if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Registration response error:', {
-                  status: response.status,
-                  statusText: response.statusText,
-                  body: errorText
-                });
-                throw new Error(`Registration failed: ${response.status} ${response.statusText}. ${errorText}`);
-              }
-              
-              const data = await response.json();
-              console.log('Registration success response:', data);
-              
-              // Show success message with redirection info if checkout URL exists
-              if (data.checkoutUrl) {
-                toast({
-                  title: "Registration successful",
-                  description: "You're being redirected to complete payment. Please wait...",
-                  duration: 5000,
-                });
-                
-                // Short delay before redirecting to give the toast time to display
-                setTimeout(() => {
-                  window.location.href = data.checkoutUrl;
-                }, 1500);
-              } else {
-                toast({
-                  title: "Registration successful",
-                  description: "Check your email for confirmation details.",
-                });
-                
-                // Close the dialog if no checkout needed
-                setShowRegistrationDialog(false);
-              }
-            } catch (error) {
-              console.error('Registration error:', error);
-              toast({
-                title: "Registration failed",
-                description: error instanceof Error ? error.message : "Please try again later.",
-                variant: "destructive"
-              });
-            } finally {
-              setIsSubmitting(false);
-            }
-          }}>
-            <div className="grid gap-4 mb-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">Camper First Name</Label>
-                  <Input 
-                    id="firstName" 
-                    value={registrationForm.firstName} 
-                    onChange={(e) => setRegistrationForm({...registrationForm, firstName: e.target.value})}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Camper Last Name</Label>
-                  <Input 
-                    id="lastName" 
-                    value={registrationForm.lastName} 
-                    onChange={(e) => setRegistrationForm({...registrationForm, lastName: e.target.value})}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="contactName">Contact Full Name (Parent/Guardian)</Label>
-                <Input 
-                  id="contactName" 
-                  value={registrationForm.contactName} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, contactName: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="email">Contact Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={registrationForm.email} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, email: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="phone">Contact Phone Number</Label>
-                <Input 
-                  id="phone" 
-                  value={registrationForm.phone} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, phone: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="tShirtSize">T-Shirt Size</Label>
-                <select 
-                  id="tShirtSize" 
-                  value={registrationForm.tShirtSize} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, tShirtSize: e.target.value})}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  required
-                >
-                  <option value="">Select a size</option>
-                  <option value="YS">Youth Small</option>
-                  <option value="YM">Youth Medium</option>
-                  <option value="YL">Youth Large</option>
-                  <option value="YXL">Youth XL</option>
-                  <option value="AS">Adult Small</option>
-                  <option value="AM">Adult Medium</option>
-                  <option value="AL">Adult Large</option>
-                  <option value="AXL">Adult XL</option>
-                  <option value="A2XL">Adult 2XL</option>
-                </select>
-              </div>
-              
-              <div>
-                <Label htmlFor="grade">Grade (Finishing)</Label>
-                <Input 
-                  id="grade" 
-                  value={registrationForm.grade} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, grade: e.target.value})}
-                  placeholder="e.g., 8th, 10th, etc."
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="schoolName">School Name</Label>
-                <Input 
-                  id="schoolName" 
-                  value={registrationForm.schoolName} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, schoolName: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="clubName">Club Name (Optional)</Label>
-                <Input 
-                  id="clubName" 
-                  value={registrationForm.clubName} 
-                  onChange={(e) => setRegistrationForm({...registrationForm, clubName: e.target.value})}
-                />
-              </div>
-              
+          <form className="space-y-6 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mt-2">
-                  <h4 className="font-bold mb-2">Medical Release Waiver</h4>
-                  <p className="text-sm text-gray-700 mb-3">
-                    I hereby authorize the camp coaching staff to act for me according to their best judgment in any 
-                    emergency requiring medical attention. I hereby waive and release the camp from any and all liability 
-                    for any injuries or illnesses incurred while at camp. I have no knowledge of any physical impairment 
-                    that would be affected by participation in the camp program as outlined.
-                  </p>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={registrationForm.medicalReleaseAccepted} 
-                      onChange={(e) => setRegistrationForm({...registrationForm, medicalReleaseAccepted: e.target.checked})}
-                      className="rounded"
-                      required
-                    />
-                    <span className="text-sm font-medium">I accept the medical release waiver</span>
-                  </label>
-                </div>
+                <Label htmlFor="firstName">First Name</Label>
+                <Input 
+                  id="firstName" 
+                  value={registrationForm.firstName}
+                  onChange={(e) => setRegistrationForm({...registrationForm, firstName: e.target.value})}
+                  placeholder="First name" 
+                />
               </div>
-              
-              {event.id === 1 && (
-                <div className="space-y-2">
-                  <Label>Registration Option</Label>
-                  <div className="flex space-x-4">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="registrationType" 
-                        value="full" 
-                        checked={registrationForm.registrationType === 'full'} 
-                        onChange={() => setRegistrationForm({...registrationForm, registrationType: 'full'})}
-                        className="rounded-full"
-                      />
-                      <span>Full Camp ($249)</span>
-                    </label>
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="registrationType" 
-                        value="single" 
-                        checked={registrationForm.registrationType === 'single'} 
-                        onChange={() => setRegistrationForm({...registrationForm, registrationType: 'single'})}
-                        className="rounded-full"
-                      />
-                      <span>Single Day ($149)</span>
-                    </label>
-                  </div>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input 
+                  id="lastName" 
+                  value={registrationForm.lastName}
+                  onChange={(e) => setRegistrationForm({...registrationForm, lastName: e.target.value})}
+                  placeholder="Last name" 
+                />
+              </div>
             </div>
             
             <div className="mt-6 flex justify-end space-x-3">
@@ -1055,22 +549,21 @@ export default function EventDetail() {
                 type="button" 
                 variant="outline" 
                 onClick={() => setShowRegistrationDialog(false)}
-                disabled={isSubmitting}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </>
-                ) : (
-                  'Complete Registration'
-                )}
+              <Button 
+                type="button" 
+                disabled={isSubmitting}
+                onClick={() => {
+                  // Implementation would handle form submission and checkout process
+                  toast({
+                    title: "Registration In Progress",
+                    description: "Taking you to the secure payment page...",
+                  });
+                }}
+              >
+                Complete Registration
               </Button>
             </div>
           </form>

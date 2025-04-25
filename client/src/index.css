@@ -448,6 +448,140 @@
   pointer-events: none;
 }
 
+/* Penn State theme for National Champ Camp */
+.psu-bg {
+  position: relative;
+  background-color: white;
+  overflow: hidden;
+}
+
+.psu-gradient-btn {
+  background: linear-gradient(to right, #041e42, #1e88e5);
+  transition: all 0.3s ease;
+}
+
+.psu-gradient-btn:hover {
+  background: linear-gradient(to right, #021631, #1565c0);
+  box-shadow: 0 4px 12px rgba(4, 30, 66, 0.3);
+}
+
+.psu-outline-btn {
+  border: 2px solid #041e42;
+  color: #041e42;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.psu-outline-btn:hover {
+  background: rgba(30, 136, 229, 0.1);
+}
+
+.psu-title {
+  background: linear-gradient(to right, #041e42, #1e88e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+@keyframes psuPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(30, 136, 229, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(30, 136, 229, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(30, 136, 229, 0);
+  }
+}
+
+.psu-border {
+  border: 2px solid #041e42;
+  box-shadow: 0 8px 25px -5px rgba(30, 136, 229, 0.25);
+  position: relative;
+}
+
+.wave-blue {
+  position: absolute;
+  background: rgba(30, 136, 229, 0.05);
+  width: 200%;
+  height: 200px;
+  border-radius: 40%;
+  opacity: 0.3;
+  animation: wave 15s infinite linear;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wave-navy {
+  position: absolute;
+  background: rgba(4, 30, 66, 0.03);
+  width: 200%;
+  height: 150px;
+  border-radius: 40%;
+  opacity: 0.5;
+  animation: wave 20s infinite linear;
+  animation-delay: -5s;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes wave {
+  0% {
+    transform: translate(-50%, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(-50%, -2%) rotateZ(180deg);
+  }
+  100% {
+    transform: translate(-50%, 0%) rotateZ(360deg);
+  }
+}
+
+/* Penn State diamond pattern */
+.psu-diamond-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(45deg, transparent 48%, rgba(30, 136, 229, 0.05) 49%, rgba(30, 136, 229, 0.05) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(4, 30, 66, 0.03) 49%, rgba(4, 30, 66, 0.03) 51%, transparent 52%);
+  background-size: 30px 30px;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animated glossy Penn State stripe */
+.psu-stripe {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0) 20%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0) 80%, 
+    transparent
+  );
+  animation: psuStripeAnimation 5s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes psuStripeAnimation {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
