@@ -200,16 +200,11 @@ export default function EventDetail() {
       
       {event.id === 2 && (
         <div className="w-full overflow-hidden banner-container relative">
-          <video 
-            src="/assets/04243.mov" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-[50vh] object-cover"
-            style={{ filter: 'brightness(1.1) contrast(1.1)' }}
+          <img 
+            src="/src/assets/events/LongSitePhotovegas.png" 
+            alt={event.title} 
+            className="w-full h-auto object-cover" 
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
         </div>
       )}
@@ -281,6 +276,21 @@ export default function EventDetail() {
                       </h1>
                     </div>
                   </>
+                ) : event.id === 2 ? (
+                  <>
+                    <div className="bg-white p-4 rounded-md border-l-4 border-[#041e42] mb-4 shadow-sm">
+                      <div className="flex items-center">
+                        <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
+                      </div>
+                    </div>
+                    
+                    <div className="my-6 flex flex-col items-center">
+                      <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mt-6 text-center">
+                        <span className="block mb-2">{event.date}</span>
+                        <span className="block text-lg font-normal">{event.location}</span>
+                      </h1>
+                    </div>
+                  </>
                 ) : (
                   <>
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">{event.title}</h1>
@@ -288,18 +298,6 @@ export default function EventDetail() {
                   </>
                 )}
               </div>
-              
-              {event.id === 2 && (
-                <div>
-                  <div className="bg-white rounded-lg overflow-hidden shadow-lg">
-                    <img 
-                      src="/src/assets/events/LongSitePhotovegas.png" 
-                      alt={event.title} 
-                      className="w-full h-auto object-cover" 
-                    />
-                  </div>
-                </div>
-              )}
               
               {event.id !== 1 && event.id !== 2 && (
                 <div>
@@ -309,7 +307,7 @@ export default function EventDetail() {
                 </div>
               )}
               
-              <div className={`${event.id !== 1 ? '' : 'lg:col-span-2'}`}>
+              <div className={`${event.id !== 1 && event.id !== 2 ? '' : 'lg:col-span-2'}`}>
                 <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
