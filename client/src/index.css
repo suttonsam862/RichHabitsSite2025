@@ -75,11 +75,11 @@
   --ring: 20 14.3% 4.1%;
   --radius: 0rem;
   
-  /* Neutral gradients for cards */
-  --fire-gradient: linear-gradient(135deg, #4a4a4a, #6a6a6a, #8a8a8a);
-  --fire-gradient-hover: linear-gradient(135deg, #3a3a3a, #5a5a5a, #7a7a7a);
-  --fire-border-gradient: linear-gradient(45deg, #4a4a4a, #8a8a8a, #4a4a4a);
-  --fire-text-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.2);
+  /* Fiery gradients for Birmingham Slam Camp cards */
+  --fire-gradient: linear-gradient(135deg, #ff4500, #ff8c00, #ffd700);
+  --fire-gradient-hover: linear-gradient(135deg, #dd3400, #e67300, #ddb700);
+  --fire-border-gradient: linear-gradient(45deg, #ff4500, #ffd700, #ff4500);
+  --fire-text-shadow: 0 0 10px rgba(255, 69, 0, 0.3), 0 0 20px rgba(255, 140, 0, 0.2);
 }
 
 .dark {
@@ -118,9 +118,12 @@
   }
   
   .fire-title {
-    color: #4a4a4a;
+    background: linear-gradient(to bottom right, #ff4500, #ff8c00, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-shadow: var(--fire-text-shadow);
     letter-spacing: 0.05em;
+    font-weight: 600;
   }
 }
 
@@ -175,7 +178,8 @@
   .fire-outline-btn {
     position: relative;
     border: none;
-    color: #4a4a4a;
+    color: #ff6a00;
+    font-weight: 500;
     z-index: 1;
   }
   
@@ -200,7 +204,8 @@
   }
   
   .fire-outline-btn:hover {
-    color: #2a2a2a;
+    color: #ff4500;
+    background-color: rgba(255, 200, 0, 0.05);
   }
   
   .fire-outline-btn:hover::after {
