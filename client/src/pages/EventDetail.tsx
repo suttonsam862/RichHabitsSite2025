@@ -87,22 +87,22 @@ export default function EventDetail() {
         } else if (data.id === 2) {
           data.coaches = [
             {
-              name: "Vincenzo Joseph",
-              title: "2x NCAA Champion",
-              image: "/src/assets/coaches/cenzo.png",
-              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
-            },
-            {
               name: "Jason Nolf",
               title: "3x NCAA Champion",
-              image: "https://intermatwrestle.com/Images/Persons/20190313130509_Jason%20Nolf%20PSU%20vs%20Michigan%201-18-19%203731%20Tony%20Rotundo.jpg",
+              image: "/src/assets/coaches/nolf.webp",
               bio: "Jason Nolf is a 3x NCAA Champion and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
             },
             {
               name: "Mark Hall",
               title: "NCAA Champion",
-              image: "https://d1qoiwmkp273n4.cloudfront.net/images/default-source/athletics-images/roster/wrestling/2018-19/hall-mark.jpg",
+              image: "/src/assets/coaches/hall.webp",
               bio: "Mark Hall is an NCAA Champion and 4x All-American from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
+            },
+            {
+              name: "Vincenzo Joseph",
+              title: "2x NCAA Champion",
+              image: "/src/assets/coaches/joseph.webp",
+              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
             }
           ];
           
@@ -474,7 +474,7 @@ export default function EventDetail() {
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-[#1e88e5]">
                           <img 
-                            src="/src/assets/coaches/cenzo.png" 
+                            src="/src/assets/coaches/joseph.webp" 
                             alt="Vincenzo Joseph" 
                             className="w-full h-full object-cover object-top"
                           />
