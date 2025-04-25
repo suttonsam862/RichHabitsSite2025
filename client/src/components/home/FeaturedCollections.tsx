@@ -1,69 +1,146 @@
 import { Link } from "wouter";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { Container } from "@/components/ui/container";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { fetchProducts } from "@/lib/shopify";
+import { Product } from "@/types/shopify";
 
-const collections = [
-  {
-    id: 1,
-    title: "Performance Collection",
-    description: "Technical fabrics for intense training",
-    image: "https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80",
-    link: "/shop?collection=performance"
-  },
-  {
-    id: 2,
-    title: "Essentials Line",
-    description: "Minimal design for everyday athletes",
-    image: "https://images.unsplash.com/photo-1483721310020-03333e577078?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80",
-    link: "/shop?collection=essentials"
-  },
-  {
-    id: 3,
-    title: "Competition Series",
-    description: "Elite gear for peak performance",
-    image: "https://images.unsplash.com/photo-1616257460024-b12a0c4c8333?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80",
-    link: "/shop?collection=competition"
-  }
-];
+// Retail Collection ID - you'll need to replace this with your actual Retail Collection ID
+const RETAIL_COLLECTION_ID = "gid://shopify/Collection/449267515709"; // Example ID format
 
 export function FeaturedCollections() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Fetch products from your Retail Collection
+  useEffect(() => {
+    async function loadRetailProducts() {
+      try {
+        setIsLoading(true);
+        const fetchedProducts = await fetchProducts(RETAIL_COLLECTION_ID);
+        
+        if (fetchedProducts && fetchedProducts.length > 0) {
+          setProducts(fetchedProducts);
+        } else {
+          setError("No products found in the Retail Collection");
+        }
+      } catch (err) {
+        console.error("Failed to fetch retail products:", err);
+        setError("Failed to load products");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadRetailProducts();
+  }, []);
+  
+  // Set up carousel animation
+  useEffect(() => {
+    if (products.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
+    }, 4000); // Change product every 4 seconds
+    
+    return () => clearInterval(interval);
+  }, [products.length]);
+  
+  // Function to get visible products (current and next)
+  const getVisibleProducts = () => {
+    if (products.length === 0) return [];
+    
+    // Show 3 products at a time, starting from currentIndex
+    const visibleProducts = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIndex + i) % products.length;
+      visibleProducts.push(products[index]);
+    }
+    
+    return visibleProducts;
+  };
+  
   return (
     <section className="py-20 bg-white">
       <Container>
         <h2 className="text-3xl font-serif font-semibold mb-12 group">
           <AnimatedUnderline>
-            Featured Collections
+            Featured Collection
           </AnimatedUnderline>
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {collections.map((collection, index) => (
-            <motion.div
-              key={collection.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="product-card bg-white"
-            >
-              <Link href={collection.link} className="block group">
-                <div className="relative overflow-hidden mb-4">
-                  <img 
-                    src={collection.image} 
-                    alt={collection.title} 
-                    className="w-full h-96 object-cover transform transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <h3 className="text-lg font-medium mb-1">{collection.title}</h3>
-                <p className="text-sm text-gray-600 mb-2">{collection.description}</p>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-pulse h-96 w-full max-w-4xl bg-gray-200 rounded"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500 py-10">{error}</div>
+        ) : (
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={currentIndex}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+              >
+                {getVisibleProducts().map((product, index) => (
+                  <motion.div
+                    key={`${product.id}-${index}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="product-card bg-white relative group"
+                  >
+                    <Link href={`/shop/product/${product.handle}`} className="block">
+                      <div className="relative overflow-hidden mb-4">
+                        <img 
+                          src={product.image || "https://via.placeholder.com/500x700"} 
+                          alt={product.title} 
+                          className="w-full h-96 object-cover transform transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <motion.div 
+                          className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          initial={false}
+                          whileHover={{ opacity: 1 }}
+                        >
+                          <span className="text-white font-medium py-2 px-4 border-2 border-white rounded-sm">
+                            View Details
+                          </span>
+                        </motion.div>
+                      </div>
+                      <h3 className="text-lg font-medium mb-1">{product.title}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{product.price}</p>
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+            
+            {/* Carousel indicators */}
+            <div className="flex justify-center mt-8 space-x-2">
+              {products.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex ? "w-8 bg-primary" : "w-2 bg-gray-300"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className="mt-12 text-center">
-          <Link href="/shop" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-            View All Collections
+          <Link href="/shop?collection=retail" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+            View Retail Collection
           </Link>
         </div>
       </Container>
