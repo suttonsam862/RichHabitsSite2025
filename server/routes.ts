@@ -267,32 +267,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Test endpoint for Shopify
-  app.get("/api/test-shopify-checkout", async (req, res) => {
+  app.all("/api/test-shopify-checkout", async (req, res) => {
     try {
       console.log('Testing Shopify checkout...');
-      const testRegistrationData: EventRegistrationData = {
-        firstName: "Test",
-        lastName: "User",
-        contactName: "Test Contact",
-        email: "test@example.com",
-        phone: "123-456-7890",
-        tShirtSize: "AL",
-        grade: "10th",
-        schoolName: "Test School",
-        clubName: "Test Club",
-        medicalReleaseAccepted: true,
-        option: "full"
-      };
       
-      const variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
-      console.log('Using variant ID:', variantId);
+      // Use data from request body if available, otherwise use default test data
+      let registrationData: EventRegistrationData;
+      
+      if (req.method === 'POST' && req.body && Object.keys(req.body).length > 0) {
+        console.log('Using registration data from request body:', req.body);
+        registrationData = {
+          firstName: req.body.firstName || "Test",
+          lastName: req.body.lastName || "User",
+          contactName: req.body.contactName || "Test Contact",
+          email: req.body.email || "test@example.com",
+          phone: req.body.phone || "123-456-7890",
+          tShirtSize: req.body.tShirtSize || "AL",
+          grade: req.body.grade || "10th",
+          schoolName: req.body.schoolName || "Test School",
+          clubName: req.body.clubName || "Test Club",
+          medicalReleaseAccepted: true,
+          option: (req.body.option || req.body.registrationType || "full") as 'full' | 'single'
+        };
+      } else {
+        // Default test data
+        registrationData = {
+          firstName: "Test",
+          lastName: "User",
+          contactName: "Test Contact",
+          email: "test@example.com",
+          phone: "123-456-7890",
+          tShirtSize: "AL",
+          grade: "10th",
+          schoolName: "Test School",
+          clubName: "Test Club",
+          medicalReleaseAccepted: true,
+          option: "full"
+        };
+      }
+      
+      // Determine which variant to use based on the option
+      let variantId = '';
+      if (registrationData.option === 'full') {
+        variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
+        console.log('Using full camp variant ID:', variantId);
+      } else {
+        variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.singleDay?.variantId || '';
+        console.log('Using single day variant ID:', variantId);
+      }
       
       if (!variantId) {
         return res.status(400).json({ message: "No valid variant ID found" });
       }
       
       // Check if the discount should be applied
-      const applyDiscount = req.query.applyDiscount === 'true';
+      const applyDiscount = req.query.applyDiscount === 'true' || req.body.applyDiscount === true;
       
       // Log discount application
       if (applyDiscount) {
@@ -302,7 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const checkout = await createEventRegistrationCheckout(
         "1", // test event ID
         variantId,
-        testRegistrationData,
+        registrationData,
         applyDiscount
       );
       
