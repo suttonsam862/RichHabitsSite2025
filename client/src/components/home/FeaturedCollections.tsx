@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { fetchProducts } from "@/lib/shopify";
 import { Product } from "@/types/shopify";
 
-// Retail Collection ID - you'll need to replace this with your actual Retail Collection ID
-const RETAIL_COLLECTION_ID = "gid://shopify/Collection/449267515709"; // Example ID format
+// Retail Collection ID from your Shopify store
+const RETAIL_COLLECTION_ID = "gid://shopify/Collection/444853616877";
 
 export function FeaturedCollections() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -20,9 +20,21 @@ export function FeaturedCollections() {
     async function loadRetailProducts() {
       try {
         setIsLoading(true);
-        // Use a different approach - fetch all products first, then filter
-        // Or fetch products via a proper query parameter approach
-        const response = await fetch(`/api/products?collection=retail`);
+        // Try to use the Shopify API integration directly
+        try {
+          const fetchedShopifyProducts = await fetchProducts(RETAIL_COLLECTION_ID);
+          if (fetchedShopifyProducts && fetchedShopifyProducts.length > 0) {
+            setProducts(fetchedShopifyProducts);
+            setIsLoading(false);
+            return; // Exit early if we successfully got products
+          }
+        } catch (shopifyError) {
+          console.error("Shopify API error:", shopifyError);
+          // Continue to fallback method
+        }
+        
+        // Fallback: Try using the server API
+        const response = await fetch(`/api/products?collection=444853616877`);
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.statusText}`);
         }
