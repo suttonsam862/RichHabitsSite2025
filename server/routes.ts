@@ -141,10 +141,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // If we have a valid variantId, create a checkout in Shopify
           if (variantId) {
             console.log('Creating checkout with variant ID:', variantId);
+            
+            // Check for applyDiscount in request or body
+            const applyDiscount = req.query.applyDiscount === 'true' || 
+                                  req.body.applyDiscount === true;
+            
+            // Log when the discount code is applied
+            if (applyDiscount) {
+              console.log('Will apply universal discount code to checkout URL');
+            }
+            
             const checkout = await createEventRegistrationCheckout(
               eventId.toString(),
               variantId,
-              registrationData
+              registrationData,
+              applyDiscount
             );
             
             console.log('Checkout response received:', JSON.stringify(checkout));
@@ -280,10 +291,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No valid variant ID found" });
       }
       
+      // Check if the discount should be applied
+      const applyDiscount = req.query.applyDiscount === 'true';
+      
+      // Log discount application
+      if (applyDiscount) {
+        console.log('Test checkout: Will apply universal discount code');
+      }
+      
       const checkout = await createEventRegistrationCheckout(
         "1", // test event ID
         variantId,
-        testRegistrationData
+        testRegistrationData,
+        applyDiscount
       );
       
       res.json({

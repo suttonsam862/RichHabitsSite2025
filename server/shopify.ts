@@ -347,7 +347,8 @@ export async function createCustomCheckout(variantId: string, quantity: number =
 export async function createEventRegistrationCheckout(
   eventId: string,
   productVariantId: string,
-  registrationData: EventRegistrationData
+  registrationData: EventRegistrationData,
+  applyDiscount: boolean = false
 ) {
   const customAttributes = [
     { key: 'Event_ID', value: eventId },
@@ -374,11 +375,33 @@ export async function createEventRegistrationCheckout(
     };
     
     console.log('Attempting to create custom checkout with Admin API...');
-    return await createCustomCheckout(productVariantId, 1, customer, customAttributes);
+    const checkout = await createCustomCheckout(productVariantId, 1, customer, customAttributes);
+    
+    // If universal discount should be applied, we'll append the discount code to the checkout URL
+    if (applyDiscount && checkout && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
+      console.log('Applying universal discount code to checkout URL');
+      const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
+      // Append the discount code parameter to the checkout URL
+      const separator = checkout.webUrl.includes('?') ? '&' : '?';
+      checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
+    }
+    
+    return checkout;
   } catch (error) {
     console.warn('Admin API checkout creation failed, falling back to Storefront API', error);
     // Fall back to the regular Storefront API checkout if Admin API fails
-    return createCheckout(productVariantId, 1, customAttributes);
+    const checkout = await createCheckout(productVariantId, 1, customAttributes);
+    
+    // If universal discount should be applied, we'll append the discount code to the checkout URL
+    if (applyDiscount && checkout && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
+      console.log('Applying universal discount code to checkout URL');
+      const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
+      // Append the discount code parameter to the checkout URL
+      const separator = checkout.webUrl.includes('?') ? '&' : '?';
+      checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
+    }
+    
+    return checkout;
   }
 }
 
@@ -395,6 +418,7 @@ export interface EventRegistrationData {
   clubName?: string;
   medicalReleaseAccepted: boolean;
   option: 'full' | 'single';
+  applyUniversalDiscount?: boolean;
 }
 
 // Maps for Shopify product and variant IDs related to events
