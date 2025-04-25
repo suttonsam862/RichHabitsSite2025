@@ -79,11 +79,13 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
     const formattedAttributes = customAttributes ? 
       customAttributes.map(attr => ({ key: attr.key, value: String(attr.value) })) : [];
     
-    console.log('Creating checkout with data:', {
+    console.log('Creating Storefront API checkout with data:', {
       variantId,
       quantity,
       customAttributes: formattedAttributes.length
     });
+    
+    console.log('Custom attributes for Storefront API:', JSON.stringify(formattedAttributes, null, 2));
     
     // Create cart using the latest Shopify Storefront API
     const mutation = `
@@ -237,16 +239,22 @@ export async function createCustomCheckout(variantId: string, quantity: number =
       customAttributes.map(attr => ({ key: attr.key, value: String(attr.value) })) : [];
     
     // Create draft order with the Admin API
+    console.log('Creating draft order with custom attributes:', JSON.stringify(formattedAttributes, null, 2));
+    
+    const lineItemProperties = formattedAttributes.map(attr => ({
+      name: attr.key,
+      value: attr.value
+    }));
+    
+    console.log('Formatted line item properties:', JSON.stringify(lineItemProperties, null, 2));
+    
     const draftOrderData = {
       draft_order: {
         line_items: [
           {
             variant_id: parseInt(numericVariantId),
             quantity: quantity,
-            properties: formattedAttributes.reduce((acc: any, attr: any) => {
-              acc[attr.key] = attr.value;
-              return acc;
-            }, {})
+            properties: lineItemProperties
           }
         ],
         customer: {
@@ -257,7 +265,10 @@ export async function createCustomCheckout(variantId: string, quantity: number =
         },
         use_customer_default_address: false,
         tags: ["Online Registration", "Rich Habits Event"],
-        note_attributes: formattedAttributes,
+        note_attributes: formattedAttributes.map(attr => ({
+          name: attr.key,
+          value: attr.value
+        })),
         applied_discount: {
           description: "Event Registration",
           value_type: "fixed_amount", 
