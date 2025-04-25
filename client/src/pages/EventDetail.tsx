@@ -90,25 +90,19 @@ export default function EventDetail() {
               name: "Vincenzo Joseph",
               title: "2x NCAA Champion",
               image: "/src/assets/coaches/cenzo.png",
-              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling."
-            },
-            {
-              name: "Nick Lee",
-              title: "NCAA Champion",
-              image: "https://intermatwrestle.com/Images/Persons/20190313142121_NIck%20Lee%20PSU%20vs%20OSU%203-31-18%202233%20Tony%20Rotundo.jpg",
-              bio: "Nick Lee is an NCAA Champion and 4x All-American from Penn State University. His disciplined approach to wrestling and meticulous attention to detail have made him one of the most consistent performers in NCAA history."
+              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
             },
             {
               name: "Jason Nolf",
               title: "3x NCAA Champion",
               image: "https://intermatwrestle.com/Images/Persons/20190313130509_Jason%20Nolf%20PSU%20vs%20Michigan%201-18-19%203731%20Tony%20Rotundo.jpg",
-              bio: "Jason Nolf is a 3x NCAA Champion and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching."
+              bio: "Jason Nolf is a 3x NCAA Champion and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
             },
             {
-              name: "Bo Nickal",
-              title: "3x NCAA Champion",
-              image: "https://d1qoiwmkp273n4.cloudfront.net/images/default-source/athletics-images/roster/wrestling/2018-19/bo-nickal-4x5.jpg",
-              bio: "Bo Nickal is a 3x NCAA Champion and Hodge Trophy winner from Penn State University. Currently pursuing MMA, Bo brings a unique perspective on wrestling for combat sports."
+              name: "Mark Hall",
+              title: "NCAA Champion",
+              image: "https://d1qoiwmkp273n4.cloudfront.net/images/default-source/athletics-images/roster/wrestling/2018-19/hall-mark.jpg",
+              bio: "Mark Hall is an NCAA Champion and 4x All-American from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
             }
           ];
           
@@ -295,7 +289,19 @@ export default function EventDetail() {
                 )}
               </div>
               
-              {event.id !== 1 && (
+              {event.id === 2 && (
+                <div>
+                  <div className="bg-white rounded-lg overflow-hidden shadow-lg">
+                    <img 
+                      src="/src/assets/events/LongSitePhotovegas.png" 
+                      alt={event.title} 
+                      className="w-full h-auto object-cover" 
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {event.id !== 1 && event.id !== 2 && (
                 <div>
                   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
                     <img src={event.image} alt={event.title} className="w-full h-auto aspect-[16/9] object-cover" />
