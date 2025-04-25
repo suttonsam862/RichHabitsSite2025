@@ -217,7 +217,7 @@ export default function Events() {
                     <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
                     <div className="flex space-x-4">
                       <a 
-                        href={`/event/${events[0].id}`}
+                        href={`/events/${events[0].id}`}
                         className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         View Details
@@ -285,7 +285,7 @@ export default function Events() {
                     <p className="text-gray-700 mb-6">{events[1].description}</p>
                     <div className="flex space-x-4">
                       <a 
-                        href={`/event/${events[1].id}`}
+                        href={`/events/${events[1].id}`}
                         className="bg-[hsl(var(--accent2))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
                       >
                         View Details
@@ -369,7 +369,7 @@ export default function Events() {
                     <p className="text-gray-700 mb-6">{events[2].description}</p>
                     <div className="flex space-x-4">
                       <a 
-                        href={`/event/${events[2].id}`}
+                        href={`/events/${events[2].id}`}
                         className="bg-[hsl(var(--accent3))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
                       >
                         View Details
