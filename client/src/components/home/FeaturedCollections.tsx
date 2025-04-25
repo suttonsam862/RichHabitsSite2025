@@ -15,21 +15,116 @@ export function FeaturedCollections() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Fetch products from your Retail Collection
+  // Fetch products for retail collection
   useEffect(() => {
     async function loadRetailProducts() {
       try {
         setIsLoading(true);
-        const fetchedProducts = await fetchProducts(RETAIL_COLLECTION_ID);
+        // Use a different approach - fetch all products first, then filter
+        // Or fetch products via a proper query parameter approach
+        const response = await fetch(`/api/products?collection=retail`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.statusText}`);
+        }
+        
+        const fetchedProducts = await response.json();
         
         if (fetchedProducts && fetchedProducts.length > 0) {
           setProducts(fetchedProducts);
         } else {
+          // For development, use dummy data
           setError("No products found in the Retail Collection");
+          // Set some dummy products for development
+          setProducts([
+            {
+              id: "1",
+              title: "Performance Track Jacket",
+              handle: "performance-track-jacket",
+              description: "Lightweight and breathable",
+              image: "/images/wrestlers/DSC09491.JPG",
+              price: "$65.00",
+              availableForSale: true,
+              variants: []
+            },
+            {
+              id: "2",
+              title: "Competition Singlet",
+              handle: "competition-singlet",
+              description: "Professional grade wrestling gear",
+              image: "/images/wrestlers/DSC09374--.JPG",
+              price: "$85.00",
+              availableForSale: true,
+              variants: []
+            },
+            {
+              id: "3",
+              title: "Training Shorts",
+              handle: "training-shorts",
+              description: "Durable and comfortable",
+              image: "/images/wrestlers/DSC07386.JPG",
+              price: "$45.00",
+              availableForSale: true,
+              variants: []
+            },
+            {
+              id: "4",
+              title: "Team Warmup Pullover",
+              handle: "team-warmup-pullover",
+              description: "Stay warm before competition",
+              image: "/images/wrestlers/DSC00423.JPG",
+              price: "$75.00",
+              availableForSale: true,
+              variants: []
+            }
+          ]);
         }
       } catch (err) {
         console.error("Failed to fetch retail products:", err);
         setError("Failed to load products");
+        
+        // Set fallback products for demo purposes
+        setProducts([
+          {
+            id: "1",
+            title: "Performance Track Jacket",
+            handle: "performance-track-jacket",
+            description: "Lightweight and breathable",
+            image: "/images/wrestlers/DSC09491.JPG",
+            price: "$65.00",
+            availableForSale: true,
+            variants: []
+          },
+          {
+            id: "2",
+            title: "Competition Singlet",
+            handle: "competition-singlet",
+            description: "Professional grade wrestling gear",
+            image: "/images/wrestlers/DSC09374--.JPG",
+            price: "$85.00",
+            availableForSale: true,
+            variants: []
+          },
+          {
+            id: "3",
+            title: "Training Shorts",
+            handle: "training-shorts",
+            description: "Durable and comfortable",
+            image: "/images/wrestlers/DSC07386.JPG",
+            price: "$45.00",
+            availableForSale: true,
+            variants: []
+          },
+          {
+            id: "4",
+            title: "Team Warmup Pullover",
+            handle: "team-warmup-pullover",
+            description: "Stay warm before competition",
+            image: "/images/wrestlers/DSC00423.JPG",
+            price: "$75.00",
+            availableForSale: true,
+            variants: []
+          }
+        ]);
       } finally {
         setIsLoading(false);
       }
