@@ -107,13 +107,13 @@ const FloatingSchoolLogos: React.FC<FloatingSchoolLogosProps> = ({ logos }) => {
           }
           
           // Slight acceleration effect to create more natural movement
-          const accelerationFactor = 0.02;
-          const maxSpeed = 2;
+          const accelerationFactor = 0.01;
+          const maxSpeed = 0.8;
           
           // Randomly adjust velocity slightly for more natural movement
-          if (Math.random() < 0.05) {
-            newVx += (Math.random() * 0.4 - 0.2);
-            newVy += (Math.random() * 0.4 - 0.2);
+          if (Math.random() < 0.03) {
+            newVx += (Math.random() * 0.2 - 0.1);
+            newVy += (Math.random() * 0.2 - 0.1);
           }
           
           // Limit maximum speed
@@ -124,7 +124,7 @@ const FloatingSchoolLogos: React.FC<FloatingSchoolLogosProps> = ({ logos }) => {
           }
           
           // Adjust rotation based on movement direction for more natural look
-          const newRotation = (newVx > 0 ? 1 : -1) * Math.min(Math.abs(newVx * 5), 10);
+          const newRotation = (newVx > 0 ? 1 : -1) * Math.min(Math.abs(newVx * 3), 5);
           
           // Scale based on vertical position (closer to edges = smaller)
           let newScale = logo.scale;
