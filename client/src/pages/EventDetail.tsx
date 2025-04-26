@@ -371,7 +371,11 @@ export default function EventDetail() {
             <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
             <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
             
-
+            {/* Texas Recruiting Clinic diamond pattern */}
+            <div className="recruiting-diamond-pattern"></div>
+            
+            {/* Animated glossy stripe */}
+            <div className="recruiting-stripe"></div>
           </>
         )}
         
