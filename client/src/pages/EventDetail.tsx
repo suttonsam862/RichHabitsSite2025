@@ -1086,6 +1086,137 @@ export default function EventDetail() {
               </div>
             </div>
             
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="contactName">Parent/Guardian Name</Label>
+                <Input 
+                  id="contactName" 
+                  value={registrationForm.contactName}
+                  onChange={(e) => setRegistrationForm({...registrationForm, contactName: e.target.value})}
+                  placeholder="Parent/Guardian name" 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email"
+                  type="email" 
+                  value={registrationForm.email}
+                  onChange={(e) => setRegistrationForm({...registrationForm, email: e.target.value})}
+                  placeholder="Email address" 
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number (Optional)</Label>
+                <Input 
+                  id="phone" 
+                  value={registrationForm.phone}
+                  onChange={(e) => setRegistrationForm({...registrationForm, phone: e.target.value})}
+                  placeholder="Phone number" 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tShirtSize">T-Shirt Size</Label>
+                <select 
+                  id="tShirtSize"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={registrationForm.tShirtSize}
+                  onChange={(e) => setRegistrationForm({...registrationForm, tShirtSize: e.target.value})}
+                >
+                  <option value="">Select a size</option>
+                  <option value="YS">Youth Small</option>
+                  <option value="YM">Youth Medium</option>
+                  <option value="YL">Youth Large</option>
+                  <option value="AS">Adult Small</option>
+                  <option value="AM">Adult Medium</option>
+                  <option value="AL">Adult Large</option>
+                  <option value="AXL">Adult XL</option>
+                  <option value="A2XL">Adult 2XL</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="grade">Grade</Label>
+                <Input 
+                  id="grade" 
+                  value={registrationForm.grade}
+                  onChange={(e) => setRegistrationForm({...registrationForm, grade: e.target.value})}
+                  placeholder="Current grade" 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="schoolName">School Name</Label>
+                <Input 
+                  id="schoolName" 
+                  value={registrationForm.schoolName}
+                  onChange={(e) => setRegistrationForm({...registrationForm, schoolName: e.target.value})}
+                  placeholder="School name" 
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="clubName">Wrestling Club (Optional)</Label>
+              <Input 
+                id="clubName" 
+                value={registrationForm.clubName}
+                onChange={(e) => setRegistrationForm({...registrationForm, clubName: e.target.value})}
+                placeholder="Club name (if applicable)" 
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <input 
+                type="checkbox" 
+                id="medicalRelease"
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" 
+                checked={registrationForm.medicalReleaseAccepted}
+                onChange={(e) => setRegistrationForm({...registrationForm, medicalReleaseAccepted: e.target.checked})}
+              />
+              <Label htmlFor="medicalRelease" className="text-sm">
+                I accept the medical release waiver and understand that Rich Habits is not responsible for any injuries that may occur.
+              </Label>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Registration Type</Label>
+              <div className="flex space-x-4">
+                <div className="flex items-center space-x-2">
+                  <input 
+                    type="radio" 
+                    id="fullCamp"
+                    value="full"
+                    name="registrationType"
+                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary" 
+                    checked={registrationForm.registrationType === 'full'}
+                    onChange={() => setRegistrationForm({...registrationForm, registrationType: 'full'})}
+                  />
+                  <Label htmlFor="fullCamp" className="text-sm">
+                    Full Camp ($249)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input 
+                    type="radio" 
+                    id="singleDay"
+                    value="single"
+                    name="registrationType"
+                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary" 
+                    checked={registrationForm.registrationType === 'single'}
+                    onChange={() => setRegistrationForm({...registrationForm, registrationType: 'single'})}
+                  />
+                  <Label htmlFor="singleDay" className="text-sm">
+                    Single Day ($149)
+                  </Label>
+                </div>
+              </div>
+            </div>
+            
             <div className="mt-6 flex justify-end space-x-3">
               <Button 
                 type="button" 
@@ -1097,12 +1228,96 @@ export default function EventDetail() {
               <Button 
                 type="button" 
                 disabled={isSubmitting}
-                onClick={() => {
-                  // Implementation would handle form submission and checkout process
-                  toast({
-                    title: "Registration In Progress",
-                    description: "Taking you to the secure payment page...",
-                  });
+                onClick={async () => {
+                  // Validate the form data
+                  const requiredFields = [
+                    { field: 'firstName', label: 'First Name' },
+                    { field: 'lastName', label: 'Last Name' },
+                    { field: 'contactName', label: 'Parent/Guardian Name' },
+                    { field: 'email', label: 'Email' },
+                    { field: 'tShirtSize', label: 'T-Shirt Size' },
+                    { field: 'grade', label: 'Grade' },
+                    { field: 'schoolName', label: 'School Name' }
+                  ];
+                  
+                  const missingFields = requiredFields.filter(
+                    ({ field }) => !registrationForm[field as keyof typeof registrationForm]
+                  );
+                  
+                  if (missingFields.length > 0) {
+                    toast({
+                      title: "Missing Information",
+                      description: `Please fill in all required fields: ${missingFields.map(f => f.label).join(', ')}`,
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  
+                  if (!registrationForm.medicalReleaseAccepted) {
+                    toast({
+                      title: "Medical Release Required",
+                      description: "You must accept the medical release waiver to register",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  
+                  try {
+                    setIsSubmitting(true);
+                    
+                    // Notify user we're processing
+                    toast({
+                      title: "Registration In Progress",
+                      description: "Preparing your registration...",
+                    });
+                    
+                    // Submit to backend API
+                    const response = await fetch(`/api/events/${eventId}/register`, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        ...registrationForm,
+                        eventId: eventId,
+                      }),
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                      throw new Error(data.message || 'Failed to register');
+                    }
+                    
+                    if (data.checkoutUrl) {
+                      // Registration successful, redirect to checkout
+                      toast({
+                        title: "Registration Successful",
+                        description: "Taking you to the secure payment page...",
+                      });
+                      
+                      // Close dialog and redirect after a short delay
+                      setTimeout(() => {
+                        setShowRegistrationDialog(false);
+                        window.location.href = data.checkoutUrl;
+                      }, 1500);
+                    } else {
+                      toast({
+                        title: "Registration Received",
+                        description: "Your registration has been submitted, but payment processing is currently unavailable.",
+                      });
+                      setShowRegistrationDialog(false);
+                    }
+                  } catch (error) {
+                    console.error('Registration error:', error);
+                    toast({
+                      title: "Registration Failed",
+                      description: error instanceof Error ? error.message : "An unknown error occurred",
+                      variant: "destructive"
+                    });
+                  } finally {
+                    setIsSubmitting(false);
+                  }
                 }}
               >
                 Complete Registration
