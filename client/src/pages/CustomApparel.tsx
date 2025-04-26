@@ -17,11 +17,11 @@ export default function CustomApparel() {
   // Design slideshow images (from Binder2.pdf)
   const [currentDesignIndex, setCurrentDesignIndex] = useState(0);
   const designImages = [
-    "/assets/design1.jpg",
-    "/assets/design2.jpg", 
-    "/assets/design3.jpg",
-    "/assets/design4.jpg",
-    "/assets/design5.jpg"
+    "/assets/designs/design1.webp",
+    "/assets/designs/design2.webp", 
+    "/assets/designs/design3.webp",
+    "/assets/designs/design4.webp",
+    "/assets/designs/design5.webp"
   ];
   
   // Rotate through images every 5 seconds
@@ -33,7 +33,7 @@ export default function CustomApparel() {
     }, 5000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [wrestlerImages.length]);
   
   // Rotate through design images every 3 seconds
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function CustomApparel() {
     }, 3000);
     
     return () => clearInterval(designInterval);
-  }, []);
+  }, [designImages.length]);
   
   return (
     <>
@@ -93,6 +93,64 @@ export default function CustomApparel() {
                 </a>
               </Link>
             </motion.div>
+          </Container>
+        </section>
+        
+        {/* Design Showcase Slideshow */}
+        <section className="py-16 bg-gray-50">
+          <Container>
+            <div className="relative h-[300px] overflow-hidden rounded-md mb-10">
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={currentDesignIndex}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute inset-0 w-full h-full"
+                >
+                  <img 
+                    src={designImages[currentDesignIndex]} 
+                    alt={`Custom design ${currentDesignIndex + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                </motion.div>
+              </AnimatePresence>
+              
+              {/* Navigation dots */}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                {designImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentDesignIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                      index === currentDesignIndex ? 'bg-primary' : 'bg-gray-300'
+                    }`}
+                    aria-label={`View design ${index + 1}`}
+                  />
+                ))}
+              </div>
+              
+              {/* Navigation arrows */}
+              <button 
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md hover:bg-white transition-colors"
+                onClick={() => setCurrentDesignIndex(prev => prev === 0 ? designImages.length - 1 : prev - 1)}
+                aria-label="Previous design"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button 
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md hover:bg-white transition-colors"
+                onClick={() => setCurrentDesignIndex(prev => prev === designImages.length - 1 ? 0 : prev + 1)}
+                aria-label="Next design"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </Container>
         </section>
         
