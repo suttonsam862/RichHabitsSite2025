@@ -453,18 +453,6 @@ export default function EventDetail() {
                           <p className="text-gray-600">A premium wrestling experience in Las Vegas</p>
                         </div>
                         
-                        {/* Featured Camp Video */}
-                        <div className="mb-8 rounded-xl overflow-hidden shadow-lg border-2 border-[#041e42]">
-                          <video 
-                            className="w-full h-auto"
-                            src="/src/assets/videos/0405.mov"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          ></video>
-                        </div>
-                        
                         <div className="prose max-w-none text-gray-700">
                           {event.description.split('\n\n').map((paragraph: string, index: number) => (
                             <p key={index} className="mb-4">
@@ -563,6 +551,24 @@ export default function EventDetail() {
                     ></video>
                     <div className="absolute bottom-3 left-3 text-white text-sm font-medium">
                       Rancho High School Mat Room
+                    </div>
+                  </div>
+                  
+                  {/* Featured Camp Video */}
+                  <div className="mb-8 rounded-xl overflow-hidden shadow-lg border-2 border-[#041e42]">
+                    <div className="relative">
+                      <video 
+                        className="w-full h-auto"
+                        src="/src/assets/videos/0405.mov"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      ></video>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#041e42]/80 to-transparent p-4">
+                        <h4 className="text-white font-bold text-lg">National Champ Camp Highlights</h4>
+                        <p className="text-white/80 text-sm">Experience the intensity and focus of Penn State champion training</p>
+                      </div>
                     </div>
                   </div>
                 </>
