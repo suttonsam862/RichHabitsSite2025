@@ -481,9 +481,11 @@ export default function EventDetail() {
                       className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 relative z-10 ${
                         event.id === 2 
                           ? 'psu-gradient-btn text-white focus:ring-blue-500' 
-                          : event.id === 1 || event.id === 3 // Using same styling for Texas Recruiting Clinic as Birmingham Slam Camp
+                          : event.id === 1 
                             ? 'fire-gradient-btn text-white focus:ring-orange-500'
-                            : 'bg-black hover:bg-gray-800 text-white focus:ring-gray-500'
+                            : event.id === 3 
+                              ? 'usa-gradient-btn text-white focus:ring-red-500'
+                              : 'bg-black hover:bg-gray-800 text-white focus:ring-gray-500'
                       }`}
                     >
                       {event.buttonLabel || 'Register Now'}
@@ -1058,7 +1060,7 @@ export default function EventDetail() {
       
       {/* Registration Dialog */}
       <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogTitle>Register for {event.title}</DialogTitle>
           <DialogDescription>
             Complete the form below to register for this event. All fields are required unless marked as optional.
@@ -1197,7 +1199,7 @@ export default function EventDetail() {
                     onChange={() => setRegistrationForm({...registrationForm, registrationType: 'full'})}
                   />
                   <Label htmlFor="fullCamp" className="text-sm">
-                    Full Camp ($249)
+                    {event.id === 2 ? 'Full Camp ($349)' : 'Full Camp ($249)'}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -1211,7 +1213,7 @@ export default function EventDetail() {
                     onChange={() => setRegistrationForm({...registrationForm, registrationType: 'single'})}
                   />
                   <Label htmlFor="singleDay" className="text-sm">
-                    Single Day ($149)
+                    {event.id === 2 ? 'Single Day ($175)' : 'Single Day ($149)'}
                   </Label>
                 </div>
               </div>
