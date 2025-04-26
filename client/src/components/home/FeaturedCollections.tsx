@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { Product } from "@/types/shopify";
 import { apiRequest } from "@/lib/queryClient";
 
-// Retail Collection ID from your Shopify store
-const RETAIL_COLLECTION_ID = "444853616877";
+// Handle for the Retail Collection in your Shopify store
+const RETAIL_COLLECTION_HANDLE = "retail-collection";
 
 // Sample retail products for when API fails
 const retailProducts: Product[] = [
@@ -65,8 +65,8 @@ export function FeaturedCollections() {
       try {
         setIsLoading(true);
         
-        // Use a direct fetch to avoid the error
-        const response = await fetch(`/api/products?collection=${RETAIL_COLLECTION_ID}`, {
+        // Use our new endpoint to fetch products from the Retail Collection
+        const response = await fetch(`/api/collections/${RETAIL_COLLECTION_HANDLE}/products`, {
           method: 'GET',
           headers: { 'Accept': 'application/json' }
         });
@@ -78,9 +78,11 @@ export function FeaturedCollections() {
         const fetchedProducts = await response.json();
         
         if (fetchedProducts && fetchedProducts.length > 0) {
+          console.log(`Found ${fetchedProducts.length} products in Retail Collection`);
           setProducts(fetchedProducts);
         } else {
           // For development, use dummy data
+          console.warn("No products found in the Retail Collection");
           setError("No products found in the Retail Collection");
           // Set retail products for development/demo purposes
           setProducts(retailProducts);
@@ -200,7 +202,7 @@ export function FeaturedCollections() {
         )}
         
         <div className="mt-12 text-center">
-          <Link href="/shop?collection=retail" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+          <Link href={`/shop?collection=${RETAIL_COLLECTION_HANDLE}`} className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
             View Retail Collection
           </Link>
         </div>

@@ -65,6 +65,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error fetching collections", error: (error as Error).message });
     }
   });
+  
+  // API route to fetch products from a specific collection by handle
+  app.get("/api/collections/:handle/products", async (req, res) => {
+    try {
+      const { handle } = req.params;
+      console.log(`Fetching products for collection with handle "${handle}"`);
+      
+      // Import getCollectionByHandle from shopify.ts
+      const { getCollectionByHandle } = await import('./shopify');
+      
+      const result = await getCollectionByHandle(handle);
+      
+      if (!result) {
+        return res.status(404).json({ message: `Collection with handle "${handle}" not found` });
+      }
+      
+      // Format the products to match our expected format
+      const formattedProducts = result.products.map(product => {
+        // Get the first variant as default
+        const firstVariant = product.variants && product.variants.length > 0 
+          ? product.variants[0] 
+          : null;
+        
+        // Get the first image as default
+        const firstImage = product.images && product.images.length > 0 
+          ? product.images[0].src 
+          : null;
+        
+        return {
+          id: product.id.toString(),
+          shopifyId: product.id.toString(),
+          title: product.title,
+          handle: product.handle,
+          description: product.body_html,
+          productType: product.product_type,
+          image: firstImage,
+          price: firstVariant ? `$${parseFloat(firstVariant.price).toFixed(2)}` : "",
+          collection: handle,
+          availableForSale: firstVariant ? firstVariant.available : false,
+          variants: product.variants.map(variant => ({
+            id: variant.id.toString(),
+            title: variant.title,
+            price: `$${parseFloat(variant.price).toFixed(2)}`,
+            availableForSale: variant.available
+          }))
+        };
+      });
+      
+      res.json(formattedProducts);
+    } catch (error) {
+      console.error('Error fetching collection products:', error);
+      res.status(500).json({ 
+        message: "Error fetching collection products", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
 
   // API routes for events
   app.get("/api/events", async (req, res) => {

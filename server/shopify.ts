@@ -71,6 +71,90 @@ export async function listProducts() {
   }
 }
 
+// Function to list all collections using Admin API
+export async function listCollections() {
+  try {
+    console.log('Fetching collections from Shopify Admin API');
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/custom_collections.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { custom_collections: any[] };
+    console.log(`Found ${data.custom_collections.length} collections`);
+    return data.custom_collections;
+  } catch (error) {
+    console.error('Error listing collections from Shopify:', error);
+    throw error;
+  }
+}
+
+// Function to get products in a collection by collection ID
+export async function getProductsByCollectionId(collectionId: string) {
+  try {
+    console.log(`Fetching products for collection ID ${collectionId} from Shopify Admin API`);
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?collection_id=${collectionId}`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { products: any[] };
+    console.log(`Found ${data.products.length} products in collection ${collectionId}`);
+    return data.products;
+  } catch (error) {
+    console.error(`Error fetching products for collection ${collectionId}:`, error);
+    throw error;
+  }
+}
+
+// Function to get a collection by handle using Admin API
+export async function getCollectionByHandle(handle: string) {
+  try {
+    console.log(`Fetching collection with handle "${handle}" from Shopify Admin API`);
+    
+    // First, list all collections to find the one with matching handle
+    const collections = await listCollections();
+    const collection = collections.find(col => col.handle === handle);
+    
+    if (!collection) {
+      console.error(`Collection with handle "${handle}" not found`);
+      return null;
+    }
+    
+    console.log(`Found collection with ID ${collection.id}`);
+    
+    // Next, fetch products in this collection
+    const products = await getProductsByCollectionId(collection.id);
+    
+    // Return both the collection and its products
+    return {
+      collection,
+      products
+    };
+  } catch (error) {
+    console.error(`Error fetching collection "${handle}" from Shopify:`, error);
+    throw error;
+  }
+}
+
 // Function to create a checkout with a product variant
 // This uses the Storefront API's cart functionality (recommended by Shopify)
 export async function createCheckout(variantId: string, quantity: number = 1, customAttributes?: any[]) {
