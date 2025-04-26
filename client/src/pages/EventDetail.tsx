@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import FloatingSchoolLogos from '@/components/event/FloatingSchoolLogos';
 
 // Import event banner images
 import recruitingBanner from '@/assets/events/recruiting-banner.png';
@@ -370,61 +371,16 @@ export default function EventDetail() {
             <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
             <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
             
-            {/* Add animated floating university logos in a flock formation */}
-            {/* Pittsburgh logo flock */}
-            <div className="floating-logo logo-pitt" style={{ top: '15%', left: '10%' }}>
-              <img src={pittLogo} alt="University of Pittsburgh" />
-            </div>
-            <div className="floating-logo logo-pitt" style={{ top: '12%', left: '14%', width: '40px', height: '40px', animationDelay: '-2s' }}>
-              <img src={pittLogo} alt="University of Pittsburgh" />
-            </div>
-            <div className="floating-logo logo-pitt" style={{ top: '18%', left: '16%', width: '30px', height: '30px', animationDelay: '-4s' }}>
-              <img src={pittLogo} alt="University of Pittsburgh" />
-            </div>
-            
-            {/* Oklahoma logo flock */}
-            <div className="floating-logo logo-ou" style={{ top: '30%', right: '15%' }}>
-              <img src={ouLogo} alt="University of Oklahoma" />
-            </div>
-            <div className="floating-logo logo-ou" style={{ top: '34%', right: '18%', width: '40px', height: '40px', animationDelay: '-3s' }}>
-              <img src={ouLogo} alt="University of Oklahoma" />
-            </div>
-            <div className="floating-logo logo-ou" style={{ top: '28%', right: '20%', width: '30px', height: '30px', animationDelay: '-5s' }}>
-              <img src={ouLogo} alt="University of Oklahoma" />
-            </div>
-            
-            {/* Brown logo flock */}
-            <div className="floating-logo logo-brown" style={{ top: '60%', left: '18%' }}>
-              <img src={brownLogo} alt="Brown University" />
-            </div>
-            <div className="floating-logo logo-brown" style={{ top: '64%', left: '22%', width: '40px', height: '40px', animationDelay: '-6s' }}>
-              <img src={brownLogo} alt="Brown University" />
-            </div>
-            <div className="floating-logo logo-brown" style={{ top: '58%', left: '24%', width: '30px', height: '30px', animationDelay: '-9s' }}>
-              <img src={brownLogo} alt="Brown University" />
-            </div>
-            
-            {/* George Mason logo flock */}
-            <div className="floating-logo logo-gmu" style={{ bottom: '20%', right: '12%' }}>
-              <img src={gmuLogo} alt="George Mason University" />
-            </div>
-            <div className="floating-logo logo-gmu" style={{ bottom: '24%', right: '16%', width: '40px', height: '40px', animationDelay: '-7s' }}>
-              <img src={gmuLogo} alt="George Mason University" />
-            </div>
-            <div className="floating-logo logo-gmu" style={{ bottom: '26%', right: '9%', width: '30px', height: '30px', animationDelay: '-10s' }}>
-              <img src={gmuLogo} alt="George Mason University" />
-            </div>
-            
-            {/* Tarleton logo flock */}
-            <div className="floating-logo logo-tarleton" style={{ top: '45%', left: '45%' }}>
-              <img src={tarletonLogo} alt="Tarleton State University" />
-            </div>
-            <div className="floating-logo logo-tarleton" style={{ top: '48%', left: '48%', width: '40px', height: '40px', animationDelay: '-5.5s' }}>
-              <img src={tarletonLogo} alt="Tarleton State University" />
-            </div>
-            <div className="floating-logo logo-tarleton" style={{ top: '42%', left: '50%', width: '30px', height: '30px', animationDelay: '-8.5s' }}>
-              <img src={tarletonLogo} alt="Tarleton State University" />
-            </div>
+            {/* Add animated floating university logos with dynamic bird-like movement */}
+            <FloatingSchoolLogos 
+              logos={[
+                { src: pittLogo, alt: "University of Pittsburgh", logoClass: "logo-pitt" },
+                { src: ouLogo, alt: "University of Oklahoma", logoClass: "logo-ou" },
+                { src: brownLogo, alt: "Brown University", logoClass: "logo-brown" },
+                { src: gmuLogo, alt: "George Mason University", logoClass: "logo-gmu" },
+                { src: tarletonLogo, alt: "Tarleton State University", logoClass: "logo-tarleton" }
+              ]}
+            />
           </>
         )}
         
