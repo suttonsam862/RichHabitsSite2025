@@ -161,7 +161,7 @@ export default function EventDetail() {
               title: "Recruiting Coordinator, University of Oklahoma",
               image: "/src/assets/coaches/hall.webp",
               school: "University of Oklahoma",
-              schoolLogo: "/src/assets/schools/ou.png",
+              schoolLogo: "/src/assets/schools/ou.svg",
               bio: "Mark Hall is the recruiting coordinator at the University of Oklahoma and a former NCAA Champion and three-time finalist from Penn State University. His expertise in talent identification and development makes him an invaluable resource for wrestlers looking to compete at the collegiate level."
             },
             {
@@ -169,7 +169,7 @@ export default function EventDetail() {
               title: "RTC Coach and Recruiter, Brown University",
               image: "/src/assets/coaches/josh_shields.jpg",
               school: "Brown University",
-              schoolLogo: "/src/assets/schools/brown.png",
+              schoolLogo: "/src/assets/schools/brown.svg",
               bio: "Josh Shields serves as an RTC coach and recruiter at Brown University. A former All-American from Arizona State University, Shields brings a wealth of knowledge about Ivy League recruitment and what it takes to succeed at elite academic institutions."
             },
             {
@@ -177,7 +177,7 @@ export default function EventDetail() {
               title: "Head Coach, Tarleton State University",
               image: "/src/assets/coaches/recruiting/main.png",
               school: "Tarleton State University",
-              schoolLogo: "/src/assets/schools/tarleton.png",
+              schoolLogo: "/src/assets/schools/tarleton.svg",
               bio: "Grant Leeth is the head coach at Tarleton State University. With his experience leading a collegiate program, Leeth provides valuable insights into the recruitment process from a head coach's perspective."
             },
             {
@@ -185,7 +185,7 @@ export default function EventDetail() {
               title: "Assistant Coach and Recruiter, George Mason University",
               image: "/src/assets/coaches/recruiting/main.png",
               school: "George Mason University",
-              schoolLogo: "/src/assets/schools/gmu.png",
+              schoolLogo: "/src/assets/schools/gmu.svg",
               bio: "Max Murin is an assistant coach and recruiter at George Mason University. A former standout wrestler himself, Murin understands what it takes to get noticed by college programs and how to transition successfully to collegiate wrestling."
             }
           ];
@@ -221,7 +221,7 @@ export default function EventDetail() {
           data.categoryClass = "bg-red-100 text-red-800";
           data.buttonLabel = "Secure Your Spot";
           data.ageGroups = "High school wrestlers";
-          data.capacity = "Limited to 200 participants";
+          data.capacity = "Limited to 150 participants";
           data.shortDescription = "A specialized two-day clinic combining elite coaching with college recruiting opportunities at Arlington Martin High School.";
         }
         
