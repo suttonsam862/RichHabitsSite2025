@@ -9,6 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
+// Import event banner images
+import recruitingBanner from '@/assets/events/recruiting-banner.png';
+
 // Event data comes from the API
 
 export default function EventDetail() {
@@ -209,7 +212,18 @@ export default function EventDetail() {
         </div>
       )}
       
-      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : ''}`}>
+      {event.id === 3 && (
+        <div className="w-full overflow-hidden banner-container relative">
+          <img 
+            src={recruitingBanner} 
+            alt={event.title} 
+            className="w-full h-auto object-cover" 
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
+        </div>
+      )}
+      
+      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : event.id === 3 ? 'recruiting-bg' : ''}`}>
         {event.id === 1 && (
           <>
             {/* Heat waves */}
