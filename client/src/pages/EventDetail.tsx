@@ -88,21 +88,21 @@ export default function EventDetail() {
           data.coaches = [
             {
               name: "Jason Nolf",
-              title: "3x NCAA Champion",
+              title: "3x NCAA Champion at 157 lbs (2017-19)",
               image: "/src/assets/coaches/nolf.webp",
-              bio: "Jason Nolf is a 3x NCAA Champion and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
+              bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
             },
             {
               name: "Mark Hall",
-              title: "NCAA Champion",
+              title: "NCAA Champion at 174 lbs (2017)",
               image: "/src/assets/coaches/hall.webp",
-              bio: "Mark Hall is an NCAA Champion and 4x All-American from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
+              bio: "Mark Hall is a 2017 NCAA Champion at 174 lbs and three-time finalist from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
             },
             {
               name: "Vincenzo Joseph",
-              title: "2x NCAA Champion",
+              title: "2x NCAA Champion at 165 lbs (2017, 2018)",
               image: "/src/assets/coaches/joseph.webp",
-              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
+              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
             }
           ];
           
@@ -140,9 +140,9 @@ export default function EventDetail() {
           // Adding other required fields
           data.categoryClass = "bg-blue-100 text-blue-800";
           data.buttonLabel = "Register Now";
-          data.ageGroups = "2nd Grade - Senior";
+          data.ageGroups = "Ages 10+ through high school";
           data.capacity = "Limited to 200 wrestlers";
-          data.shortDescription = "An intensive 3-day wrestling camp featuring elite coaching from NCAA champions and Olympic-level athletes.";
+          data.shortDescription = "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions in Las Vegas.";
         }
         
         setEvent(data);
@@ -201,7 +201,7 @@ export default function EventDetail() {
       {event.id === 2 && (
         <div className="w-full overflow-hidden banner-container relative">
           <img 
-            src="/src/assets/events/LongSitePhotovegas.png" 
+            src="/src/assets/LongSitePhotovegas.png" 
             alt={event.title} 
             className="w-full h-auto object-cover" 
           />
@@ -446,6 +446,21 @@ export default function EventDetail() {
                           Penn State University has dominated NCAA wrestling, winning 9 of the last 12 national championships. Our National Champ Camp brings you direct access to the training methods that have created this dynasty.
                         </p>
                       </div>
+                      
+                      <div className="mt-10">
+                        <div className="mb-6 border-b border-blue-100 pb-2">
+                          <h3 className="text-xl font-bold psu-title">About National Champ Camp</h3>
+                          <p className="text-gray-600">A premium wrestling experience in Las Vegas</p>
+                        </div>
+                        
+                        <div className="prose max-w-none text-gray-700">
+                          {event.description.split('\n\n').map((paragraph: string, index: number) => (
+                            <p key={index} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -481,14 +496,14 @@ export default function EventDetail() {
                         </div>
                         <div>
                           <h4 className="font-bold text-gray-800">Vincenzo Joseph</h4>
-                          <p className="text-[#1e88e5] text-sm">2x NCAA Champion</p>
+                          <p className="text-[#1e88e5] text-sm">2x NCAA Champion at 165 lbs (2017, 2018)</p>
                         </div>
                       </div>
                       <blockquote className="text-gray-700 italic border-l-4 border-[#041e42] pl-4 py-2 mb-4">
-                        "Wrestling is about constant evolution. At National Champ Camp, we'll push beyond fundamentals to develop the technical details and mindset that separate champions from competitors."
+                        "Wrestling is about constant evolution. At National Champ Camp, we'll push beyond fundamentals to develop the technical details and championship mindset that separates NCAA champions from competitors."
                       </blockquote>
                       <p className="text-sm text-gray-700 mb-4">
-                        Coach Joseph is renowned for his creative wrestling style and championship mentality. His sessions will focus on developing scoring opportunities from all positions and building resilience under pressure.
+                        Coach Joseph is a two-time NCAA champion at 165 lbs (2017, 2018) from Penn State University. Known for his creative wrestling style and championship mentality, his sessions will focus on elite setups, chain-wrestling sequences, and developing scoring opportunities from all positions.
                       </p>
                     </div>
                   </div>
@@ -500,13 +515,19 @@ export default function EventDetail() {
                     <div className="p-6">
                       <ul className="space-y-4">
                         <li className="flex">
-                          <span>Train with Penn State's championship coaching network</span>
+                          <span>Train with Penn State NCAA champions and learn their systems</span>
                         </li>
                         <li className="flex">
-                          <span>Intensive training in Las Vegas's premier facilities</span>
+                          <span>Receive custom National Champ Camp singlet with registration</span>
                         </li>
                         <li className="flex">
-                          <span>Personalized technique feedback and development</span>
+                          <span>Get pro-shot highlight footage of your training</span>
+                        </li>
+                        <li className="flex">
+                          <span>Enter the Friday night Vegas Spotlight Match Showcase</span>
+                        </li>
+                        <li className="flex">
+                          <span>Groups of 10+ wrestlers get 10% credit on next Rich Habits gear order</span>
                         </li>
                       </ul>
                     </div>
