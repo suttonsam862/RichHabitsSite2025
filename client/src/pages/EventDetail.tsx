@@ -485,7 +485,7 @@ export default function EventDetail() {
               {event.id !== 1 && event.id !== 2 && (
                 <div className="lg:col-span-2">
                   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
-                    <img src={event.image} alt={event.title} className="w-full h-auto aspect-[16/9] object-cover" />
+                    <img src={event.image} alt={event.title} className="w-full h-auto max-h-[120px] object-cover object-center" />
                   </div>
                 </div>
               )}
