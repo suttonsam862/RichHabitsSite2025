@@ -481,7 +481,7 @@ export default function EventDetail() {
                       className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 relative z-10 ${
                         event.id === 2 
                           ? 'psu-gradient-btn text-white focus:ring-blue-500' 
-                          : event.id === 1
+                          : event.id === 1 || event.id === 3 // Using same styling for Texas Recruiting Clinic as Birmingham Slam Camp
                             ? 'fire-gradient-btn text-white focus:ring-orange-500'
                             : 'bg-black hover:bg-gray-800 text-white focus:ring-gray-500'
                       }`}
