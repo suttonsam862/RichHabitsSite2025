@@ -15,6 +15,7 @@ import event2Image from "../assets/events/cenzo.png";
 import event3Image from "../assets/events/event3.png";
 import birminghamVideo from "@assets/0424.mov";
 import champCampVideo from "@assets/04243.mov";
+import texasRecruitingVideo from "@assets/trcvid.mov";
 
 // Static events data
 const events = [
@@ -26,8 +27,9 @@ const events = [
     date: "June 12th-13th, 2025",
     time: "10:00 AM - 5:00 PM",
     location: "Arlington Martin High School",
-    description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, and professional video profiling to enhance recruitment portfolios.",
-    price: "$195",
+    description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.",
+    price: "$249",
+    originalPrice: "$300",
     image: event3Image
   },
   {
@@ -162,7 +164,7 @@ export default function Events() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
                     <video 
-                      src="/src/assets/videos/0424.mov"
+                      src={texasRecruitingVideo}
                       autoPlay 
                       loop 
                       muted 
@@ -192,7 +194,7 @@ export default function Events() {
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
                       <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
                     </div>
                     <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
                     <div className="flex space-x-4">
@@ -346,7 +348,7 @@ export default function Events() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm">
                     <video 
-                      src="/src/assets/videos/0424.mov"
+                      src={texasRecruitingVideo}
                       autoPlay 
                       loop 
                       muted 
@@ -538,7 +540,7 @@ export default function Events() {
                     <p className="text-sm text-gray-600">Parent of High School Wrestler</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">"The Rich Habits Recruiting Clinic in Arlington was worth every penny. My son connected with three college coaches who are now actively recruiting him. The video profile they created was professional and impressive."</p>
+                <p className="text-gray-700 italic">"The Texas Recruiting Clinic in Arlington was worth every penny. My son connected with three college coaches who are now actively recruiting him. The video profile they created was professional and impressive."</p>
               </motion.div>
             </div>
           </Container>
