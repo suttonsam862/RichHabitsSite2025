@@ -399,7 +399,7 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-gray-500 mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <span className="font-medium">Limited to 150 participants - Register now</span>
+                        <span className="font-medium">Limited to 200 participants - Register now</span>
                       </div>
                     </div>
                     
@@ -414,7 +414,7 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-[#041e42] mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <span className="font-medium">Limited to 150 participants - Register now</span>
+                        <span className="font-medium">Limited to 200 participants - Register now</span>
                       </div>
                     </div>
                     
@@ -716,7 +716,7 @@ export default function EventDetail() {
                           This unique clinic combines elite technical training with direct access to college coaches and recruiters, creating invaluable opportunities for high school wrestlers looking to compete at the collegiate level.
                         </p>
                         <p>
-                          Limited to 150 participants to ensure quality instruction and maximum exposure to college coaches. Each wrestler receives personalized feedback and evaluation.
+                          Limited to 150 wrestlers to ensure quality instruction and maximum exposure to college coaches. Each wrestler receives personalized feedback and evaluation.
                         </p>
                       </div>
                       
@@ -780,7 +780,7 @@ export default function EventDetail() {
                     <div className="p-6">
                       <ul className="space-y-3">
                         <li className="flex">
-                          <span>Limited to 150 wrestlers - small group training</span>
+                          <span>Limited to 200 wrestlers - small group training</span>
                         </li>
                         <li className="flex">
                           <span>All participants receive Birmingham Slam Camp t-shirt</span>
