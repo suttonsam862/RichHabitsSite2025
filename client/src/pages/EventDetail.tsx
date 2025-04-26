@@ -483,14 +483,14 @@ export default function EventDetail() {
               </div>
               
               {event.id !== 1 && event.id !== 2 && (
-                <div className="lg:col-span-2">
+                <div className="col-span-full">
                   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
                     <img src={event.image} alt={event.title} className="w-full h-auto max-h-[120px] object-cover object-center" />
                   </div>
                 </div>
               )}
               
-              <div className="lg:col-span-2 mt-6">
+              <div className="col-span-full mt-6">
                 <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 w-full">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
