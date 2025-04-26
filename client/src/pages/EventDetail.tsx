@@ -354,6 +354,23 @@ export default function EventDetail() {
             <div className="recruiting-red-wave" style={{ top: '25%', animationDelay: '6s' }}></div>
             <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
             <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
+            
+            {/* Add animated floating university logos */}
+            <div className="floating-logo logo-pitt" style={{ top: '15%', left: '10%' }}>
+              <img src={pittLogo} alt="University of Pittsburgh" />
+            </div>
+            <div className="floating-logo logo-ou" style={{ top: '30%', right: '15%' }}>
+              <img src={ouLogo} alt="University of Oklahoma" />
+            </div>
+            <div className="floating-logo logo-brown" style={{ top: '60%', left: '18%' }}>
+              <img src={brownLogo} alt="Brown University" />
+            </div>
+            <div className="floating-logo logo-gmu" style={{ bottom: '20%', right: '12%' }}>
+              <img src={gmuLogo} alt="George Mason University" />
+            </div>
+            <div className="floating-logo logo-tarleton" style={{ top: '45%', left: '45%' }}>
+              <img src={tarletonLogo} alt="Tarleton State University" />
+            </div>
           </>
         )}
         
@@ -580,6 +597,13 @@ export default function EventDetail() {
                 <div>
                   <div className="mb-10">
                     <div className="mb-6 border-b border-red-100 pb-2">
+                      <div className="flex items-center justify-center mb-3">
+                        <img src={pittLogo} alt="University of Pittsburgh" className="w-12 h-12 mx-1 school-logo-pulse" />
+                        <img src={ouLogo} alt="University of Oklahoma" className="w-12 h-12 mx-1 school-logo-pulse" />
+                        <img src={brownLogo} alt="Brown University" className="w-12 h-12 mx-1 school-logo-pulse" />
+                        <img src={gmuLogo} alt="George Mason University" className="w-12 h-12 mx-1 school-logo-pulse" />
+                        <img src={tarletonLogo} alt="Tarleton State University" className="w-12 h-12 mx-1 school-logo-pulse" />
+                      </div>
                       <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         Elite NCAA Champion Coaches
                       </h3>
@@ -596,11 +620,11 @@ export default function EventDetail() {
                               className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                             />
                             {coach.schoolLogo && (
-                              <div className="absolute top-3 right-3 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg">
+                              <div className="absolute top-3 right-3 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg school-logo-pulse">
                                 <img 
                                   src={coach.schoolLogo} 
                                   alt={coach.school || ""} 
-                                  className="w-full h-full object-cover"
+                                  className="w-full h-full object-contain"
                                 />
                               </div>
                             )}
@@ -619,6 +643,13 @@ export default function EventDetail() {
                   {event.schedule && (
                     <div className="mt-10">
                       <div className="mb-6 border-b border-red-100 pb-2">
+                        <div className="flex items-center justify-center mb-3">
+                          <img src={pittLogo} alt="University of Pittsburgh" className="w-10 h-10 mx-1 school-logo-pulse" />
+                          <img src={ouLogo} alt="University of Oklahoma" className="w-10 h-10 mx-1 school-logo-pulse" />
+                          <img src={brownLogo} alt="Brown University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                          <img src={gmuLogo} alt="George Mason University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                          <img src={tarletonLogo} alt="Tarleton State University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                        </div>
                         <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                           Daily Schedule
                         </h3>
@@ -653,6 +684,13 @@ export default function EventDetail() {
                       
                       <div className="mt-10">
                         <div className="mb-6 border-b border-red-100 pb-2">
+                          <div className="flex items-center justify-center mb-3">
+                            <img src={pittLogo} alt="University of Pittsburgh" className="w-10 h-10 mx-1 school-logo-pulse" />
+                            <img src={ouLogo} alt="University of Oklahoma" className="w-10 h-10 mx-1 school-logo-pulse" />
+                            <img src={brownLogo} alt="Brown University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                            <img src={gmuLogo} alt="George Mason University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                            <img src={tarletonLogo} alt="Tarleton State University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                          </div>
                           <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                             About Texas Recruiting Clinic
                           </h3>
