@@ -152,7 +152,7 @@ export default function EventDetail() {
           data.categoryClass = "bg-blue-100 text-blue-800";
           data.buttonLabel = "Register Now";
           data.ageGroups = "Ages 10+ through high school";
-          data.capacity = "Limited to 150 wrestlers";
+          data.capacity = "Limited to 200 wrestlers";
           data.shortDescription = "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions in Las Vegas.";
         } else if (data.id === 3) {
           data.coaches = [
