@@ -11,6 +11,12 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
+import { 
+  sendContactFormEmail, 
+  sendCustomApparelInquiryEmail, 
+  sendEventRegistrationEmail, 
+  sendNewsletterSubscriptionEmail 
+} from "./email";
 
 // Shopify configuration - in a real app, store these in environment variables
 const SHOPIFY_ADMIN_API_KEY = process.env.SHOPIFY_ADMIN_API_KEY || "";
@@ -185,6 +191,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Continue with registration process even if Shopify checkout fails
         }
       }
+      // Send email notification
+      if (event) {
+        await sendEventRegistrationEmail({
+          firstName: validatedData.firstName,
+          lastName: validatedData.lastName,
+          contactName: validatedData.contactName,
+          email: validatedData.email,
+          phone: validatedData.phone || '',
+          tShirtSize: validatedData.tShirtSize || '',
+          grade: validatedData.grade || '',
+          schoolName: validatedData.schoolName || '',
+          clubName: validatedData.clubName,
+          eventName: event.name,
+          registrationType: validatedData.registrationType
+        });
+      }
       
       res.status(201).json({
         message: "Registration successful",
@@ -208,6 +230,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create custom apparel inquiry
       const inquiry = await storage.createCustomApparelInquiry(validatedData);
       
+      // Send email notification
+      await sendCustomApparelInquiryEmail({
+        organizationName: validatedData.organizationName,
+        contactName: validatedData.contactName,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        sport: validatedData.sport,
+        numberOfItems: validatedData.numberOfItems,
+        timeframe: validatedData.timeframe,
+        designIdeas: validatedData.designIdeas
+      });
+      
       res.status(201).json({
         message: "Inquiry submitted successfully",
         inquiry
@@ -228,6 +262,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create contact submission
       const submission = await storage.createContactSubmission(validatedData);
+      
+      // Send email notification
+      await sendContactFormEmail({
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        subject: validatedData.subject,
+        message: validatedData.message
+      });
       
       res.status(201).json({
         message: "Contact form submitted successfully",
@@ -376,6 +419,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create newsletter subscriber
       const subscriber = await storage.createNewsletterSubscriber({ email });
+      
+      // Send email notification
+      await sendNewsletterSubscriptionEmail(email);
       
       res.status(201).json({
         message: "Subscribed to newsletter successfully",
