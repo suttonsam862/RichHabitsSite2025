@@ -149,22 +149,44 @@ export default function EventDetail() {
         } else if (data.id === 3) {
           data.coaches = [
             {
-              name: "Jason Nolf",
-              title: "3x NCAA Champion at 157 lbs (2017-19)",
-              image: "/src/assets/coaches/nolf.webp",
-              bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
+              name: "Micky Phillippi",
+              title: "Assistant Coach, University of Pittsburgh",
+              image: "/src/assets/coaches/recruiting/main.png",
+              school: "University of Pittsburgh",
+              schoolLogo: "/src/assets/schools/pitt.svg",
+              bio: "Micky Phillippi serves as an assistant coach at the University of Pittsburgh. As a former standout wrestler, Phillippi brings technical expertise and a deep understanding of what college programs look for in recruits."
             },
             {
               name: "Mark Hall",
-              title: "NCAA Champion at 174 lbs (2017)",
+              title: "Recruiting Coordinator, University of Oklahoma",
               image: "/src/assets/coaches/hall.webp",
-              bio: "Mark Hall is a 2017 NCAA Champion at 174 lbs and three-time finalist from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
+              school: "University of Oklahoma",
+              schoolLogo: "/src/assets/schools/ou.png",
+              bio: "Mark Hall is the recruiting coordinator at the University of Oklahoma and a former NCAA Champion and three-time finalist from Penn State University. His expertise in talent identification and development makes him an invaluable resource for wrestlers looking to compete at the collegiate level."
             },
             {
-              name: "Vincenzo Joseph",
-              title: "2x NCAA Champion at 165 lbs (2017, 2018)",
-              image: "/src/assets/coaches/joseph.webp",
-              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
+              name: "Josh Shields",
+              title: "RTC Coach and Recruiter, Brown University",
+              image: "/src/assets/coaches/josh_shields.jpg",
+              school: "Brown University",
+              schoolLogo: "/src/assets/schools/brown.png",
+              bio: "Josh Shields serves as an RTC coach and recruiter at Brown University. A former All-American from Arizona State University, Shields brings a wealth of knowledge about Ivy League recruitment and what it takes to succeed at elite academic institutions."
+            },
+            {
+              name: "Grant Leeth",
+              title: "Head Coach, Tarleton State University",
+              image: "/src/assets/coaches/recruiting/main.png",
+              school: "Tarleton State University",
+              schoolLogo: "/src/assets/schools/tarleton.png",
+              bio: "Grant Leeth is the head coach at Tarleton State University. With his experience leading a collegiate program, Leeth provides valuable insights into the recruitment process from a head coach's perspective."
+            },
+            {
+              name: "Max Murin",
+              title: "Assistant Coach and Recruiter, George Mason University",
+              image: "/src/assets/coaches/recruiting/main.png",
+              school: "George Mason University",
+              schoolLogo: "/src/assets/schools/gmu.png",
+              bio: "Max Murin is an assistant coach and recruiter at George Mason University. A former standout wrestler himself, Murin understands what it takes to get noticed by college programs and how to transition successfully to collegiate wrestling."
             }
           ];
           
