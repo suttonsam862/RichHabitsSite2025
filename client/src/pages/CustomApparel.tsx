@@ -14,17 +14,7 @@ export default function CustomApparel() {
     "/images/wrestlers/DSC09374--.JPG"
   ];
   
-  // Design slideshow images (from Binder2.pdf)
-  const [currentDesignIndex, setCurrentDesignIndex] = useState(0);
-  const designImages = [
-    "/assets/designs/design1.webp",
-    "/assets/designs/design2.webp", 
-    "/assets/designs/design3.webp",
-    "/assets/designs/design4.webp",
-    "/assets/designs/design5.webp"
-  ];
-  
-  // Rotate through images every 5 seconds
+  // Rotate through hero images every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
@@ -34,17 +24,6 @@ export default function CustomApparel() {
     
     return () => clearInterval(interval);
   }, [wrestlerImages.length]);
-  
-  // Rotate through design images every 3 seconds
-  useEffect(() => {
-    const designInterval = setInterval(() => {
-      setCurrentDesignIndex((prevIndex) => 
-        prevIndex === designImages.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000);
-    
-    return () => clearInterval(designInterval);
-  }, [designImages.length]);
   
   return (
     <>
@@ -96,60 +75,60 @@ export default function CustomApparel() {
           </Container>
         </section>
         
-        {/* Design Showcase Slideshow */}
+        {/* Design Showcase Continuous Carousel */}
         <section className="py-16 bg-gray-50">
           <Container>
-            <div className="relative h-[300px] overflow-hidden rounded-md mb-10">
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={currentDesignIndex}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.8 }}
-                  className="absolute inset-0 w-full h-full"
-                >
-                  <img 
-                    src={designImages[currentDesignIndex]} 
-                    alt={`Custom design ${currentDesignIndex + 1}`}
-                    className="w-full h-full object-contain"
-                  />
-                </motion.div>
-              </AnimatePresence>
-              
-              {/* Navigation dots */}
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-                {designImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentDesignIndex(index)}
-                    className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                      index === currentDesignIndex ? 'bg-primary' : 'bg-gray-300'
-                    }`}
-                    aria-label={`View design ${index + 1}`}
-                  />
-                ))}
+            <div className="overflow-hidden mb-10">
+              <div className="relative">
+                <div className="flex items-center justify-start gap-4 h-[200px] overflow-hidden">
+                  <motion.div 
+                    className="flex gap-8 min-w-max"
+                    animate={{ 
+                      x: [0, -2000], 
+                    }}
+                    transition={{ 
+                      repeat: Infinity,
+                      repeatType: "loop",
+                      duration: 30,
+                      ease: "linear"
+                    }}
+                  >
+                    {/* First set of images */}
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design1.webp" alt="Custom design 1" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design2.webp" alt="Custom design 2" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design3.webp" alt="Custom design 3" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design4.webp" alt="Custom design 4" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design5.webp" alt="Custom design 5" className="h-full w-full object-contain" />
+                    </div>
+                    
+                    {/* Duplicate set for seamless looping */}
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design1.webp" alt="Custom design 1" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design2.webp" alt="Custom design 2" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design3.webp" alt="Custom design 3" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design4.webp" alt="Custom design 4" className="h-full w-full object-contain" />
+                    </div>
+                    <div className="flex-shrink-0 h-[180px] w-[250px]">
+                      <img src="/assets/designs/design5.webp" alt="Custom design 5" className="h-full w-full object-contain" />
+                    </div>
+                  </motion.div>
+                </div>
               </div>
-              
-              {/* Navigation arrows */}
-              <button 
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md hover:bg-white transition-colors"
-                onClick={() => setCurrentDesignIndex(prev => prev === 0 ? designImages.length - 1 : prev - 1)}
-                aria-label="Previous design"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button 
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md hover:bg-white transition-colors"
-                onClick={() => setCurrentDesignIndex(prev => prev === designImages.length - 1 ? 0 : prev + 1)}
-                aria-label="Next design"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
             </div>
           </Container>
         </section>
