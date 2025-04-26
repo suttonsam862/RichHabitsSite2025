@@ -244,33 +244,32 @@ export default function Events() {
                 viewport={{ once: true }}
               />
               
-              <div className="relative overflow-hidden bg-white border-2 border-[#041e42] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(30, 136, 229, 0.15)' }}>
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 fire-border">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm order-1 md:order-2 relative">
-                    <video
-                      src={champCampVideo}
-                      autoPlay
-                      loop
-                      muted
+                  <div className="h-64 overflow-hidden rounded-sm relative">
+                    <video 
+                      src={birminghamVideo}
+                      autoPlay 
+                      loop 
+                      muted 
                       playsInline
-                      className="w-full h-full object-cover absolute inset-0"
-                      style={{ filter: 'brightness(1.1) contrast(1.1)' }}
-                    >
-                      <img 
-                        src={events[1].image} 
-                        alt={events[1].title} 
-                        className="w-full h-full object-cover"
-                      />
-                    </video>
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      style={{ position: "absolute", top: 0, left: 0 }}
+                    />
                   </div>
-                  <div className="md:col-span-2 order-2 md:order-1">
+                  <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className="inline-block bg-[#041e42]/10 text-[#041e42] text-xs font-medium px-3 py-1 rounded-sm">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm fire-gradient-btn text-white">
                         {events[1].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                      {events[1].title}
+                    <h3 className="text-3xl font-bold mb-3 fire-title">
+                      <span style={{ 
+                        color: 'white', 
+                        fontWeight: 800, 
+                        letterSpacing: '0.08em',
+                        textShadow: '0 0 5px rgba(255, 160, 100, 0.5)'
+                      }}>BIRMINGHAM</span> SLAM CAMP
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
@@ -278,17 +277,17 @@ export default function Events() {
                       <p className="text-sm text-gray-600"><strong>Location:</strong> {events[1].location}</p>
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price}</p>
                     </div>
-                    <p className="text-gray-700 mb-6">{events[1].description}</p>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[1].description}</p>
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[1].id}`}
-                        className="bg-[#041e42] text-white py-2 px-6 font-medium tracking-wide hover:bg-[#0c2a5c] transition-colors inline-block rounded-sm"
+                        className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[1])}
-                        className="border border-[#041e42] text-[#041e42] py-2 px-6 font-medium tracking-wide hover:bg-[#e6f2ff] transition-colors inline-block rounded-sm"
+                        className="fire-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         Register Now
                       </button>
@@ -306,92 +305,87 @@ export default function Events() {
               viewport={{ once: true }}
               className="mb-16 relative"
             >
-              {/* Animated Edge Top Left and Top Right */}
+              {/* Animated Edge Top Left */}
               <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[hsl(var(--accent3))] z-10"
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[#041e42] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
               />
               
+              {/* Animated Edge Top Right */}
               <motion.div 
-                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[hsl(var(--accent3))] z-10"
+                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[#041e42] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
                 viewport={{ once: true }}
               />
               
-              {/* Animated Edge Bottom Left and Bottom Right */}
+              {/* Animated Edge Bottom Left */}
               <motion.div 
-                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[hsl(var(--accent3))] z-10"
+                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[#1e88e5] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
                 viewport={{ once: true }}
               />
               
+              {/* Animated Edge Bottom Right */}
               <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[hsl(var(--accent3))] z-10"
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[#1e88e5] z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
                 viewport={{ once: true }}
               />
               
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6" style={{ 
-                  border: '2px solid',
-                  borderImageSlice: 1,
-                  borderImageSource: 'linear-gradient(to right, #bf0a30, #ffffff, #002868)'
-                }}>
+              <div className="relative overflow-hidden bg-white border-2 border-[#041e42] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(30, 136, 229, 0.15)' }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm">
-                    <video 
-                      src={texasRecruitingVideo}
-                      autoPlay 
-                      loop 
-                      muted 
+                  <div className="h-64 overflow-hidden rounded-sm relative">
+                    <video
+                      src={champCampVideo}
+                      autoPlay
+                      loop
+                      muted
                       playsInline
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                    />
+                      className="w-full h-full object-cover absolute inset-0"
+                      style={{ filter: 'brightness(1.1) contrast(1.1)' }}
+                    >
+                      <img 
+                        src={events[2].image} 
+                        alt={events[2].title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </video>
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" style={{
-                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
-                        color: 'white'
-                      }}>
+                      <span className="inline-block bg-[#041e42]/10 text-[#041e42] text-xs font-medium px-3 py-1 rounded-sm">
                         {events[2].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3">
-                      <span style={{ 
-                        color: '#002868',
-                        textShadow: '1px 1px 0 #bf0a30'
-                      }}>
-                        {events[2].title}
-                      </span>
+                    <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                      {events[2].title}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> June 12th-13th, 2025</p>
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> Arlington Martin High School</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[2].location}</p>
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
                     </div>
                     <p className="text-gray-700 mb-6">{events[2].description}</p>
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[2].id}`}
-                        className="text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
-                        style={{ background: '#002868' }}
+                        className="bg-[#041e42] text-white py-2 px-6 font-medium tracking-wide hover:bg-[#0c2a5c] transition-colors inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[2])}
-                        className="border py-2 px-6 font-medium tracking-wide transition-colors inline-block rounded-sm hover:bg-red-50"
-                        style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
+                        className="border border-[#041e42] text-[#041e42] py-2 px-6 font-medium tracking-wide hover:bg-[#e6f2ff] transition-colors inline-block rounded-sm"
                       >
                         Register Now
                       </button>
