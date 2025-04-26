@@ -144,14 +144,14 @@ export default function EventDetail() {
           data.categoryClass = "bg-blue-100 text-blue-800";
           data.buttonLabel = "Register Now";
           data.ageGroups = "Ages 10+ through high school";
-          data.capacity = "Limited to 200 wrestlers";
+          data.capacity = "Limited to 150 wrestlers";
           data.shortDescription = "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions in Las Vegas.";
         } else if (data.id === 3) {
           data.coaches = [
             {
               name: "Micky Phillippi",
               title: "Assistant Coach, University of Pittsburgh",
-              image: "/src/assets/coaches/recruiting/main.png",
+              image: "/src/assets/coaches/recruiting/phillippi.webp",
               school: "University of Pittsburgh",
               schoolLogo: "/src/assets/schools/pitt.svg",
               bio: "Micky Phillippi serves as an assistant coach at the University of Pittsburgh. As a former standout wrestler, Phillippi brings technical expertise and a deep understanding of what college programs look for in recruits."
@@ -167,7 +167,7 @@ export default function EventDetail() {
             {
               name: "Josh Shields",
               title: "RTC Coach and Recruiter, Brown University",
-              image: "/src/assets/coaches/josh_shields.jpg",
+              image: "/src/assets/coaches/recruiting/shields.webp",
               school: "Brown University",
               schoolLogo: "/src/assets/schools/brown.svg",
               bio: "Josh Shields serves as an RTC coach and recruiter at Brown University. A former All-American from Arizona State University, Shields brings a wealth of knowledge about Ivy League recruitment and what it takes to succeed at elite academic institutions."
@@ -175,7 +175,7 @@ export default function EventDetail() {
             {
               name: "Grant Leeth",
               title: "Head Coach, Tarleton State University",
-              image: "/src/assets/coaches/recruiting/main.png",
+              image: "/src/assets/coaches/recruiting/leeth.webp",
               school: "Tarleton State University",
               schoolLogo: "/src/assets/schools/tarleton.svg",
               bio: "Grant Leeth is the head coach at Tarleton State University. With his experience leading a collegiate program, Leeth provides valuable insights into the recruitment process from a head coach's perspective."
@@ -183,7 +183,7 @@ export default function EventDetail() {
             {
               name: "Max Murin",
               title: "Assistant Coach and Recruiter, George Mason University",
-              image: "/src/assets/coaches/recruiting/main.png",
+              image: "/src/assets/coaches/recruiting/murin.webp",
               school: "George Mason University",
               schoolLogo: "/src/assets/schools/gmu.svg",
               bio: "Max Murin is an assistant coach and recruiter at George Mason University. A former standout wrestler himself, Murin understands what it takes to get noticed by college programs and how to transition successfully to collegiate wrestling."
@@ -370,7 +370,7 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-gray-500 mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
+                        <span className="font-medium">Limited to 150 participants - Register early to secure your spot</span>
                       </div>
                     </div>
                     
@@ -385,7 +385,7 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-[#041e42] mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
+                        <span className="font-medium">Limited to 150 participants - Register early to secure your spot</span>
                       </div>
                     </div>
                     
