@@ -448,7 +448,7 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-gray-500 mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <span className="font-medium">Limited to 150 participants - Register early to secure your spot</span>
+                        <span className="font-medium">Limited to 150 participants - Register now</span>
                       </div>
                     </div>
                     
@@ -463,7 +463,7 @@ export default function EventDetail() {
                   <>
                     <div className="bg-white p-4 rounded-md border-l-4 border-[#041e42] mb-4 shadow-sm">
                       <div className="flex items-center">
-                        <span className="font-medium">Limited to 150 participants - Register early to secure your spot</span>
+                        <span className="font-medium">Limited to 150 participants - Register now</span>
                       </div>
                     </div>
                     
@@ -483,15 +483,15 @@ export default function EventDetail() {
               </div>
               
               {event.id !== 1 && event.id !== 2 && (
-                <div>
+                <div className="lg:col-span-2">
                   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
                     <img src={event.image} alt={event.title} className="w-full h-auto aspect-[16/9] object-cover" />
                   </div>
                 </div>
               )}
               
-              <div className={`${event.id !== 1 && event.id !== 2 ? '' : 'lg:col-span-2'}`}>
-                <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+              <div className="lg:col-span-2 mt-6">
+                <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 w-full">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h3>
