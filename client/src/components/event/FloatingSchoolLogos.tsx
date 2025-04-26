@@ -31,8 +31,9 @@ const FloatingSchoolLogos: React.FC<FloatingSchoolLogosProps> = ({ logos }) => {
   // Initialize logos with random positions and velocities
   useEffect(() => {
     if (containerRef.current && logos.length > 0) {
-      const containerWidth = window.innerWidth;
-      const containerHeight = window.innerHeight;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const containerWidth = containerRect.width || 300;
+      const containerHeight = containerRect.height || 200;
       setContainerSize({ width: containerWidth, height: containerHeight });
       
       const initialLogos = logos.map((logo, index) => {
@@ -45,12 +46,12 @@ const FloatingSchoolLogos: React.FC<FloatingSchoolLogosProps> = ({ logos }) => {
         
         // Random velocity with slight bias for natural looking flock behavior
         // The logos will tend to move together based on these velocities
-        const baseVx = Math.random() * 1.5 - 0.75; // -0.75 to 0.75
-        const baseVy = Math.random() * 1.5 - 0.75; // -0.75 to 0.75
+        const baseVx = Math.random() * 1.0 - 0.5; // -0.5 to 0.5 (slower)
+        const baseVy = Math.random() * 1.0 - 0.5; // -0.5 to 0.5 (slower)
         
         // Add slight variations to create more realistic flock movement
-        const vx = baseVx + (Math.random() * 0.4 - 0.2); // small variation
-        const vy = baseVy + (Math.random() * 0.4 - 0.2); // small variation
+        const vx = baseVx + (Math.random() * 0.2 - 0.1); // smaller variation
+        const vy = baseVy + (Math.random() * 0.2 - 0.1); // smaller variation
         
         return {
           id: `logo-${index}`,
@@ -160,9 +161,10 @@ const FloatingSchoolLogos: React.FC<FloatingSchoolLogosProps> = ({ logos }) => {
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
         setContainerSize({
-          width: window.innerWidth,
-          height: window.innerHeight
+          width: containerRect.width || 300,
+          height: containerRect.height || 200
         });
       }
     };

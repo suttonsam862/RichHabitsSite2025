@@ -371,16 +371,7 @@ export default function EventDetail() {
             <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
             <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
             
-            {/* Add animated floating university logos with dynamic bird-like movement */}
-            <FloatingSchoolLogos 
-              logos={[
-                { src: pittLogo, alt: "University of Pittsburgh", logoClass: "logo-pitt" },
-                { src: ouLogo, alt: "University of Oklahoma", logoClass: "logo-ou" },
-                { src: brownLogo, alt: "Brown University", logoClass: "logo-brown" },
-                { src: gmuLogo, alt: "George Mason University", logoClass: "logo-gmu" },
-                { src: tarletonLogo, alt: "Tarleton State University", logoClass: "logo-tarleton" }
-              ]}
-            />
+
           </>
         )}
         
@@ -447,32 +438,43 @@ export default function EventDetail() {
               )}
               
               <div className="col-span-full mt-6">
-                <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 w-full">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 w-full relative">
+                  {event.id === 3 && (
+                    <FloatingSchoolLogos 
+                      logos={[
+                        { src: pittLogo, alt: "University of Pittsburgh", logoClass: "logo-pitt" },
+                        { src: ouLogo, alt: "University of Oklahoma", logoClass: "logo-ou" },
+                        { src: brownLogo, alt: "Brown University", logoClass: "logo-brown" },
+                        { src: gmuLogo, alt: "George Mason University", logoClass: "logo-gmu" },
+                        { src: tarletonLogo, alt: "Tarleton State University", logoClass: "logo-tarleton" }
+                      ]}
+                    />
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 relative z-10">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h3>
-                      <div className="flex items-center">
+                      <h3 className="text-sm font-medium text-gray-500 mb-1 relative z-10">Date & Time</h3>
+                      <div className="flex items-center relative z-10">
                         <span className="text-gray-800">
                           {event.date} <span className="text-gray-500">•</span> {event.time}
                         </span>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
-                      <div className="flex items-center">
+                      <h3 className="text-sm font-medium text-gray-500 mb-1 relative z-10">Location</h3>
+                      <div className="flex items-center relative z-10">
                         <span className="text-gray-800">{event.location}</span>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="mt-4">
+                  <div className="mt-4 relative z-10">
                     <div className="flex items-center mb-2">
                       <span className="text-gray-800 font-medium">{event.price}</span>
                     </div>
                     
                     <button 
                       onClick={() => setShowRegistrationDialog(true)}
-                      className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 relative z-10 ${
                         event.id === 2 
                           ? 'psu-gradient-btn text-white focus:ring-blue-500' 
                           : event.id === 1
@@ -484,10 +486,10 @@ export default function EventDetail() {
                     </button>
                     
                     <div className="mt-4 flex justify-between text-gray-500 text-sm">
-                      <div className="flex items-center">
+                      <div className="flex items-center relative z-10">
                         {event.ageGroups}
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center relative z-10">
                         {event.capacity}
                       </div>
                     </div>
