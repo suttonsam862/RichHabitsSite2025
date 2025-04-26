@@ -12,6 +12,13 @@ import { useToast } from '@/hooks/use-toast';
 // Import event banner images
 import recruitingBanner from '@/assets/events/recruiting-banner.png';
 
+// Import animated school logos
+import pittLogo from '@/assets/schools/animated/pitt.png';
+import ouLogo from '@/assets/schools/animated/ou.png';
+import brownLogo from '@/assets/schools/animated/brown.png';
+import gmuLogo from '@/assets/schools/animated/gmu.png';
+import tarletonLogo from '@/assets/schools/animated/tarleton.png';
+
 // Event data comes from the API
 
 export default function EventDetail() {
@@ -153,7 +160,7 @@ export default function EventDetail() {
               title: "Assistant Coach, University of Pittsburgh",
               image: "/src/assets/coaches/recruiting/phillippi.webp",
               school: "University of Pittsburgh",
-              schoolLogo: "/src/assets/schools/pitt.svg",
+              schoolLogo: pittLogo,
               bio: "Micky Phillippi serves as an assistant coach at the University of Pittsburgh. As a former standout wrestler, Phillippi brings technical expertise and a deep understanding of what college programs look for in recruits."
             },
             {
@@ -161,7 +168,7 @@ export default function EventDetail() {
               title: "Recruiting Coordinator, University of Oklahoma",
               image: "/src/assets/coaches/hall.webp",
               school: "University of Oklahoma",
-              schoolLogo: "/src/assets/schools/ou.svg",
+              schoolLogo: ouLogo,
               bio: "Mark Hall is the recruiting coordinator at the University of Oklahoma and a former NCAA Champion and three-time finalist from Penn State University. His expertise in talent identification and development makes him an invaluable resource for wrestlers looking to compete at the collegiate level."
             },
             {
@@ -169,7 +176,7 @@ export default function EventDetail() {
               title: "RTC Coach and Recruiter, Brown University",
               image: "/src/assets/coaches/recruiting/shields.webp",
               school: "Brown University",
-              schoolLogo: "/src/assets/schools/brown.svg",
+              schoolLogo: brownLogo,
               bio: "Josh Shields serves as an RTC coach and recruiter at Brown University. A former All-American from Arizona State University, Shields brings a wealth of knowledge about Ivy League recruitment and what it takes to succeed at elite academic institutions."
             },
             {
@@ -177,7 +184,7 @@ export default function EventDetail() {
               title: "Head Coach, Tarleton State University",
               image: "/src/assets/coaches/recruiting/leeth.webp",
               school: "Tarleton State University",
-              schoolLogo: "/src/assets/schools/tarleton.svg",
+              schoolLogo: tarletonLogo,
               bio: "Grant Leeth is the head coach at Tarleton State University. With his experience leading a collegiate program, Leeth provides valuable insights into the recruitment process from a head coach's perspective."
             },
             {
@@ -185,7 +192,7 @@ export default function EventDetail() {
               title: "Assistant Coach and Recruiter, George Mason University",
               image: "/src/assets/coaches/recruiting/murin.webp",
               school: "George Mason University",
-              schoolLogo: "/src/assets/schools/gmu.svg",
+              schoolLogo: gmuLogo,
               bio: "Max Murin is an assistant coach and recruiter at George Mason University. A former standout wrestler himself, Murin understands what it takes to get noticed by college programs and how to transition successfully to collegiate wrestling."
             }
           ];
