@@ -118,7 +118,7 @@ export default function Events() {
             <div className="mb-12">
               <h2 className="text-5xl font-serif font-medium mb-6 group text-center tracking-wide">
                 <AnimatedUnderline>
-                  <span className="fire-title">UPCOMING EVENTS</span>
+                  <span className="text-gray-300">UPCOMING EVENTS</span>
                 </AnimatedUnderline>
               </h2>
               <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
