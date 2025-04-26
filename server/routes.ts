@@ -107,11 +107,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create event registration in our database
       const registration = await storage.createEventRegistration(validatedData);
       
-      // For Birmingham Slam Camp, connect to Shopify
+      // For Birmingham Slam Camp and Texas Recruiting Clinic, connect to Shopify
       let checkoutUrl = null;
-      if (event.id === 1) { // Birmingham Slam Camp
+      if (event.id === 1 || event.id === 3) { // Birmingham Slam Camp or Texas Recruiting Clinic
         try {
-          console.log('Creating Shopify checkout for Birmingham Slam Camp...');
+          const eventName = event.id === 1 ? 'Birmingham Slam Camp' : 'Texas Recruiting Clinic';
+          const eventKey = event.id === 1 ? 'birmingham-slam-camp' : 'texas-recruiting-clinic';
+          
+          console.log(`Creating Shopify checkout for ${eventName}...`);
           // Format the registration data for Shopify
           const registrationData: EventRegistrationData = {
             firstName: validatedData.firstName,
@@ -131,10 +134,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Determine which product variant to use based on registration type
           let variantId = '';
           if (validatedData.registrationType === 'full') {
-            variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
+            variantId = EVENT_PRODUCTS[eventKey]?.fullCamp?.variantId || '';
             console.log('Using full camp variant ID:', variantId);
           } else {
-            variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.singleDay?.variantId || '';
+            variantId = EVENT_PRODUCTS[eventKey]?.singleDay?.variantId || '';
             console.log('Using single day variant ID:', variantId);
           }
           

@@ -446,5 +446,17 @@ export const EVENT_PRODUCTS = {
       productId: 'gid://shopify/Product/8949406105837', // Birmingham Slam Camp Product ID 
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Birmingham Slam Camp Variant ID
     }
+  },
+  'texas-recruiting-clinic': {
+    fullCamp: {
+      // Using the same product/variant as Birmingham Slam Camp since they have the same price
+      productId: 'gid://shopify/Product/8949406105837', // Same as Birmingham Slam Camp Product ID
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Same as Birmingham Slam Camp Variant ID
+    },
+    singleDay: {
+      // Using the same product/variant as Birmingham Slam Camp since they have the same price
+      productId: 'gid://shopify/Product/8949406105837', // Same as Birmingham Slam Camp Product ID
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Same as Birmingham Slam Camp Variant ID
+    }
   }
 };
