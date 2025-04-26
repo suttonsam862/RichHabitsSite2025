@@ -146,6 +146,61 @@ export default function EventDetail() {
           data.ageGroups = "Ages 10+ through high school";
           data.capacity = "Limited to 200 wrestlers";
           data.shortDescription = "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions in Las Vegas.";
+        } else if (data.id === 3) {
+          data.coaches = [
+            {
+              name: "Jason Nolf",
+              title: "3x NCAA Champion at 157 lbs (2017-19)",
+              image: "/src/assets/coaches/nolf.webp",
+              bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
+            },
+            {
+              name: "Mark Hall",
+              title: "NCAA Champion at 174 lbs (2017)",
+              image: "/src/assets/coaches/hall.webp",
+              bio: "Mark Hall is a 2017 NCAA Champion at 174 lbs and three-time finalist from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
+            },
+            {
+              name: "Vincenzo Joseph",
+              title: "2x NCAA Champion at 165 lbs (2017, 2018)",
+              image: "/src/assets/coaches/joseph.webp",
+              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
+            }
+          ];
+          
+          data.schedule = [
+            {
+              time: "9:00 AM - 9:30 AM",
+              activity: "Check-in and Welcome"
+            },
+            {
+              time: "9:30 AM - 11:30 AM",
+              activity: "Technical Session with College Coaches"
+            },
+            {
+              time: "11:30 AM - 12:30 PM",
+              activity: "Lunch Break and Networking"
+            },
+            {
+              time: "12:30 PM - 2:30 PM",
+              activity: "Live Wrestling and Evaluation"
+            },
+            {
+              time: "2:30 PM - 3:30 PM",
+              activity: "Recruiting Seminar and Q&A"
+            },
+            {
+              time: "3:30 PM - 4:00 PM",
+              activity: "One-on-One Feedback Sessions"
+            }
+          ];
+          
+          // Adding other required fields
+          data.categoryClass = "bg-red-100 text-red-800";
+          data.buttonLabel = "Secure Your Spot";
+          data.ageGroups = "High school wrestlers";
+          data.capacity = "Limited to 200 participants";
+          data.shortDescription = "A specialized two-day clinic combining elite coaching with college recruiting opportunities at Arlington Martin High School.";
         }
         
         setEvent(data);
@@ -479,6 +534,91 @@ export default function EventDetail() {
                         <div className="mb-6 border-b border-blue-100 pb-2">
                           <h3 className="text-xl font-bold psu-title">About National Champ Camp</h3>
                           <p className="text-gray-600">A premium wrestling experience in Las Vegas</p>
+                        </div>
+                        
+                        <div className="prose max-w-none text-gray-700">
+                          {event.description.split('\n\n').map((paragraph: string, index: number) => (
+                            <p key={index} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : event.id === 3 ? (
+                <div>
+                  <div className="mb-10">
+                    <div className="mb-6 border-b border-red-100 pb-2">
+                      <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Elite NCAA Champion Coaches
+                      </h3>
+                      <p className="text-gray-600">Learn directly from collegiate champions with recruiting expertise</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+                          <div className="aspect-square overflow-hidden">
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name} 
+                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
+                            <p className="text-[#bf0a30] text-sm mb-2">{coach.title}</p>
+                            <p className="text-gray-700 text-sm">{coach.bio}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Event Schedule */}
+                  {event.schedule && (
+                    <div className="mt-10">
+                      <div className="mb-6 border-b border-red-100 pb-2">
+                        <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                          Daily Schedule
+                        </h3>
+                        <p className="text-gray-600">Combining elite coaching with college recruiting opportunities</p>
+                      </div>
+                      <div className="border-2 border-[#bf0a30]/20 rounded-md overflow-hidden shadow-lg relative">
+                        {event.schedule.map((item: any, index: number) => (
+                          <div 
+                            key={index} 
+                            className={`grid grid-cols-3 p-4 relative ${
+                              index % 2 === 0 ? 'bg-red-50' : 'bg-white'
+                            }`}
+                          >
+                            <div className="font-medium text-[#bf0a30]">{item.time}</div>
+                            <div className="col-span-2 text-gray-800">{item.activity}</div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="mt-12 p-6 bg-gradient-to-r from-[#bf0a30] to-[#002868] rounded-lg text-white shadow-lg">
+                        <div className="inline-block px-3 py-1 bg-white text-red-600 text-sm font-bold rounded-full mb-4">
+                          SPECIAL OFFER: $249 (Regular $300)
+                        </div>
+                        <h3 className="text-xl font-bold mb-4">Why Attend the Texas Recruiting Clinic?</h3>
+                        <p className="mb-4">
+                          This unique clinic combines elite technical training with direct access to college coaches and recruiters, creating invaluable opportunities for high school wrestlers looking to compete at the collegiate level.
+                        </p>
+                        <p>
+                          Limited to 200 participants to ensure quality instruction and maximum exposure to college coaches. Each wrestler receives personalized feedback and evaluation.
+                        </p>
+                      </div>
+                      
+                      <div className="mt-10">
+                        <div className="mb-6 border-b border-red-100 pb-2">
+                          <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            About Texas Recruiting Clinic
+                          </h3>
+                          <p className="text-gray-600">A premium recruiting opportunity in Arlington</p>
                         </div>
                         
                         <div className="prose max-w-none text-gray-700">
