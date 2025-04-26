@@ -19,6 +19,18 @@ import champCampVideo from "@assets/04243.mov";
 // Static events data
 const events = [
   {
+    id: 3,
+    title: "TEXAS RECRUITING CLINIC",
+    category: "Wrestling",
+    categoryClass: "bg-[hsl(var(--accent3)_/_0.1)] text-[hsl(var(--accent3))]",
+    date: "June 12th-13th, 2025",
+    time: "10:00 AM - 5:00 PM",
+    location: "Arlington Martin High School",
+    description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, and professional video profiling to enhance recruitment portfolios.",
+    price: "$195",
+    image: event3Image
+  },
+  {
     id: 1,
     title: "BIRMINGHAM SLAM CAMP",
     category: "Wrestling",
@@ -41,18 +53,6 @@ const events = [
     description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
     price: "$349",
     image: event2Image
-  },
-  {
-    id: 3,
-    title: "RICH HABITS RECRUITING CLINIC",
-    category: "Wrestling",
-    categoryClass: "bg-[hsl(var(--accent3)_/_0.1)] text-[hsl(var(--accent3))]",
-    date: "August 15th-16th, 2025",
-    time: "10:00 AM - 5:00 PM",
-    location: "Arlington, TX",
-    description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, and professional video profiling to enhance recruitment portfolios.",
-    price: "$195",
-    image: event3Image
   }
 ];
 
@@ -130,37 +130,39 @@ export default function Events() {
               viewport={{ once: true }}
               className="mb-24 relative"
             >
-              {/* Animated Edge Top Left */}
+              {/* Animated Edge Top Left - Red */}
               <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[#ff4e00] z-10"
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 viewport={{ once: true }}
                 style={{ 
-                  borderImage: 'var(--fire-border-gradient) 1',
-                  borderImageSlice: 1
+                  borderColor: '#bf0a30'
                 }}
               />
               
-              {/* Animated Edge Bottom Right */}
+              {/* Animated Edge Bottom Right - Blue */}
               <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[#ffc400] z-10"
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
                 style={{ 
-                  borderImage: 'var(--fire-border-gradient) 1',
-                  borderImageSlice: 1
+                  borderColor: '#002868'
                 }}
               />
               
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 fire-border">
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6" style={{ 
+                  border: '2px solid',
+                  borderImageSlice: 1,
+                  borderImageSource: 'linear-gradient(to right, #bf0a30, #ffffff, #002868)'
+                }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
                     <video 
-                      src={birminghamVideo} 
+                      src="/src/assets/videos/0424.mov"
                       autoPlay 
                       loop 
                       muted 
@@ -171,17 +173,20 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm fire-gradient-btn text-white">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" style={{
+                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
+                        color: 'white'
+                      }}>
                         {events[0].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3 fire-title">
+                    <h3 className="text-3xl font-bold mb-3">
                       <span style={{ 
-                        color: 'white', 
-                        fontWeight: 800, 
-                        letterSpacing: '0.08em',
-                        textShadow: '0 0 5px rgba(255, 160, 100, 0.5)'
-                      }}>BIRMINGHAM</span> SLAM CAMP
+                        color: '#002868',
+                        textShadow: '1px 1px 0 #bf0a30'
+                      }}>
+                        {events[0].title}
+                      </span>
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
@@ -193,13 +198,15 @@ export default function Events() {
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[0].id}`}
-                        className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
+                        style={{ background: '#002868' }}
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[0])}
-                        className="fire-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm hover:bg-red-50 transition-colors"
+                        style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
                       >
                         Register Now
                       </button>
@@ -381,8 +388,8 @@ export default function Events() {
                       </a>
                       <button 
                         onClick={() => handleRegister(events[2])}
-                        className="border py-2 px-6 font-medium tracking-wide transition-colors inline-block rounded-sm"
-                        style={{ borderColor: '#bf0a30', color: '#bf0a30', ':hover': { backgroundColor: 'rgba(191, 10, 48, 0.1)' } }}
+                        className="border py-2 px-6 font-medium tracking-wide transition-colors inline-block rounded-sm hover:bg-red-50"
+                        style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
                       >
                         Register Now
                       </button>
