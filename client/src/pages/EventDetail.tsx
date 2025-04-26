@@ -1026,10 +1026,10 @@ export default function EventDetail() {
                     <div className="recruiting-stripe"></div>
                   </div>
                   
-                  {/* Third Video - Links to National Champ Camp */}
+                  {/* Third Video - Links to Birmingham Slam Camp */}
                   <div className="mb-8 rounded-xl overflow-hidden shadow-lg cursor-pointer group relative recruiting-border">
                     <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
-                    <a href="/events/2" className="block">
+                    <a href="/events/1" className="block">
                       <div className="relative">
                         <video 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300 relative z-10"
@@ -1042,7 +1042,7 @@ export default function EventDetail() {
                         ></video>
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-20">
                           <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                            <span className="font-bold" style={{ color: '#1e88e5' }}>Visit National Champ Camp →</span>
+                            <span className="font-bold" style={{ color: '#ff6b00' }}>Visit Birmingham Slam Camp →</span>
                           </div>
                         </div>
                       </div>
