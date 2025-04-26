@@ -455,6 +455,63 @@
   overflow: hidden;
 }
 
+/* Texas Recruiting Clinic styles */
+.recruiting-bg {
+  position: relative;
+  background-color: white;
+  overflow: hidden;
+}
+
+@keyframes redWhiteBlueWave {
+  0% {
+    opacity: 0.1;
+    transform: translateX(-100%) scale(0.95);
+  }
+  50% {
+    opacity: 0.2;
+    transform: translateX(0%) scale(1);
+  }
+  100% {
+    opacity: 0.1;
+    transform: translateX(100%) scale(0.95);
+  }
+}
+
+.recruiting-red-wave {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(90deg, transparent, rgba(191, 10, 48, 0.15), transparent);
+  z-index: 0;
+  animation: redWhiteBlueWave 20s infinite ease-in-out;
+}
+
+.recruiting-white-wave {
+  position: absolute;
+  top: 40%;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  z-index: 0;
+  animation: redWhiteBlueWave 20s infinite ease-in-out reverse;
+  animation-delay: 4s;
+}
+
+.recruiting-blue-wave {
+  position: absolute;
+  top: 70%;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(90deg, transparent, rgba(0, 40, 104, 0.15), transparent);
+  z-index: 0;
+  animation: redWhiteBlueWave 20s infinite ease-in-out;
+  animation-delay: 8s;
+}
+
 .psu-gradient-btn {
   background: linear-gradient(to right, #041e42, #1e88e5);
   transition: all 0.3s ease;

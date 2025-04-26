@@ -259,6 +259,20 @@ export default function EventDetail() {
           </>
         )}
         
+        {event.id === 3 && (
+          <>
+            {/* Texas Recruiting Clinic red, white, and blue waves */}
+            <div className="recruiting-red-wave"></div>
+            <div className="recruiting-white-wave"></div>
+            <div className="recruiting-blue-wave"></div>
+            
+            {/* Add another set of waves with different timing */}
+            <div className="recruiting-red-wave" style={{ top: '25%', animationDelay: '6s' }}></div>
+            <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
+            <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
+          </>
+        )}
+        
         <Container>
           {/* Event Header */}
           <div className="mb-12">
