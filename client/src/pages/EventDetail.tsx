@@ -479,6 +479,87 @@ export default function EventDetail() {
             </div>
             
             <div>
+              {event.id === 1 && (
+                <>
+                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-[#ff6b00] relative">
+                    <div className="fire-gradient-btn px-6 py-4 text-white">
+                      <h3 className="text-lg font-bold">Event Highlights</h3>
+                    </div>
+                    <div className="p-6">
+                      <ul className="space-y-3">
+                        <li className="flex">
+                          <span>Limited to 150 wrestlers - small group training</span>
+                        </li>
+                        <li className="flex">
+                          <span>All participants receive Birmingham Slam Camp t-shirt</span>
+                        </li>
+                        <li className="flex">
+                          <span>Professional photo and video highlights provided</span>
+                        </li>
+                        <li className="flex">
+                          <span>Groups of 10+ wrestlers get 10% credit on next Rich Habits gear order</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  {/* First Video */}
+                  <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
+                    <video 
+                      className="w-full h-auto object-cover"
+                      src="/src/assets/videos/0424.mov"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{ maxHeight: "360px" }}
+                      onPlay={(e) => { e.currentTarget.volume = 0; }}
+                    ></video>
+                  </div>
+                  
+                  {/* Featured Camp Video */}
+                  <div className="mb-8 rounded-xl overflow-hidden shadow-lg border-2 border-[#ff6b00]">
+                    <div className="relative">
+                      <video 
+                        className="w-full h-auto"
+                        src="/src/assets/videos/0331.mov"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        onPlay={(e) => { e.currentTarget.volume = 0; }}
+                      ></video>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#ff6b00]/80 to-transparent p-4">
+                        <h4 className="text-white font-bold text-lg">Birmingham Slam Camp Highlights</h4>
+                        <p className="text-white/80 text-sm">Experience elite training with champions in Birmingham</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Third Video - Links to National Champ Camp */}
+                  <div className="mb-8 rounded-xl overflow-hidden shadow-lg cursor-pointer group relative">
+                    <a href="/events/2" className="block">
+                      <div className="relative">
+                        <video 
+                          className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                          src="/src/assets/videos/0425.mov"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          onPlay={(e) => { e.currentTarget.volume = 0; }}
+                        ></video>
+                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                            <span className="font-bold text-[#041e42]">Visit National Champ Camp →</span>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </>
+              )}
+              
               {event.id === 2 && (
                 <>
                   <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-[#041e42] relative">
