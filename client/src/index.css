@@ -570,6 +570,56 @@
   }
 }
 
+/* Texas Recruiting Clinic styles - similar to PSU animations */
+.recruiting-border {
+  border: 2px solid #bf0a30;
+  box-shadow: 0 8px 25px -5px rgba(191, 10, 48, 0.25);
+  position: relative;
+}
+
+.recruiting-diamond-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(45deg, transparent 48%, rgba(191, 10, 48, 0.05) 49%, rgba(191, 10, 48, 0.05) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(0, 40, 104, 0.03) 49%, rgba(0, 40, 104, 0.03) 51%, transparent 52%);
+  background-size: 30px 30px;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animated glossy stripe for Texas Recruiting Clinic */
+.recruiting-stripe {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0) 20%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0) 80%, 
+    transparent
+  );
+  animation: recruitingStripeAnimation 5s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes recruitingStripeAnimation {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
 .recruiting-red-wave {
   position: absolute;
   top: 10%;
