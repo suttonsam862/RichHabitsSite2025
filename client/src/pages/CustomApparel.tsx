@@ -1,10 +1,51 @@
 import { Container } from "@/components/ui/container";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
+import { useState, useEffect } from "react";
 
 export default function CustomApparel() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const wrestlerImages = [
+    "/images/wrestlers/DSC09491.JPG",
+    "/images/wrestlers/DSC07386.JPG",
+    "/images/wrestlers/DSC00423.JPG",
+    "/images/wrestlers/DSC09374--.JPG"
+  ];
+  
+  // Design slideshow images (from Binder2.pdf)
+  const [currentDesignIndex, setCurrentDesignIndex] = useState(0);
+  const designImages = [
+    "/assets/design1.jpg",
+    "/assets/design2.jpg", 
+    "/assets/design3.jpg",
+    "/assets/design4.jpg",
+    "/assets/design5.jpg"
+  ];
+  
+  // Rotate through images every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === wrestlerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Rotate through design images every 3 seconds
+  useEffect(() => {
+    const designInterval = setInterval(() => {
+      setCurrentDesignIndex((prevIndex) => 
+        prevIndex === designImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000);
+    
+    return () => clearInterval(designInterval);
+  }, []);
+  
   return (
     <>
       <Helmet>
@@ -14,14 +55,27 @@ export default function CustomApparel() {
       
       <div className="bg-white">
         {/* Hero Section */}
-        <section className="relative h-[70vh] flex items-center">
-          <div className="absolute inset-0 w-full h-full">
-            <img 
-              src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" 
-              alt="Custom jersey design" 
-              className="object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <section className="w-full h-[70vh] bg-black flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-gray-900 to-black">
+            {/* Background image slideshow */}
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={currentImageIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5 }}
+                className="absolute inset-0 w-full h-full"
+                style={{ 
+                  backgroundImage: `url(${wrestlerImages[currentImageIndex]})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              ></motion.div>
+            </AnimatePresence>
+            
+            {/* Overlay to ensure text is readable */}
+            <div className="absolute inset-0 bg-black bg-opacity-60"></div>
           </div>
           
           <Container className="relative z-10 text-white">
