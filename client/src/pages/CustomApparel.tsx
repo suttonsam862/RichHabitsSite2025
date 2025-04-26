@@ -132,70 +132,70 @@ export default function CustomApparel() {
                       {/* Design images - direct references */}
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/athens.png" 
+                          src="/designs/athens.png" 
                           alt="Athens design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/brooksfinal.png" 
+                          src="/designs/brooksfinal.png" 
                           alt="Brooks final design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/bragg.png" 
+                          src="/designs/bragg.png" 
                           alt="Bragg design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/canenation.png" 
+                          src="/designs/canenation.png" 
                           alt="Cane Nation design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/elevate.png" 
+                          src="/designs/elevate.png" 
                           alt="Elevate design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/ltds.png" 
+                          src="/designs/ltds.png" 
                           alt="LTDS design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/classicrashguard.png" 
+                          src="/designs/classicrashguard.png" 
                           alt="Classic rashguard design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/bluerashguard.png" 
+                          src="/designs/bluerashguard.png" 
                           alt="Blue rashguard design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/blackrashguard.png" 
+                          src="/designs/blackrashguard.png" 
                           alt="Black rashguard design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/nopaws.png" 
+                          src="/designs/nopaws.png" 
                           alt="No Paws design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
@@ -204,21 +204,21 @@ export default function CustomApparel() {
                       {/* Duplicate first few items for seamless looping */}
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/athens.png" 
+                          src="/designs/athens.png" 
                           alt="Athens design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/brooksfinal.png" 
+                          src="/designs/brooksfinal.png" 
                           alt="Brooks final design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
                       </div>
                       <div className="flex-shrink-0 h-[280px] w-[350px]">
                         <img 
-                          src="/assets/designs/bragg.png" 
+                          src="/designs/bragg.png" 
                           alt="Bragg design" 
                           className="h-full w-full object-contain shadow-md rounded-md"
                         />
@@ -343,28 +343,28 @@ export default function CustomApparel() {
               >
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/assets/designs/athens.png" 
+                    src="/designs/athens.png" 
                     alt="Athens wrestling team custom design" 
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/assets/designs/brooksfinal.png" 
+                    src="/designs/brooksfinal.png" 
                     alt="Brooks High School custom apparel" 
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/assets/designs/elevate.png" 
+                    src="/designs/elevate.png" 
                     alt="Elevate wrestling singlet design" 
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/assets/designs/bragg.png" 
+                    src="/designs/bragg.png" 
                     alt="Bragg Middle School apparel design" 
                     className="w-full h-full object-contain"
                   />
@@ -393,7 +393,7 @@ export default function CustomApparel() {
               >
                 <div className="w-full h-64 p-4 flex items-center justify-center">
                   <img 
-                    src="/assets/designs/ltds.png" 
+                    src="/designs/ltds.png" 
                     alt="Learning Tree Day School" 
                     className="h-full object-contain"
                   />
@@ -413,7 +413,7 @@ export default function CustomApparel() {
               >
                 <div className="w-full h-64 p-4 flex items-center justify-center">
                   <img 
-                    src="/assets/designs/canenation.png" 
+                    src="/designs/canenation.png" 
                     alt="Cane Nation Wrestling" 
                     className="h-full object-contain"
                   />
@@ -433,7 +433,7 @@ export default function CustomApparel() {
               >
                 <div className="w-full h-64 p-4 flex items-center justify-center">
                   <img 
-                    src="/assets/designs/classicrashguard.png" 
+                    src="/designs/classicrashguard.png" 
                     alt="10th Planet Birmingham" 
                     className="h-full object-contain"
                   />
@@ -472,7 +472,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/deathsquad.png" 
+                      src="/designs/deathsquad.png" 
                       alt="Death Squad design" 
                       className="h-full w-full object-contain"
                     />
@@ -486,7 +486,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/nickpolo.png" 
+                      src="/designs/nickpolo.png" 
                       alt="Nick Polo design" 
                       className="h-full w-full object-contain"
                     />
@@ -500,7 +500,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/brooks.png" 
+                      src="/designs/brooks.png" 
                       alt="Brooks design" 
                       className="h-full w-full object-contain"
                     />
@@ -518,7 +518,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/northside.png" 
+                      src="/designs/northside.png" 
                       alt="Northside design" 
                       className="h-full w-full object-contain"
                     />
@@ -532,7 +532,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/ltdsmockups.png" 
+                      src="/designs/ltdsmockups.png" 
                       alt="LTDS Mockups" 
                       className="h-full w-full object-contain"
                     />
@@ -546,7 +546,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/blackrashguard.png" 
+                      src="/designs/blackrashguard.png" 
                       alt="Black Rashguard design" 
                       className="h-full w-full object-contain"
                     />
@@ -564,7 +564,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/normalchrome.png" 
+                      src="/designs/normalchrome.png" 
                       alt="Normal Chrome design" 
                       className="h-full w-full object-contain"
                     />
@@ -578,7 +578,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/fullmockups.png" 
+                      src="/designs/fullmockups.png" 
                       alt="Full Mockups design" 
                       className="h-full w-full object-contain"
                     />
@@ -592,7 +592,7 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/assets/designs/bluerashguard.png" 
+                      src="/designs/bluerashguard.png" 
                       alt="Blue Rashguard design" 
                       className="h-full w-full object-contain"
                     />
