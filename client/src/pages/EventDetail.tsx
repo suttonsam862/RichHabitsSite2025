@@ -1006,20 +1006,19 @@ export default function EventDetail() {
                     <div className="recruiting-stripe"></div>
                   </div>
                   
-                  {/* Featured Camp Video */}
+                  {/* Featured Camp Video - YouTube Embed */}
                   <div className="mb-8 rounded-xl overflow-hidden shadow-lg recruiting-border">
                     <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
-                    <div className="relative">
-                      <video 
-                        className="w-full h-auto relative z-10"
-                        src="/src/assets/videos/0331.mov"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        onPlay={(e) => { e.currentTarget.volume = 0; }}
-                      ></video>
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#bf0a30]/80 to-transparent p-4 z-20">
+                    <div className="relative" style={{ paddingTop: '56.25%' }}>
+                      <iframe 
+                        className="absolute top-0 left-0 w-full h-full z-10"
+                        src="https://www.youtube.com/embed/luouX84juYU?autoplay=1&mute=1&loop=1&playlist=luouX84juYU&controls=0&showinfo=0"
+                        title="Texas Recruiting Clinic Wrestling Video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#bf0a30]/80 to-transparent p-4 z-20 pointer-events-none">
                         <h4 className="text-white font-bold text-lg">Texas Recruiting Clinic Experience</h4>
                         <p className="text-white/80 text-sm">Get noticed by college coaches at this premier recruiting event</p>
                       </div>
