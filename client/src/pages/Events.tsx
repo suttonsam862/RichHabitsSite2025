@@ -331,41 +331,58 @@ export default function Events() {
                 viewport={{ once: true }}
               />
               
-              <div className="relative overflow-hidden bg-white border border-[hsl(var(--shadow))] shadow-lg rounded-sm p-6">
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6" style={{ 
+                  border: '2px solid',
+                  borderImageSlice: 1,
+                  borderImageSource: 'linear-gradient(to right, #bf0a30, #ffffff, #002868)'
+                }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm">
-                    <img 
-                      src={events[2].image} 
-                      alt={events[2].title} 
+                    <video 
+                      src="/src/assets/videos/0424.mov"
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className={`inline-block ${events[2].categoryClass} text-xs font-medium px-3 py-1 rounded-sm`}>
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" style={{
+                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
+                        color: 'white'
+                      }}>
                         {events[2].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3" style={{ color: 'hsl(var(--accent3))' }}>
-                      {events[2].title}
+                    <h3 className="text-3xl font-bold mb-3">
+                      <span style={{ 
+                        color: '#002868',
+                        textShadow: '1px 1px 0 #bf0a30'
+                      }}>
+                        {events[2].title}
+                      </span>
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> June 12th-13th, 2025</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[2].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> Arlington Martin High School</p>
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
                     </div>
                     <p className="text-gray-700 mb-6">{events[2].description}</p>
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[2].id}`}
-                        className="bg-[hsl(var(--accent3))] text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                        className="text-white py-2 px-6 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block rounded-sm"
+                        style={{ background: '#002868' }}
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[2])}
-                        className="border border-[hsl(var(--accent3))] text-[hsl(var(--accent3))] py-2 px-6 font-medium tracking-wide hover:bg-[hsl(var(--accent3)_/_0.1)] transition-colors inline-block rounded-sm"
+                        className="border py-2 px-6 font-medium tracking-wide transition-colors inline-block rounded-sm"
+                        style={{ borderColor: '#bf0a30', color: '#bf0a30', ':hover': { backgroundColor: 'rgba(191, 10, 48, 0.1)' } }}
                       >
                         Register Now
                       </button>
