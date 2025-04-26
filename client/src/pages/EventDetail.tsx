@@ -324,6 +324,21 @@ export default function EventDetail() {
             <div className="neon-lick-3"></div>
             <div className="neon-lick-1" style={{left: '75%', animationDelay: '3s'}}></div>
             <div className="neon-lick-2" style={{left: '25%', animationDelay: '7s'}}></div>
+            
+            {/* Add animated flame particles */}
+            <div className="flame-particle" style={{ left: '10%', bottom: '10%', animationDelay: '0s' }}></div>
+            <div className="flame-particle" style={{ left: '25%', bottom: '15%', animationDelay: '2s' }}></div>
+            <div className="flame-particle" style={{ left: '40%', bottom: '5%', animationDelay: '4s' }}></div>
+            <div className="flame-particle" style={{ left: '60%', bottom: '20%', animationDelay: '1s' }}></div>
+            <div className="flame-particle" style={{ left: '75%', bottom: '15%', animationDelay: '3s' }}></div>
+            <div className="flame-particle" style={{ left: '90%', bottom: '10%', animationDelay: '5s' }}></div>
+            
+            {/* Add another layer of particles */}
+            <div className="flame-particle" style={{ left: '5%', bottom: '30%', animationDelay: '3.5s' }}></div>
+            <div className="flame-particle" style={{ left: '30%', bottom: '25%', animationDelay: '2.5s' }}></div>
+            <div className="flame-particle" style={{ left: '50%', bottom: '35%', animationDelay: '0.5s' }}></div>
+            <div className="flame-particle" style={{ left: '70%', bottom: '30%', animationDelay: '4.5s' }}></div>
+            <div className="flame-particle" style={{ left: '85%', bottom: '25%', animationDelay: '1.5s' }}></div>
           </>
         )}
         
@@ -355,20 +370,59 @@ export default function EventDetail() {
             <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
             <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
             
-            {/* Add animated floating university logos */}
+            {/* Add animated floating university logos in a flock formation */}
+            {/* Pittsburgh logo flock */}
             <div className="floating-logo logo-pitt" style={{ top: '15%', left: '10%' }}>
               <img src={pittLogo} alt="University of Pittsburgh" />
             </div>
+            <div className="floating-logo logo-pitt" style={{ top: '12%', left: '14%', width: '40px', height: '40px', animationDelay: '-2s' }}>
+              <img src={pittLogo} alt="University of Pittsburgh" />
+            </div>
+            <div className="floating-logo logo-pitt" style={{ top: '18%', left: '16%', width: '30px', height: '30px', animationDelay: '-4s' }}>
+              <img src={pittLogo} alt="University of Pittsburgh" />
+            </div>
+            
+            {/* Oklahoma logo flock */}
             <div className="floating-logo logo-ou" style={{ top: '30%', right: '15%' }}>
               <img src={ouLogo} alt="University of Oklahoma" />
             </div>
+            <div className="floating-logo logo-ou" style={{ top: '34%', right: '18%', width: '40px', height: '40px', animationDelay: '-3s' }}>
+              <img src={ouLogo} alt="University of Oklahoma" />
+            </div>
+            <div className="floating-logo logo-ou" style={{ top: '28%', right: '20%', width: '30px', height: '30px', animationDelay: '-5s' }}>
+              <img src={ouLogo} alt="University of Oklahoma" />
+            </div>
+            
+            {/* Brown logo flock */}
             <div className="floating-logo logo-brown" style={{ top: '60%', left: '18%' }}>
               <img src={brownLogo} alt="Brown University" />
             </div>
+            <div className="floating-logo logo-brown" style={{ top: '64%', left: '22%', width: '40px', height: '40px', animationDelay: '-6s' }}>
+              <img src={brownLogo} alt="Brown University" />
+            </div>
+            <div className="floating-logo logo-brown" style={{ top: '58%', left: '24%', width: '30px', height: '30px', animationDelay: '-9s' }}>
+              <img src={brownLogo} alt="Brown University" />
+            </div>
+            
+            {/* George Mason logo flock */}
             <div className="floating-logo logo-gmu" style={{ bottom: '20%', right: '12%' }}>
               <img src={gmuLogo} alt="George Mason University" />
             </div>
+            <div className="floating-logo logo-gmu" style={{ bottom: '24%', right: '16%', width: '40px', height: '40px', animationDelay: '-7s' }}>
+              <img src={gmuLogo} alt="George Mason University" />
+            </div>
+            <div className="floating-logo logo-gmu" style={{ bottom: '26%', right: '9%', width: '30px', height: '30px', animationDelay: '-10s' }}>
+              <img src={gmuLogo} alt="George Mason University" />
+            </div>
+            
+            {/* Tarleton logo flock */}
             <div className="floating-logo logo-tarleton" style={{ top: '45%', left: '45%' }}>
+              <img src={tarletonLogo} alt="Tarleton State University" />
+            </div>
+            <div className="floating-logo logo-tarleton" style={{ top: '48%', left: '48%', width: '40px', height: '40px', animationDelay: '-5.5s' }}>
+              <img src={tarletonLogo} alt="Tarleton State University" />
+            </div>
+            <div className="floating-logo logo-tarleton" style={{ top: '42%', left: '50%', width: '30px', height: '30px', animationDelay: '-8.5s' }}>
               <img src={tarletonLogo} alt="Tarleton State University" />
             </div>
           </>
