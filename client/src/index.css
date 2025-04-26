@@ -169,10 +169,66 @@
   .fire-gradient-btn {
     background: var(--fire-gradient);
     transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .fire-gradient-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+      rgba(255, 107, 0, 0) 0%, 
+      rgba(255, 107, 0, 0) 40%, 
+      rgba(255, 255, 255, 0.6) 50%, 
+      rgba(255, 107, 0, 0) 60%, 
+      rgba(255, 107, 0, 0) 100%);
+    transform: rotate(45deg);
+    animation: flare-sweep 4s infinite;
+    z-index: -1;
+  }
+  
+  @keyframes flare-sweep {
+    0% { transform: rotate(45deg) translateY(-150%); }
+    100% { transform: rotate(45deg) translateY(150%); }
   }
   
   .fire-gradient-btn:hover {
     background: var(--fire-gradient-hover);
+    box-shadow: 0 4px 12px rgba(255, 82, 0, 0.4);
+  }
+  
+  .fire-gradient-text {
+    background: var(--fire-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .fire-gradient-text::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      rgba(255, 255, 255, 0) 0%, 
+      rgba(255, 255, 255, 0.4) 50%, 
+      rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-45deg);
+    animation: text-shine 4s infinite;
+  }
+  
+  @keyframes text-shine {
+    0% { transform: skewX(-45deg) translateX(-150%); }
+    100% { transform: skewX(-45deg) translateX(150%); }
   }
   
   .fire-outline-btn {
@@ -656,67 +712,177 @@
 /* Animated School Logos */
 .floating-logo {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   z-index: 1;
   opacity: 0.7;
   filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
-  animation: float 15s infinite ease-in-out;
+  animation: bird-float 25s infinite alternate ease-in-out;
+  transform-origin: center center;
 }
 
 .floating-logo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  animation: rotate 20s infinite linear;
+  animation: logo-shine 6s infinite ease-in-out;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
-@keyframes float {
+@keyframes bird-float {
   0% {
-    transform: translateY(0) translateX(0);
+    transform: translateY(0) translateX(0) scale(1);
   }
-  25% {
-    transform: translateY(-20px) translateX(10px);
+  10% {
+    transform: translateY(-50px) translateX(100px) scale(0.9) rotate(10deg);
+  }
+  20% {
+    transform: translateY(-80px) translateX(200px) scale(1.1) rotate(-5deg);
+  }
+  30% {
+    transform: translateY(-30px) translateX(300px) scale(0.8) rotate(15deg);
+  }
+  40% {
+    transform: translateY(-120px) translateX(250px) scale(1) rotate(-10deg);
   }
   50% {
-    transform: translateY(0) translateX(20px);
+    transform: translateY(-70px) translateX(200px) scale(1.2) rotate(5deg);
   }
-  75% {
-    transform: translateY(20px) translateX(10px);
+  60% {
+    transform: translateY(-30px) translateX(150px) scale(0.9) rotate(-8deg);
+  }
+  70% {
+    transform: translateY(-90px) translateX(50px) scale(1.1) rotate(12deg);
+  }
+  80% {
+    transform: translateY(-40px) translateX(-100px) scale(0.8) rotate(-15deg);
+  }
+  90% {
+    transform: translateY(-60px) translateX(-200px) scale(1) rotate(10deg);
   }
   100% {
-    transform: translateY(0) translateX(0);
+    transform: translateY(0) translateX(0) scale(1) rotate(0deg);
   }
 }
 
-@keyframes rotate {
+@keyframes logo-shine {
   0% {
+    filter: brightness(1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
     transform: rotate(0deg);
   }
+  25% {
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    transform: rotate(5deg);
+  }
+  50% {
+    filter: brightness(1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    transform: rotate(0deg);
+  }
+  75% {
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    transform: rotate(-5deg);
+  }
   100% {
-    transform: rotate(360deg);
+    filter: brightness(1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    transform: rotate(0deg);
   }
 }
 
-/* School logo animation delays */
-.logo-pitt { animation-delay: 0s; }
-.logo-ou { animation-delay: -3s; }
-.logo-brown { animation-delay: -6s; }
-.logo-gmu { animation-delay: -9s; }
-.logo-tarleton { animation-delay: -12s; }
+/* Define different paths for each school logo to create a "flocking" effect */
+.logo-pitt {
+  animation: bird-float-1 30s infinite alternate ease-in-out;
+  animation-delay: 0s;
+}
+
+.logo-ou {
+  animation: bird-float-2 28s infinite alternate ease-in-out;
+  animation-delay: -4s;
+}
+
+.logo-brown {
+  animation: bird-float-3 32s infinite alternate ease-in-out;
+  animation-delay: -8s;
+}
+
+.logo-gmu {
+  animation: bird-float-4 26s infinite alternate ease-in-out;
+  animation-delay: -12s;
+}
+
+.logo-tarleton {
+  animation: bird-float-5 34s infinite alternate ease-in-out;
+  animation-delay: -16s;
+}
+
+/* Custom path animations for bird-like movement */
+@keyframes bird-float-1 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  15% { transform: translate(150px, -50px) scale(0.8) rotate(10deg); }
+  30% { transform: translate(300px, -20px) scale(1.1) rotate(-5deg); }
+  45% { transform: translate(200px, -100px) scale(0.9) rotate(15deg); }
+  60% { transform: translate(100px, -150px) scale(1.2) rotate(-10deg); }
+  75% { transform: translate(-50px, -100px) scale(0.8) rotate(5deg); }
+  90% { transform: translate(-150px, -50px) scale(1) rotate(-15deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
+
+@keyframes bird-float-2 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  15% { transform: translate(-120px, -70px) scale(1.1) rotate(-8deg); }
+  30% { transform: translate(-240px, 20px) scale(0.9) rotate(12deg); }
+  45% { transform: translate(-150px, 100px) scale(1.2) rotate(-5deg); }
+  60% { transform: translate(-50px, 150px) scale(0.8) rotate(10deg); }
+  75% { transform: translate(100px, 70px) scale(1) rotate(-15deg); }
+  90% { transform: translate(200px, -30px) scale(0.9) rotate(8deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
+
+@keyframes bird-float-3 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  15% { transform: translate(100px, 80px) scale(0.9) rotate(15deg); }
+  30% { transform: translate(200px, 120px) scale(1.1) rotate(-10deg); }
+  45% { transform: translate(250px, 50px) scale(0.8) rotate(5deg); }
+  60% { transform: translate(150px, -50px) scale(1.2) rotate(-8deg); }
+  75% { transform: translate(50px, -150px) scale(0.9) rotate(12deg); }
+  90% { transform: translate(-100px, -80px) scale(1) rotate(-5deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
+
+@keyframes bird-float-4 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  15% { transform: translate(-80px, 100px) scale(1.1) rotate(-12deg); }
+  30% { transform: translate(-160px, 50px) scale(0.8) rotate(8deg); }
+  45% { transform: translate(-200px, -50px) scale(1) rotate(-5deg); }
+  60% { transform: translate(-100px, -150px) scale(0.9) rotate(15deg); }
+  75% { transform: translate(50px, -100px) scale(1.2) rotate(-10deg); }
+  90% { transform: translate(150px, -50px) scale(0.8) rotate(5deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
+
+@keyframes bird-float-5 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  15% { transform: translate(120px, -100px) scale(0.8) rotate(10deg); }
+  30% { transform: translate(50px, -200px) scale(1.1) rotate(-15deg); }
+  45% { transform: translate(-100px, -150px) scale(0.9) rotate(5deg); }
+  60% { transform: translate(-200px, -50px) scale(1) rotate(-8deg); }
+  75% { transform: translate(-150px, 50px) scale(1.2) rotate(12deg); }
+  90% { transform: translate(-50px, 150px) scale(0.9) rotate(-5deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
 
 /* School logo pulse effect */
 .school-logo-pulse {
   position: relative;
   display: inline-block;
   transition: transform 0.3s ease;
+  overflow: hidden;
 }
 
 .school-logo-pulse:hover {
   transform: scale(1.1);
 }
 
-.school-logo-pulse::after {
+.school-logo-pulse::before {
   content: '';
   position: absolute;
   width: 100%;
@@ -728,9 +894,21 @@
   box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
 }
 
+.school-logo-pulse::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  top: 45%;
+  left: -150%;
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
   }
   70% {
     box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
@@ -738,4 +916,10 @@
   100% {
     box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
   }
+}
+
+@keyframes shine {
+  0% { left: -150%; }
+  75% { left: 150%; }
+  100% { left: 150%; }
 }
