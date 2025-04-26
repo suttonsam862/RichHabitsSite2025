@@ -544,6 +544,27 @@ export default function EventDetail() {
                       </ul>
                     </div>
                   </div>
+                  
+                  {/* Live Training Cam */}
+                  <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
+                    <div className="absolute top-3 right-3 z-10 bg-black/70 px-3 py-1 rounded-full text-white text-xs flex items-center">
+                      <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1 animate-pulse"></span>
+                      LIVE TRAINING
+                    </div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
+                    <video 
+                      className="w-full h-auto object-cover"
+                      src="/src/assets/videos/04243.mov"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{ maxHeight: "360px" }}
+                    ></video>
+                    <div className="absolute bottom-3 left-3 text-white text-sm font-medium">
+                      Rancho High School Mat Room
+                    </div>
+                  </div>
                 </>
               )}
             </div>
