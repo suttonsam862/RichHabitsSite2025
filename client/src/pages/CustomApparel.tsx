@@ -129,8 +129,19 @@ export default function CustomApparel() {
                         ease: "linear"
                       }}
                     >
-                      {/* First set of design images */}
-                      {designImages.map((image, index) => (
+                      {/* Design images - using specified order for better display */}
+                      {[
+                        "/assets/designs/athens.png",
+                        "/assets/designs/brooksfinal.png",
+                        "/assets/designs/bragg.png",
+                        "/assets/designs/canenation.png", 
+                        "/assets/designs/elevate.png",
+                        "/assets/designs/ltds.png",
+                        "/assets/designs/classicrashguard.png",
+                        "/assets/designs/bluerashguard.png",
+                        "/assets/designs/blackrashguard.png",
+                        "/assets/designs/nopaws.png"
+                      ].map((image, index) => (
                         <div key={`design-${index}`} className="flex-shrink-0 h-[280px] w-[350px]">
                           <img 
                             src={image} 
@@ -140,8 +151,15 @@ export default function CustomApparel() {
                         </div>
                       ))}
                       
-                      {/* Duplicate set for seamless looping */}
-                      {designImages.slice(0, 6).map((image, index) => (
+                      {/* Duplicate first few items for seamless looping */}
+                      {[
+                        "/assets/designs/athens.png",
+                        "/assets/designs/brooksfinal.png",
+                        "/assets/designs/bragg.png", 
+                        "/assets/designs/canenation.png",
+                        "/assets/designs/elevate.png",
+                        "/assets/designs/ltds.png"
+                      ].map((image, index) => (
                         <div key={`design-dupe-${index}`} className="flex-shrink-0 h-[280px] w-[350px]">
                           <img 
                             src={image} 
@@ -153,60 +171,6 @@ export default function CustomApparel() {
                     </motion.div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Fading showcase of larger designs */}
-              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 h-[400px]">
-                <AnimatePresence mode="wait">
-                  <motion.div 
-                    key={`showcase-${currentDesignSet}-0`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
-                    className="relative h-full bg-white rounded-lg shadow-md p-4"
-                  >
-                    <img 
-                      src={designImages[currentDesignSet * 3]} 
-                      alt={`Featured design ${currentDesignSet * 3 + 1}`}
-                      className="h-full w-full object-contain"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-                
-                <AnimatePresence mode="wait">
-                  <motion.div 
-                    key={`showcase-${currentDesignSet}-1`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1, delay: 0.2 }}
-                    className="relative h-full bg-white rounded-lg shadow-md p-4"
-                  >
-                    <img 
-                      src={designImages[currentDesignSet * 3 + 1]} 
-                      alt={`Featured design ${currentDesignSet * 3 + 2}`}
-                      className="h-full w-full object-contain"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-                
-                <AnimatePresence mode="wait">
-                  <motion.div 
-                    key={`showcase-${currentDesignSet}-2`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1, delay: 0.4 }}
-                    className="relative h-full bg-white rounded-lg shadow-md p-4"
-                  >
-                    <img 
-                      src={designImages[currentDesignSet * 3 + 2 >= designImages.length ? 0 : currentDesignSet * 3 + 2]} 
-                      alt={`Featured design ${currentDesignSet * 3 + 3}`}
-                      className="h-full w-full object-contain"
-                    />
-                  </motion.div>
-                </AnimatePresence>
               </div>
             </div>
           </Container>
@@ -432,6 +396,81 @@ export default function CustomApparel() {
                   View More Projects
                 </a>
               </Link>
+            </div>
+          </Container>
+        </section>
+        
+        {/* Fading Design Showcase Section */}
+        <section className="py-20 bg-gray-50">
+          <Container>
+            <h2 className="text-3xl font-serif font-semibold mb-10 group text-center">
+              <AnimatedUnderline>
+                Featured Design Showcase
+              </AnimatedUnderline>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[500px]">
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={`showcase-${currentDesignSet}-0`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                >
+                  <img 
+                    src={[
+                      "/assets/designs/deathsquad.png",
+                      "/assets/designs/northside.png",
+                      "/assets/designs/normalchrome.png"
+                    ][currentDesignSet]} 
+                    alt={`Featured design ${currentDesignSet * 3 + 1}`}
+                    className="h-full w-full object-contain"
+                  />
+                </motion.div>
+              </AnimatePresence>
+              
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={`showcase-${currentDesignSet}-1`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                  className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                >
+                  <img 
+                    src={[
+                      "/assets/designs/nickpolo.png",
+                      "/assets/designs/ltdsmockups.png",
+                      "/assets/designs/fullmockups.png"
+                    ][currentDesignSet]} 
+                    alt={`Featured design ${currentDesignSet * 3 + 2}`}
+                    className="h-full w-full object-contain"
+                  />
+                </motion.div>
+              </AnimatePresence>
+              
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={`showcase-${currentDesignSet}-2`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1, delay: 0.4 }}
+                  className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                >
+                  <img 
+                    src={[
+                      "/assets/designs/brooks.png",
+                      "/assets/designs/blackrashguard.png",
+                      "/assets/designs/bluerashguard.png"
+                    ][currentDesignSet]} 
+                    alt={`Featured design ${currentDesignSet * 3 + 3}`}
+                    className="h-full w-full object-contain"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
           </Container>
         </section>
