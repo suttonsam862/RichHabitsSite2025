@@ -230,15 +230,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create contact submission
       const submission = await storage.createContactSubmission(validatedData);
       
-      // Send email notification
-      await sendContactFormEmail({
-        name: validatedData.name,
-        email: validatedData.email,
-        phone: validatedData.phone,
-        subject: validatedData.subject,
-        message: validatedData.message
-      });
-      
       res.status(201).json({
         message: "Contact form submitted successfully",
         submission
@@ -386,9 +377,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create newsletter subscriber
       const subscriber = await storage.createNewsletterSubscriber({ email });
-      
-      // Send email notification
-      await sendNewsletterSubscriptionEmail(email);
       
       res.status(201).json({
         message: "Subscribed to newsletter successfully",
