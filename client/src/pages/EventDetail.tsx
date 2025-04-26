@@ -582,12 +582,21 @@ export default function EventDetail() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {event.coaches && event.coaches.map((coach: any, index: number) => (
                         <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
-                          <div className="aspect-square overflow-hidden">
+                          <div className="aspect-square overflow-hidden relative">
                             <img 
                               src={coach.image} 
                               alt={coach.name} 
                               className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
                             />
+                            {coach.schoolLogo && (
+                              <div className="absolute top-3 right-3 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg">
+                                <img 
+                                  src={coach.schoolLogo} 
+                                  alt={coach.school || ""} 
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )}
                           </div>
                           <div className="p-4">
                             <h4 className="font-bold text-gray-800">{coach.name}</h4>
@@ -631,7 +640,7 @@ export default function EventDetail() {
                           This unique clinic combines elite technical training with direct access to college coaches and recruiters, creating invaluable opportunities for high school wrestlers looking to compete at the collegiate level.
                         </p>
                         <p>
-                          Limited to 200 participants to ensure quality instruction and maximum exposure to college coaches. Each wrestler receives personalized feedback and evaluation.
+                          Limited to 150 participants to ensure quality instruction and maximum exposure to college coaches. Each wrestler receives personalized feedback and evaluation.
                         </p>
                       </div>
                       
