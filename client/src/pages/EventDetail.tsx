@@ -651,12 +651,22 @@ export default function EventDetail() {
                 <div>
                   <div className="mb-10">
                     <div className="mb-6 border-b border-red-100 pb-2">
-                      <div className="flex items-center justify-center mb-3">
-                        <img src={pittLogo} alt="University of Pittsburgh" className="w-12 h-12 mx-1 school-logo-pulse" />
-                        <img src={ouLogo} alt="University of Oklahoma" className="w-12 h-12 mx-1 school-logo-pulse" />
-                        <img src={brownLogo} alt="Brown University" className="w-12 h-12 mx-1 school-logo-pulse" />
-                        <img src={gmuLogo} alt="George Mason University" className="w-12 h-12 mx-1 school-logo-pulse" />
-                        <img src={tarletonLogo} alt="Tarleton State University" className="w-12 h-12 mx-1 school-logo-pulse" />
+                      <div className="flex items-center justify-between mb-3 w-full px-4 max-w-xl mx-auto">
+                        <div className="w-16 h-16 flex items-center justify-center">
+                          <img src={pittLogo} alt="University of Pittsburgh" className="w-14 h-14 object-contain school-logo-pulse" />
+                        </div>
+                        <div className="w-16 h-16 flex items-center justify-center">
+                          <img src={ouLogo} alt="University of Oklahoma" className="w-14 h-14 object-contain school-logo-pulse" />
+                        </div>
+                        <div className="w-16 h-16 flex items-center justify-center">
+                          <img src={brownLogo} alt="Brown University" className="w-14 h-14 object-contain school-logo-pulse" />
+                        </div>
+                        <div className="w-16 h-16 flex items-center justify-center">
+                          <img src={gmuLogo} alt="George Mason University" className="w-14 h-14 object-contain school-logo-pulse" />
+                        </div>
+                        <div className="w-16 h-16 flex items-center justify-center">
+                          <img src={tarletonLogo} alt="Tarleton State University" className="w-14 h-14 object-contain school-logo-pulse" />
+                        </div>
                       </div>
                       <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         Elite NCAA Champion Coaches
@@ -697,12 +707,22 @@ export default function EventDetail() {
                   {event.schedule && (
                     <div className="mt-10">
                       <div className="mb-6 border-b border-red-100 pb-2">
-                        <div className="flex items-center justify-center mb-3">
-                          <img src={pittLogo} alt="University of Pittsburgh" className="w-10 h-10 mx-1 school-logo-pulse" />
-                          <img src={ouLogo} alt="University of Oklahoma" className="w-10 h-10 mx-1 school-logo-pulse" />
-                          <img src={brownLogo} alt="Brown University" className="w-10 h-10 mx-1 school-logo-pulse" />
-                          <img src={gmuLogo} alt="George Mason University" className="w-10 h-10 mx-1 school-logo-pulse" />
-                          <img src={tarletonLogo} alt="Tarleton State University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                        <div className="flex items-center justify-between mb-3 w-full px-4 max-w-xl mx-auto">
+                          <div className="w-14 h-14 flex items-center justify-center">
+                            <img src={pittLogo} alt="University of Pittsburgh" className="w-12 h-12 object-contain school-logo-pulse" />
+                          </div>
+                          <div className="w-14 h-14 flex items-center justify-center">
+                            <img src={ouLogo} alt="University of Oklahoma" className="w-12 h-12 object-contain school-logo-pulse" />
+                          </div>
+                          <div className="w-14 h-14 flex items-center justify-center">
+                            <img src={brownLogo} alt="Brown University" className="w-12 h-12 object-contain school-logo-pulse" />
+                          </div>
+                          <div className="w-14 h-14 flex items-center justify-center">
+                            <img src={gmuLogo} alt="George Mason University" className="w-12 h-12 object-contain school-logo-pulse" />
+                          </div>
+                          <div className="w-14 h-14 flex items-center justify-center">
+                            <img src={tarletonLogo} alt="Tarleton State University" className="w-12 h-12 object-contain school-logo-pulse" />
+                          </div>
                         </div>
                         <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                           Daily Schedule
@@ -738,12 +758,22 @@ export default function EventDetail() {
                       
                       <div className="mt-10">
                         <div className="mb-6 border-b border-red-100 pb-2">
-                          <div className="flex items-center justify-center mb-3">
-                            <img src={pittLogo} alt="University of Pittsburgh" className="w-10 h-10 mx-1 school-logo-pulse" />
-                            <img src={ouLogo} alt="University of Oklahoma" className="w-10 h-10 mx-1 school-logo-pulse" />
-                            <img src={brownLogo} alt="Brown University" className="w-10 h-10 mx-1 school-logo-pulse" />
-                            <img src={gmuLogo} alt="George Mason University" className="w-10 h-10 mx-1 school-logo-pulse" />
-                            <img src={tarletonLogo} alt="Tarleton State University" className="w-10 h-10 mx-1 school-logo-pulse" />
+                          <div className="flex items-center justify-between mb-3 w-full px-4 max-w-xl mx-auto">
+                            <div className="w-14 h-14 flex items-center justify-center">
+                              <img src={pittLogo} alt="University of Pittsburgh" className="w-12 h-12 object-contain school-logo-pulse" />
+                            </div>
+                            <div className="w-14 h-14 flex items-center justify-center">
+                              <img src={ouLogo} alt="University of Oklahoma" className="w-12 h-12 object-contain school-logo-pulse" />
+                            </div>
+                            <div className="w-14 h-14 flex items-center justify-center">
+                              <img src={brownLogo} alt="Brown University" className="w-12 h-12 object-contain school-logo-pulse" />
+                            </div>
+                            <div className="w-14 h-14 flex items-center justify-center">
+                              <img src={gmuLogo} alt="George Mason University" className="w-12 h-12 object-contain school-logo-pulse" />
+                            </div>
+                            <div className="w-14 h-14 flex items-center justify-center">
+                              <img src={tarletonLogo} alt="Tarleton State University" className="w-12 h-12 object-contain school-logo-pulse" />
+                            </div>
                           </div>
                           <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                             About Texas Recruiting Clinic
