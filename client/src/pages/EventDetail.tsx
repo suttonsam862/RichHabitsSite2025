@@ -548,6 +548,7 @@ export default function EventDetail() {
                       muted
                       playsInline
                       style={{ maxHeight: "360px" }}
+                      onPlay={(e) => { e.currentTarget.volume = 0; }}
                     ></video>
                     <div className="absolute bottom-3 left-3 text-white text-sm font-medium">
                       Rancho High School Mat Room
@@ -564,6 +565,7 @@ export default function EventDetail() {
                         loop
                         muted
                         playsInline
+                        onPlay={(e) => { e.currentTarget.volume = 0; }}
                       ></video>
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#041e42]/80 to-transparent p-4">
                         <h4 className="text-white font-bold text-lg">National Champ Camp Highlights</h4>
