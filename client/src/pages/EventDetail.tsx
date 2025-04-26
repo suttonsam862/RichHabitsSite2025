@@ -12,12 +12,12 @@ import { useToast } from '@/hooks/use-toast';
 // Import event banner images
 import recruitingBanner from '@/assets/events/recruiting-banner.png';
 
-// Import animated school logos
-import pittLogo from '@/assets/schools/animated/pitt.png';
-import ouLogo from '@/assets/schools/animated/ou.png';
-import brownLogo from '@/assets/schools/animated/brown.png';
-import gmuLogo from '@/assets/schools/animated/gmu.png';
-import tarletonLogo from '@/assets/schools/animated/tarleton.png';
+// Import school logos
+import pittLogo from '@/assets/schools/Pitt logo.png';
+import ouLogo from '@/assets/schools/OU O.png';
+import brownLogo from '@/assets/schools/brown b.png';
+import gmuLogo from '@/assets/schools/george mason g.png';
+import tarletonLogo from '@/assets/schools/tarleton t.png';
 
 // Event data comes from the API
 
