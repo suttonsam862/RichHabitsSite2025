@@ -3,15 +3,38 @@ import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function CustomApparel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentDesignSet, setCurrentDesignSet] = useState(0);
+  
   const wrestlerImages = [
     "/images/wrestlers/DSC09491.JPG",
     "/images/wrestlers/DSC07386.JPG",
     "/images/wrestlers/DSC00423.JPG",
     "/images/wrestlers/DSC09374--.JPG"
+  ];
+  
+  // All our design images
+  const designImages = [
+    "/assets/designs/athens.png",
+    "/assets/designs/deathsquad.png",
+    "/assets/designs/blackrashguard.png",
+    "/assets/designs/bluerashguard.png",
+    "/assets/designs/bragg.png",
+    "/assets/designs/brooks.png",
+    "/assets/designs/brooksfinal.png",
+    "/assets/designs/canenation.png",
+    "/assets/designs/classicrashguard.png",
+    "/assets/designs/elevate.png",
+    "/assets/designs/fullmockups.png",
+    "/assets/designs/ltds.png",
+    "/assets/designs/ltdsmockups.png",
+    "/assets/designs/nickpolo.png",
+    "/assets/designs/nopaws.png",
+    "/assets/designs/normalchrome.png",
+    "/assets/designs/northside.png"
   ];
   
   // Rotate through hero images every 5 seconds
@@ -24,6 +47,17 @@ export default function CustomApparel() {
     
     return () => clearInterval(interval);
   }, [wrestlerImages.length]);
+  
+  // Rotate through design sets every 4 seconds for the showcase section
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDesignSet((prevSet) => 
+        prevSet === 2 ? 0 : prevSet + 1
+      );
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   return (
     <>
@@ -75,59 +109,104 @@ export default function CustomApparel() {
           </Container>
         </section>
         
-        {/* Design Showcase Continuous Carousel */}
+        {/* Design Showcase with sliding and fading effects */}
         <section className="py-16 bg-gray-50">
           <Container>
-            <div className="overflow-hidden mb-10">
-              <div className="relative">
-                <div className="flex items-center justify-start gap-4 h-[200px] overflow-hidden">
-                  <motion.div 
-                    className="flex gap-8 min-w-max"
-                    animate={{ 
-                      x: [0, -2000], 
-                    }}
-                    transition={{ 
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      duration: 30,
-                      ease: "linear"
-                    }}
-                  >
-                    {/* First set of images */}
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design1.webp" alt="Custom design 1" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design2.webp" alt="Custom design 2" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design3.webp" alt="Custom design 3" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design4.webp" alt="Custom design 4" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design5.webp" alt="Custom design 5" className="h-full w-full object-contain" />
-                    </div>
-                    
-                    {/* Duplicate set for seamless looping */}
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design1.webp" alt="Custom design 1" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design2.webp" alt="Custom design 2" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design3.webp" alt="Custom design 3" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design4.webp" alt="Custom design 4" className="h-full w-full object-contain" />
-                    </div>
-                    <div className="flex-shrink-0 h-[180px] w-[250px]">
-                      <img src="/assets/designs/design5.webp" alt="Custom design 5" className="h-full w-full object-contain" />
-                    </div>
-                  </motion.div>
+            <div className="mb-10">
+              {/* Horizontal auto-scrolling carousel */}
+              <div className="overflow-hidden">
+                <div className="relative">
+                  <div className="flex items-center justify-start h-[300px] overflow-hidden">
+                    <motion.div 
+                      className="flex gap-8 min-w-max"
+                      animate={{ 
+                        x: [0, -3500], 
+                      }}
+                      transition={{ 
+                        repeat: Infinity,
+                        repeatType: "loop",
+                        duration: 60,
+                        ease: "linear"
+                      }}
+                    >
+                      {/* First set of design images */}
+                      {designImages.map((image, index) => (
+                        <div key={`design-${index}`} className="flex-shrink-0 h-[280px] w-[350px]">
+                          <img 
+                            src={image} 
+                            alt={`Rich Habits design concept ${index + 1}`} 
+                            className="h-full w-full object-contain shadow-md rounded-md"
+                          />
+                        </div>
+                      ))}
+                      
+                      {/* Duplicate set for seamless looping */}
+                      {designImages.slice(0, 6).map((image, index) => (
+                        <div key={`design-dupe-${index}`} className="flex-shrink-0 h-[280px] w-[350px]">
+                          <img 
+                            src={image} 
+                            alt={`Rich Habits design concept ${index + 1}`} 
+                            className="h-full w-full object-contain shadow-md rounded-md"
+                          />
+                        </div>
+                      ))}
+                    </motion.div>
+                  </div>
                 </div>
+              </div>
+              
+              {/* Fading showcase of larger designs */}
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 h-[400px]">
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={`showcase-${currentDesignSet}-0`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4"
+                  >
+                    <img 
+                      src={designImages[currentDesignSet * 3]} 
+                      alt={`Featured design ${currentDesignSet * 3 + 1}`}
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+                
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={`showcase-${currentDesignSet}-1`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.2 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4"
+                  >
+                    <img 
+                      src={designImages[currentDesignSet * 3 + 1]} 
+                      alt={`Featured design ${currentDesignSet * 3 + 2}`}
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+                
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={`showcase-${currentDesignSet}-2`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.4 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4"
+                  >
+                    <img 
+                      src={designImages[currentDesignSet * 3 + 2 >= designImages.length ? 0 : currentDesignSet * 3 + 2]} 
+                      alt={`Featured design ${currentDesignSet * 3 + 3}`}
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
           </Container>
@@ -245,30 +324,30 @@ export default function CustomApparel() {
               >
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="https://images.unsplash.com/photo-1516826957135-700dedea698c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Custom jersey" 
-                    className="w-full h-full object-cover"
+                    src="/assets/designs/athens.png" 
+                    alt="Athens wrestling team custom design" 
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Team uniforms" 
-                    className="w-full h-full object-cover"
+                    src="/assets/designs/brooksfinal.png" 
+                    alt="Brooks High School custom apparel" 
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="https://images.unsplash.com/photo-1519861531473-9200262188bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Material samples" 
-                    className="w-full h-full object-cover"
+                    src="/assets/designs/elevate.png" 
+                    alt="Elevate wrestling singlet design" 
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="https://images.unsplash.com/photo-1535483102974-fa1e64d0ca86?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Design process" 
-                    className="w-full h-full object-cover"
+                    src="/assets/designs/bragg.png" 
+                    alt="Bragg Middle School apparel design" 
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </motion.div>
@@ -293,14 +372,16 @@ export default function CustomApparel() {
                 viewport={{ once: true }}
                 className="bg-white shadow-sm hover:shadow-md transition-shadow"
               >
-                <img 
-                  src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Metro High School Basketball" 
-                  className="w-full h-64 object-cover"
-                />
+                <div className="w-full h-64 p-4 flex items-center justify-center">
+                  <img 
+                    src="/assets/designs/ltds.png" 
+                    alt="Learning Tree Day School" 
+                    className="h-full object-contain"
+                  />
+                </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-medium mb-2">Metro High School Basketball</h3>
-                  <p className="text-gray-700 mb-4">Complete team uniform redesign featuring moisture-wicking technology and custom embroidery.</p>
+                  <h3 className="text-xl font-medium mb-2">Learning Tree Day School</h3>
+                  <p className="text-gray-700 mb-4">Complete staff uniform system with color-coded options for different departments and specialized embroidery.</p>
                 </div>
               </motion.div>
               
@@ -311,14 +392,16 @@ export default function CustomApparel() {
                 viewport={{ once: true }}
                 className="bg-white shadow-sm hover:shadow-md transition-shadow"
               >
-                <img 
-                  src="https://images.unsplash.com/photo-1607962837359-5e7e89f86776?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Riverside College Football" 
-                  className="w-full h-64 object-cover"
-                />
+                <div className="w-full h-64 p-4 flex items-center justify-center">
+                  <img 
+                    src="/assets/designs/canenation.png" 
+                    alt="Cane Nation Wrestling" 
+                    className="h-full object-contain"
+                  />
+                </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-medium mb-2">Riverside College Football</h3>
-                  <p className="text-gray-700 mb-4">Performance-focused practice gear with climate-adaptive fabrics for all-season training.</p>
+                  <h3 className="text-xl font-medium mb-2">Cane Nation Wrestling</h3>
+                  <p className="text-gray-700 mb-4">Performance-focused competition gear with advanced sublimation printing and coordinated accessories.</p>
                 </div>
               </motion.div>
               
@@ -329,14 +412,16 @@ export default function CustomApparel() {
                 viewport={{ once: true }}
                 className="bg-white shadow-sm hover:shadow-md transition-shadow"
               >
-                <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Valley Soccer Club" 
-                  className="w-full h-64 object-cover"
-                />
+                <div className="w-full h-64 p-4 flex items-center justify-center">
+                  <img 
+                    src="/assets/designs/classicrashguard.png" 
+                    alt="10th Planet Birmingham" 
+                    className="h-full object-contain"
+                  />
+                </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-medium mb-2">Valley Soccer Club</h3>
-                  <p className="text-gray-700 mb-4">Custom kits with advanced cooling technology and ergonomic designs for maximum mobility.</p>
+                  <h3 className="text-xl font-medium mb-2">10th Planet Birmingham</h3>
+                  <p className="text-gray-700 mb-4">Custom rashguards and training gear with moisture-wicking technology and distinctive team branding.</p>
                 </div>
               </motion.div>
             </div>
