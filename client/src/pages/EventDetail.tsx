@@ -453,6 +453,18 @@ export default function EventDetail() {
                           <p className="text-gray-600">A premium wrestling experience in Las Vegas</p>
                         </div>
                         
+                        {/* Featured Camp Video */}
+                        <div className="mb-8 rounded-xl overflow-hidden shadow-lg border-2 border-[#041e42]">
+                          <video 
+                            className="w-full h-auto"
+                            src="/src/assets/videos/0405.mov"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          ></video>
+                        </div>
+                        
                         <div className="prose max-w-none text-gray-700">
                           {event.description.split('\n\n').map((paragraph: string, index: number) => (
                             <p key={index} className="mb-4">
