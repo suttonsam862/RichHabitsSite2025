@@ -1,5 +1,7 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
+import path from "path";
 import { storage } from "./storage";
 import { 
   insertContactSubmissionSchema, 
@@ -17,6 +19,8 @@ const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || "rich-habits.my
 const SHOPIFY_API_VERSION = "2023-07"; // Update to latest version as needed
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve designs files directly
+  app.use('/designs', express.static(path.join(process.cwd(), 'public/designs')));
   // API routes for products
   app.get("/api/products", async (req, res) => {
     try {
