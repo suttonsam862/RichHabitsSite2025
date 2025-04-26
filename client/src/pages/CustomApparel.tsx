@@ -129,45 +129,100 @@ export default function CustomApparel() {
                         ease: "linear"
                       }}
                     >
-                      {/* Design images - using specified order for better display */}
-                      {[
-                        "/assets/designs/athens.png",
-                        "/assets/designs/brooksfinal.png",
-                        "/assets/designs/bragg.png",
-                        "/assets/designs/canenation.png", 
-                        "/assets/designs/elevate.png",
-                        "/assets/designs/ltds.png",
-                        "/assets/designs/classicrashguard.png",
-                        "/assets/designs/bluerashguard.png",
-                        "/assets/designs/blackrashguard.png",
-                        "/assets/designs/nopaws.png"
-                      ].map((image, index) => (
-                        <div key={`design-${index}`} className="flex-shrink-0 h-[280px] w-[350px]">
-                          <img 
-                            src={image} 
-                            alt={`Rich Habits design concept ${index + 1}`} 
-                            className="h-full w-full object-contain shadow-md rounded-md"
-                          />
-                        </div>
-                      ))}
+                      {/* Design images - direct references */}
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/athens.png" 
+                          alt="Athens design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/brooksfinal.png" 
+                          alt="Brooks final design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/bragg.png" 
+                          alt="Bragg design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/canenation.png" 
+                          alt="Cane Nation design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/elevate.png" 
+                          alt="Elevate design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/ltds.png" 
+                          alt="LTDS design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/classicrashguard.png" 
+                          alt="Classic rashguard design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/bluerashguard.png" 
+                          alt="Blue rashguard design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/blackrashguard.png" 
+                          alt="Black rashguard design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/nopaws.png" 
+                          alt="No Paws design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
                       
                       {/* Duplicate first few items for seamless looping */}
-                      {[
-                        "/assets/designs/athens.png",
-                        "/assets/designs/brooksfinal.png",
-                        "/assets/designs/bragg.png", 
-                        "/assets/designs/canenation.png",
-                        "/assets/designs/elevate.png",
-                        "/assets/designs/ltds.png"
-                      ].map((image, index) => (
-                        <div key={`design-dupe-${index}`} className="flex-shrink-0 h-[280px] w-[350px]">
-                          <img 
-                            src={image} 
-                            alt={`Rich Habits design concept ${index + 1}`} 
-                            className="h-full w-full object-contain shadow-md rounded-md"
-                          />
-                        </div>
-                      ))}
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/athens.png" 
+                          alt="Athens design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/brooksfinal.png" 
+                          alt="Brooks final design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 h-[280px] w-[350px]">
+                        <img 
+                          src="/assets/designs/bragg.png" 
+                          alt="Bragg design" 
+                          className="h-full w-full object-contain shadow-md rounded-md"
+                        />
+                      </div>
                     </motion.div>
                   </div>
                 </div>
@@ -391,10 +446,8 @@ export default function CustomApparel() {
             </div>
             
             <div className="mt-12 text-center">
-              <Link href="/gallery">
-                <a className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-                  View More Projects
-                </a>
+              <Link to="/gallery" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+                View More Projects
               </Link>
             </div>
           </Container>
@@ -409,68 +462,143 @@ export default function CustomApparel() {
               </AnimatedUnderline>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[500px]">
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={`showcase-${currentDesignSet}-0`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
-                  className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
-                >
-                  <img 
-                    src={[
-                      "/assets/designs/deathsquad.png",
-                      "/assets/designs/northside.png",
-                      "/assets/designs/normalchrome.png"
-                    ][currentDesignSet]} 
-                    alt={`Featured design ${currentDesignSet * 3 + 1}`}
-                    className="h-full w-full object-contain"
-                  />
-                </motion.div>
-              </AnimatePresence>
+              {currentDesignSet === 0 && (
+                <>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/deathsquad.png" 
+                      alt="Death Squad design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.2 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/nickpolo.png" 
+                      alt="Nick Polo design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.4 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/brooks.png" 
+                      alt="Brooks design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </>
+              )}
               
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={`showcase-${currentDesignSet}-1`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1, delay: 0.2 }}
-                  className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
-                >
-                  <img 
-                    src={[
-                      "/assets/designs/nickpolo.png",
-                      "/assets/designs/ltdsmockups.png",
-                      "/assets/designs/fullmockups.png"
-                    ][currentDesignSet]} 
-                    alt={`Featured design ${currentDesignSet * 3 + 2}`}
-                    className="h-full w-full object-contain"
-                  />
-                </motion.div>
-              </AnimatePresence>
+              {currentDesignSet === 1 && (
+                <>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/northside.png" 
+                      alt="Northside design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.2 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/ltdsmockups.png" 
+                      alt="LTDS Mockups" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.4 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/blackrashguard.png" 
+                      alt="Black Rashguard design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </>
+              )}
               
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={`showcase-${currentDesignSet}-2`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1, delay: 0.4 }}
-                  className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
-                >
-                  <img 
-                    src={[
-                      "/assets/designs/brooks.png",
-                      "/assets/designs/blackrashguard.png",
-                      "/assets/designs/bluerashguard.png"
-                    ][currentDesignSet]} 
-                    alt={`Featured design ${currentDesignSet * 3 + 3}`}
-                    className="h-full w-full object-contain"
-                  />
-                </motion.div>
-              </AnimatePresence>
+              {currentDesignSet === 2 && (
+                <>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/normalchrome.png" 
+                      alt="Normal Chrome design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.2 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/fullmockups.png" 
+                      alt="Full Mockups design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1, delay: 0.4 }}
+                    className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
+                  >
+                    <img 
+                      src="/assets/designs/bluerashguard.png" 
+                      alt="Blue Rashguard design" 
+                      className="h-full w-full object-contain"
+                    />
+                  </motion.div>
+                </>
+              )}
             </div>
           </Container>
         </section>
