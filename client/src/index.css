@@ -746,16 +746,17 @@
   background: #999;
 }
 
-/* Animated School Logos */
+/* Animated School Logos with bird-like movement, velocity, acceleration & wall bounce */
 .floating-logo {
   position: absolute;
-  width: 60px;
-  height: 60px;
-  z-index: 1;
-  opacity: 0.7;
-  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
-  animation: bird-float 25s infinite alternate ease-in-out;
+  width: 50px;
+  height: 50px;
+  z-index: 10;
+  opacity: 0.8;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+  transition: transform 0.1s ease;
   transform-origin: center center;
+  pointer-events: none;
 }
 
 .floating-logo img {
@@ -763,72 +764,36 @@
   height: 100%;
   object-fit: contain;
   animation: logo-shine 6s infinite ease-in-out;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  transform-origin: center center;
 }
 
-@keyframes bird-float {
-  0% {
-    transform: translateY(0) translateX(0) scale(1);
-  }
-  10% {
-    transform: translateY(-50px) translateX(100px) scale(0.9) rotate(10deg);
-  }
-  20% {
-    transform: translateY(-80px) translateX(200px) scale(1.1) rotate(-5deg);
-  }
-  30% {
-    transform: translateY(-30px) translateX(300px) scale(0.8) rotate(15deg);
-  }
-  40% {
-    transform: translateY(-120px) translateX(250px) scale(1) rotate(-10deg);
-  }
-  50% {
-    transform: translateY(-70px) translateX(200px) scale(1.2) rotate(5deg);
-  }
-  60% {
-    transform: translateY(-30px) translateX(150px) scale(0.9) rotate(-8deg);
-  }
-  70% {
-    transform: translateY(-90px) translateX(50px) scale(1.1) rotate(12deg);
-  }
-  80% {
-    transform: translateY(-40px) translateX(-100px) scale(0.8) rotate(-15deg);
-  }
-  90% {
-    transform: translateY(-60px) translateX(-200px) scale(1) rotate(10deg);
-  }
-  100% {
-    transform: translateY(0) translateX(0) scale(1) rotate(0deg);
-  }
-}
-
+/* Animated shine effect for logos */
 @keyframes logo-shine {
   0% {
     filter: brightness(1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1);
   }
   25% {
     filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
-    transform: rotate(5deg);
+    transform: rotate(5deg) scale(1.05);
   }
   50% {
     filter: brightness(1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1);
   }
   75% {
     filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
-    transform: rotate(-5deg);
+    transform: rotate(-5deg) scale(1.05);
   }
   100% {
     filter: brightness(1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1);
   }
 }
 
-/* Define different paths for each school logo to create a "flocking" effect */
+/* School-specific glow effects */
 .logo-pitt {
-  animation: bird-float-1 30s infinite alternate ease-in-out;
-  animation-delay: 0s;
+  filter: drop-shadow(0 0 8px rgba(0, 53, 148, 0.7));
 }
 
 .logo-pitt img {
@@ -836,8 +801,7 @@
 }
 
 .logo-ou {
-  animation: bird-float-2 28s infinite alternate ease-in-out;
-  animation-delay: -4s;
+  filter: drop-shadow(0 0 8px rgba(153, 0, 0, 0.7));
 }
 
 .logo-ou img {
@@ -845,8 +809,7 @@
 }
 
 .logo-brown {
-  animation: bird-float-3 32s infinite alternate ease-in-out;
-  animation-delay: -8s;
+  filter: drop-shadow(0 0 8px rgba(77, 40, 0, 0.7));
 }
 
 .logo-brown img {
@@ -854,8 +817,7 @@
 }
 
 .logo-gmu {
-  animation: bird-float-4 26s infinite alternate ease-in-out;
-  animation-delay: -12s;
+  filter: drop-shadow(0 0 8px rgba(0, 105, 55, 0.7));
 }
 
 .logo-gmu img {
@@ -863,14 +825,14 @@
 }
 
 .logo-tarleton {
-  animation: bird-float-5 34s infinite alternate ease-in-out;
-  animation-delay: -16s;
+  filter: drop-shadow(0 0 8px rgba(100, 38, 103, 0.7));
 }
 
 .logo-tarleton img {
   animation: logo-shine 6s infinite ease-in-out, tarleton-pulse 4.2s infinite ease-in-out;
 }
 
+/* School specific pulse animations with glow effects */
 @keyframes pitt-pulse {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 53, 148, 0.6)); }
   50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(0, 53, 148, 0.9)); }
@@ -896,74 +858,25 @@
   50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(100, 38, 103, 0.9)); }
 }
 
-/* Custom path animations for bird-like movement */
-@keyframes bird-float-1 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  10% { transform: translate(80px, -30px) scale(0.95) rotate(5deg); }
-  20% { transform: translate(160px, -50px) scale(1.05) rotate(-3deg); }
-  25% { transform: translate(200px, -40px) scale(1) rotate(0deg); }
-  35% { transform: translate(250px, -60px) scale(0.98) rotate(4deg); }
-  40% { transform: translate(270px, -40px) scale(1.02) rotate(0deg); }
-  50% { transform: translate(250px, -20px) scale(0.95) rotate(-4deg); }
-  60% { transform: translate(200px, -40px) scale(1) rotate(0deg); }
-  65% { transform: translate(160px, -30px) scale(1.03) rotate(2deg); }
-  75% { transform: translate(100px, -40px) scale(0.97) rotate(-2deg); }
-  85% { transform: translate(50px, -20px) scale(1) rotate(3deg); }
-  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+/* Animation for floating logos to simulate natural movement */
+@keyframes float-bounce {
+  0% { transform: translate(0px, 0px) rotate(0deg); }
+  25% { transform: translate(5px, -5px) rotate(3deg); }
+  50% { transform: translate(0px, -8px) rotate(0deg); }
+  75% { transform: translate(-5px, -3px) rotate(-3deg); }
+  100% { transform: translate(0px, 0px) rotate(0deg); }
 }
 
-@keyframes bird-float-2 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  10% { transform: translate(-50px, -20px) scale(1.03) rotate(-2deg); }
-  20% { transform: translate(-100px, -40px) scale(0.98) rotate(3deg); }
-  30% { transform: translate(-150px, -30px) scale(1) rotate(0deg); }
-  35% { transform: translate(-180px, -40px) scale(1.02) rotate(-4deg); }
-  45% { transform: translate(-200px, -20px) scale(0.97) rotate(0deg); }
-  55% { transform: translate(-180px, 0px) scale(1) rotate(2deg); }
-  65% { transform: translate(-150px, -10px) scale(0.99) rotate(0deg); }
-  75% { transform: translate(-100px, -20px) scale(1.01) rotate(-3deg); }
-  85% { transform: translate(-50px, -10px) scale(0.98) rotate(0deg); }
-  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-}
-
-@keyframes bird-float-3 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  12% { transform: translate(30px, 40px) scale(0.97) rotate(4deg); }
-  22% { transform: translate(60px, 60px) scale(1.02) rotate(-2deg); }
-  32% { transform: translate(100px, 80px) scale(0.99) rotate(0deg); }
-  42% { transform: translate(120px, 60px) scale(1.03) rotate(3deg); }
-  52% { transform: translate(100px, 40px) scale(0.98) rotate(-3deg); }
-  62% { transform: translate(60px, 30px) scale(1) rotate(0deg); }
-  72% { transform: translate(30px, 20px) scale(1.01) rotate(2deg); }
-  82% { transform: translate(10px, 10px) scale(0.99) rotate(-2deg); }
-  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-}
-
-@keyframes bird-float-4 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  15% { transform: translate(-30px, 30px) scale(1.02) rotate(-3deg); }
-  25% { transform: translate(-60px, 40px) scale(0.98) rotate(0deg); }
-  35% { transform: translate(-90px, 30px) scale(1) rotate(2deg); }
-  45% { transform: translate(-120px, 10px) scale(0.97) rotate(-2deg); }
-  55% { transform: translate(-100px, -10px) scale(1.01) rotate(0deg); }
-  65% { transform: translate(-70px, -20px) scale(0.99) rotate(3deg); }
-  75% { transform: translate(-40px, -10px) scale(1.02) rotate(-1deg); }
-  85% { transform: translate(-20px, 0px) scale(0.98) rotate(0deg); }
-  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-}
-
-@keyframes bird-float-5 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  10% { transform: translate(40px, -40px) scale(0.99) rotate(2deg); }
-  20% { transform: translate(70px, -70px) scale(1.01) rotate(-3deg); }
-  30% { transform: translate(90px, -90px) scale(0.98) rotate(0deg); }
-  40% { transform: translate(70px, -110px) scale(1.02) rotate(4deg); }
-  50% { transform: translate(40px, -100px) scale(0.97) rotate(-2deg); }
-  60% { transform: translate(10px, -80px) scale(1) rotate(0deg); }
-  70% { transform: translate(-20px, -60px) scale(1.03) rotate(3deg); }
-  80% { transform: translate(-10px, -30px) scale(0.98) rotate(-1deg); }
-  90% { transform: translate(0px, -10px) scale(1) rotate(0deg); }
-  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+/* Container for the floating logos */
+.logo-animation-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 5; 
+  pointer-events: none;
+  overflow: hidden;
 }
 
 /* School logo pulse effect */
