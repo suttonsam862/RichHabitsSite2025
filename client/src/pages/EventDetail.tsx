@@ -533,13 +533,8 @@ export default function EventDetail() {
                     </div>
                   </div>
                   
-                  {/* Live Training Cam */}
+                  {/* First Video */}
                   <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
-                    <div className="absolute top-3 right-3 z-10 bg-black/70 px-3 py-1 rounded-full text-white text-xs flex items-center">
-                      <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-1 animate-pulse"></span>
-                      LIVE TRAINING
-                    </div>
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
                     <video 
                       className="w-full h-auto object-cover"
                       src="/src/assets/videos/04243.mov"
@@ -550,9 +545,6 @@ export default function EventDetail() {
                       style={{ maxHeight: "360px" }}
                       onPlay={(e) => { e.currentTarget.volume = 0; }}
                     ></video>
-                    <div className="absolute bottom-3 left-3 text-white text-sm font-medium">
-                      Rancho High School Mat Room
-                    </div>
                   </div>
                   
                   {/* Featured Camp Video */}
@@ -571,6 +563,21 @@ export default function EventDetail() {
                         <h4 className="text-white font-bold text-lg">National Champ Camp Highlights</h4>
                         <p className="text-white/80 text-sm">Experience the intensity and focus of Penn State champion training</p>
                       </div>
+                    </div>
+                  </div>
+                  
+                  {/* Third Video */}
+                  <div className="mb-8 rounded-xl overflow-hidden shadow-lg">
+                    <div className="relative">
+                      <video 
+                        className="w-full h-auto"
+                        src="/src/assets/videos/0425.mov"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        onPlay={(e) => { e.currentTarget.volume = 0; }}
+                      ></video>
                     </div>
                   </div>
                 </>
