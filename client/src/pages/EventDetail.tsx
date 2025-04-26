@@ -960,6 +960,98 @@ export default function EventDetail() {
                   </div>
                 </>
               )}
+              
+              {event.id === 3 && (
+                <>
+                  <div className="recruiting-border bg-white shadow-md rounded-lg overflow-hidden mb-8 relative">
+                    <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
+                    <div className="px-6 py-4" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', color: 'white' }}>
+                      <h3 className="text-lg font-bold">Texas Recruiting Clinic Highlights</h3>
+                    </div>
+                    <div className="p-6">
+                      <ul className="space-y-3">
+                        <li className="flex">
+                          <span>Limited to 150 wrestlers - maximum recruiting exposure</span>
+                        </li>
+                        <li className="flex">
+                          <span>Direct access to college coaches from 5 different programs</span>
+                        </li>
+                        <li className="flex">
+                          <span>Professional photo and video highlights provided</span>
+                        </li>
+                        <li className="flex">
+                          <span>Personalized evaluation and feedback from coaches</span>
+                        </li>
+                        <li className="flex">
+                          <span>Groups of 10+ wrestlers get 10% credit on next Rich Habits gear order</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="recruiting-stripe"></div>
+                  </div>
+                  
+                  {/* First Video */}
+                  <div className="relative recruiting-border rounded-lg overflow-hidden mb-8 shadow-lg">
+                    <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
+                    <video 
+                      className="w-full h-auto object-cover relative z-10"
+                      src="/src/assets/videos/trcvid.mov"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      style={{ maxHeight: "360px" }}
+                      onPlay={(e) => { e.currentTarget.volume = 0; }}
+                    ></video>
+                    <div className="recruiting-stripe"></div>
+                  </div>
+                  
+                  {/* Featured Camp Video */}
+                  <div className="mb-8 rounded-xl overflow-hidden shadow-lg recruiting-border">
+                    <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
+                    <div className="relative">
+                      <video 
+                        className="w-full h-auto relative z-10"
+                        src="/src/assets/videos/0331.mov"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        onPlay={(e) => { e.currentTarget.volume = 0; }}
+                      ></video>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#bf0a30]/80 to-transparent p-4 z-20">
+                        <h4 className="text-white font-bold text-lg">Texas Recruiting Clinic Experience</h4>
+                        <p className="text-white/80 text-sm">Get noticed by college coaches at this premier recruiting event</p>
+                      </div>
+                    </div>
+                    <div className="recruiting-stripe"></div>
+                  </div>
+                  
+                  {/* Third Video - Links to National Champ Camp */}
+                  <div className="mb-8 rounded-xl overflow-hidden shadow-lg cursor-pointer group relative recruiting-border">
+                    <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
+                    <a href="/events/2" className="block">
+                      <div className="relative">
+                        <video 
+                          className="w-full h-auto group-hover:scale-105 transition-transform duration-300 relative z-10"
+                          src="/src/assets/videos/0425.mov"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          onPlay={(e) => { e.currentTarget.volume = 0; }}
+                        ></video>
+                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-20">
+                          <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                            <span className="font-bold" style={{ color: '#1e88e5' }}>Visit National Champ Camp →</span>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                    <div className="recruiting-stripe"></div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </Container>
