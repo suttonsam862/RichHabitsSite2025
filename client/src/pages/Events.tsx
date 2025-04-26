@@ -25,7 +25,7 @@ const events = [
     category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent3)_/_0.1)] text-[hsl(var(--accent3))]",
     date: "June 12th-13th, 2025",
-    time: "10:00 AM - 5:00 PM",
+    time: "9:00 AM - 4:00 PM",
     location: "Arlington Martin High School",
     description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.",
     price: "$249",
@@ -192,11 +192,11 @@ export default function Events() {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> 9:00 AM - 4:00 PM</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> Arlington Martin High School</p>
                       <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
                     </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.</p>
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[0].id}`}
