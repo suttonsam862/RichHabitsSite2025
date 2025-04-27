@@ -108,10 +108,10 @@ export default function Contact() {
                 </div>
                 <h3 className="text-xl font-medium mb-3">Email</h3>
                 <p className="text-gray-700 mb-2">For general inquiries:</p>
-                <a href="mailto:info@richhabits.com" className="text-[hsl(var(--accent))] hover:underline">info@richhabits.com</a>
+                <a href="mailto:admin@rich-habits.com" className="text-[hsl(var(--accent))] hover:underline">admin@rich-habits.com</a>
                 
                 <p className="text-gray-700 mt-3 mb-2">For custom team orders:</p>
-                <a href="mailto:teams@richhabits.com" className="text-[hsl(var(--accent))] hover:underline">teams@richhabits.com</a>
+                <a href="mailto:samsutton@rich-habits.com" className="text-[hsl(var(--accent))] hover:underline">samsutton@rich-habits.com</a>
               </motion.div>
               
               <motion.div
@@ -126,7 +126,7 @@ export default function Contact() {
                 </div>
                 <h3 className="text-xl font-medium mb-3">Phone</h3>
                 <p className="text-gray-700 mb-2">Customer Service:</p>
-                <a href="tel:+18005551234" className="text-[hsl(var(--accent))] hover:underline">(800) 555-1234</a>
+                <a href="tel:+14808104477" className="text-[hsl(var(--accent))] hover:underline">+1 (480) 810-4477</a>
                 
                 <p className="text-gray-700 mt-3 mb-2">Hours of Operation:</p>
                 <p className="text-gray-700">Monday - Friday: 9am - 5pm EST</p>
@@ -328,7 +328,7 @@ export default function Contact() {
                   className="bg-white p-6 shadow-sm"
                 >
                   <h3 className="text-xl font-medium mb-3">How do I start a custom team order?</h3>
-                  <p className="text-gray-700">Fill out the request form on our Custom Apparel page or email teams@richhabits.com with your requirements. Our design team will schedule a consultation to discuss your needs.</p>
+                  <p className="text-gray-700">Fill out the request form on our Custom Apparel page or email samsutton@rich-habits.com with your requirements. Our design team will schedule a consultation to discuss your needs.</p>
                 </motion.div>
                 
                 <motion.div
@@ -339,7 +339,7 @@ export default function Contact() {
                   className="bg-white p-6 shadow-sm"
                 >
                   <h3 className="text-xl font-medium mb-3">Do you offer bulk discounts?</h3>
-                  <p className="text-gray-700">Yes, we offer tiered discounts based on order quantity. Contact our sales team at sales@richhabits.com for a custom quote.</p>
+                  <p className="text-gray-700">Yes, we offer tiered discounts based on order quantity. Contact our sales team at admin@rich-habits.com for a custom quote.</p>
                 </motion.div>
                 
                 <motion.div
