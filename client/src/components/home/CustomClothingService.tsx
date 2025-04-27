@@ -4,20 +4,34 @@ import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
+// Use directly public paths
+const brooksMockup = "/images/custom-apparel/BrooksMockupFinal.png";
+const caneNationMockup = "/images/custom-apparel/CaneNationMockup.png";
+const normalChromeMockup = "/images/custom-apparel/NormalChromeMockup1.png";
+const nickPoloMockup = "/images/custom-apparel/NickPoloMockupFinal.png";
+const elevateMockup = "/images/custom-apparel/ElevateMockup5.png";
+const braggMockup = "/images/custom-apparel/BraggMockup.png";
+const athensMockup = "/images/custom-apparel/Athens Mockup.png";
+const deathSquadMockup = "/images/custom-apparel/10pDeathSquad Mockup.png";
+const blueRashguardMockup = "/images/custom-apparel/BlueRashguardMockup.png";
+const blackRashguardMockup = "/images/custom-apparel/BlackRashgaurdMockup.png";
+const classicRashguardMockup = "/images/custom-apparel/ClassicRashguardMockup.png";
+const noPawsMockup = "/images/custom-apparel/NoPawsRanburneMockup.png";
+
 // Define the design mockup images for the carousel
 const designImages = [
-  "/images/custom-apparel/BrooksMockupFinal.png",
-  "/images/custom-apparel/CaneNationMockup.png",
-  "/images/custom-apparel/NormalChromeMockup1.png",
-  "/images/custom-apparel/NickPoloMockupFinal.png",
-  "/images/custom-apparel/ElevateMockup5.png",
-  "/images/custom-apparel/BraggMockup.png",
-  "/images/custom-apparel/Athens Mockup.png",
-  "/images/custom-apparel/10pDeathSquad Mockup.png",
-  "/images/custom-apparel/BlueRashguardMockup.png",
-  "/images/custom-apparel/BlackRashgaurdMockup.png",
-  "/images/custom-apparel/ClassicRashguardMockup.png",
-  "/images/custom-apparel/NoPawsRanburneMockup.png"
+  brooksMockup,
+  caneNationMockup,
+  normalChromeMockup,
+  nickPoloMockup,
+  elevateMockup,
+  braggMockup,
+  athensMockup,
+  deathSquadMockup,
+  blueRashguardMockup,
+  blackRashguardMockup,
+  classicRashguardMockup,
+  noPawsMockup
 ];
 
 export function CustomClothingService() {
