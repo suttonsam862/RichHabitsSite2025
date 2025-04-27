@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="260" height="80" viewBox="0 0 260 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rectangle with rounded corners -->
+  <rect width="260" height="80" rx="8" fill="white"/>
+  
+  <!-- Mango Icon -->
+  <path d="M50 20C58.8366 20 66 27.1634 66 36C66 44.8366 58.8366 52 50 52C41.1634 52 34 44.8366 34 36C34 27.1634 41.1634 20 50 20Z" fill="#FFC107"/>
+  <path d="M50 22C57.732 22 64 28.268 64 36C64 43.732 57.732 50 50 50C42.268 50 36 43.732 36 36C36 28.268 42.268 22 50 22Z" fill="#FFD54F"/>
+  <path d="M50 24C56.6274 24 62 29.3726 62 36C62 42.6274 56.6274 48 50 48C43.3726 48 38 42.6274 38 36C38 29.3726 43.3726 24 50 24Z" fill="#FFE082"/>
+  <path d="M54 32C55.1046 32 56 32.8954 56 34C56 35.1046 55.1046 36 54 36C52.8954 36 52 35.1046 52 34C52 32.8954 52.8954 32 54 32Z" fill="#795548"/>
+  <path d="M48 28L50 30L52 28" stroke="#795548" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Text "FRUIT HUNTERS" -->
+  <text x="85" y="38" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="#4CAF50">FRUIT</text>
+  <text x="145" y="38" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="#FF5722">HUNTERS</text>
+  
+  <!-- Tagline -->
+  <text x="85" y="52" font-family="Arial, sans-serif" font-size="10" fill="#607D8B">Exotic Fruits from Around the World</text>
+</svg>
