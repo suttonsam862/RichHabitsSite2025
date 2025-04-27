@@ -20,6 +20,30 @@ async function fetchCollaborations() {
   return data as Collaboration[];
 }
 
+// Fruit data for the Fruit Hunters collaboration
+const fruitData = [
+  { name: "Jackfruit", imageSrc: "/images/fruits/jackfruit.png" },
+  { name: "Black Sapote", imageSrc: "/images/fruits/black-sapote.png" },
+  { name: "Durian", imageSrc: "/images/fruits/durian.png" },
+  { name: "Papaya", imageSrc: "/images/fruits/papaya.png" },
+  { name: "Star Fruit", imageSrc: "/images/fruits/star-fruit.png" },
+  { name: "Cocoa", imageSrc: "/images/fruits/cocoa.png" }
+];
+
+const FruitGallery = () => {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 mb-6">
+      {fruitData.map((fruit, index) => (
+        <div key={index} className="flex flex-col items-center">
+          <div className="bg-gray-50 rounded-lg p-2 w-full h-24 flex items-center justify-center mb-2">
+            <span className="text-gray-500 text-sm">{`${index + 1}: ${fruit.name}`}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const CollaborationCard: React.FC<CollaborationProps> = ({ 
   name, 
   logoSrc, 
@@ -27,6 +51,8 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
   description,
   isComingSoon = false
 }) => {
+  const isFruitHunters = name === 'Fruit Hunters';
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -48,7 +74,14 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
         <h4 className="text-xl font-bold text-center">{name}</h4>
       </div>
       
-      <p className="text-gray-700 text-center mb-6">{description}</p>
+      <p className="text-gray-700 text-center mb-3">
+        {isFruitHunters 
+          ? "America's premier exotic fruit company partnering with Rich Habits to provide optimal nutrition for our wrestlers and athletes. Exclusive fruit packs available at all Birmingham Slam Camp events."
+          : description
+        }
+      </p>
+      
+      {isFruitHunters && <FruitGallery />}
       
       {!isComingSoon ? (
         <div className="text-center">
