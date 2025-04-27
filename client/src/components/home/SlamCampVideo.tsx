@@ -57,7 +57,7 @@ export function SlamCampVideo() {
               className="relative h-[500px] bg-black rounded-lg overflow-hidden"
             >
               <video 
-                src="/videos/0424.mov"
+                src="/videos/0425.mov"
                 className="w-full h-full object-cover"
                 autoPlay
                 loop
