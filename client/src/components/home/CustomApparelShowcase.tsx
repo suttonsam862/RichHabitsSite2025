@@ -2,11 +2,11 @@ import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
-// Import a selection of the best images
-import homewoodSinglet from "/attached_assets/DSC09354.JPG";
-import jordanSinglet from "/attached_assets/DSC09491.JPG";
-import femaleWrestler from "/attached_assets/DSC02187--.jpg";
-import winnerShot from "/attached_assets/DSC07337--.jpg";
+// Image paths
+const homewoodSinglet = "/images/DSC09354.JPG";
+const jordanSinglet = "/images/DSC09491.JPG";
+const femaleWrestler = "/images/DSC02187--.jpg";
+const winnerShot = "/images/DSC07337--.jpg";
 
 export function CustomApparelShowcase() {
   return (

@@ -3,24 +3,24 @@ import { Dialog, DialogContent, DialogClose, DialogTrigger } from "@/components/
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-// Import images
-import homewoodSinglet from "/attached_assets/DSC09354.JPG";
-import jordanSinglet from "/attached_assets/DSC09491.JPG";
-import homewoodWrestler from "/attached_assets/DSC09374--.JPG";
-import jordanWrestler from "/attached_assets/DSC09488.JPG";
-import homewoodTshirt from "/attached_assets/DSC09273.JPG";
-import wrestlerAction1 from "/attached_assets/DSC00521--.JPG";
-import wrestlerAction2 from "/attached_assets/DSC08657--.JPG";
-import wrestlerAction3 from "/attached_assets/DSC08631.JPG";
-import wrestlerAction4 from "/attached_assets/DSC08612.JPG";
-import varsityMatch from "/attached_assets/DSC08615.JPG";
-import winnerShot from "/attached_assets/DSC07337--.jpg";
-import richHabitsCoach from "/attached_assets/DSC09299.JPG";
-import richHabitsCoach2 from "/attached_assets/DSC09295--.JPG";
-import wrestlerClose from "/attached_assets/DSC09353.JPG";
-import femaleWrestler1 from "/attached_assets/DSC02187--.jpg";
-import femaleWrestler2 from "/attached_assets/DSC02190--.jpg";
-import rhShirt from "/attached_assets/DSC00423.JPG";
+// Image paths
+const homewoodSinglet = "/images/DSC09354.JPG";
+const jordanSinglet = "/images/DSC09491.JPG";
+const homewoodWrestler = "/images/DSC09374--.JPG";
+const jordanWrestler = "/images/DSC09488.JPG";
+const homewoodTshirt = "/images/DSC09273.JPG";
+const wrestlerAction1 = "/images/DSC00521--.JPG";
+const wrestlerAction2 = "/images/DSC08657--.JPG";
+const wrestlerAction3 = "/images/DSC08631.JPG";
+const wrestlerAction4 = "/images/DSC08612.JPG";
+const varsityMatch = "/images/DSC08615.JPG";
+const winnerShot = "/images/DSC07337--.jpg";
+const richHabitsCoach = "/images/DSC09299.JPG";
+const richHabitsCoach2 = "/images/DSC09295--.JPG";
+const wrestlerClose = "/images/DSC09353.JPG";
+const femaleWrestler1 = "/images/DSC02187--.jpg";
+const femaleWrestler2 = "/images/DSC02190--.jpg";
+const rhShirt = "/images/DSC00423.JPG";
 
 interface GalleryImage {
   src: string;

@@ -450,9 +450,12 @@ export default function CustomApparel() {
             </div>
             
             <div className="mt-12 text-center">
-              <Link to="/gallery" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-                View More Projects
-              </Link>
+              <a 
+                href="#contactForm" 
+                className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors"
+              >
+                Request Similar Design
+              </a>
             </div>
           </Container>
         </section>
@@ -606,6 +609,15 @@ export default function CustomApparel() {
             </div>
           </Container>
         </section>
+        
+        {/* Featured Teams Section */}
+        <FeaturedTeams />
+        
+        {/* Team Gallery Section */}
+        <TeamGallery />
+        
+        {/* Testimonials Section */}
+        <Testimonials />
         
         {/* Contact Form Section */}
         <section id="contactForm" className="py-20 bg-[hsl(var(--secondary))]">

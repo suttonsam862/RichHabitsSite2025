@@ -2,9 +2,9 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Card, CardContent } from "@/components/ui/card";
 import { Quote } from "lucide-react";
 
-// Import coaching staff images
-import coachImage from "/attached_assets/DSC09299.JPG";
-import coachImage2 from "/attached_assets/DSC09295--.JPG";
+// Image paths 
+const coachImage = "/images/DSC09299.JPG";
+const coachImage2 = "/images/DSC09295--.JPG";
 
 interface Testimonial {
   quote: string;

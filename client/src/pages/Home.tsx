@@ -6,6 +6,7 @@ import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { FruitHuntersBanner } from "@/components/home/FruitHuntersBanner";
 import { Collaborations } from "@/components/home/Collaborations";
 import { Newsletter } from "@/components/home/Newsletter";
+import { CustomApparelShowcase } from "@/components/home/CustomApparelShowcase";
 import { Helmet } from "react-helmet";
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
       <FeaturedEvents />
       <SlamCampVideo />
       <CampSlideshow />
+      <CustomApparelShowcase />
       <Collaborations />
       <FruitHuntersBanner />
       <FeaturedProducts />
