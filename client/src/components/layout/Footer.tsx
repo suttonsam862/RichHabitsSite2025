@@ -9,17 +9,14 @@ export function Footer() {
             <h3 className="text-xl font-serif mb-6">Rich Habits</h3>
             <p className="text-gray-400 mb-6">Premium athletic apparel for high-performing athletes who demand quality and style.</p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://www.instagram.com/richhabits/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <i className="icon ion-logo-instagram text-xl"></i>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://twitter.com/samsu1tonrh" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <i className="icon ion-logo-twitter text-xl"></i>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://www.facebook.com/richhabitsapparel/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <i className="icon ion-logo-facebook text-xl"></i>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <i className="icon ion-logo-youtube text-xl"></i>
               </a>
             </div>
           </div>
@@ -28,10 +25,10 @@ export function Footer() {
             <h4 className="text-lg font-medium mb-4">Shop</h4>
             <ul className="space-y-2">
               <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">All Products</Link></li>
-              <li><Link href="/shop?collection=performance" className="text-gray-400 hover:text-white transition-colors">Performance Collection</Link></li>
-              <li><Link href="/shop?collection=essentials" className="text-gray-400 hover:text-white transition-colors">Essentials Line</Link></li>
-              <li><Link href="/shop?collection=competition" className="text-gray-400 hover:text-white transition-colors">Competition Series</Link></li>
-              <li><Link href="/shop?category=gift-cards" className="text-gray-400 hover:text-white transition-colors">Gift Cards</Link></li>
+              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Performance Collection</Link></li>
+              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Essentials Line</Link></li>
+              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Competition Series</Link></li>
+              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Gift Cards</Link></li>
             </ul>
           </div>
           
