@@ -181,6 +181,7 @@ export default function Events() {
                       loop 
                       muted 
                       playsInline
+                      onError={handleVideoError}
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       style={{ position: "absolute", top: 0, left: 0 }}
                     ></video>
@@ -273,6 +274,7 @@ export default function Events() {
                       loop 
                       muted 
                       playsInline
+                      onError={handleVideoError}
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       style={{ position: "absolute", top: 0, left: 0 }}
                     ></video>
@@ -378,6 +380,7 @@ export default function Events() {
                       loop
                       muted
                       playsInline
+                      onError={handleVideoError}
                       className="w-full h-full object-cover absolute inset-0"
                       style={{ filter: 'brightness(1.1) contrast(1.1)' }}
                     ></video>
