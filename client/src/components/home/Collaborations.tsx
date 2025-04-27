@@ -38,15 +38,6 @@ const FruitGallery = () => {
         alt="Exotic fruits from Fruit Hunters" 
         className="w-full rounded-lg shadow-md"
       />
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
-        {fruitData.map((fruit, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="text-center p-2">
-              <span className="text-gray-700 font-medium">{`${index + 1}: ${fruit.name}`}</span>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
