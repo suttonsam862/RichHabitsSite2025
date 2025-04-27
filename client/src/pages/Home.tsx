@@ -5,6 +5,7 @@ import { CampSlideshow } from "@/components/home/CampSlideshow";
 import { GallerySection } from "@/components/home/GallerySection";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { FruitHuntersBanner } from "@/components/home/FruitHuntersBanner";
+import { Collaborations } from "@/components/home/Collaborations";
 import { Newsletter } from "@/components/home/Newsletter";
 import { Helmet } from "react-helmet";
 
@@ -21,6 +22,7 @@ export default function Home() {
       <SlamCampVideo />
       <CampSlideshow />
       <GallerySection />
+      <Collaborations />
       <FruitHuntersBanner />
       <FeaturedProducts />
       <Newsletter />
