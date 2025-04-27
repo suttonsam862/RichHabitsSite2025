@@ -10,7 +10,7 @@ const camps = [
     date: 'June 19-21, 2025',
     location: 'Clay-Chalkville Middle School',
     description: 'Join us for 3 days of intensive training with top wrestling coaches.',
-    image: '/images/events/birmingham-slam-camp.jpg',
+    video: '/videos/slamcamp.mov',
     link: '/events/1',
     color: 'from-orange-600 to-red-600'
   },
@@ -85,14 +85,28 @@ export function CampSlideshow() {
               transition={{ duration: 0.5 }}
               className="absolute inset-0"
             >
-              {/* Image background */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ 
-                  backgroundImage: `url(${currentCamp.image})`,
-                  filter: 'brightness(0.7)'
-                }}
-              ></div>
+              {/* Background: either video or image */}
+              {currentCamp.video ? (
+                <div className="absolute inset-0">
+                  <video 
+                    src={currentCamp.video} 
+                    className="object-cover w-full h-full"
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    style={{ filter: 'brightness(0.7)' }}
+                  />
+                </div>
+              ) : (
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ 
+                    backgroundImage: `url(${currentCamp.image})`,
+                    filter: 'brightness(0.7)'
+                  }}
+                ></div>
+              )}
               
               {/* Content */}
               <div className="absolute inset-0 flex items-center justify-center z-20">
