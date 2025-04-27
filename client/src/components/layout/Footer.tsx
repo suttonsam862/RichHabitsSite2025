@@ -24,11 +24,11 @@ export function Footer() {
           <div>
             <h4 className="text-lg font-medium mb-4">Shop</h4>
             <ul className="space-y-2">
-              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">All Products</Link></li>
-              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Performance Collection</Link></li>
-              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Essentials Line</Link></li>
-              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Competition Series</Link></li>
-              <li><Link href="/shop" className="text-gray-400 hover:text-white transition-colors">Gift Cards</Link></li>
+              <li><span className="text-gray-400">All Products (Coming Soon)</span></li>
+              <li><span className="text-gray-400">Performance Collection (Coming Soon)</span></li>
+              <li><span className="text-gray-400">Essentials Line (Coming Soon)</span></li>
+              <li><span className="text-gray-400">Competition Series (Coming Soon)</span></li>
+              <li><span className="text-gray-400">Gift Cards (Coming Soon)</span></li>
             </ul>
           </div>
           
@@ -36,9 +36,9 @@ export function Footer() {
             <h4 className="text-lg font-medium mb-4">Services</h4>
             <ul className="space-y-2">
               <li><Link href="/custom-apparel" className="text-gray-400 hover:text-white transition-colors">Custom Team Apparel</Link></li>
-              <li><Link href="/events" className="text-gray-400 hover:text-white transition-colors">Sports Clinics & Events</Link></li>
-              <li><Link href="/custom-apparel#consultation" className="text-gray-400 hover:text-white transition-colors">Design Consultation</Link></li>
-              <li><Link href="/custom-apparel#bulk-orders" className="text-gray-400 hover:text-white transition-colors">Bulk Orders</Link></li>
+              <li><Link href="/events" className="text-gray-400 hover:text-white transition-colors">Wrestling Camps & Events</Link></li>
+              <li><Link href="/custom-apparel" className="text-gray-400 hover:text-white transition-colors">Team Outfitting</Link></li>
+              <li><Link href="/events" className="text-gray-400 hover:text-white transition-colors">Clinics & Training</Link></li>
             </ul>
           </div>
           
@@ -47,7 +47,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="/shipping-returns" className="text-gray-400 hover:text-white transition-colors">Shipping & Returns</Link></li>
+              <li><Link href="/return-policy" className="text-gray-400 hover:text-white transition-colors">Shipping & Returns</Link></li>
               <li><Link href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
             </ul>

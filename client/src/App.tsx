@@ -14,6 +14,8 @@ import Gallery from "@/pages/Gallery";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import ReturnPolicy from "@/pages/ReturnPolicy";
 
 function Router() {
   return (
@@ -27,6 +29,8 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/admin" component={Admin} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/return-policy" component={ReturnPolicy} />
       <Route component={NotFound} />
     </Switch>
   );
