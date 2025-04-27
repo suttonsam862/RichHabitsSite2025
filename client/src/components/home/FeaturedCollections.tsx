@@ -59,46 +59,11 @@ export function FeaturedCollections() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Fetch products for retail collection
+  // Load retail products (now using static products while shop is under construction)
   useEffect(() => {
-    async function loadRetailProducts() {
-      try {
-        setIsLoading(true);
-        
-        // Use our new endpoint to fetch products from the Retail Collection
-        const response = await fetch(`/api/collections/${RETAIL_COLLECTION_HANDLE}/products`, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.statusText}`);
-        }
-        
-        const fetchedProducts = await response.json();
-        
-        if (fetchedProducts && fetchedProducts.length > 0) {
-          console.log(`Found ${fetchedProducts.length} products in Retail Collection`);
-          setProducts(fetchedProducts);
-        } else {
-          // For development, use dummy data
-          console.warn("No products found in the Retail Collection");
-          setError("No products found in the Retail Collection");
-          // Set retail products for development/demo purposes
-          setProducts(retailProducts);
-        }
-      } catch (err) {
-        console.error("Failed to fetch retail products:", err);
-        setError("Failed to load products");
-        
-        // Set retail products for development/demo purposes
-        setProducts(retailProducts);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    loadRetailProducts();
+    // Load sample retail products for demonstration purposes
+    setProducts(retailProducts);
+    setIsLoading(false);
   }, []);
   
   // Set up carousel animation
@@ -202,8 +167,8 @@ export function FeaturedCollections() {
         )}
         
         <div className="mt-12 text-center">
-          <Link href={`/shop?collection=${RETAIL_COLLECTION_HANDLE}`} className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-            View Retail Collection
+          <Link href="/shop" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+            View All Products
           </Link>
         </div>
       </Container>

@@ -155,68 +155,65 @@ export default function Shop() {
         <meta name="description" content="Shop premium athletic apparel designed for high-performing athletes." />
       </Helmet>
       
-      <div className="py-16 bg-white">
+      <div className="min-h-[80vh] flex items-center justify-center bg-white">
         <Container>
-          <div className="mb-12">
-            <h1 className="text-4xl font-serif font-semibold mb-6">Shop</h1>
-            
-            {/* Filters */}
-            <div className="flex flex-wrap gap-4 border-b border-[hsl(var(--shadow))] pb-4">
-              <button 
-                className={`px-4 py-2 text-sm font-medium ${!activeFilter ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveFilter(null)}
-              >
-                All Products
-              </button>
+          <div className="text-center max-w-3xl mx-auto py-20">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="text-5xl font-serif font-semibold mb-8">Shop Coming Soon</h1>
               
-              {collections.map((collection: CollectionFilter) => (
-                <button
-                  key={collection.id}
-                  className={`px-4 py-2 text-sm font-medium ${activeFilter === collection.id ? 'bg-primary text-white' : 'hover:bg-gray-100'}`}
-                  onClick={() => setActiveFilter(collection.id)}
-                >
-                  {collection.name}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {isLoading ? (
-            <div className="py-12 text-center">Loading products...</div>
-          ) : error ? (
-            <div className="py-12 text-center text-red-500">Error loading products. Please try again.</div>
-          ) : (
-            <>
-              {filteredProducts.length === 0 ? (
-                <div className="py-12 text-center">No products found.</div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {filteredProducts.map((product: ShopProduct, index: number) => (
-                    <motion.div
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.05 }}
-                      className="product-card bg-white"
-                    >
-                      <Link href={`/shop/product/${product.handle}`} className="block group">
-                        <div className="relative overflow-hidden mb-4">
-                          <img 
-                            src={product.image || ''} 
-                            alt={product.title} 
-                            className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
-                        <h3 className="text-base font-medium mb-1">{product.title}</h3>
-                        <p className="text-sm text-gray-500 mb-2">{product.color}</p>
-                        <p className="font-medium">{product.price}</p>
-                      </Link>
-                    </motion.div>
-                  ))}
+              <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
+              
+              <p className="text-xl text-gray-600 mb-10">
+                Our online shop is currently under construction. 
+                We're working hard to bring you premium athletic apparel designed 
+                for high-performing athletes.
+              </p>
+              
+              <div className="flex justify-center space-x-6 mb-12">
+                <div className="flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full border-4 border-primary flex items-center justify-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium">High Performance</span>
                 </div>
-              )}
-            </>
-          )}
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full border-4 border-primary flex items-center justify-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium">Premium Quality</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full border-4 border-primary flex items-center justify-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium">Athlete Focused</span>
+                </div>
+              </div>
+              
+              <div className="bg-gray-100 p-6 rounded-lg">
+                <h2 className="text-xl font-medium mb-4">Need Custom Team Apparel?</h2>
+                <p className="text-gray-600 mb-6">
+                  While our shop is being built, we're still taking orders for custom team apparel. 
+                  Get in touch with us to discuss your requirements.
+                </p>
+                <Link href="/custom-apparel" className="inline-block bg-primary text-white px-8 py-3 rounded hover:bg-primary/90 transition">
+                  Custom Apparel Inquiries
+                </Link>
+              </div>
+            </motion.div>
+          </div>
         </Container>
       </div>
     </>
