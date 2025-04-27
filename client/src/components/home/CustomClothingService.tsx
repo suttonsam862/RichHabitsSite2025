@@ -14,7 +14,7 @@ import braggMockup from "../../assets/BraggMockup.png";
 import blueRashguardMockup from "../../assets/BlueRashguardMockup.png";
 import blackRashguardMockup from "../../assets/BlackRashgaurdMockup.png";
 import classicRashguardMockup from "../../assets/ClassicRashguardMockup.png";
-import noPawsMockup from "../../assets/NoPawsRanburneMockup.png";
+
 
 // Define the design images array using imported assets
 const designImages = [
@@ -26,8 +26,7 @@ const designImages = [
   braggMockup,
   blueRashguardMockup,
   blackRashguardMockup,
-  classicRashguardMockup,
-  noPawsMockup
+  classicRashguardMockup
 ];
 
 export function CustomClothingService() {
