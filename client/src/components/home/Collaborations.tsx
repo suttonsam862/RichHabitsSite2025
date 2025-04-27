@@ -22,12 +22,12 @@ async function fetchCollaborations() {
 
 // Fruit data for the Fruit Hunters collaboration
 const fruitData = [
-  { name: "Dragon Fruit", imageSrc: "/images/fruits/dragon-fruit.png" },
-  { name: "Mangosteen", imageSrc: "/images/fruits/mangosteen.png" },
-  { name: "Passion Fruit", imageSrc: "/images/fruits/passion-fruit.png" },
   { name: "Jackfruit", imageSrc: "/images/fruits/jackfruit.png" },
+  { name: "Black Sapote", imageSrc: "/images/fruits/black-sapote.png" },
+  { name: "Durian", imageSrc: "/images/fruits/durian.png" },
+  { name: "Papaya", imageSrc: "/images/fruits/papaya.png" },
   { name: "Star Fruit", imageSrc: "/images/fruits/star-fruit.png" },
-  { name: "Rambutan", imageSrc: "/images/fruits/rambutan.png" }
+  { name: "Cocoa", imageSrc: "/images/fruits/cocoa.png" }
 ];
 
 const FruitGallery = () => {
