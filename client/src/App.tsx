@@ -10,7 +10,6 @@ import Shop from "@/pages/Shop";
 import CustomApparel from "@/pages/CustomApparel";
 import Events from "@/pages/Events";
 import EventDetail from "@/pages/EventDetail";
-import Gallery from "@/pages/Gallery";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
@@ -25,7 +24,6 @@ function Router() {
       <Route path="/custom-apparel" component={CustomApparel} />
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
-      <Route path="/gallery" component={Gallery} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/admin" component={Admin} />
