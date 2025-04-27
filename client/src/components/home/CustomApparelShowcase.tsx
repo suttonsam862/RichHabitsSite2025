@@ -3,10 +3,10 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
 // Import a selection of the best images
-import homewoodSinglet from "@assets/DSC09354.JPG";
-import jordanSinglet from "@assets/DSC09491.JPG";
-import femaleWrestler from "@assets/DSC02187--.jpg";
-import winnerShot from "@assets/DSC07337--.jpg";
+import homewoodSinglet from "/attached_assets/DSC09354.JPG";
+import jordanSinglet from "/attached_assets/DSC09491.JPG";
+import femaleWrestler from "/attached_assets/DSC02187--.jpg";
+import winnerShot from "/attached_assets/DSC07337--.jpg";
 
 export function CustomApparelShowcase() {
   return (

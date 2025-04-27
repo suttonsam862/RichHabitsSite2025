@@ -4,23 +4,23 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 // Import images
-import homewoodSinglet from "@assets/DSC09354.JPG";
-import jordanSinglet from "@assets/DSC09491.JPG";
-import homewoodWrestler from "@assets/DSC09374--.JPG";
-import jordanWrestler from "@assets/DSC09488.JPG";
-import homewoodTshirt from "@assets/DSC09273.JPG";
-import wrestlerAction1 from "@assets/DSC00521--.JPG";
-import wrestlerAction2 from "@assets/DSC08657--.JPG";
-import wrestlerAction3 from "@assets/DSC08631.JPG";
-import wrestlerAction4 from "@assets/DSC08612.JPG";
-import varsityMatch from "@assets/DSC08615.JPG";
-import winnerShot from "@assets/DSC07337--.jpg";
-import richHabitsCoach from "@assets/DSC09299.JPG";
-import richHabitsCoach2 from "@assets/DSC09295--.JPG";
-import wrestlerClose from "@assets/DSC09353.JPG";
-import femaleWrestler1 from "@assets/DSC02187--.jpg";
-import femaleWrestler2 from "@assets/DSC02190--.jpg";
-import rhShirt from "@assets/DSC00423.JPG";
+import homewoodSinglet from "/attached_assets/DSC09354.JPG";
+import jordanSinglet from "/attached_assets/DSC09491.JPG";
+import homewoodWrestler from "/attached_assets/DSC09374--.JPG";
+import jordanWrestler from "/attached_assets/DSC09488.JPG";
+import homewoodTshirt from "/attached_assets/DSC09273.JPG";
+import wrestlerAction1 from "/attached_assets/DSC00521--.JPG";
+import wrestlerAction2 from "/attached_assets/DSC08657--.JPG";
+import wrestlerAction3 from "/attached_assets/DSC08631.JPG";
+import wrestlerAction4 from "/attached_assets/DSC08612.JPG";
+import varsityMatch from "/attached_assets/DSC08615.JPG";
+import winnerShot from "/attached_assets/DSC07337--.jpg";
+import richHabitsCoach from "/attached_assets/DSC09299.JPG";
+import richHabitsCoach2 from "/attached_assets/DSC09295--.JPG";
+import wrestlerClose from "/attached_assets/DSC09353.JPG";
+import femaleWrestler1 from "/attached_assets/DSC02187--.jpg";
+import femaleWrestler2 from "/attached_assets/DSC02190--.jpg";
+import rhShirt from "/attached_assets/DSC00423.JPG";
 
 interface GalleryImage {
   src: string;

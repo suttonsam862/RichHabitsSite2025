@@ -2,10 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 // Import team images
-import homewoodSinglet from "@assets/DSC09354.JPG";
-import jordanSinglet from "@assets/DSC09491.JPG";
-import wrestlerAction1 from "@assets/DSC08631.JPG";
-import richHabitsCoach from "@assets/DSC09299.JPG";
+import homewoodSinglet from "/attached_assets/DSC09354.JPG";
+import jordanSinglet from "/attached_assets/DSC09491.JPG";
+import wrestlerAction1 from "/attached_assets/DSC08631.JPG";
+import richHabitsCoach from "/attached_assets/DSC09299.JPG";
 
 interface Team {
   name: string;

@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
 import { useState, useEffect, useRef } from "react";
+import { TeamGallery } from "@/components/custom-apparel/TeamGallery";
+import { FeaturedTeams } from "@/components/custom-apparel/FeaturedTeams";
+import { Testimonials } from "@/components/custom-apparel/Testimonials";
 
 export default function CustomApparel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -100,11 +103,12 @@ export default function CustomApparel() {
             >
               <h1 className="text-5xl font-serif font-bold mb-4">Custom Team Apparel</h1>
               <p className="text-xl mb-8">AI-enhanced design process tailored to your team's identity and performance needs.</p>
-              <Link href="#contactForm">
-                <a className="bg-white text-primary py-3 px-8 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block">
-                  Request a Consultation
-                </a>
-              </Link>
+              <a 
+                href="#contactForm"
+                className="bg-white text-primary py-3 px-8 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block"
+              >
+                Request a Consultation
+              </a>
             </motion.div>
           </Container>
         </section>

@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Quote } from "lucide-react";
 
 // Import coaching staff images
-import coachImage from "@assets/DSC09299.JPG";
-import coachImage2 from "@assets/DSC09295--.JPG";
+import coachImage from "/attached_assets/DSC09299.JPG";
+import coachImage2 from "/attached_assets/DSC09295--.JPG";
 
 interface Testimonial {
   quote: string;
