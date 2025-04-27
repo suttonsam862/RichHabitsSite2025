@@ -21,7 +21,6 @@ export default function Home() {
       <FeaturedEvents />
       <SlamCampVideo />
       <CampSlideshow />
-      <GallerySection />
       <Collaborations />
       <FruitHuntersBanner />
       <FeaturedProducts />
