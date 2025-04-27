@@ -10,12 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 
 // Import event images and videos
-import event1Image from "../assets/events/event1.png";
-import event2Image from "../assets/events/cenzo.png";
-import event3Image from "../assets/events/event3.png";
-import birminghamVideo from "@assets/0424.mov";
-import champCampVideo from "@assets/04243.mov";
-import texasRecruitingVideo from "@assets/trcvid.mov";
+// Use public path references for consistent loading
+const event1Image = "/assets/events/SlamCampSiteBanner.png";
+const event2Image = "/assets/events/LongSitePhotovegas.png";
+const event3Image = "/assets/events/RecruitingWebsiteimage4.png";
+const birminghamVideo = "/assets/0424.mov";
+const champCampVideo = "/assets/04243.mov";
+const texasRecruitingVideo = "/assets/trcvid.mov";
 
 // Static events data
 const events = [
