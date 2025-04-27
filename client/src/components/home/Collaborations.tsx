@@ -74,7 +74,7 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
 
 export function Collaborations() {
   // Fetch collaborations data from the API
-  const { data: apiCollaborations, isLoading, error } = useQuery({
+  const { data: apiCollaborations, isLoading, error, refetch } = useQuery({
     queryKey: ['/api/collaborations'],
     queryFn: fetchCollaborations
   });
