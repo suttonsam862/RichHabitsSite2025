@@ -1,6 +1,9 @@
 import { Container } from "@/components/ui/container";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import type { Collaboration } from "@shared/schema";
 
 interface CollaborationProps {
   name: string;
@@ -8,6 +11,13 @@ interface CollaborationProps {
   website: string;
   description: string;
   isComingSoon?: boolean;
+}
+
+// Function to fetch collaborations from the API
+async function fetchCollaborations() {
+  const response = await apiRequest("GET", "/api/collaborations");
+  const data = await response.json();
+  return data as Collaboration[];
 }
 
 const CollaborationCard: React.FC<CollaborationProps> = ({ 
@@ -63,7 +73,14 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
 };
 
 export function Collaborations() {
-  const collaborations: CollaborationProps[] = [
+  // Fetch collaborations data from the API
+  const { data: apiCollaborations, isLoading, error } = useQuery({
+    queryKey: ['/api/collaborations'],
+    queryFn: fetchCollaborations
+  });
+
+  // Fallback collaborations data to use if API fails or while loading
+  const fallbackCollaborations: CollaborationProps[] = [
     {
       name: "Fruit Hunters",
       logoSrc: "/images/fruit-hunters-logo.png", 
@@ -84,6 +101,15 @@ export function Collaborations() {
     }
   ];
 
+  // Map API data to component props when available
+  const displayCollaborations = apiCollaborations?.map(collab => ({
+    name: collab.name,
+    logoSrc: collab.logoSrc || undefined,
+    website: collab.website,
+    description: collab.description,
+    isComingSoon: collab.isComingSoon || false
+  })) || fallbackCollaborations;
+
   return (
     <section className="py-20 bg-[hsl(var(--background))]">
       <Container>
@@ -103,18 +129,28 @@ export function Collaborations() {
           </motion.div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {collaborations.map((collaboration, index) => (
-            <CollaborationCard
-              key={index}
-              name={collaboration.name}
-              logoSrc={collaboration.logoSrc}
-              website={collaboration.website}
-              description={collaboration.description}
-              isComingSoon={collaboration.isComingSoon}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" aria-label="Loading"/>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500 py-10">
+            <p>There was an error loading our collaborations. Please try again later.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {displayCollaborations.map((collaboration, index) => (
+              <CollaborationCard
+                key={index}
+                name={collaboration.name}
+                logoSrc={collaboration.logoSrc}
+                website={collaboration.website}
+                description={collaboration.description}
+                isComingSoon={collaboration.isComingSoon}
+              />
+            ))}
+          </div>
+        )}
       </Container>
     </section>
   );

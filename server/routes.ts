@@ -7,7 +7,8 @@ import {
   insertContactSubmissionSchema, 
   insertCustomApparelInquirySchema, 
   insertEventRegistrationSchema,
-  insertNewsletterSubscriberSchema
+  insertNewsletterSubscriberSchema,
+  insertCollaborationSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
@@ -444,6 +445,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid email address", errors: error.errors });
       }
       res.status(500).json({ message: "Error subscribing to newsletter", error: (error as Error).message });
+    }
+  });
+  
+  // API routes for collaborations
+  app.get("/api/collaborations/all", async (req, res) => {
+    try {
+      const collaborations = await storage.getCollaborations();
+      res.json(collaborations);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching all collaborations", error: (error as Error).message });
+    }
+  });
+  
+  app.get("/api/collaborations", async (req, res) => {
+    try {
+      const collaborations = await storage.getActiveCollaborations();
+      res.json(collaborations);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching collaborations", error: (error as Error).message });
+    }
+  });
+  
+  app.get("/api/collaborations/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const collaboration = await storage.getCollaboration(parseInt(id));
+      
+      if (!collaboration) {
+        return res.status(404).json({ message: "Collaboration not found" });
+      }
+      
+      res.json(collaboration);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching collaboration", error: (error as Error).message });
+    }
+  });
+  
+  app.post("/api/collaborations", async (req, res) => {
+    try {
+      // Validate request body
+      const validatedData = insertCollaborationSchema.parse(req.body);
+      
+      // Create collaboration
+      const collaboration = await storage.createCollaboration(validatedData);
+      
+      res.status(201).json({
+        message: "Collaboration created successfully",
+        collaboration
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating collaboration", error: (error as Error).message });
+    }
+  });
+  
+  app.put("/api/collaborations/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate request body
+      const validatedData = insertCollaborationSchema.partial().parse(req.body);
+      
+      // Check if collaboration exists
+      const existingCollaboration = await storage.getCollaboration(parseInt(id));
+      if (!existingCollaboration) {
+        return res.status(404).json({ message: "Collaboration not found" });
+      }
+      
+      // Update collaboration
+      const updatedCollaboration = await storage.updateCollaboration(parseInt(id), validatedData);
+      
+      res.json({
+        message: "Collaboration updated successfully",
+        collaboration: updatedCollaboration
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error updating collaboration", error: (error as Error).message });
+    }
+  });
+  
+  app.delete("/api/collaborations/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Check if collaboration exists
+      const existingCollaboration = await storage.getCollaboration(parseInt(id));
+      if (!existingCollaboration) {
+        return res.status(404).json({ message: "Collaboration not found" });
+      }
+      
+      // Delete collaboration
+      const result = await storage.deleteCollaboration(parseInt(id));
+      
+      res.json({
+        message: "Collaboration deleted successfully",
+        success: result
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting collaboration", error: (error as Error).message });
     }
   });
 
