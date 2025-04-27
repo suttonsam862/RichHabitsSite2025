@@ -1,5 +1,5 @@
 import { Hero } from "@/components/home/Hero";
-import { FeaturedCollections } from "@/components/home/FeaturedCollections";
+import { FeaturedEvents } from "@/components/home/FeaturedEvents";
 import { CustomClothingService } from "@/components/home/CustomClothingService";
 import { CampSlideshow } from "@/components/home/CampSlideshow";
 import { GallerySection } from "@/components/home/GallerySection";
@@ -17,7 +17,7 @@ export default function Home() {
       </Helmet>
       
       <Hero />
-      <FeaturedCollections />
+      <FeaturedEvents />
       <CustomClothingService />
       <CampSlideshow />
       <GallerySection />
