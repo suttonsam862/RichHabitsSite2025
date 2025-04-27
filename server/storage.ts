@@ -6,7 +6,8 @@ import {
   eventRegistrations, type EventRegistration, type InsertEventRegistration,
   customApparelInquiries, type CustomApparelInquiry, type InsertCustomApparelInquiry,
   contactSubmissions, type ContactSubmission, type InsertContactSubmission,
-  newsletterSubscribers, type NewsletterSubscriber, type InsertNewsletterSubscriber
+  newsletterSubscribers, type NewsletterSubscriber, type InsertNewsletterSubscriber,
+  collaborations, type Collaboration, type InsertCollaboration
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -39,6 +40,14 @@ export interface IStorage {
   // Newsletter methods
   getNewsletterSubscriberByEmail(email: string): Promise<NewsletterSubscriber | undefined>;
   createNewsletterSubscriber(data: InsertNewsletterSubscriber): Promise<NewsletterSubscriber>;
+  
+  // Collaboration methods
+  getCollaborations(): Promise<Collaboration[]>;
+  getActiveCollaborations(): Promise<Collaboration[]>;
+  getCollaboration(id: number): Promise<Collaboration | undefined>;
+  createCollaboration(data: InsertCollaboration): Promise<Collaboration>;
+  updateCollaboration(id: number, data: Partial<InsertCollaboration>): Promise<Collaboration>;
+  deleteCollaboration(id: number): Promise<boolean>;
 }
 
 // Database-backed storage implementation
@@ -125,6 +134,48 @@ export class DatabaseStorage implements IStorage {
       .values(data)
       .returning();
     return subscriber;
+  }
+  
+  // Collaboration methods
+  async getCollaborations(): Promise<Collaboration[]> {
+    return await db.select().from(collaborations).orderBy(collaborations.displayOrder);
+  }
+  
+  async getActiveCollaborations(): Promise<Collaboration[]> {
+    return await db.select()
+      .from(collaborations)
+      .where(eq(collaborations.active, true))
+      .orderBy(collaborations.displayOrder);
+  }
+  
+  async getCollaboration(id: number): Promise<Collaboration | undefined> {
+    const [collaboration] = await db.select().from(collaborations).where(eq(collaborations.id, id));
+    return collaboration;
+  }
+  
+  async createCollaboration(data: InsertCollaboration): Promise<Collaboration> {
+    const [collaboration] = await db
+      .insert(collaborations)
+      .values(data)
+      .returning();
+    return collaboration;
+  }
+  
+  async updateCollaboration(id: number, data: Partial<InsertCollaboration>): Promise<Collaboration> {
+    const [updatedCollaboration] = await db
+      .update(collaborations)
+      .set(data)
+      .where(eq(collaborations.id, id))
+      .returning();
+    return updatedCollaboration;
+  }
+  
+  async deleteCollaboration(id: number): Promise<boolean> {
+    const result = await db
+      .delete(collaborations)
+      .where(eq(collaborations.id, id))
+      .returning({ id: collaborations.id });
+    return result.length > 0;
   }
 }
 

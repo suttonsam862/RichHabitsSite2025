@@ -198,6 +198,30 @@ export const insertNewsletterSubscriberSchema = createInsertSchema(newsletterSub
   email: true
 });
 
+// Collaborations table
+export const collaborations = pgTable("collaborations", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  logoSrc: text("logo_src"),
+  website: text("website").notNull(),
+  description: text("description").notNull(),
+  isComingSoon: boolean("is_coming_soon").default(false),
+  displayOrder: integer("display_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertCollaborationSchema = createInsertSchema(collaborations).pick({
+  name: true,
+  logoSrc: true,
+  website: true,
+  description: true,
+  isComingSoon: true,
+  displayOrder: true,
+  active: true
+});
+
 // Type definitions
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -222,3 +246,6 @@ export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 
 export type InsertNewsletterSubscriber = z.infer<typeof insertNewsletterSubscriberSchema>;
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
+
+export type InsertCollaboration = z.infer<typeof insertCollaborationSchema>;
+export type Collaboration = typeof collaborations.$inferSelect;
