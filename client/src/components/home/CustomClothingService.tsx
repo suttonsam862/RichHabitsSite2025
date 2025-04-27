@@ -4,18 +4,30 @@ import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-// Define a simpler set of design images with no spaces in filenames
+// Import images directly as modules
+import brooksMockup from "../../assets/BrooksMockupFinal.png";
+import caneNationMockup from "../../assets/CaneNationMockup.png";
+import normalChromeMockup from "../../assets/NormalChromeMockup1.png";
+import nickPoloMockup from "../../assets/NickPoloMockupFinal.png";
+import elevateMockup from "../../assets/ElevateMockup5.png";
+import braggMockup from "../../assets/BraggMockup.png";
+import blueRashguardMockup from "../../assets/BlueRashguardMockup.png";
+import blackRashguardMockup from "../../assets/BlackRashgaurdMockup.png";
+import classicRashguardMockup from "../../assets/ClassicRashguardMockup.png";
+import noPawsMockup from "../../assets/NoPawsRanburneMockup.png";
+
+// Define the design images array using imported assets
 const designImages = [
-  "/images/custom-apparel/BrooksMockupFinal.png",
-  "/images/custom-apparel/CaneNationMockup.png",
-  "/images/custom-apparel/NormalChromeMockup1.png",
-  "/images/custom-apparel/NickPoloMockupFinal.png",
-  "/images/custom-apparel/ElevateMockup5.png",
-  "/images/custom-apparel/BraggMockup.png",
-  "/images/custom-apparel/BlueRashguardMockup.png",
-  "/images/custom-apparel/BlackRashgaurdMockup.png",
-  "/images/custom-apparel/ClassicRashguardMockup.png",
-  "/images/custom-apparel/NoPawsRanburneMockup.png"
+  brooksMockup,
+  caneNationMockup,
+  normalChromeMockup,
+  nickPoloMockup,
+  elevateMockup,
+  braggMockup,
+  blueRashguardMockup,
+  blackRashguardMockup,
+  classicRashguardMockup,
+  noPawsMockup
 ];
 
 export function CustomClothingService() {
