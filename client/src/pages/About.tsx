@@ -118,6 +118,23 @@ export default function About() {
               <p className="text-lg max-w-3xl mx-auto">Meet the founders behind Rich Habits.</p>
             </div>
             
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="mb-12"
+            >
+              <div className="w-full max-w-xl mx-auto mb-8">
+                <img 
+                  src="/images/team/founders-together.png" 
+                  alt="Carter Vail (left) and Sam Sutton (right) - Co-Founders of Rich Habits" 
+                  className="w-full rounded-lg shadow-md"
+                />
+                <p className="text-center text-sm text-gray-500 mt-2">Carter Vail (left) and Sam Sutton (right)</p>
+              </div>
+            </motion.div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -127,13 +144,6 @@ export default function About() {
                 className="bg-white p-8 shadow-sm rounded-lg"
               >
                 <div className="text-center mb-6">
-                  <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
-                    <img 
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                      alt="Sam Sutton - Co-Founder" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
                   <h3 className="text-2xl font-medium mb-1">Sam Sutton</h3>
                   <p className="text-gray-600 mb-4">Co-Founder, Design & Financial Operations</p>
                 </div>
@@ -150,13 +160,6 @@ export default function About() {
                 className="bg-white p-8 shadow-sm rounded-lg"
               >
                 <div className="text-center mb-6">
-                  <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
-                    <img 
-                      src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                      alt="Carter Vail - Co-Founder" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
                   <h3 className="text-2xl font-medium mb-1">Carter Vail</h3>
                   <p className="text-gray-600 mb-4">Co-Founder, Communications & Operations</p>
                 </div>
