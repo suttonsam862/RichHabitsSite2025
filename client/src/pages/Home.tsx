@@ -1,6 +1,6 @@
 import { Hero } from "@/components/home/Hero";
 import { FeaturedEvents } from "@/components/home/FeaturedEvents";
-import { CustomClothingService } from "@/components/home/CustomClothingService";
+import { SlamCampVideo } from "@/components/home/SlamCampVideo";
 import { CampSlideshow } from "@/components/home/CampSlideshow";
 import { GallerySection } from "@/components/home/GallerySection";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
@@ -18,7 +18,7 @@ export default function Home() {
       
       <Hero />
       <FeaturedEvents />
-      <CustomClothingService />
+      <SlamCampVideo />
       <CampSlideshow />
       <GallerySection />
       <FruitHuntersBanner />
