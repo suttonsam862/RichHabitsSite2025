@@ -57,13 +57,16 @@ export function SlamCampVideo() {
               className="relative h-[500px] bg-black rounded-lg overflow-hidden"
             >
               <video 
-                src="/videos/slamcamp.mov"
+                src="/videos/0424.mov"
                 className="w-full h-full object-cover"
                 autoPlay
                 loop
                 muted
                 playsInline
-              />
+                controls
+              >
+                Your browser does not support the video tag.
+              </video>
               
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <p className="text-white font-medium">
