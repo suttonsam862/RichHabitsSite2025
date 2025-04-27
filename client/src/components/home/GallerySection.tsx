@@ -75,8 +75,8 @@ export function GallerySection() {
         </div>
         
         <div className="mt-12 text-center">
-          <Link href="/gallery" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
-            View Full Gallery
+          <Link href="/custom-apparel" className="inline-block border border-primary py-3 px-8 font-medium tracking-wide hover:bg-primary hover:text-white transition-colors">
+            View Custom Apparel
           </Link>
         </div>
       </Container>

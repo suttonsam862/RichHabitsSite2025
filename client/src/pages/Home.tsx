@@ -2,7 +2,6 @@ import { Hero } from "@/components/home/Hero";
 import { FeaturedEvents } from "@/components/home/FeaturedEvents";
 import { SlamCampVideo } from "@/components/home/SlamCampVideo";
 import { CampSlideshow } from "@/components/home/CampSlideshow";
-import { GallerySection } from "@/components/home/GallerySection";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { FruitHuntersBanner } from "@/components/home/FruitHuntersBanner";
 import { Collaborations } from "@/components/home/Collaborations";
