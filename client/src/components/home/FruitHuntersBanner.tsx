@@ -31,38 +31,38 @@ export function FruitHuntersBanner() {
   const fruitSections = [
     {
       src: "/images/fruits/0E28DDF2-9BF4-4256-BE3B-E3D1367A5740_1_102_o.jpeg",
-      alt: "Dragon fruit", 
-      title: "Dragon Fruit",
+      alt: "Jackfruit", 
+      title: "Jackfruit",
       description: "Rich in antioxidants & vitamin C"
     },
     {
       src: "/images/fruits/10F83FC8-8626-4870-BBD7-8A2205E5ADD1_1_102_o.jpeg",
-      alt: "Mangosteen",
-      title: "Mangosteen",
+      alt: "Black Sapote",
+      title: "Black Sapote",
       description: "The 'queen of fruits' with immune benefits"
     },
     {
       src: "/images/fruits/50C705BD-6E71-453B-A059-36DF8A4A5E04_1_102_o.jpeg",
-      alt: "Passion fruit",
-      title: "Passion Fruit",
+      alt: "Durian",
+      title: "Durian",
       description: "Perfect post-workout recovery fruit"
     },
     {
       src: "/images/fruits/50DE3461-8B8B-4B94-972D-99A7C403443D_1_102_o.jpeg",
-      alt: "Jackfruit",
-      title: "Jackfruit",
+      alt: "Papaya",
+      title: "Papaya",
       description: "Nutrient-dense for muscle recovery"
     },
     {
       src: "/images/fruits/B7585903-4E2F-40FE-AAF5-466F61CE7DB4_1_102_o.jpeg",
-      alt: "Star fruit",
+      alt: "Star Fruit",
       title: "Star Fruit",
       description: "Hydrating and rich in potassium"
     },
     {
       src: "/images/fruits/F9FFD4F6-37A8-4F2B-AEEC-FF61C7E4481E_1_102_o.jpeg",
-      alt: "Rambutan",
-      title: "Rambutan",
+      alt: "Cocoa",
+      title: "Cocoa",
       description: "Energy-boosting tropical delight"
     }
   ];
