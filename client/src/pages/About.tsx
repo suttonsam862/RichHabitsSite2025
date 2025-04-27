@@ -16,8 +16,8 @@ export default function About() {
         <section className="relative h-[60vh] flex items-center">
           <div className="absolute inset-0 w-full h-full">
             <img 
-              src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80" 
-              alt="Athletes in training" 
+              src="/images/coaches/DSC09374--.JPG" 
+              alt="Rich Habits Wrestling Camp" 
               className="object-cover w-full h-full"
             />
             <div className="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -30,13 +30,13 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="max-w-2xl"
             >
-              <h1 className="text-5xl font-serif font-bold mb-4">Our Story</h1>
-              <p className="text-xl">Creating premium athletic apparel for those who demand more.</p>
+              <h1 className="text-5xl font-serif font-bold mb-4">About Rich Habits</h1>
+              <p className="text-xl">Creating premium athletic apparel and experiences for wrestlers and athletes who demand more.</p>
             </motion.div>
           </Container>
         </section>
         
-        {/* Mission Section */}
+        {/* Our Story Section */}
         <section className="py-20">
           <Container>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -48,17 +48,14 @@ export default function About() {
               >
                 <h2 className="text-3xl font-serif font-semibold mb-6 group">
                   <AnimatedUnderline>
-                    Our Mission
+                    Our Story
                   </AnimatedUnderline>
                 </h2>
                 <p className="text-lg mb-6">
-                  Rich Habits was founded on a simple belief: athletic apparel should enhance performance without sacrificing style or sustainability.
+                  Our journey began in 2022 when Sam Sutton and Carter Vail, two friends with a shared vision, decided to start a clothing company. The idea was born in a cozy coffee shop in Uptown, located in downtown Birmingham. Over a few hours and countless cups of coffee, we discussed our aspirations and how we could achieve them.
                 </p>
                 <p className="text-lg mb-6">
-                  We design premium gear for athletes who push boundaries, combining innovative materials with minimal, refined aesthetics that stand apart from the loud, over-branded options that dominate the market.
-                </p>
-                <p className="text-lg">
-                  Every piece we create is designed to help athletes perform better, recover faster, and look exceptional—whether they're competing, training, or representing their team off the field.
+                  In the following years, we immersed ourselves in the world of clothing, learning everything we could while selling shirts and other gear to various companies. Through hard work and dedication, we discovered our niche: providing gear packs to high school sports teams. Today, we are proud to have contracts with over ten teams and are continually expanding our reach, striving to support more athletes and teams every day.
                 </p>
               </motion.div>
               
@@ -79,63 +76,35 @@ export default function About() {
           </Container>
         </section>
         
-        {/* Values Section */}
+        {/* Mission Section */}
         <section className="py-20 bg-[hsl(var(--secondary))]">
           <Container>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-serif font-semibold mb-4 group">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-serif font-semibold mb-8 group text-center">
                 <AnimatedUnderline>
-                  Our Values
+                  Our Mission
                 </AnimatedUnderline>
               </h2>
-              <p className="text-lg max-w-3xl mx-auto">The principles that guide everything we do.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6">
-                  <i className="icon ion-md-star text-2xl"></i>
-                </div>
-                <h3 className="text-xl font-medium mb-3">Excellence</h3>
-                <p className="text-gray-700">We are committed to excellence in every aspect of our business, from material selection to customer service.</p>
-              </motion.div>
               
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5 }}
                 viewport={{ once: true }}
-                className="text-center"
+                className="bg-white p-8 shadow-sm rounded-lg"
               >
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6">
-                  <i className="icon ion-md-infinite text-2xl"></i>
-                </div>
-                <h3 className="text-xl font-medium mb-3">Innovation</h3>
-                <p className="text-gray-700">We continuously explore new technologies and design approaches to create gear that helps athletes perform at their best.</p>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6">
-                  <i className="icon ion-md-leaf text-2xl"></i>
-                </div>
-                <h3 className="text-xl font-medium mb-3">Sustainability</h3>
-                <p className="text-gray-700">We are committed to environmentally responsible practices throughout our design and production processes.</p>
+                <p className="text-lg mb-6 text-center">
+                  Our mission is bold and ambitious: to challenge and surpass every major sports clothing company, such as Nike and Adidas. We aim to provide affordable luxury clothing to athletes at every level, from professionals to youth.
+                </p>
+                <p className="text-lg text-center">
+                  Our commitment is to ensure that every athlete in the world has access to high-quality, stylish gear without breaking the bank. We believe in democratizing luxury and making top-tier sports apparel accessible to all, fostering a sense of confidence and excellence in every athlete who wears our brand.
+                </p>
               </motion.div>
             </div>
           </Container>
         </section>
+        
+
         
         {/* Team Section */}
         <section className="py-20">
@@ -146,27 +115,31 @@ export default function About() {
                   Our Team
                 </AnimatedUnderline>
               </h2>
-              <p className="text-lg max-w-3xl mx-auto">Meet the people behind Rich Habits.</p>
+              <p className="text-lg max-w-3xl mx-auto">Meet the founders behind Rich Habits.</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 viewport={{ once: true }}
-                className="text-center"
+                className="bg-white p-8 shadow-sm rounded-lg"
               >
-                <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
-                  <img 
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Alex Thompson - Founder & CEO" 
-                    className="w-full h-full object-cover"
-                  />
+                <div className="text-center mb-6">
+                  <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
+                    <img 
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                      alt="Sam Sutton - Co-Founder" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="text-2xl font-medium mb-1">Sam Sutton</h3>
+                  <p className="text-gray-600 mb-4">Co-Founder, Design & Financial Operations</p>
                 </div>
-                <h3 className="text-xl font-medium mb-1">Alex Thompson</h3>
-                <p className="text-gray-600 mb-4">Founder & CEO</p>
-                <p className="text-gray-700">Former collegiate athlete with a passion for design and technology. Alex founded Rich Habits in 2015 after seeing a gap in the market for premium, minimal athletic apparel.</p>
+                <p className="text-gray-700">
+                  Sam Sutton, a high school state champion in wrestling and a star student, has always been driven by passion and dedication. His wrestling journey took him to Arizona State, where he competed for the prestigious Sunkist Kids, and now continues at Tarleton State in Texas. At our company, Sam heads up all financial operations and also handles all the design work. His love for art and graphic design, coupled with his relentless work ethic, ensures that every piece we create reflects the highest standards of quality and creativity. As a devoted Christian, Sam's values and faith are central to his approach in both life and business, guiding his commitment to integrity and excellence.
+                </p>
               </motion.div>
               
               <motion.div
@@ -174,49 +147,34 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="text-center"
+                className="bg-white p-8 shadow-sm rounded-lg"
               >
-                <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
-                  <img 
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Maya Rodriguez - Design Director" 
-                    className="w-full h-full object-cover"
-                  />
+                <div className="text-center mb-6">
+                  <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
+                    <img 
+                      src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                      alt="Carter Vail - Co-Founder" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="text-2xl font-medium mb-1">Carter Vail</h3>
+                  <p className="text-gray-600 mb-4">Co-Founder, Communications & Operations</p>
                 </div>
-                <h3 className="text-xl font-medium mb-1">Maya Rodriguez</h3>
-                <p className="text-gray-600 mb-4">Design Director</p>
-                <p className="text-gray-700">With a background in high-fashion and sportswear, Maya leads our design team, bringing her expertise in creating performance gear that doesn't sacrifice aesthetics.</p>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <div className="w-48 h-48 rounded-full overflow-hidden mx-auto mb-6">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                    alt="Jamal Wilson - Technology Lead" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-medium mb-1">Jamal Wilson</h3>
-                <p className="text-gray-600 mb-4">Technology Lead</p>
-                <p className="text-gray-700">Jamal oversees our AI-assisted design process, combining his expertise in machine learning with a deep understanding of athletic performance needs.</p>
+                <p className="text-gray-700">
+                  Carter Vail, a dedicated and hard-working individual, was a four-year varsity basketball point guard at Homewood High School. Known for his tenacity and leadership on the court, Carter now attends the University of Alabama, where he spent a year as a manager for the basketball team. At our company, Carter handles all communication and daily operations, ensuring everything runs smoothly and efficiently. He is also responsible for big-picture event planning and goal setting. Carter values his close-knit circle, cherishing his family and friends above all.
+                </p>
               </motion.div>
             </div>
           </Container>
         </section>
         
-        {/* What Sets Us Apart Section */}
+        {/* Our Services Section */}
         <section className="py-20 bg-[hsl(var(--secondary))]">
           <Container>
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-serif font-semibold mb-8 group text-center">
                 <AnimatedUnderline>
-                  What Sets Us Apart
+                  Our Services
                 </AnimatedUnderline>
               </h2>
               
@@ -226,10 +184,10 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white p-6 shadow-sm"
+                  className="bg-white p-6 shadow-sm rounded-lg"
                 >
-                  <h3 className="text-xl font-medium mb-4">AI-Enhanced Design Process</h3>
-                  <p className="text-gray-700">Our proprietary AI system analyzes performance data, material properties, and design elements to create apparel that optimizes both function and form. This technology allows us to iterate quickly and provide customized solutions for teams and individuals.</p>
+                  <h3 className="text-xl font-medium mb-4">Custom Team Apparel</h3>
+                  <p className="text-gray-700">We specialize in creating custom apparel packages for high school sports teams, offering unique designs tailored to each team's identity and needs. Our process ensures that every piece represents your team's spirit and helps build a cohesive team identity.</p>
                 </motion.div>
                 
                 <motion.div
@@ -237,10 +195,10 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                   viewport={{ once: true }}
-                  className="bg-white p-6 shadow-sm"
+                  className="bg-white p-6 shadow-sm rounded-lg"
                 >
-                  <h3 className="text-xl font-medium mb-4">Focus on Minimalism</h3>
-                  <p className="text-gray-700">In an industry dominated by loud designs and excessive branding, we take a different approach. Our clean, refined aesthetic lets the quality and performance of our products speak for themselves, while providing a sophisticated look that transitions seamlessly from training to everyday life.</p>
+                  <h3 className="text-xl font-medium mb-4">Wrestling Camps and Clinics</h3>
+                  <p className="text-gray-700">Our signature wrestling camps bring together elite coaches and athletes to provide intensive training experiences. From Birmingham Slam Camp to National Champ Camp in Las Vegas, we create opportunities for wrestlers to learn, grow, and connect with the best in the sport.</p>
                 </motion.div>
                 
                 <motion.div
@@ -248,10 +206,10 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                   viewport={{ once: true }}
-                  className="bg-white p-6 shadow-sm"
+                  className="bg-white p-6 shadow-sm rounded-lg"
                 >
-                  <h3 className="text-xl font-medium mb-4">Community Engagement</h3>
-                  <p className="text-gray-700">We're more than just a clothing brand. Through our events, clinics, and partnerships with schools and teams, we're actively involved in supporting athletes at all levels and fostering a community focused on excellence and continuous improvement.</p>
+                  <h3 className="text-xl font-medium mb-4">Premium Athletic Apparel</h3>
+                  <p className="text-gray-700">We design and produce high-quality athletic apparel that combines performance, style, and affordability. Our commitment to providing affordable luxury means that athletes at every level can access gear that enhances their performance without breaking the bank.</p>
                 </motion.div>
               </div>
             </div>
