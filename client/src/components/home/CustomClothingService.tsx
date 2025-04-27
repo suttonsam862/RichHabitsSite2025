@@ -1,9 +1,36 @@
 import { Link } from "wouter";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { Container } from "@/components/ui/container";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+
+// Define the design mockup images for the carousel
+const designImages = [
+  "/images/custom-apparel/BrooksMockupFinal.png",
+  "/images/custom-apparel/CaneNationMockup.png",
+  "/images/custom-apparel/NormalChromeMockup1.png",
+  "/images/custom-apparel/NickPoloMockupFinal.png",
+  "/images/custom-apparel/ElevateMockup5.png",
+  "/images/custom-apparel/BraggMockup.png",
+  "/images/custom-apparel/Athens Mockup.png",
+  "/images/custom-apparel/10pDeathSquad Mockup.png",
+  "/images/custom-apparel/BlueRashguardMockup.png",
+  "/images/custom-apparel/BlackRashgaurdMockup.png",
+  "/images/custom-apparel/ClassicRashguardMockup.png",
+  "/images/custom-apparel/NoPawsRanburneMockup.png"
+];
 
 export function CustomClothingService() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Auto-advance the carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % designImages.length);
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, []);
   return (
     <section className="py-20 bg-[hsl(var(--secondary))]">
       <Container>
@@ -57,15 +84,39 @@ export function CustomClothingService() {
               className="relative h-[500px] bg-white p-1"
             >
               {/* This would be where a 3D model could be embedded in the future */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <img 
-                  src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Custom jersey design" 
-                  className="object-cover w-full h-full"
-                />
-                {/* 3D model placeholder icon */}
-                <div className="absolute right-4 bottom-4 bg-white p-2 rounded-full">
-                  <i className="icon ion-md-cube text-xl"></i>
+              <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.img 
+                    key={currentImageIndex}
+                    src={designImages[currentImageIndex]} 
+                    alt={`Custom apparel design ${currentImageIndex + 1}`} 
+                    className="object-contain w-full h-full"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </AnimatePresence>
+                
+                {/* Controls */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 z-10">
+                  {designImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`h-2 transition-all duration-300 ${
+                        index === currentImageIndex ? "w-6 bg-primary" : "w-2 bg-gray-300"
+                      } rounded-full`}
+                      aria-label={`Go to design ${index + 1}`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Caption */}
+                <div className="absolute left-0 right-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-white">
+                  <p className="text-sm font-medium">
+                    Custom Design Gallery {currentImageIndex + 1}/{designImages.length}
+                  </p>
                 </div>
               </div>
             </motion.div>
