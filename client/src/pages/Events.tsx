@@ -70,6 +70,17 @@ export default function Events() {
     experience: ""
   });
   
+  // Add event handler for video errors
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const videoElement = e.currentTarget;
+    videoElement.classList.add('error');
+    // Find the parent container and add the error class to it
+    const parentContainer = videoElement.parentElement;
+    if (parentContainer) {
+      parentContainer.classList.add('video-error');
+    }
+  };
+  
   const { toast } = useToast();
 
   const handleRegister = (event: any) => {
@@ -172,7 +183,15 @@ export default function Events() {
                       playsInline
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       style={{ position: "absolute", top: 0, left: 0 }}
-                    />
+                    ></video>
+                    {/* Use overlay image as fallback */}
+                    <div className="absolute inset-0 z-0">
+                      <img 
+                        src={events[0].image} 
+                        alt={events[0].title} 
+                        className="w-full h-full object-cover opacity-0 video-fallback"
+                      />
+                    </div>
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
@@ -256,7 +275,15 @@ export default function Events() {
                       playsInline
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       style={{ position: "absolute", top: 0, left: 0 }}
-                    />
+                    ></video>
+                    {/* Use overlay image as fallback */}
+                    <div className="absolute inset-0 z-0">
+                      <img 
+                        src={events[1].image} 
+                        alt={events[1].title} 
+                        className="w-full h-full object-cover opacity-0 video-fallback"
+                      />
+                    </div>
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
@@ -353,13 +380,15 @@ export default function Events() {
                       playsInline
                       className="w-full h-full object-cover absolute inset-0"
                       style={{ filter: 'brightness(1.1) contrast(1.1)' }}
-                    >
+                    ></video>
+                    {/* Use overlay image as fallback */}
+                    <div className="absolute inset-0 z-0">
                       <img 
                         src={events[2].image} 
                         alt={events[2].title} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover opacity-0 video-fallback"
                       />
-                    </video>
+                    </div>
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">

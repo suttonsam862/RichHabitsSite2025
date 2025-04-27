@@ -577,6 +577,35 @@
   position: relative;
 }
 
+/* Video fallback handling */
+video:not([playsinline]) ~ .video-fallback {
+  opacity: 1 !important;
+}
+
+video.error ~ .video-fallback,
+video:not([autoplay]) ~ .video-fallback {
+  opacity: 1 !important;
+}
+
+/* Display fallback when video errors */
+video:invalid ~ .video-fallback {
+  opacity: 1 !important;
+}
+
+/* When JavaScript detects video failed to load */
+.video-error .video-fallback {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  video {
+    display: none !important;
+  }
+  .video-fallback {
+    opacity: 1 !important;
+  }
+}
+
 .recruiting-diamond-pattern {
   position: absolute;
   top: 0;
