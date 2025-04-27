@@ -397,74 +397,7 @@ export default function Events() {
           </Container>
         </section>
         
-        {/* Past Events Gallery Section */}
-        <section className="py-16 bg-[hsl(var(--secondary))]">
-          <Container>
-            <div className="mb-12">
-              <h2 className="text-3xl font-serif font-semibold mb-6 group">
-                <AnimatedUnderline>
-                  Past Events Gallery
-                </AnimatedUnderline>
-              </h2>
-              <p className="text-lg">Take a look at our previous clinics and training events.</p>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="aspect-square"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Basketball clinic" 
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="aspect-square"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1560089000-7433a4ebbd64?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Soccer training" 
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="aspect-square"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1515523110800-9415d13b84a8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Football camp" 
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="aspect-square"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                  alt="Track meet" 
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            </div>
-          </Container>
-        </section>
+
       </div>
       
       {/* Registration Dialog */}
