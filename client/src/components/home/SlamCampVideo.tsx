@@ -1,8 +1,35 @@
 import { Container } from "@/components/ui/container";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { useEffect, useRef } from "react";
 
 export function SlamCampVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  useEffect(() => {
+    // Enforce autoplay when component mounts
+    const playVideo = () => {
+      if (videoRef.current) {
+        videoRef.current.play().catch(error => {
+          console.log("Autoplay prevented:", error);
+        });
+      }
+    };
+    
+    playVideo();
+    
+    // Add a click event listener to the document to play video on user interaction
+    const handleUserInteraction = () => {
+      playVideo();
+      document.removeEventListener("click", handleUserInteraction);
+    };
+    
+    document.addEventListener("click", handleUserInteraction);
+    
+    return () => {
+      document.removeEventListener("click", handleUserInteraction);
+    };
+  }, []);
   return (
     <section className="py-20 bg-[hsl(var(--secondary))]">
       <Container>
@@ -57,13 +84,13 @@ export function SlamCampVideo() {
               className="relative h-[500px] bg-black rounded-lg overflow-hidden"
             >
               <video 
+                ref={videoRef}
                 src="/videos/0425.mov"
                 className="w-full h-full object-cover"
                 autoPlay
                 loop
                 muted
                 playsInline
-                controls
               >
                 Your browser does not support the video tag.
               </video>
