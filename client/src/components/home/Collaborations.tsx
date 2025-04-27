@@ -22,24 +22,31 @@ async function fetchCollaborations() {
 
 // Fruit data for the Fruit Hunters collaboration
 const fruitData = [
+  { name: "Dragon Fruit", imageSrc: "/images/fruits/dragon-fruit.png" },
+  { name: "Mangosteen", imageSrc: "/images/fruits/mangosteen.png" },
+  { name: "Passion Fruit", imageSrc: "/images/fruits/passion-fruit.png" },
   { name: "Jackfruit", imageSrc: "/images/fruits/jackfruit.png" },
-  { name: "Black Sapote", imageSrc: "/images/fruits/black-sapote.png" },
-  { name: "Durian", imageSrc: "/images/fruits/durian.png" },
-  { name: "Papaya", imageSrc: "/images/fruits/papaya.png" },
   { name: "Star Fruit", imageSrc: "/images/fruits/star-fruit.png" },
-  { name: "Cocoa", imageSrc: "/images/fruits/cocoa.png" }
+  { name: "Rambutan", imageSrc: "/images/fruits/rambutan.png" }
 ];
 
 const FruitGallery = () => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 mb-6">
-      {fruitData.map((fruit, index) => (
-        <div key={index} className="flex flex-col items-center">
-          <div className="bg-gray-50 rounded-lg p-2 w-full h-24 flex items-center justify-center mb-2">
-            <span className="text-gray-500 text-sm">{`${index + 1}: ${fruit.name}`}</span>
+    <div className="mt-4 mb-6">
+      <img 
+        src="/images/fruits/fruit-gallery.png" 
+        alt="Exotic fruits from Fruit Hunters" 
+        className="w-full rounded-lg shadow-md"
+      />
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+        {fruitData.map((fruit, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <div className="text-center p-2">
+              <span className="text-gray-700 font-medium">{`${index + 1}: ${fruit.name}`}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
