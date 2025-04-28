@@ -130,6 +130,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get events from database
       const events = await storage.getEvents();
       
+      // Add built-in events that might not be in the database
+      
+      // Check if National Champ Camp is already in the list
+      const nationalChampCampExists = events.some(event => event.id === 2);
+      
+      if (!nationalChampCampExists) {
+        // Add National Champ Camp to the list if it doesn't exist
+        const nationalChampCampEvent = {
+          id: 2,
+          title: "National Champ Camp",
+          category: "Wrestling",
+          date: "June 4-7, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Rancho High School, Las Vegas",
+          description: "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions. This camp combines technical instruction, live wrestling, and competitive training in a high-energy environment. Limited to 200 wrestlers.",
+          price: "$349 full camp or $175 per day",
+          shopifyProductId: "national-champ-camp",
+          image: "/assets/LongSitePhotovegas.png",
+          maxParticipants: 200,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        events.push(nationalChampCampEvent);
+      }
+      
       // Check if Cory Land Tour is already in the list
       const coryLandTourExists = events.some(event => event.id === 4);
       
@@ -145,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
           price: "$99 per day or $200 for all three days",
           shopifyProductId: "cory-land-tour",
-          image: "/src/assets/DSC09354.JPG",
+          image: "/assets/DSC09354.JPG",
           maxParticipants: 75,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -165,6 +191,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const eventId = parseInt(id);
       
+      // Special case for National Champ Camp which might not be in the database yet
+      if (eventId === 2) {
+        // Return mock data for National Champ Camp
+        const nationalChampCampEvent = {
+          id: 2,
+          title: "National Champ Camp",
+          category: "Wrestling",
+          date: "June 4-7, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Rancho High School, Las Vegas",
+          description: "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions. This camp combines technical instruction, live wrestling, and competitive training in a high-energy environment. Limited to 200 wrestlers.",
+          price: "$349 full camp or $175 per day",
+          shopifyProductId: "national-champ-camp",
+          image: "/assets/LongSitePhotovegas.png",
+          maxParticipants: 200,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        return res.json(nationalChampCampEvent);
+      }
+      
       // Special case for Cory Land Tour which might not be in the database yet
       if (eventId === 4) {
         // Return mock data for Cory Land Tour
@@ -178,7 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
           price: "$99 per day or $200 for all three days",
           shopifyProductId: "cory-land-tour",
-          image: "/src/assets/DSC09354.JPG",
+          image: "/assets/DSC09354.JPG",
           maxParticipants: 75,
           createdAt: new Date(),
           updatedAt: new Date()
