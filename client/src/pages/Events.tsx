@@ -150,6 +150,110 @@ export default function Events() {
               </h2>
               <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
             </div>
+
+            {/* Cory Land Tour - Event Row 0 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-24 relative"
+            >
+              {/* Animated Edge Top Left - Purple */}
+              <motion.div 
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                style={{ 
+                  borderColor: '#4B0082'
+                }}
+              />
+              
+              {/* Animated Edge Bottom Right - Gold */}
+              <motion.div 
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                viewport={{ once: true }}
+                style={{ 
+                  borderColor: '#D4AF37'
+                }}
+              />
+              
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 cory-border">
+                {/* Add animated background elements */}
+                <div className="cory-diamond-pattern"></div>
+                <div className="cory-purple-wave"></div>
+                <div className="cory-gold-wave"></div>
+                <div className="cory-stripe"></div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                  <div className="h-64 overflow-hidden rounded-sm relative">
+                    <video 
+                      src={coryLandVideo}
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      onError={handleVideoError}
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      style={{ position: "absolute", top: 0, left: 0 }}
+                    ></video>
+                    {/* Use overlay image as fallback */}
+                    <div className="absolute inset-0 z-0">
+                      <img 
+                        src={events[0].image} 
+                        alt={events[0].title} 
+                        className="w-full h-full object-cover opacity-0 video-fallback"
+                      />
+                    </div>
+                  </div>
+                  <div className="md:col-span-2 relative z-10">
+                    <div className="mb-4">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm cory-gradient-btn text-white">
+                        {events[0].category}
+                      </span>
+                    </div>
+                    <h3 className="text-3xl font-bold mb-3 relative">
+                      <span style={{ 
+                        background: 'linear-gradient(to right, #4B0082, #8A2BE2)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textShadow: '0 0 1px rgba(212, 175, 55, 0.2)'
+                      }}>
+                        {events[0].title}
+                      </span>
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-purple-100 text-purple-600 px-1 rounded ml-1">EARLY BIRD</span></p>
+                    </div>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
+                    <div className="flex space-x-4">
+                      <a 
+                        href={`/events/${events[0].id}`}
+                        className="cory-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                      >
+                        View Details
+                      </a>
+                      <button 
+                        onClick={() => handleRegister(events[0])}
+                        className="cory-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                      >
+                        Register Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
             
             {/* Event Row 1 */}
             <motion.div 
@@ -203,8 +307,8 @@ export default function Events() {
                     {/* Use overlay image as fallback */}
                     <div className="absolute inset-0 z-0">
                       <img 
-                        src={events[0].image} 
-                        alt={events[0].title} 
+                        src={events[1].image} 
+                        alt={events[1].title} 
                         className="w-full h-full object-cover opacity-0 video-fallback"
                       />
                     </div>
@@ -215,7 +319,7 @@ export default function Events() {
                         background: 'linear-gradient(90deg, #bf0a30, #002868)',
                         color: 'white'
                       }}>
-                        {events[0].category}
+                        {events[1].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-3">
@@ -223,26 +327,26 @@ export default function Events() {
                         color: '#002868',
                         textShadow: '1px 1px 0 #bf0a30'
                       }}>
-                        {events[0].title}
+                        {events[1].title}
                       </span>
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> 9:00 AM - 4:00 PM</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> Arlington Martin High School</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[1].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price} <span className="line-through text-red-500 ml-1">{events[1].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
                     </div>
                     <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.</p>
                     <div className="flex space-x-4">
                       <a 
-                        href={`/events/${events[0].id}`}
+                        href={`/events/${events[1].id}`}
                         className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
                         style={{ background: '#002868' }}
                       >
                         View Details
                       </a>
                       <button 
-                        onClick={() => handleRegister(events[0])}
+                        onClick={() => handleRegister(events[1])}
                         className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm hover:bg-red-50 transition-colors"
                         style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
                       >
@@ -296,8 +400,8 @@ export default function Events() {
                     {/* Use overlay image as fallback */}
                     <div className="absolute inset-0 z-0">
                       <img 
-                        src={events[1].image} 
-                        alt={events[1].title} 
+                        src={events[2].image} 
+                        alt={events[2].title} 
                         className="w-full h-full object-cover opacity-0 video-fallback"
                       />
                     </div>
@@ -305,7 +409,7 @@ export default function Events() {
                   <div className="md:col-span-2">
                     <div className="mb-4">
                       <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm fire-gradient-btn text-white">
-                        {events[1].category}
+                        {events[2].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-3 fire-title">
@@ -317,21 +421,21 @@ export default function Events() {
                       }}>BIRMINGHAM</span> SLAM CAMP
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[1].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price}</p>
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[2].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
                     </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[1].description}</p>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[2].description}</p>
                     <div className="flex space-x-4">
                       <a 
-                        href={`/events/${events[1].id}`}
+                        href={`/events/${events[2].id}`}
                         className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
-                        onClick={() => handleRegister(events[1])}
+                        onClick={() => handleRegister(events[2])}
                         className="fire-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         Register Now
@@ -402,8 +506,8 @@ export default function Events() {
                     {/* Use overlay image as fallback */}
                     <div className="absolute inset-0 z-0">
                       <img 
-                        src={events[2].image} 
-                        alt={events[2].title} 
+                        src={events[3].image} 
+                        alt={events[3].title} 
                         className="w-full h-full object-cover opacity-0 video-fallback"
                       />
                     </div>
@@ -411,28 +515,28 @@ export default function Events() {
                   <div className="md:col-span-2">
                     <div className="mb-4">
                       <span className="inline-block bg-[#041e42]/10 text-[#041e42] text-xs font-medium px-3 py-1 rounded-sm">
-                        {events[2].category}
+                        {events[3].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                      {events[2].title}
+                      {events[3].title}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[2].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[3].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[3].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[3].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[3].price}</p>
                     </div>
-                    <p className="text-gray-700 mb-6">{events[2].description}</p>
+                    <p className="text-gray-700 mb-6">{events[3].description}</p>
                     <div className="flex space-x-4">
                       <a 
-                        href={`/events/${events[2].id}`}
+                        href={`/events/${events[3].id}`}
                         className="bg-[#041e42] text-white py-2 px-6 font-medium tracking-wide hover:bg-[#0c2a5c] transition-colors inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
-                        onClick={() => handleRegister(events[2])}
+                        onClick={() => handleRegister(events[3])}
                         className="border border-[#041e42] text-[#041e42] py-2 px-6 font-medium tracking-wide hover:bg-[#e6f2ff] transition-colors inline-block rounded-sm"
                       >
                         Register Now
