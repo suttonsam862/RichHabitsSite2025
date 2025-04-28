@@ -132,6 +132,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Add built-in events that might not be in the database
       
+      // Check if Birmingham Slam Camp is already in the list
+      const birminghamSlamCampExists = events.some(event => event.id === 1);
+      
+      if (!birminghamSlamCampExists) {
+        // Add Birmingham Slam Camp to the list if it doesn't exist
+        const birminghamSlamCampEvent = {
+          id: 1,
+          title: "Birmingham Slam Camp",
+          category: "Wrestling",
+          date: "June 19-21, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Clay-Chalkville Middle School, Birmingham, AL",
+          description: "A 3-day intensive wrestling camp featuring elite coaching from Zahid Valencia, Josh Shields, Brandon Courtney, and Michael McGee. This camp provides technical instruction in a high-energy, competitive environment. Limited to 200 wrestlers.",
+          price: "$249 full camp or $149 single day",
+          shopifyProductId: "birmingham-slam-camp",
+          image: "/assets/DSC09374--.JPG",
+          maxParticipants: 200,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        events.push(birminghamSlamCampEvent);
+      }
+      
       // Check if National Champ Camp is already in the list
       const nationalChampCampExists = events.some(event => event.id === 2);
       
@@ -154,6 +178,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         events.push(nationalChampCampEvent);
+      }
+      
+      // Check if Texas Recruiting Clinic is already in the list
+      const texasRecruitingClinicExists = events.some(event => event.id === 3);
+      
+      if (!texasRecruitingClinicExists) {
+        // Add Texas Recruiting Clinic to the list if it doesn't exist
+        const texasRecruitingClinicEvent = {
+          id: 3,
+          title: "Texas Recruiting Clinic",
+          category: "Wrestling",
+          date: "June 12-13, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Arlington Martin High School, TX",
+          description: "A specialized two-day clinic focusing on collegiate wrestling recruitment with coaches from top university programs. This event combines technical training with recruiting seminars and one-on-one feedback sessions.",
+          price: "$249",
+          shopifyProductId: "texas-recruiting-clinic",
+          image: "/assets/RecruitingWebsiteimage4.png",
+          maxParticipants: 150,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        events.push(texasRecruitingClinicEvent);
       }
       
       // Check if Cory Land Tour is already in the list
@@ -191,6 +239,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const eventId = parseInt(id);
       
+      // Special case for Birmingham Slam Camp which might not be in the database yet
+      if (eventId === 1) {
+        // Return mock data for Birmingham Slam Camp
+        const birminghamSlamCampEvent = {
+          id: 1,
+          title: "Birmingham Slam Camp",
+          category: "Wrestling",
+          date: "June 19-21, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Clay-Chalkville Middle School, Birmingham, AL",
+          description: "A 3-day intensive wrestling camp featuring elite coaching from Zahid Valencia, Josh Shields, Brandon Courtney, and Michael McGee. This camp provides technical instruction in a high-energy, competitive environment. Limited to 200 wrestlers.",
+          price: "$249 full camp or $149 single day",
+          shopifyProductId: "birmingham-slam-camp",
+          image: "/assets/DSC09374--.JPG",
+          maxParticipants: 200,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        return res.json(birminghamSlamCampEvent);
+      }
+      
       // Special case for National Champ Camp which might not be in the database yet
       if (eventId === 2) {
         // Return mock data for National Champ Camp
@@ -211,6 +281,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         return res.json(nationalChampCampEvent);
+      }
+      
+      // Special case for Texas Recruiting Clinic which might not be in the database yet
+      if (eventId === 3) {
+        // Return mock data for Texas Recruiting Clinic
+        const texasRecruitingClinicEvent = {
+          id: 3,
+          title: "Texas Recruiting Clinic",
+          category: "Wrestling",
+          date: "June 12-13, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Arlington Martin High School, TX",
+          description: "A specialized two-day clinic focusing on collegiate wrestling recruitment with coaches from top university programs. This event combines technical training with recruiting seminars and one-on-one feedback sessions.",
+          price: "$249",
+          shopifyProductId: "texas-recruiting-clinic",
+          image: "/assets/RecruitingWebsiteimage4.png",
+          maxParticipants: 150,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        return res.json(texasRecruitingClinicEvent);
       }
       
       // Special case for Cory Land Tour which might not be in the database yet
