@@ -249,6 +249,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               eventKey = 'birmingham-slam-camp'; // Default fallback
           }
           
+          // Type safety for event keys
+          const validEventKey = eventKey as keyof typeof EVENT_PRODUCTS;
+          
           console.log(`Creating Shopify checkout for ${eventName}...`);
           // Format the registration data for Shopify
           const registrationData: EventRegistrationData = {
@@ -284,10 +287,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Determine which product variant to use based on registration type
           let variantId = '';
           if (validatedData.registrationType === 'full') {
-            variantId = EVENT_PRODUCTS[eventKey]?.fullCamp?.variantId || '';
+            variantId = EVENT_PRODUCTS[validEventKey]?.fullCamp?.variantId || '';
             console.log('Using full camp variant ID:', variantId);
           } else {
-            variantId = EVENT_PRODUCTS[eventKey]?.singleDay?.variantId || '';
+            variantId = EVENT_PRODUCTS[validEventKey]?.singleDay?.variantId || '';
             console.log('Using single day variant ID:', variantId);
           }
           
@@ -399,7 +402,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return {
           id: product.id,
           title: product.title,
-          variants: product.variants.map((variant: any) => ({
+          variants: product.variants.map((variant: {id: string, title: string, price: string}) => ({
             id: variant.id,
             title: variant.title,
             price: variant.price,
@@ -464,12 +467,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Determine which variant to use based on the option
+      const testEventKey = 'birmingham-slam-camp' as keyof typeof EVENT_PRODUCTS;
       let variantId = '';
       if (registrationData.option === 'full') {
-        variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.fullCamp?.variantId || '';
+        variantId = EVENT_PRODUCTS[testEventKey]?.fullCamp?.variantId || '';
         console.log('Using full camp variant ID:', variantId);
       } else {
-        variantId = EVENT_PRODUCTS['birmingham-slam-camp']?.singleDay?.variantId || '';
+        variantId = EVENT_PRODUCTS[testEventKey]?.singleDay?.variantId || '';
         console.log('Using single day variant ID:', variantId);
       }
       
