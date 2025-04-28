@@ -169,12 +169,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create event registration in our database
       const registration = await storage.createEventRegistration(validatedData);
       
-      // For Birmingham Slam Camp and Texas Recruiting Clinic, connect to Shopify
+      // For registered events, connect to Shopify checkout
       let checkoutUrl = null;
-      if (event.id === 1 || event.id === 3) { // Birmingham Slam Camp or Texas Recruiting Clinic
+      if (event.id === 1 || event.id === 2 || event.id === 3 || event.id === 4) { // All events support Shopify checkout
         try {
-          const eventName = event.id === 1 ? 'Birmingham Slam Camp' : 'Texas Recruiting Clinic';
-          const eventKey = event.id === 1 ? 'birmingham-slam-camp' : 'texas-recruiting-clinic';
+          let eventName, eventKey;
+          
+          // Map event ID to the proper name and key
+          switch(event.id) {
+            case 1:
+              eventName = 'Birmingham Slam Camp';
+              eventKey = 'birmingham-slam-camp';
+              break;
+            case 2:
+              eventName = 'National Champ Camp';
+              eventKey = 'national-champ-camp';
+              break;
+            case 3:
+              eventName = 'Texas Recruiting Clinic';
+              eventKey = 'texas-recruiting-clinic';
+              break;
+            case 4:
+              eventName = 'Cory Land Tour';
+              eventKey = 'cory-land-tour';
+              break;
+            default:
+              eventName = 'Unknown Event';
+              eventKey = 'birmingham-slam-camp'; // Default fallback
+          }
           
           console.log(`Creating Shopify checkout for ${eventName}...`);
           // Format the registration data for Shopify

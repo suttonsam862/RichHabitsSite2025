@@ -78,11 +78,17 @@ export default function Events() {
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [showRegistrationDialog, setShowRegistrationDialog] = useState(false);
   const [registrationForm, setRegistrationForm] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
+    contactName: "",
     email: "",
     phone: "",
-    age: "",
-    experience: ""
+    tShirtSize: "Large",
+    grade: "",
+    schoolName: "",
+    clubName: "",
+    medicalReleaseAccepted: false,
+    registrationType: "full"
   });
   
   // Add event handler for video errors
@@ -111,24 +117,74 @@ export default function Events() {
     }));
   };
 
-  const handleSubmitRegistration = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // In a real app, this would submit to an API
-    // For now, just show a success message
-    toast({
-      title: "Registration submitted!",
-      description: `You've registered for ${selectedEvent.title}. Check your email for confirmation.`,
-    });
+    if (!selectedEvent) {
+      toast({
+        title: "Error",
+        description: "No event selected.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
     
-    setShowRegistrationDialog(false);
-    setRegistrationForm({
-      name: "",
-      email: "",
-      phone: "",
-      age: "",
-      experience: ""
-    });
+    try {
+      // Submit to the API for registration
+      const response = await fetch(`/api/events/${selectedEvent.id}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(registrationForm)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to register for event');
+      }
+      
+      // If checkout URL exists, redirect the user
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Otherwise just show success message
+        toast({
+          title: "Registration submitted!",
+          description: `You've registered for ${selectedEvent.title}. Check your email for confirmation.`,
+        });
+        
+        setShowRegistrationDialog(false);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+      // Reset form
+      setRegistrationForm({
+        firstName: "",
+        lastName: "",
+        contactName: "",
+        email: "",
+        phone: "",
+        tShirtSize: "Large",
+        grade: "",
+        schoolName: "",
+        clubName: "",
+        medicalReleaseAccepted: false,
+        registrationType: "full"
+      });
+    }
   };
   
   return (
@@ -554,7 +610,7 @@ export default function Events() {
       
       {/* Registration Dialog */}
       <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Register for {selectedEvent?.title}</DialogTitle>
             <DialogDescription>
@@ -563,13 +619,33 @@ export default function Events() {
           </DialogHeader>
           
           <form onSubmit={handleSubmitRegistration} className="space-y-4 pt-4">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <Input
-                  id="name"
-                  name="name"
-                  value={registrationForm.name}
+                  id="firstName"
+                  name="firstName"
+                  value={registrationForm.firstName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  value={registrationForm.lastName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="contactName">Parent/Guardian Name</Label>
+                <Input
+                  id="contactName"
+                  name="contactName"
+                  value={registrationForm.contactName}
                   onChange={handleInputChange}
                   required
                 />
@@ -596,31 +672,118 @@ export default function Events() {
                 />
               </div>
               <div>
-                <Label htmlFor="age">Age</Label>
+                <Label htmlFor="tShirtSize">T-Shirt Size</Label>
+                <Select 
+                  name="tShirtSize" 
+                  defaultValue={registrationForm.tShirtSize}
+                  onValueChange={(value) => {
+                    setRegistrationForm(prev => ({
+                      ...prev,
+                      tShirtSize: value
+                    }));
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a t-shirt size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Youth S">Youth Small</SelectItem>
+                    <SelectItem value="Youth M">Youth Medium</SelectItem>
+                    <SelectItem value="Youth L">Youth Large</SelectItem>
+                    <SelectItem value="Adult XS">Adult XS</SelectItem>
+                    <SelectItem value="Adult S">Adult Small</SelectItem>
+                    <SelectItem value="Adult M">Adult Medium</SelectItem>
+                    <SelectItem value="Adult L">Adult Large</SelectItem>
+                    <SelectItem value="Adult XL">Adult XL</SelectItem>
+                    <SelectItem value="Adult 2XL">Adult 2XL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="grade">Current Grade</Label>
                 <Input
-                  id="age"
-                  name="age"
-                  type="number"
-                  value={registrationForm.age}
+                  id="grade"
+                  name="grade"
+                  value={registrationForm.grade}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div>
-                <Label htmlFor="experience">Experience Level</Label>
+                <Label htmlFor="schoolName">School Name</Label>
                 <Input
-                  id="experience"
-                  name="experience"
-                  placeholder="Beginner, Intermediate, Advanced"
-                  value={registrationForm.experience}
+                  id="schoolName"
+                  name="schoolName"
+                  value={registrationForm.schoolName}
                   onChange={handleInputChange}
                   required
                 />
               </div>
+              <div>
+                <Label htmlFor="clubName">Club Name (optional)</Label>
+                <Input
+                  id="clubName"
+                  name="clubName"
+                  value={registrationForm.clubName}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Label htmlFor="registrationType">Registration Type</Label>
+                <Select 
+                  name="registrationType" 
+                  defaultValue={registrationForm.registrationType}
+                  onValueChange={(value) => {
+                    setRegistrationForm(prev => ({
+                      ...prev,
+                      registrationType: value
+                    }));
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select registration type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full">Full Camp ($249)</SelectItem>
+                    <SelectItem value="single">Single Day ($149)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="md:col-span-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="medicalReleaseAccepted"
+                    checked={registrationForm.medicalReleaseAccepted}
+                    onCheckedChange={(checked) => {
+                      setRegistrationForm(prev => ({
+                        ...prev,
+                        medicalReleaseAccepted: checked === true
+                      }));
+                    }}
+                    required
+                  />
+                  <Label 
+                    htmlFor="medicalReleaseAccepted" 
+                    className="text-sm leading-tight cursor-pointer"
+                  >
+                    I acknowledge that my child is in good health and able to participate in the activities. 
+                    I accept all responsibility for my child's health and safety and waive any liability against Rich Habits.
+                  </Label>
+                </div>
+              </div>
             </div>
             
             <DialogFooter>
-              <Button type="submit">Proceed to Payment</Button>
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? (
+                  <>
+                    <span className="mr-2">Processing</span>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </>
+                ) : (
+                  "Proceed to Payment"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -520,6 +520,16 @@ export interface EventRegistrationData {
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 // For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})
 export const EVENT_PRODUCTS = {
+  'cory-land-tour': {
+    fullCamp: {
+      productId: 'gid://shopify/Product/8949406105837', // Using Birmingham Slam Camp Product ID temporarily
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Using Birmingham Slam Camp Variant ID temporarily
+    },
+    singleDay: {
+      productId: 'gid://shopify/Product/8949406105837', 
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+    }
+  },
   'birmingham-slam-camp': {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406105837', // Birmingham Slam Camp Product ID
