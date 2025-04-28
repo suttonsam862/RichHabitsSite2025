@@ -851,6 +851,86 @@ export default function EventDetail() {
                     </div>
                   )}
                 </div>
+              ) : event.id === 4 ? (
+                <div>
+                  <div className="mb-10">
+                    <div className="mb-6 border-b border-purple-200 pb-2">
+                      <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #4F2D7F, #9b7ede)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Elite Northern Iowa Coaching Staff</h3>
+                      <p className="text-gray-600">Learn from the rising stars in collegiate wrestling</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-purple-200 hover:shadow-md transition-shadow duration-300">
+                          <div className="aspect-square overflow-hidden">
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name} 
+                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
+                            <p className="text-purple-600 text-sm mb-2">{coach.title}</p>
+                            <p className="text-gray-700 text-sm">{coach.bio}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Event Schedule */}
+                  {event.schedule && (
+                    <div className="mt-10">
+                      <div className="mb-6 border-b border-purple-200 pb-2">
+                        <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #4F2D7F, #9b7ede)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Daily Schedule</h3>
+                        <p className="text-gray-600">Elite training program across multiple locations</p>
+                      </div>
+                      <div className="rounded-md overflow-hidden shadow-lg relative border border-purple-200">
+                        <div className="cory-land-pattern absolute inset-0 opacity-10"></div>
+                        {event.schedule.map((item: any, index: number) => (
+                          <div 
+                            key={index} 
+                            className={`grid grid-cols-3 p-4 relative ${
+                              index % 2 === 0 ? 'bg-purple-50' : 'bg-white'
+                            }`}
+                          >
+                            <div className="font-medium text-purple-800">{item.time}</div>
+                            <div className="col-span-2 text-gray-800">{item.activity}</div>
+                          </div>
+                        ))}
+                        <div className="cory-land-stripe"></div>
+                      </div>
+                      
+                      <div className="mt-12 p-6 bg-gradient-to-r from-[#4F2D7F] to-[#9b7ede] rounded-lg text-white shadow-lg">
+                        <h3 className="text-xl font-bold mb-4">Why Join the Cory Land Tour?</h3>
+                        <p className="mb-4">
+                          This unique tour brings elite Northern Iowa wrestling talent across multiple locations in Alabama, making high-level instruction accessible to wrestlers throughout the state. Each day focuses on different techniques and positions.
+                        </p>
+                        <p>
+                          Limited to 75 wrestlers per location to ensure quality instruction and individual attention. Choose to attend one day or all three for the complete experience.
+                        </p>
+                      </div>
+                      
+                      <div className="mt-10">
+                        <div className="mb-6 border-b border-purple-200 pb-2">
+                          <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #4F2D7F, #9b7ede)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            About Cory Land Tour
+                          </h3>
+                          <p className="text-gray-600">A premium wrestling experience across Alabama</p>
+                        </div>
+                        
+                        <div className="prose max-w-none text-gray-700">
+                          {event.description.split('\n\n').map((paragraph: string, index: number) => (
+                            <p key={index} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <h2 className="text-2xl font-medium mb-6">About This Event</h2>
@@ -943,6 +1023,106 @@ export default function EventDetail() {
                         </div>
                       </div>
                     </a>
+                  </div>
+                </>
+              )}
+              
+              {event.id === 4 && (
+                <>
+                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-purple-400 relative">
+                    <div className="px-6 py-4 text-white" style={{ background: 'linear-gradient(135deg, #4F2D7F, #9b7ede)' }}>
+                      <h3 className="text-lg font-bold">Event Highlights</h3>
+                    </div>
+                    <div className="p-6">
+                      <ul className="space-y-3">
+                        <li className="flex">
+                          <span>Limited to 75 wrestlers per location</span>
+                        </li>
+                        <li className="flex">
+                          <span>All participants receive Cory Land Tour t-shirt</span>
+                        </li>
+                        <li className="flex">
+                          <span>Choose individual days or the full tour experience</span>
+                        </li>
+                        <li className="flex">
+                          <span>Daily technical focus varies by location</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-b from-[#4F2D7F] to-[#35185c] shadow-md rounded-lg overflow-hidden mb-8 text-white">
+                    <div className="border-b border-purple-300/30 px-6 py-4">
+                      <h3 className="text-lg font-bold">Tour Details</h3>
+                    </div>
+                    <div className="p-6">
+                      <ul className="space-y-4">
+                        <li className="flex items-start">
+                          <div className="text-purple-300 mr-2 mt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M5 12h14"></path>
+                              <path d="M12 5v14"></path>
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium text-white">Day 1: July 10, 2025</span>
+                            <p className="text-purple-200 text-sm mt-1">Focus on neutral position techniques and setups</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="text-purple-300 mr-2 mt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M5 12h14"></path>
+                              <path d="M12 5v14"></path>
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium text-white">Day 2: July 11, 2025</span>
+                            <p className="text-purple-200 text-sm mt-1">Focus on mat wrestling and top position control</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start">
+                          <div className="text-purple-300 mr-2 mt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M5 12h14"></path>
+                              <path d="M12 5v14"></path>
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="font-medium text-white">Day 3: July 12, 2025</span>
+                            <p className="text-purple-200 text-sm mt-1">Focus on bottom position escapes and advanced techniques</p>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  {/* Coach Spotlight */}
+                  <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-purple-400 relative">
+                    <div className="px-6 py-4 text-white" style={{ background: 'linear-gradient(135deg, #4F2D7F, #9b7ede)' }}>
+                      <h3 className="text-lg font-bold">Coach Spotlight: Cory Land</h3>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-purple-400">
+                          <img 
+                            src="/assets/coaches/cory-land-tour/cory-land.webp" 
+                            alt="Cory Land" 
+                            className="w-full h-full object-cover object-top"
+                          />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-800">Cory Land</h4>
+                          <p className="text-purple-600 text-sm">Northern Iowa Wrestling Team</p>
+                        </div>
+                      </div>
+                      <blockquote className="text-gray-700 italic border-l-4 border-purple-500 pl-4 py-2 mb-4">
+                        "Wrestling techniques evolve constantly. On this tour, we're bringing collegiate-level training directly to Alabama wrestlers, focusing on the details that create champions."
+                      </blockquote>
+                      <p className="text-sm text-gray-700 mb-4">
+                        Cory Land is a standout wrestler at the University of Northern Iowa. His technical approach and competitive mindset have made him one of the rising stars to watch. This Alabama tour brings his expertise back to his home state.
+                      </p>
+                    </div>
                   </div>
                 </>
               )}
