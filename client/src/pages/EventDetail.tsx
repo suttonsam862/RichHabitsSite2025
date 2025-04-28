@@ -37,6 +37,9 @@ export default function EventDetail() {
     clubName: '',
     medicalReleaseAccepted: false,
     registrationType: 'full', // 'full' or 'single'
+    day1: false, // for Cory Land Tour
+    day2: false, // for Cory Land Tour
+    day3: false, // for Cory Land Tour
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -231,6 +234,67 @@ export default function EventDetail() {
           data.ageGroups = "High school wrestlers";
           data.capacity = "Limited to 150 participants";
           data.shortDescription = "A specialized two-day clinic combining elite coaching with college recruiting opportunities at Arlington Martin High School.";
+        } else if (data.id === 4) {
+          data.coaches = [
+            {
+              name: "Cory Land",
+              title: "Northern Iowa Wrestling Team",
+              image: "/src/assets/DSC09374--.JPG",
+              bio: "Cory Land is a standout wrestler at the University of Northern Iowa. Known for his technical skill and competitive drive, Cory brings his expertise to this multi-day tour across Alabama."
+            },
+            {
+              name: "Wyatt Voelker",
+              title: "Northern Iowa Wrestling Team",
+              image: "/src/assets/DSC09283--.JPG",
+              bio: "Wyatt Voelker is a powerful wrestler from the University of Northern Iowa. His strength-based approach and innovative techniques make him a favorite instructor among young wrestlers."
+            },
+            {
+              name: "Trever Andersen",
+              title: "Northern Iowa Wrestling Team",
+              image: "/src/assets/DSC09295--.JPG", 
+              bio: "Trever Andersen brings his unique wrestling style from Northern Iowa to this special tour. Specializing in strategic positioning and counter techniques, Trever offers valuable insights to wrestlers of all levels."
+            },
+            {
+              name: "Garrett Funk",
+              title: "Northern Iowa Wrestling Team",
+              image: "/src/assets/DSC09491.JPG",
+              bio: "Garrett Funk rounds out the Northern Iowa contingent with his explosive style and technical expertise. His approach to wrestling combines traditional fundamentals with modern innovations."
+            }
+          ];
+          
+          data.schedule = [
+            {
+              time: "9:00 AM - 9:30 AM",
+              activity: "Check-in and Welcome"
+            },
+            {
+              time: "9:30 AM - 11:30 AM",
+              activity: "Technical Session with Northern Iowa Wrestlers"
+            },
+            {
+              time: "11:30 AM - 12:30 PM",
+              activity: "Lunch Break"
+            },
+            {
+              time: "12:30 PM - 2:30 PM",
+              activity: "Live Wrestling and Application"
+            },
+            {
+              time: "2:30 PM - 3:30 PM",
+              activity: "Q&A and Special Technique Focuses"
+            },
+            {
+              time: "3:30 PM - 4:00 PM",
+              activity: "Cool Down and Closing"
+            }
+          ];
+          
+          // Adding other required fields
+          data.categoryClass = "bg-purple-100 text-purple-800";
+          data.buttonLabel = "Register Now";
+          data.ageGroups = "Ages 8+ through high school";
+          data.capacity = "Limited to 75 wrestlers per location";
+          data.shortDescription = "A three-day wrestling tour across Alabama featuring elite instruction from Northern Iowa wrestlers.";
         }
         
         setEvent(data);
@@ -308,7 +372,18 @@ export default function EventDetail() {
         </div>
       )}
       
-      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : event.id === 3 ? 'recruiting-bg' : ''}`}>
+      {event.id === 4 && (
+        <div className="w-full overflow-hidden banner-container relative">
+          <img 
+            src={'/src/assets/DSC09354.JPG'} 
+            alt={event.title} 
+            className="w-full h-auto object-cover" 
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
+        </div>
+      )}
+      
+      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : event.id === 3 ? 'recruiting-bg' : event.id === 4 ? 'cory-land-bg' : ''}`}>
         {event.id === 1 && (
           <>
             {/* Heat waves */}
@@ -376,6 +451,26 @@ export default function EventDetail() {
             
             {/* Animated glossy stripe */}
             <div className="recruiting-stripe"></div>
+          </>
+        )}
+        
+        {event.id === 4 && (
+          <>
+            {/* Cory Land Tour purple and gold waves */}
+            <div className="cory-land-purple-wave"></div>
+            <div className="cory-land-gold-wave"></div>
+            <div className="cory-land-white-wave"></div>
+            
+            {/* Add another set of waves with different timing */}
+            <div className="cory-land-purple-wave" style={{ top: '40%', animationDelay: '5s' }}></div>
+            <div className="cory-land-gold-wave" style={{ top: '70%', animationDelay: '9s' }}></div>
+            <div className="cory-land-white-wave" style={{ top: '90%', animationDelay: '13s' }}></div>
+            
+            {/* Cory Land Tour pattern */}
+            <div className="cory-land-pattern"></div>
+            
+            {/* Animated glossy stripe */}
+            <div className="cory-land-stripe"></div>
           </>
         )}
         
@@ -1199,7 +1294,9 @@ export default function EventDetail() {
                     onChange={() => setRegistrationForm({...registrationForm, registrationType: 'full'})}
                   />
                   <Label htmlFor="fullCamp" className="text-sm">
-                    {event.id === 2 ? 'Full Camp ($349)' : 'Full Camp ($249)'}
+                    {event.id === 2 ? 'Full Camp ($349)' : 
+                     event.id === 4 ? 'All 3 Days ($200)' : 
+                     'Full Camp ($249)'}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -1213,11 +1310,73 @@ export default function EventDetail() {
                     onChange={() => setRegistrationForm({...registrationForm, registrationType: 'single'})}
                   />
                   <Label htmlFor="singleDay" className="text-sm">
-                    {event.id === 2 ? 'Single Day ($175)' : 'Single Day ($149)'}
+                    {event.id === 2 ? 'Single Day ($175)' : 
+                     event.id === 4 ? 'Select Days ($99 per day)' : 
+                     'Single Day ($149)'}
                   </Label>
                 </div>
               </div>
             </div>
+            
+            {/* Day selection for Cory Land Tour */}
+            {event.id === 4 && registrationForm.registrationType === 'single' && (
+              <div className="space-y-3 border rounded-md p-4 bg-gray-50 mt-4">
+                <Label className="font-semibold block">Select Day(s)</Label>
+                <div className="text-sm text-gray-500 mb-2">
+                  Please select at least one day for the Cory Land Tour ($99 per day)
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="day1"
+                      className="h-4 w-4 mr-2"
+                      checked={registrationForm.day1 || false}
+                      onChange={(e) => setRegistrationForm({
+                        ...registrationForm, 
+                        day1: e.target.checked
+                      })}
+                    />
+                    <Label htmlFor="day1" className="cursor-pointer">
+                      Day 1 - Birmingham
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="day2"
+                      className="h-4 w-4 mr-2"
+                      checked={registrationForm.day2 || false}
+                      onChange={(e) => setRegistrationForm({
+                        ...registrationForm, 
+                        day2: e.target.checked
+                      })}
+                    />
+                    <Label htmlFor="day2" className="cursor-pointer">
+                      Day 2 - Huntsville
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="day3"
+                      className="h-4 w-4 mr-2"
+                      checked={registrationForm.day3 || false}
+                      onChange={(e) => setRegistrationForm({
+                        ...registrationForm, 
+                        day3: e.target.checked
+                      })}
+                    />
+                    <Label htmlFor="day3" className="cursor-pointer">
+                      Day 3 - Montgomery
+                    </Label>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="mt-6 flex justify-end space-x-3">
               <Button 
@@ -1262,6 +1421,19 @@ export default function EventDetail() {
                       variant: "destructive"
                     });
                     return;
+                  }
+                  
+                  // Validate day selection for Cory Land Tour
+                  if (event.id === 4 && registrationForm.registrationType === 'single') {
+                    const daySelected = registrationForm.day1 || registrationForm.day2 || registrationForm.day3;
+                    if (!daySelected) {
+                      toast({
+                        title: "Day Selection Required",
+                        description: "Please select at least one day for the Cory Land Tour",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
                   }
                   
                   try {
