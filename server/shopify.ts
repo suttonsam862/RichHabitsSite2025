@@ -565,6 +565,18 @@ export const EVENT_PRODUCTS = {
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Birmingham Slam Camp Variant ID
     }
   },
+  'national-champ-camp': {
+    fullCamp: {
+      productId: 'gid://shopify/Product/8949406105837', // Temporarily using Birmingham product
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Temporarily using Birmingham variant
+      // Price: $349 for full camp
+    },
+    singleDay: {
+      productId: 'gid://shopify/Product/8949406105837', // Temporarily using Birmingham product
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Temporarily using Birmingham variant
+      // Price: $175 per day
+    }
+  },
   'texas-recruiting-clinic': {
     fullCamp: {
       // Using the same product/variant as Birmingham Slam Camp since they have the same price
