@@ -123,7 +123,7 @@ export default function EventDetail() {
             {
               name: "Vincenzo Joseph",
               title: "2x NCAA Champion at 165 lbs (2017, 2018)",
-              image: "/src/assets/coaches/joseph.webp",
+              image: "/assets/DSC09283--.JPG",
               bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
             }
           ];
@@ -170,7 +170,7 @@ export default function EventDetail() {
             {
               name: "Micky Phillippi",
               title: "Assistant Coach, University of Pittsburgh",
-              image: "/src/assets/coaches/recruiting/phillippi.webp",
+              image: "/assets/crop (1).webp",
               school: "University of Pittsburgh",
               schoolLogo: pittLogo,
               bio: "Micky Phillippi serves as an assistant coach at the University of Pittsburgh. As a former standout wrestler, Phillippi brings technical expertise and a deep understanding of what college programs look for in recruits."
