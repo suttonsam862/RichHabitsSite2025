@@ -96,13 +96,13 @@ export default function EventDetail() {
             {
               name: "Brandon Courtney",
               title: "NCAA Finalist",
-              image: "/src/assets/coaches/brandon_courtney.webp",
+              image: "/assets/DSC08631.JPG",
               bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat."
             },
             {
               name: "Michael McGee",
               title: "NCAA All-American",
-              image: "/src/assets/coaches/Michael_McGee_JouQS.jpg",
+              image: "/assets/Michael_McGee_JouQS.jpg",
               bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness."
             }
           ];
@@ -111,7 +111,7 @@ export default function EventDetail() {
             {
               name: "Jason Nolf",
               title: "3x NCAA Champion at 157 lbs (2017-19)",
-              image: "/src/assets/coaches/nolf.webp",
+              image: "/assets/DSC09273.JPG",
               bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
             },
             {
@@ -361,7 +361,7 @@ export default function EventDetail() {
       {event.id === 2 && (
         <div className="w-full overflow-hidden banner-container relative">
           <img 
-            src="/src/assets/LongSitePhotovegas.png" 
+            src="/assets/LongSitePhotovegas.png" 
             alt={event.title} 
             className="w-full h-auto object-cover" 
           />
@@ -1145,7 +1145,7 @@ export default function EventDetail() {
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-[#1e88e5]">
                           <img 
-                            src="/src/assets/coaches/joseph.webp" 
+                            src="/assets/DSC09283--.JPG" 
                             alt="Vincenzo Joseph" 
                             className="w-full h-full object-cover object-top"
                           />
@@ -1193,7 +1193,7 @@ export default function EventDetail() {
                   <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
                     <video 
                       className="w-full h-auto object-cover"
-                      src="/src/assets/videos/04243.mov"
+                      src="/assets/04243.mov"
                       autoPlay
                       loop
                       muted
@@ -1208,7 +1208,7 @@ export default function EventDetail() {
                     <div className="relative">
                       <video 
                         className="w-full h-auto"
-                        src="/src/assets/videos/0405.mov"
+                        src="/assets/0405.mov"
                         autoPlay
                         loop
                         muted
