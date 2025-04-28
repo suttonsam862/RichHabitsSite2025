@@ -459,6 +459,27 @@ export async function createEventRegistrationCheckout(
     { key: 'Medical_Release_Accepted', value: registrationData.medicalReleaseAccepted ? 'Yes' : 'No' },
     { key: 'Registration_Type', value: registrationData.option },
   ];
+  
+  // For Cory Land Tour, add the selected days to custom attributes
+  if (eventId === '4') {
+    const selectedDays = [];
+    if (registrationData.day1) selectedDays.push('Day 1 - Birmingham');
+    if (registrationData.day2) selectedDays.push('Day 2 - Huntsville');
+    if (registrationData.day3) selectedDays.push('Day 3 - Montgomery');
+    
+    // Add selected days as a custom attribute
+    if (selectedDays.length > 0) {
+      customAttributes.push({ 
+        key: 'Selected_Days', 
+        value: selectedDays.join(', ') 
+      });
+    }
+    
+    // Add individual day selections for clarity
+    customAttributes.push({ key: 'Day_1_Birmingham', value: registrationData.day1 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_2_Huntsville', value: registrationData.day2 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_3_Montgomery', value: registrationData.day3 ? 'Yes' : 'No' });
+  }
 
   // Try to use the more customized Admin API checkout first
   try {
@@ -514,6 +535,9 @@ export interface EventRegistrationData {
   medicalReleaseAccepted: boolean;
   option: 'full' | 'single';
   applyUniversalDiscount?: boolean;
+  day1?: boolean;
+  day2?: boolean;
+  day3?: boolean;
 }
 
 // Maps for Shopify product and variant IDs related to events

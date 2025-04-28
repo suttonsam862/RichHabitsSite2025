@@ -213,6 +213,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             medicalReleaseAccepted: validatedData.medicalReleaseAccepted || false,
             option: validatedData.registrationType === 'full' ? 'full' : 'single'
           };
+          
+          // For Cory Land Tour, add day selection data
+          if (eventId === 4) {
+            registrationData.day1 = validatedData.day1 || false;
+            registrationData.day2 = validatedData.day2 || false;
+            registrationData.day3 = validatedData.day3 || false;
+            
+            // Validate that at least one day is selected for single day registration
+            if (validatedData.registrationType === 'single' && 
+                !registrationData.day1 && !registrationData.day2 && !registrationData.day3) {
+              return res.status(400).json({ 
+                message: "Please select at least one day for the Cory Land Tour single day registration" 
+              });
+            }
+          }
           console.log('Registration data prepared:', JSON.stringify(registrationData));
           
           // Determine which product variant to use based on registration type
@@ -390,7 +405,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           schoolName: "Test School",
           clubName: "Test Club",
           medicalReleaseAccepted: true,
-          option: "full"
+          option: "full",
+          day1: true,
+          day2: true,
+          day3: true
         };
       }
       
