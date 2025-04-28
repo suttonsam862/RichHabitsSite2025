@@ -239,25 +239,25 @@ export default function EventDetail() {
             {
               name: "Cory Land",
               title: "Northern Iowa Wrestling Team",
-              image: "/src/assets/DSC09374--.JPG",
+              image: "/assets/coaches/cory-land-tour/cory-land.webp",
               bio: "Cory Land is a standout wrestler at the University of Northern Iowa. Known for his technical skill and competitive drive, Cory brings his expertise to this multi-day tour across Alabama."
             },
             {
               name: "Wyatt Voelker",
               title: "Northern Iowa Wrestling Team",
-              image: "/src/assets/DSC09283--.JPG",
+              image: "/assets/coaches/cory-land-tour/wyatt-voelker.webp",
               bio: "Wyatt Voelker is a powerful wrestler from the University of Northern Iowa. His strength-based approach and innovative techniques make him a favorite instructor among young wrestlers."
             },
             {
               name: "Trever Andersen",
               title: "Northern Iowa Wrestling Team",
-              image: "/src/assets/DSC09295--.JPG", 
+              image: "/assets/coaches/cory-land-tour/trever-anderson.webp", 
               bio: "Trever Andersen brings his unique wrestling style from Northern Iowa to this special tour. Specializing in strategic positioning and counter techniques, Trever offers valuable insights to wrestlers of all levels."
             },
             {
               name: "Garrett Funk",
               title: "Northern Iowa Wrestling Team",
-              image: "/src/assets/DSC09491.JPG",
+              image: "/assets/coaches/cory-land-tour/garrett-funk.webp",
               bio: "Garrett Funk rounds out the Northern Iowa contingent with his explosive style and technical expertise. His approach to wrestling combines traditional fundamentals with modern innovations."
             }
           ];
