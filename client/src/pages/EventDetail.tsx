@@ -10,6 +10,14 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import FloatingSchoolLogos from '@/components/event/FloatingSchoolLogos';
 
+// This function converts "/src/assets/..." paths to "/assets/..." paths that work in production
+const fixAssetPath = (path: string): string => {
+  if (path.startsWith('/src/assets/')) {
+    return path.replace('/src/assets/', '/assets/');
+  }
+  return path;
+};
+
 // Import event banner images
 import recruitingBanner from '@/assets/events/recruiting-banner.png';
 
@@ -76,13 +84,13 @@ export default function EventDetail() {
             {
               name: "Zahid Valencia",
               title: "2x NCAA Champion",
-              image: "/src/assets/coaches/VALENCIA_Zahid-headshot.jpg",
+              image: "/assets/VALENCIA_Zahid-headshot.jpg",
               bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat."
             },
             {
               name: "Josh Shields",
               title: "NCAA All-American",
-              image: "/src/assets/coaches/josh_shields.jpg",
+              image: "/assets/DSC08657--.JPG",
               bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit."
             },
             {
@@ -375,7 +383,7 @@ export default function EventDetail() {
       {event.id === 4 && (
         <div className="w-full overflow-hidden banner-container relative">
           <img 
-            src={'/src/assets/DSC09354.JPG'} 
+            src="/assets/DSC09354.JPG" 
             alt={event.title} 
             className="w-full h-auto object-cover" 
           />
@@ -1106,7 +1114,7 @@ export default function EventDetail() {
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-purple-400">
                           <img 
-                            src="/assets/coaches/cory-land-tour/cory-land.webp" 
+                            src="/assets/crop.webp" 
                             alt="Cory Land" 
                             className="w-full h-full object-cover object-top"
                           />
