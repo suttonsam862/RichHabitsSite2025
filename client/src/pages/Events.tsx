@@ -31,19 +31,6 @@ const coryLandVideo = "/assets/slamcamp.mov"; // Placeholder until specific vide
 // Static events data
 const events = [
   {
-    id: 4,
-    title: "CORY LAND TOUR",
-    category: "Wrestling",
-    categoryClass: "bg-[#4B0082]/10 text-[#4B0082]",
-    date: "May 15th-17th, 2025",
-    time: "9:00 AM - 3:00 PM",
-    location: "Multiple locations in Alabama",
-    description: "Join Northern Iowa standout Cory Land and his teammates Wyatt Voelker, Trever Anderson, and Garrett Funk for this unique 3-day clinic tour across Alabama. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes.",
-    price: "$199",
-    originalPrice: "$249",
-    image: event4Image
-  },
-  {
     id: 3,
     title: "TEXAS RECRUITING CLINIC",
     category: "Wrestling",
@@ -55,6 +42,24 @@ const events = [
     price: "$249",
     originalPrice: "$300",
     image: event3Image
+  },
+  {
+    id: 4,
+    title: "CORY LAND TOUR",
+    category: "Wrestling",
+    categoryClass: "bg-[#4B0082]/10 text-[#4B0082]",
+    date: "May 15th-17th, 2025",
+    time: "9:00 AM - 3:00 PM",
+    location: "Multiple locations in Alabama",
+    description: "Join Northern Iowa standout Cory Land and his teammates Wyatt Voelker, Trever Anderson, and Garrett Funk for this unique 3-day clinic tour across Alabama. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes.",
+    price: "$99/day",
+    originalPrice: "$299",
+    image: event4Image,
+    locations: [
+      { day: "Day 1 - May 15", location: "Birmingham, AL" },
+      { day: "Day 2 - May 16", location: "Huntsville, AL" },
+      { day: "Day 3 - May 17", location: "Montgomery, AL" }
+    ]
   },
   {
     id: 1,
@@ -96,7 +101,10 @@ export default function Events() {
     schoolName: "",
     clubName: "",
     medicalReleaseAccepted: false,
-    registrationType: "full"
+    registrationType: "full",
+    day1: false,
+    day2: false,
+    day3: false
   });
   
   // Add event handler for video errors
@@ -190,7 +198,10 @@ export default function Events() {
         schoolName: "",
         clubName: "",
         medicalReleaseAccepted: false,
-        registrationType: "full"
+        registrationType: "full",
+        day1: false,
+        day2: false,
+        day3: false
       });
     }
   };
@@ -215,7 +226,110 @@ export default function Events() {
               <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
             </div>
 
-            {/* Cory Land Tour - Event Row 0 */}
+            {/* Event Row 0: Texas Recruiting Clinic */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="mb-24 relative"
+            >
+              {/* Animated Edge Top Left - Red */}
+              <motion.div 
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                style={{ 
+                  borderColor: '#bf0a30'
+                }}
+              />
+              
+              {/* Animated Edge Bottom Right - Blue */}
+              <motion.div 
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                viewport={{ once: true }}
+                style={{ 
+                  borderColor: '#002868'
+                }}
+              />
+              
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6" style={{ 
+                  border: '2px solid',
+                  borderImageSlice: 1,
+                  borderImageSource: 'linear-gradient(to right, #bf0a30, #ffffff, #002868)'
+                }}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                  <div className="h-64 overflow-hidden rounded-sm relative">
+                    <video 
+                      src={texasRecruitingVideo}
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      onError={handleVideoError}
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      style={{ position: "absolute", top: 0, left: 0 }}
+                    ></video>
+                    {/* Use overlay image as fallback */}
+                    <div className="absolute inset-0 z-0">
+                      <img 
+                        src={events[0].image} 
+                        alt={events[0].title} 
+                        className="w-full h-full object-cover opacity-0 video-fallback"
+                      />
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="mb-4">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" style={{
+                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
+                        color: 'white'
+                      }}>
+                        {events[0].category}
+                      </span>
+                    </div>
+                    <h3 className="text-3xl font-bold mb-3">
+                      <span style={{ 
+                        color: '#002868',
+                        textShadow: '1px 1px 0 #bf0a30'
+                      }}>
+                        {events[0].title}
+                      </span>
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
+                    </div>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
+                    <div className="flex space-x-4">
+                      <a 
+                        href={`/events/${events[0].id}`}
+                        className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
+                        style={{ background: '#002868' }}
+                      >
+                        View Details
+                      </a>
+                      <button 
+                        onClick={() => handleRegister(events[0])}
+                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm hover:bg-red-50 transition-colors"
+                        style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
+                      >
+                        Register Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Event Row 1: Cory Land Tour */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -269,8 +383,8 @@ export default function Events() {
                     {/* Use overlay image as fallback */}
                     <div className="absolute inset-0 z-0">
                       <img 
-                        src={events[0].image} 
-                        alt={events[0].title} 
+                        src={events[1].image} 
+                        alt={events[1].title} 
                         className="w-full h-full object-cover opacity-0 video-fallback"
                       />
                     </div>
@@ -278,7 +392,7 @@ export default function Events() {
                   <div className="md:col-span-2 relative z-10">
                     <div className="mb-4">
                       <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm cory-gradient-btn text-white">
-                        {events[0].category}
+                        {events[1].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-3 relative">
@@ -290,25 +404,32 @@ export default function Events() {
                         letterSpacing: '0.08em',
                         textShadow: '0 0 1px rgba(212, 175, 55, 0.2)'
                       }}>
-                        {events[0].title}
+                        {events[1].title}
                       </span>
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-purple-100 text-purple-600 px-1 rounded ml-1">EARLY BIRD</span></p>
+                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
+                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
+                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price} <span className="line-through text-red-500 ml-1">{events[1].originalPrice}</span> <span className="text-xs bg-purple-100 text-purple-600 px-1 rounded ml-1">ALL DAYS: $200</span></p>
                     </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
+                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[1].description}</p>
+                    
+                    {/* Location details */}
+                    <div className="mb-6 pl-2 border-l-2 border-purple-600">
+                      {events[1].locations?.map((loc, idx) => (
+                        <p key={idx} className="text-sm text-gray-700 mb-1"><strong>{loc.day}:</strong> {loc.location}</p>
+                      ))}
+                    </div>
+                    
                     <div className="flex space-x-4">
                       <a 
-                        href={`/events/${events[0].id}`}
+                        href={`/events/${events[1].id}`}
                         className="cory-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
-                        onClick={() => handleRegister(events[0])}
+                        onClick={() => handleRegister(events[1])}
                         className="cory-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         Register Now
@@ -319,7 +440,7 @@ export default function Events() {
               </div>
             </motion.div>
             
-            {/* Event Row 1 */}
+            {/* Event Row 2 */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -752,11 +873,54 @@ export default function Events() {
                     <SelectValue placeholder="Select registration type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="full">Full Camp ($249)</SelectItem>
-                    <SelectItem value="single">Single Day ($149)</SelectItem>
+                    {selectedEvent?.id === 4 ? (
+                      <>
+                        <SelectItem value="full">All Days ($200)</SelectItem>
+                        <SelectItem value="single">Individual Days ($99 each)</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="full">Full Camp ($249)</SelectItem>
+                        <SelectItem value="single">Single Day ($149)</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
+              
+              {/* Day selection for Cory Land Tour */}
+              {selectedEvent?.id === 4 && (
+                <div className="md:col-span-2 space-y-3 mt-2 p-3 bg-purple-50 rounded-md">
+                  <Label>Select Camp Days (Cory Land Tour)</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
+                    {events[1]?.locations?.map((loc, idx) => (
+                      <div key={idx} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`day${idx+1}`} 
+                          checked={registrationForm[`day${idx+1}` as keyof typeof registrationForm] as boolean}
+                          onCheckedChange={(checked) => {
+                            setRegistrationForm(prev => ({
+                              ...prev,
+                              [`day${idx+1}`]: checked
+                            }));
+                          }} 
+                        />
+                        <Label 
+                          htmlFor={`day${idx+1}`}
+                          className="text-sm font-normal cursor-pointer"
+                        >
+                          {loc.day} ({loc.location})
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-purple-600 mt-1">
+                    {registrationForm.registrationType === 'full' ? 
+                      'Full camp includes all days for $200 (save $97!)' : 
+                      'Select one or more days ($99 each)'}
+                  </p>
+                </div>
+              )}
               <div className="md:col-span-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox 
