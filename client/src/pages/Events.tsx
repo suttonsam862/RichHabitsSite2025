@@ -14,12 +14,27 @@ import { Helmet } from "react-helmet";
 const event1Image = "/assets/events/SlamCampSiteBanner.png";
 const event2Image = "/assets/events/LongSitePhotovegas.png";
 const event3Image = "/assets/events/RecruitingWebsiteimage4.png";
+const event4Image = "/assets/events/image_1745720198123.png"; // Placeholder until specific graphic is created
 const birminghamVideo = "/assets/0424.mov";
 const champCampVideo = "/assets/04243.mov";
 const texasRecruitingVideo = "/assets/trcvid.mov";
+const coryLandVideo = "/assets/slamcamp.mov"; // Placeholder until specific video is created
 
 // Static events data
 const events = [
+  {
+    id: 4,
+    title: "CORY LAND TOUR",
+    category: "Wrestling",
+    categoryClass: "bg-[#4B0082]/10 text-[#4B0082]",
+    date: "May 15th-17th, 2025",
+    time: "9:00 AM - 3:00 PM",
+    location: "Multiple locations in Alabama",
+    description: "Join Northern Iowa standout Cory Land and his teammates Wyatt Voelker, Trever Anderson, and Garrett Funk for this unique 3-day clinic tour across Alabama. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes.",
+    price: "$199",
+    originalPrice: "$249",
+    image: event4Image
+  },
   {
     id: 3,
     title: "TEXAS RECRUITING CLINIC",
