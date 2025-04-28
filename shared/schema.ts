@@ -124,6 +124,9 @@ export const eventRegistrations = pgTable("event_registrations", {
   medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
   registrationType: text("registration_type"),
   shopifyOrderId: text("shopify_order_id"),
+  day1: boolean("day1").default(false), // For multi-day events to track day selection
+  day2: boolean("day2").default(false), // For multi-day events to track day selection
+  day3: boolean("day3").default(false), // For multi-day events to track day selection
   createdAt: timestamp("created_at").defaultNow()
 });
 
@@ -140,7 +143,10 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   clubName: true,
   medicalReleaseAccepted: true,
   registrationType: true,
-  shopifyOrderId: true
+  shopifyOrderId: true,
+  day1: true,
+  day2: true,
+  day3: true
 });
 
 // Custom apparel inquiries table

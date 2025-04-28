@@ -127,7 +127,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API routes for events
   app.get("/api/events", async (req, res) => {
     try {
+      // Get events from database
       const events = await storage.getEvents();
+      
+      // Check if Cory Land Tour is already in the list
+      const coryLandTourExists = events.some(event => event.id === 4);
+      
+      if (!coryLandTourExists) {
+        // Add Cory Land Tour to the list if it doesn't exist
+        const coryLandTourEvent = {
+          id: 4,
+          title: "Cory Land Tour",
+          category: "Wrestling",
+          date: "July 10-12, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Multiple Locations Across Alabama",
+          description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
+          price: "$99 per day or $200 for all three days",
+          shopifyProductId: "cory-land-tour",
+          image: "/src/assets/DSC09354.JPG",
+          maxParticipants: 75,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        events.push(coryLandTourEvent);
+      }
+      
       res.json(events);
     } catch (error) {
       res.status(500).json({ message: "Error fetching events", error: (error as Error).message });
@@ -137,7 +163,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      const event = await storage.getEvent(parseInt(id));
+      const eventId = parseInt(id);
+      
+      // Special case for Cory Land Tour which might not be in the database yet
+      if (eventId === 4) {
+        // Return mock data for Cory Land Tour
+        const coryLandTourEvent = {
+          id: 4,
+          title: "Cory Land Tour",
+          category: "Wrestling",
+          date: "July 10-12, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Multiple Locations Across Alabama",
+          description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
+          price: "$99 per day or $200 for all three days",
+          shopifyProductId: "cory-land-tour",
+          image: "/src/assets/DSC09354.JPG",
+          maxParticipants: 75,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        return res.json(coryLandTourEvent);
+      }
+      
+      // Regular case for other events
+      const event = await storage.getEvent(eventId);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
