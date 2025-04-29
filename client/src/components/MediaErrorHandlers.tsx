@@ -95,48 +95,58 @@ export const useMediaErrorHandler = (mediaType: 'video' | 'image' | 'audio', src
 /**
  * Video component with built-in error handling
  */
-export const VideoWithErrorHandling: React.FC<VideoWithErrorHandlingProps> = ({
-  src,
-  fallback,
-  onError,
-  children,
-  className = '',
-  ...props
-}) => {
-  const mediaRef = useRef<HTMLVideoElement>(null);
-  const { handleLoad, handleError } = useMediaErrorHandler('video', src || '');
-  
-  // Custom fallback UI for video errors
-  const defaultFallback = (
-    <div className={`video-error-container bg-gray-100 rounded flex items-center justify-center ${className}`} style={{ minHeight: '200px' }}>
-      <div className="text-center p-4">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-        <p className="text-gray-600">Video could not be loaded</p>
+export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWithErrorHandlingProps>(
+  ({ src, fallback, onError, children, className = '', ...props }, ref) => {
+    const internalRef = useRef<HTMLVideoElement>(null);
+    const { handleLoad, handleError } = useMediaErrorHandler('video', src || '');
+    
+    // Merge the forwarded ref with our internal ref
+    const combinedRef = (element: HTMLVideoElement) => {
+      // Update internal ref
+      if (internalRef) {
+        (internalRef as any).current = element;
+      }
+      
+      // Update forwarded ref
+      if (typeof ref === 'function') {
+        ref(element);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLVideoElement>).current = element;
+      }
+    };
+    
+    // Custom fallback UI for video errors
+    const defaultFallback = (
+      <div className={`video-error-container bg-gray-100 rounded flex items-center justify-center ${className}`} style={{ minHeight: '200px' }}>
+        <div className="text-center p-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <p className="text-gray-600">Video could not be loaded</p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
-  return (
-    <MediaErrorBoundary 
-      mediaType="video"
-      fallback={fallback || defaultFallback}
-      onError={onError}
-    >
-      <video
-        ref={mediaRef}
-        src={src}
-        className={className}
-        onError={handleError as any}
-        onLoadedData={handleLoad}
-        {...props}
+    return (
+      <MediaErrorBoundary 
+        mediaType="video"
+        fallback={fallback || defaultFallback}
+        onError={onError}
       >
-        {children}
-      </video>
-    </MediaErrorBoundary>
-  );
-};
+        <video
+          ref={combinedRef}
+          src={src}
+          className={className}
+          onError={handleError as any}
+          onLoadedData={handleLoad}
+          {...props}
+        >
+          {children}
+        </video>
+      </MediaErrorBoundary>
+    );
+  }
+);
 
 /**
  * Image component with built-in error handling
