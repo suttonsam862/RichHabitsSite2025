@@ -463,9 +463,9 @@ export async function createEventRegistrationCheckout(
   // For Cory Land Tour, add the selected days to custom attributes
   if (eventId === '4') {
     const selectedDays = [];
-    if (registrationData.day1) selectedDays.push('Day 1 - Birmingham');
-    if (registrationData.day2) selectedDays.push('Day 2 - Huntsville');
-    if (registrationData.day3) selectedDays.push('Day 3 - Montgomery');
+    if (registrationData.day1) selectedDays.push('Day 1 - Athens High School (July 23)');
+    if (registrationData.day2) selectedDays.push('Day 2 - Ironclad Wrestling Club (July 24)');
+    if (registrationData.day3) selectedDays.push('Day 3 - South AL Location (July 25)');
     
     // Add selected days as a custom attribute
     if (selectedDays.length > 0) {
@@ -476,9 +476,9 @@ export async function createEventRegistrationCheckout(
     }
     
     // Add individual day selections for clarity
-    customAttributes.push({ key: 'Day_1_Birmingham', value: registrationData.day1 ? 'Yes' : 'No' });
-    customAttributes.push({ key: 'Day_2_Huntsville', value: registrationData.day2 ? 'Yes' : 'No' });
-    customAttributes.push({ key: 'Day_3_Montgomery', value: registrationData.day3 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_1_Athens', value: registrationData.day1 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_2_Ironclad', value: registrationData.day2 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_3_SouthAL', value: registrationData.day3 ? 'Yes' : 'No' });
   }
 
   // Try to use the more customized Admin API checkout first
