@@ -514,23 +514,50 @@ export async function createEventRegistrationCheckout(
   registrationData: EventRegistrationData,
   applyDiscount: boolean = false
 ) {
-  // Get the event name based on the event ID
+  // Get the event name and Shopify product key based on the event ID
   let eventName = '';
+  let shopifyKey = '';
+  
   switch (eventId) {
     case '1':
       eventName = 'Birmingham Slam Camp';
+      shopifyKey = 'birmingham-slam-camp';
       break;
     case '2':
       eventName = 'National Champ Camp';
+      shopifyKey = 'national-champ-camp';
       break;
     case '3':
       eventName = 'Texas Recruiting Clinic';
+      shopifyKey = 'texas-recruiting-clinic';
       break;
     case '4':
       eventName = 'Cory Land Tour';
+      shopifyKey = 'cory-land-tour';
       break;
     default:
       eventName = 'Wrestling Event';
+      shopifyKey = 'birmingham-slam-camp'; // Default fallback
+  }
+  
+  // Get the registration option (full camp or single day)
+  const option = registrationData.option || 'full';
+  const optionKey = option === 'full' ? 'fullCamp' : 'singleDay';
+  
+  // Get the product variant ID and price from our mapping
+  const eventProduct = EVENT_PRODUCTS[shopifyKey as keyof typeof EVENT_PRODUCTS];
+  const variantDetails = eventProduct[optionKey as keyof typeof eventProduct];
+  
+  // Override the provided product variant ID with the one from our mapping if available
+  if (variantDetails && variantDetails.variantId) {
+    productVariantId = variantDetails.variantId;
+    console.log(`Using product variant ID from mapping: ${productVariantId}`);
+  }
+  
+  // Get the proper price for this event/option combination
+  const price = variantDetails?.price;
+  if (price) {
+    console.log(`Using price for ${eventName} (${option}): $${price}`);
   }
 
   // Create a more descriptive title for the checkout, including camper name and event
@@ -692,53 +719,56 @@ export interface EventRegistrationData {
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 // For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})
 export const EVENT_PRODUCTS = {
+  // Cory Land Tour - ID 4 - $200 full camp / $99 per day
   'cory-land-tour': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837', // Using Birmingham Slam Camp Product ID temporarily
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Using Birmingham Slam Camp Variant ID temporarily
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      price: 200.00  // All days for $200
     },
     singleDay: {
       productId: 'gid://shopify/Product/8949406105837', 
       variantId: 'gid://shopify/ProductVariant/47808555679981',
+      price: 99.00  // $99 per day
     }
   },
+  // Birmingham Slam Camp - ID 1 - $249 full camp / $149 single day
   'birmingham-slam-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837', // Birmingham Slam Camp Product ID
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Birmingham Slam Camp Variant ID
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      price: 249.00  // Full camp for $249
     },
     singleDay: {
-      // Using the same product for now since there's only one variant for the camp
-      productId: 'gid://shopify/Product/8949406105837', // Birmingham Slam Camp Product ID 
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Birmingham Slam Camp Variant ID
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      price: 149.00  // Single day for $149
     }
   },
+  // National Champ Camp - ID 2 - $349 full camp / $175 per day
   'national-champ-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837', // Temporarily using Birmingham product
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Temporarily using Birmingham variant
-      // Price: $349 for full camp
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      price: 349.00  // Full camp for $349
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949406105837', // Temporarily using Birmingham product
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Temporarily using Birmingham variant
-      // Price: $175 per day
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      price: 175.00  // Single day for $175
     }
   },
+  // Texas Recruiting Clinic - ID 3 - $249 full camp / $149 single day
   'texas-recruiting-clinic': {
     fullCamp: {
-      // Need to create a dedicated product for Texas Recruiting Clinic in Shopify
-      // For now, using Birmingham product but we'll update this when the product is created
       productId: 'gid://shopify/Product/8949406105837',
       variantId: 'gid://shopify/ProductVariant/47808555679981',
-      // Will need to be replaced with Texas product/variant IDs
+      price: 249.00  // Full clinic for $249
     },
     singleDay: {
-      // Need to create a dedicated product for Texas Recruiting Clinic in Shopify
-      // For now, using Birmingham product but we'll update this when the product is created
       productId: 'gid://shopify/Product/8949406105837',
       variantId: 'gid://shopify/ProductVariant/47808555679981',
-      // Will need to be replaced with Texas product/variant IDs
+      price: 149.00  // Single day for $149
     }
   }
 };
