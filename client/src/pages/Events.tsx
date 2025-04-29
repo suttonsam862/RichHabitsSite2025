@@ -26,7 +26,7 @@ const event4Image = "/assets/events/image_1745720198123.png"; // Placeholder unt
 const birminghamVideo = "/assets/0424.mov";
 const champCampVideo = "/assets/04243.mov";
 const texasRecruitingVideo = "/assets/trcvid.mov";
-const coryLandVideo = "/assets/slamcamp.mov"; // Placeholder until specific video is created
+const coryLandVideo = "/assets/corylandloopvide.mov"; // Updated Cory Land Tour video
 
 // Static events data
 const events = [
@@ -493,76 +493,6 @@ export default function Events() {
                   borderColor: '#002868'
                 }}
               />
-              
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6" style={{ 
-                  border: '2px solid',
-                  borderImageSlice: 1,
-                  borderImageSource: 'linear-gradient(to right, #bf0a30, #ffffff, #002868)'
-                }}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm relative">
-                    <video 
-                      src={texasRecruitingVideo}
-                      autoPlay 
-                      loop 
-                      muted 
-                      playsInline
-                      onError={handleVideoError}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                      style={{ position: "absolute", top: 0, left: 0 }}
-                    ></video>
-                    {/* Use overlay image as fallback */}
-                    <div className="absolute inset-0 z-0">
-                      <img 
-                        src={events[1].image} 
-                        alt={events[1].title} 
-                        className="w-full h-full object-cover opacity-0 video-fallback"
-                      />
-                    </div>
-                  </div>
-                  <div className="md:col-span-2">
-                    <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" style={{
-                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
-                        color: 'white'
-                      }}>
-                        {events[1].category}
-                      </span>
-                    </div>
-                    <h3 className="text-3xl font-bold mb-3">
-                      <span style={{ 
-                        color: '#002868',
-                        textShadow: '1px 1px 0 #bf0a30'
-                      }}>
-                        {events[1].title}
-                      </span>
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[1].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price} <span className="line-through text-red-500 ml-1">{events[1].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
-                    </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.</p>
-                    <div className="flex space-x-4">
-                      <a 
-                        href={`/events/${events[1].id}`}
-                        className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
-                        style={{ background: '#002868' }}
-                      >
-                        View Details
-                      </a>
-                      <button 
-                        onClick={() => handleRegister(events[1])}
-                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm hover:bg-red-50 transition-colors"
-                        style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
-                      >
-                        Register Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </motion.div>
             
             {/* Event Row 2 */}
