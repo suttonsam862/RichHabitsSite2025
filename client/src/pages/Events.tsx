@@ -285,6 +285,12 @@ export default function Events() {
                 }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
+                    {/* Using image as primary with optional video enhancement */}
+                    <img 
+                      src={events[0].image} 
+                      alt={events[0].title} 
+                      className="w-full h-full object-cover"
+                    />
                     <video 
                       src={texasRecruitingVideo}
                       autoPlay 
@@ -292,17 +298,12 @@ export default function Events() {
                       muted 
                       playsInline
                       onError={handleVideoError}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                      style={{ position: "absolute", top: 0, left: 0 }}
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 absolute top-0 left-0 opacity-0"
+                      onCanPlay={(e) => {
+                        // Only show video if it successfully loads
+                        e.currentTarget.style.opacity = "1";
+                      }}
                     ></video>
-                    {/* Use overlay image as fallback */}
-                    <div className="absolute inset-0 z-0">
-                      <img 
-                        src={events[0].image} 
-                        alt={events[0].title} 
-                        className="w-full h-full object-cover opacity-0 video-fallback"
-                      />
-                    </div>
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
@@ -390,6 +391,12 @@ export default function Events() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
+                    {/* Using image as primary with optional video enhancement */}
+                    <img 
+                      src={events[1].image} 
+                      alt={events[1].title} 
+                      className="w-full h-full object-cover"
+                    />
                     <video 
                       src={coryLandVideo}
                       autoPlay 
@@ -397,17 +404,12 @@ export default function Events() {
                       muted 
                       playsInline
                       onError={handleVideoError}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                      style={{ position: "absolute", top: 0, left: 0 }}
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 absolute top-0 left-0 opacity-0"
+                      onCanPlay={(e) => {
+                        // Only show video if it successfully loads
+                        e.currentTarget.style.opacity = "1";
+                      }}
                     ></video>
-                    {/* Use overlay image as fallback */}
-                    <div className="absolute inset-0 z-0">
-                      <img 
-                        src={events[1].image} 
-                        alt={events[1].title} 
-                        className="w-full h-full object-cover opacity-0 video-fallback"
-                      />
-                    </div>
                   </div>
                   <div className="md:col-span-2 relative z-10">
                     <div className="mb-4">

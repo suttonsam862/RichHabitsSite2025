@@ -517,8 +517,9 @@ export async function createEventRegistrationCheckout(
     }
     
     return checkout;
-  } catch (error) {
-    console.warn('Admin API checkout creation failed, falling back to Storefront API', error);
+  } catch (adminApiError) {
+    // Properly typed error capturing
+    console.warn('Admin API checkout creation failed, falling back to Storefront API', adminApiError);
     
     // Fall back to the regular Storefront API checkout if Admin API fails
     try {
@@ -547,7 +548,9 @@ export async function createEventRegistrationCheckout(
       return checkout;
     } catch (fallbackError) {
       console.error('Both checkout methods failed:', fallbackError);
-      throw new Error(`Failed to create checkout with both methods: ${error.message} and then ${fallbackError.message}`);
+      const errorMsg = adminApiError instanceof Error ? adminApiError.message : String(adminApiError);
+      const fallbackErrorMsg = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+      throw new Error(`Failed to create checkout with both methods: ${errorMsg} and then ${fallbackErrorMsg}`);
     }
   }
 }
@@ -610,14 +613,18 @@ export const EVENT_PRODUCTS = {
   },
   'texas-recruiting-clinic': {
     fullCamp: {
-      // Using the same product/variant as Birmingham Slam Camp since they have the same price
-      productId: 'gid://shopify/Product/8949406105837', // Same as Birmingham Slam Camp Product ID
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Same as Birmingham Slam Camp Variant ID
+      // Need to create a dedicated product for Texas Recruiting Clinic in Shopify
+      // For now, using Birmingham product but we'll update this when the product is created
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      // Will need to be replaced with Texas product/variant IDs
     },
     singleDay: {
-      // Using the same product/variant as Birmingham Slam Camp since they have the same price
-      productId: 'gid://shopify/Product/8949406105837', // Same as Birmingham Slam Camp Product ID
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Same as Birmingham Slam Camp Variant ID
+      // Need to create a dedicated product for Texas Recruiting Clinic in Shopify
+      // For now, using Birmingham product but we'll update this when the product is created
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      // Will need to be replaced with Texas product/variant IDs
     }
   }
 };
