@@ -171,9 +171,11 @@ export default function EventRegistration() {
           console.log('Fixed checkout URL format:', checkoutUrl);
         }
         
-        // Redirect after a short delay
+        // Redirect after a short delay - using direct window.location for reliability
         setTimeout(() => {
-          window.location.href = checkoutUrl;
+          console.log('Executing redirect to:', checkoutUrl);
+          // Force a hard redirect to the checkout URL
+          window.location.replace(checkoutUrl);
         }, 1500);
       } else {
         toast({
