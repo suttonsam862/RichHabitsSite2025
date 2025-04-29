@@ -105,7 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: firstVariant ? `$${parseFloat(firstVariant.price).toFixed(2)}` : "",
           collection: handle,
           availableForSale: firstVariant ? firstVariant.available : false,
-          variants: product.variants.map((variant) => ({
+          variants: product.variants.map((variant: any) => ({
             id: variant.id.toString(),
             title: variant.title,
             price: `$${parseFloat(variant.price).toFixed(2)}`,
@@ -421,6 +421,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let checkoutUrl = null;
       let shopifyError = null;
       
+      console.log(`Registration successful, creating Shopify checkout for event ${event.title}`);
+      
       if (eventId === 1 || eventId === 2 || eventId === 3 || eventId === 4) { // All events support Shopify checkout
         try {
           // Create a simplified mapping of event IDs to their keys
@@ -560,7 +562,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid request data", errors: error.errors });
       }
-      res.status(500).json({ message: "Error registering for event", error: (error as Error).message });
+      console.error('Error registering for event:', error);
+      let errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Try to provide a more detailed error message for better debugging
+      if (error instanceof Error && error.stack) {
+        console.error('Error stack:', error.stack);
+      }
+      
+      res.status(500).json({ 
+        message: "Error registering for event", 
+        error: errorMessage,
+        errorType: error instanceof Error ? error.constructor.name : 'Unknown'
+      });
     }
   });
 

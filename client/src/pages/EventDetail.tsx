@@ -1448,10 +1448,38 @@ export default function EventDetail() {
                 }
               } catch (error) {
                 console.error('Registration error:', error);
+                
+                // Attempt to extract a more detailed error message
+                let errorMessage = "An unknown error occurred";
+                
+                if (error instanceof Error) {
+                  errorMessage = error.message;
+                  
+                  // Check if the error message contains a JSON string with additional details
+                  if (error.message.includes('{') && error.message.includes('}')) {
+                    try {
+                      // Try to extract the JSON part from the error message
+                      const jsonMatch = error.message.match(/{.*}/);
+                      if (jsonMatch) {
+                        const errorDetails = JSON.parse(jsonMatch[0]);
+                        console.log('Parsed error details:', errorDetails);
+                        
+                        // Format a more user-friendly error message
+                        if (errorDetails.tags) {
+                          errorMessage = `Registration data format error: ${JSON.stringify(errorDetails)}`;
+                        }
+                      }
+                    } catch (parseError) {
+                      console.error('Could not parse error details:', parseError);
+                    }
+                  }
+                }
+                
                 toast({
                   title: "Registration Failed",
-                  description: error instanceof Error ? error.message : "An unknown error occurred",
-                  variant: "destructive"
+                  description: errorMessage,
+                  variant: "destructive",
+                  duration: 7000
                 });
               } finally {
                 setIsSubmitting(false);
