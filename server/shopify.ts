@@ -348,7 +348,7 @@ export async function createCustomCheckout(variantId: string, quantity: number =
           phone: customer.phone || ''
         },
         use_customer_default_address: false,
-        tags: ["Online Registration", "Rich Habits Event"],
+        tags: "Online Registration, Rich Habits Event",
         note_attributes: formattedAttributes.map(attr => ({
           name: attr.key,
           value: attr.value
@@ -378,6 +378,19 @@ export async function createCustomCheckout(variantId: string, quantity: number =
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Error creating draft order:', errorText);
+      
+      // Try to parse the error response for a more detailed error message
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.error('Parsed error details:', JSON.stringify(errorJson, null, 2));
+        if (errorJson.errors) {
+          throw new Error(`Failed to create draft order: ${JSON.stringify(errorJson.errors)}`);
+        }
+      } catch (parseError) {
+        // If we can't parse the error, just use the original error text
+        console.error('Could not parse error details:', parseError);
+      }
+      
       throw new Error(`Failed to create draft order: ${response.status} ${response.statusText}`);
     }
     
@@ -412,6 +425,19 @@ export async function createCustomCheckout(variantId: string, quantity: number =
     if (!invoiceResponse.ok) {
       const errorText = await invoiceResponse.text();
       console.error('Error sending invoice:', errorText);
+      
+      // Try to parse the error response for a more detailed error message
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.error('Parsed invoice error details:', JSON.stringify(errorJson, null, 2));
+        if (errorJson.errors) {
+          throw new Error(`Failed to send invoice: ${JSON.stringify(errorJson.errors)}`);
+        }
+      } catch (parseError) {
+        // If we can't parse the error, just use the original error text
+        console.error('Could not parse invoice error details:', parseError);
+      }
+      
       throw new Error(`Failed to send invoice: ${invoiceResponse.status} ${invoiceResponse.statusText}`);
     }
     
