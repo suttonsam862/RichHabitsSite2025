@@ -1470,14 +1470,17 @@ export default function EventDetail() {
                       const jsonMatch = errorMessage.match(jsonRegex);
                       
                       if (jsonMatch && jsonMatch.length > 0) {
-                        errorDetails = JSON.parse(jsonMatch[0]);
+                        const parsedDetails = JSON.parse(jsonMatch[0]);
+                        errorDetails = parsedDetails;
                         console.log('Parsed error details:', errorDetails);
                         
                         // Create a more user-friendly error message
-                        if (errorDetails.error) {
-                          errorMessage = errorDetails.error;
-                        } else if (errorDetails.message) {
-                          errorMessage = errorDetails.message;
+                        if (parsedDetails && typeof parsedDetails === 'object') {
+                          if ('error' in parsedDetails && typeof parsedDetails.error === 'string') {
+                            errorMessage = parsedDetails.error;
+                          } else if ('message' in parsedDetails && typeof parsedDetails.message === 'string') {
+                            errorMessage = parsedDetails.message;
+                          }
                         }
                       }
                     } catch (parseError) {
