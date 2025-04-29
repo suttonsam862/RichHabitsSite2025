@@ -121,8 +121,8 @@ export default function Events() {
   const { toast } = useToast();
 
   const handleRegister = (event: any) => {
-    setSelectedEvent(event);
-    setShowRegistrationDialog(true);
+    // Instead of showing the dialog, navigate to the dedicated registration page
+    window.location.href = `/events/${event.id}/register`;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
