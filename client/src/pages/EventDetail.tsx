@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import EventVideo from '@/components/events/EventVideo';
+import EventImage from '@/components/events/EventImage';
 import FloatingSchoolLogos from '@/components/event/FloatingSchoolLogos';
 
 // This function converts "/src/assets/..." paths to "/assets/..." paths that work in production
@@ -978,18 +980,21 @@ export default function EventDetail() {
                     </div>
                   </div>
                   
-                  {/* First Video */}
+                  {/* First Video - with enhanced error handling */}
                   <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
-                    <video 
-                      className="w-full h-auto object-cover"
+                    <EventVideo
                       src="/assets/0424.mov"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
+                      className="w-full h-auto object-cover"
+                      autoplay={true}
+                      loop={true}
+                      muted={true}
+                      controls={false}
+                      title="Event Highlight Video"
+                      onError={(error) => {
+                        console.error("Video error detected:", error);
+                      }}
                       style={{ maxHeight: "360px" }}
-                      onPlay={(e) => { e.currentTarget.volume = 0; }}
-                    ></video>
+                    />
                   </div>
                   
                   {/* Featured Camp Video */}
