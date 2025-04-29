@@ -174,25 +174,10 @@ export default function EventRegistration() {
           console.log('Fixed checkout URL format:', formattedCheckoutUrl);
         }
         
-        // Show the checkout in an iframe
-        try {
-          // Set the checkout URL and show the iframe
-          setCheckoutUrl(formattedCheckoutUrl);
-          setShowCheckoutFrame(true);
-        } catch (error) {
-          console.error('Error showing checkout frame:', error);
-          
-          // Fallback to redirect if iframe fails
-          toast({
-            title: "Checkout Error",
-            description: "Redirecting to external checkout page...",
-          });
-          
-          // Fallback method - direct redirect
-          setTimeout(() => {
-            window.location.href = formattedCheckoutUrl;
-          }, 500);
-        }
+        console.log('Showing checkout in iframe:', formattedCheckoutUrl);
+        // Show the checkout in an iframe - directly set state without try/catch (setState can't throw)
+        setCheckoutUrl(formattedCheckoutUrl);
+        setShowCheckoutFrame(true);
       } else {
         toast({
           title: "Registration Received",

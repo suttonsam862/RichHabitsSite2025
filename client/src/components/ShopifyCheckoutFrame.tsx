@@ -100,7 +100,8 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
           className={`flex-grow w-full ${loading || error ? 'hidden' : 'block'}`}
           onError={handleIframeError}
           title="Shopify Checkout"
-          sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups"
+          sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation"
+          referrerPolicy="origin"
         />
       </div>
     </div>

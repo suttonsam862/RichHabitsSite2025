@@ -23,33 +23,16 @@ export default function ShopifyRedirect() {
       
       // Decode the URL
       const decodedUrl = decodeURIComponent(encodedUrl);
+      console.log('Checkout URL decoded:', decodedUrl);
       setCheckoutUrl(decodedUrl);
       
-      // Start countdown
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setRedirecting(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
-      return () => clearInterval(timer);
+      // Skip countdown and immediately show iframe
+      setRedirecting(true);
     } catch (error) {
       console.error('Error processing redirect URL:', error);
       setError('Failed to process the checkout URL. Please try again.');
     }
   }, []);
-  
-  // Redirect after countdown
-  useEffect(() => {
-    if (redirecting && checkoutUrl) {
-      // We'll handle this with our embedded checkout instead of redirecting
-    }
-  }, [redirecting, checkoutUrl]);
   
   // Handle manual redirect
   const handleManualRedirect = () => {
