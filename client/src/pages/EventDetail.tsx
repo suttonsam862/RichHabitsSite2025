@@ -581,9 +581,9 @@ export default function EventDetail() {
                       <span className="text-gray-800 font-medium">{event.price}</span>
                     </div>
                     
-                    <button 
-                      onClick={() => setShowRegistrationDialog(true)}
-                      className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 relative z-10 ${
+                    <a 
+                      href={`/events/${event.id}/register`}
+                      className={`block text-center w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 relative z-10 ${
                         event.id === 2 
                           ? 'psu-gradient-btn text-white focus:ring-blue-500' 
                           : event.id === 1 
@@ -594,7 +594,7 @@ export default function EventDetail() {
                       }`}
                     >
                       {event.buttonLabel || 'Register Now'}
-                    </button>
+                    </a>
                     
                     <div className="mt-4 flex justify-between text-gray-500 text-sm">
                       <div className="flex items-center relative z-10">
