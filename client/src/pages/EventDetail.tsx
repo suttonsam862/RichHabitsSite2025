@@ -983,7 +983,7 @@ export default function EventDetail() {
                   {/* First Video - with enhanced error handling */}
                   <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
                     <EventVideo
-                      src="/assets/0424.mov"
+                      src="/assets/0424.mp4"
                       className="w-full h-auto object-cover"
                       autoplay={true}
                       loop={true}
