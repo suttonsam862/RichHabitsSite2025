@@ -308,7 +308,13 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
 }
 
 // Create a branded checkout page using the Admin API - more customization options
-export async function createCustomCheckout(variantId: string, quantity: number = 1, customer: any, customAttributes?: any[]) {
+export async function createCustomCheckout(
+  variantId: string, 
+  quantity: number = 1, 
+  customer: any, 
+  customAttributes?: any[], 
+  customPrice?: number
+) {
   try {
     // Extract the numeric ID from the gid format
     const numericVariantId = variantId.split('/').pop();
@@ -335,6 +341,8 @@ export async function createCustomCheckout(variantId: string, quantity: number =
     // Extract registration title and event information
     let registrationTitle = '';
     let eventName = '';
+    let eventId = '';
+    let registrationType = 'full';
     
     const titleAttribute = formattedAttributes.find(attr => attr.key === 'Registration_Title');
     if (titleAttribute) {
@@ -346,19 +354,76 @@ export async function createCustomCheckout(variantId: string, quantity: number =
       eventName = eventAttribute.value;
     }
     
+    const eventIdAttribute = formattedAttributes.find(attr => attr.key === 'Event_ID');
+    if (eventIdAttribute) {
+      eventId = eventIdAttribute.value;
+    }
+    
+    const registrationTypeAttribute = formattedAttributes.find(attr => attr.key === 'Registration_Type');
+    if (registrationTypeAttribute) {
+      registrationType = registrationTypeAttribute.value;
+    }
+    
     // Create descriptive notes for the order
     const orderNote = registrationTitle || 
       `${customer.firstName} ${customer.lastName} - ${eventName || 'Event'} Registration`;
     
+    // Check if custom price should be used
+    let priceOverride = null;
+    if (customPrice) {
+      console.log(`Using custom price override: $${customPrice}`);
+      priceOverride = customPrice;
+    } else if (eventId) {
+      // Get the shopify key and product details based on the event ID
+      let shopifyKey = '';
+      switch (eventId) {
+        case '1':
+          shopifyKey = 'birmingham-slam-camp';
+          break;
+        case '2':
+          shopifyKey = 'national-champ-camp';
+          break;
+        case '3':
+          shopifyKey = 'texas-recruiting-clinic';
+          break;
+        case '4':
+          shopifyKey = 'cory-land-tour';
+          break;
+      }
+      
+      if (shopifyKey) {
+        const optionKey = registrationType === 'full' ? 'fullCamp' : 'singleDay';
+        
+        try {
+          const eventProduct = EVENT_PRODUCTS[shopifyKey as keyof typeof EVENT_PRODUCTS];
+          if (eventProduct) {
+            const variantDetails = eventProduct[optionKey as keyof typeof eventProduct];
+            if (variantDetails && variantDetails.price) {
+              priceOverride = variantDetails.price;
+              console.log(`Using price from event mapping: $${priceOverride} for ${eventName} (${registrationType})`);
+            }
+          }
+        } catch (err) {
+          console.warn('Error getting price from event mapping:', err);
+        }
+      }
+    }
+    
+    // Build the draft order data
+    const lineItem: any = {
+      variant_id: parseInt(numericVariantId),
+      quantity: quantity,
+      properties: lineItemProperties
+    };
+    
+    // Add price override if available
+    if (priceOverride !== null) {
+      lineItem.price = priceOverride.toFixed(2);
+    }
+    
     const draftOrderData = {
       draft_order: {
-        line_items: [
-          {
-            variant_id: parseInt(numericVariantId),
-            quantity: quantity,
-            properties: lineItemProperties
-          }
-        ],
+        line_items: [lineItem],
         customer: {
           first_name: customer.firstName,
           last_name: customer.lastName,
