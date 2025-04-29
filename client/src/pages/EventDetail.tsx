@@ -1428,16 +1428,26 @@ export default function EventDetail() {
                 }
                 
                 if (data.checkoutUrl) {
+                  // Log the checkout URL for debugging
+                  console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
+                  
                   // Registration successful, redirect to checkout
                   toast({
                     title: "Registration Successful",
                     description: "Taking you to the secure payment page...",
                   });
                   
+                  // Ensure the URL is properly formatted
+                  let checkoutUrl = data.checkoutUrl;
+                  if (!checkoutUrl.startsWith('http')) {
+                    checkoutUrl = 'https://' + checkoutUrl;
+                    console.log('Fixed checkout URL format:', checkoutUrl);
+                  }
+                  
                   // Close dialog and redirect after a short delay
                   setTimeout(() => {
                     setShowRegistrationDialog(false);
-                    window.location.href = data.checkoutUrl;
+                    window.location.href = checkoutUrl;
                   }, 1500);
                 } else {
                   toast({

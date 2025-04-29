@@ -434,8 +434,8 @@ export async function createCustomCheckout(variantId: string, quantity: number =
           draft_order_invoice: {
             to: customer.email,
             from: "noreply@rich-habits.com",
-            subject: "Complete your Rich Habits event registration",
-            custom_message: `Thank you for registering for our event! Please complete your payment to confirm your spot.`
+            subject: `Complete your ${eventName} registration with Rich Habits`,
+            custom_message: `Thank you for registering ${registrationTitle ? registrationTitle : ''}! Please complete your payment to confirm your spot for ${eventName}.`
           }
         })
       }
@@ -467,9 +467,33 @@ export async function createCustomCheckout(variantId: string, quantity: number =
     };
     
     // Return the invoice URL which leads to the custom checkout page
+    let checkoutUrl = invoiceData.draft_order_invoice.invoice_url;
+    
+    // Ensure the URL is properly formatted
+    if (checkoutUrl) {
+      // Log the original URL for debugging
+      console.log('Original checkout URL:', checkoutUrl);
+      
+      // Ensure the URL starts with https:// for security
+      if (!checkoutUrl.startsWith('https://')) {
+        if (checkoutUrl.startsWith('http://')) {
+          checkoutUrl = 'https://' + checkoutUrl.substring(7);
+        } else {
+          checkoutUrl = 'https://' + checkoutUrl;
+        }
+      }
+      
+      // Add domain if URL might be a relative path
+      if (checkoutUrl.startsWith('/')) {
+        checkoutUrl = `https://${SHOPIFY_STORE_DOMAIN}${checkoutUrl}`;
+      }
+      
+      console.log('Formatted checkout URL:', checkoutUrl);
+    }
+    
     return {
       id: draftOrderResponse.draft_order.id.toString(),
-      webUrl: invoiceData.draft_order_invoice.invoice_url,
+      webUrl: checkoutUrl,
       subtotalPrice: draftOrderResponse.draft_order.subtotal_price,
       totalPrice: draftOrderResponse.draft_order.total_price
     };
@@ -602,6 +626,27 @@ export async function createEventRegistrationCheckout(
       }
       
       console.log('Successfully created fallback checkout with Storefront API:', checkout.webUrl);
+      
+      // Format the checkout URL
+      if (checkout.webUrl) {
+        console.log('Original storefront checkout URL:', checkout.webUrl);
+        
+        // Ensure the URL starts with https:// for security
+        if (!checkout.webUrl.startsWith('https://')) {
+          if (checkout.webUrl.startsWith('http://')) {
+            checkout.webUrl = 'https://' + checkout.webUrl.substring(7);
+          } else {
+            checkout.webUrl = 'https://' + checkout.webUrl;
+          }
+        }
+        
+        // Add domain if URL might be a relative path
+        if (checkout.webUrl.startsWith('/')) {
+          checkout.webUrl = `https://${SHOPIFY_STORE_DOMAIN}${checkout.webUrl}`;
+        }
+        
+        console.log('Formatted storefront checkout URL:', checkout.webUrl);
+      }
       
       // If universal discount should be applied, we'll append the discount code to the checkout URL
       if (applyDiscount && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
