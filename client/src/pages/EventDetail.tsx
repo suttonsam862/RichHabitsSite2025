@@ -997,18 +997,21 @@ export default function EventDetail() {
                     />
                   </div>
                   
-                  {/* Featured Camp Video */}
+                  {/* Featured Camp Video - with enhanced error handling */}
                   <div className="mb-8 rounded-xl overflow-hidden shadow-lg border-2 border-[#ff6b00]">
                     <div className="relative">
-                      <video 
-                        className="w-full h-auto"
+                      <EventVideo 
                         src="/assets/0331.mov"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        onPlay={(e) => { e.currentTarget.volume = 0; }}
-                      ></video>
+                        className="w-full h-auto"
+                        autoplay={true}
+                        loop={true}
+                        muted={true}
+                        controls={false}
+                        title="Birmingham Slam Camp Highlights"
+                        onError={(error) => {
+                          console.error("Featured camp video error:", error);
+                        }}
+                      />
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#ff6b00]/80 to-transparent p-4">
                         <h4 className="text-white font-bold text-lg">Birmingham Slam Camp Highlights</h4>
                         <p className="text-white/80 text-sm">Experience elite training with champions in Birmingham</p>
@@ -1016,19 +1019,22 @@ export default function EventDetail() {
                     </div>
                   </div>
                   
-                  {/* Third Video - Links to National Champ Camp */}
+                  {/* Third Video - Links to National Champ Camp - with enhanced error handling */}
                   <div className="mb-8 rounded-xl overflow-hidden shadow-lg cursor-pointer group relative">
                     <a href="/events/2" className="block">
                       <div className="relative">
-                        <video 
-                          className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                        <EventVideo 
                           src="/assets/0425.mov"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          onPlay={(e) => { e.currentTarget.volume = 0; }}
-                        ></video>
+                          className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                          autoplay={true}
+                          loop={true}
+                          muted={true}
+                          controls={false}
+                          title="National Champ Camp Preview"
+                          onError={(error) => {
+                            console.error("National Champ Camp video error:", error);
+                          }}
+                        />
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                           <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                             <span className="font-bold text-[#041e42]">Visit National Champ Camp →</span>
@@ -1118,10 +1124,14 @@ export default function EventDetail() {
                     <div className="p-6">
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-purple-400">
-                          <img 
+                          <EventImage 
                             src="/assets/crop.webp" 
                             alt="Cory Land" 
                             className="w-full h-full object-cover object-top"
+                            fallbackSrc="/assets/coaches/default-avatar.webp"
+                            onError={(error) => {
+                              console.error("Coach image error:", error);
+                            }}
                           />
                         </div>
                         <div>
