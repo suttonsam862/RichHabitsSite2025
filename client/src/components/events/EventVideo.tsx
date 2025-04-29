@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { VideoWithErrorHandling } from '../MediaErrorHandlers';
-import { parseVideoError, logMediaError, MediaErrorData } from '../../utils/mediaErrorUtils';
+import { 
+  parseVideoError, 
+  logMediaError, 
+  MediaErrorData, 
+  canBrowserPlayMedia,
+  getSupportedMediaFormats,
+  checkResourceExists
+} from '../../utils/mediaErrorUtils';
 
 // Helper function to check if a video file actually exists on the server
 const checkVideoExists = async (url: string): Promise<boolean> => {
@@ -58,13 +65,26 @@ const EventVideo: React.FC<EventVideoProps> = ({
     setHasError(false);
     setLoadAttempts(0);
     
+    // Test browser video capabilities
+    const testVideoCapabilities = () => {
+      const supportedFormats = getSupportedMediaFormats();
+      console.log('Browser supported video formats:', supportedFormats.video);
+      
+      const fileExtension = src.split('.').pop()?.toLowerCase();
+      const canPlay = canBrowserPlayMedia(fileExtension || '');
+      console.log(`Can browser play ${fileExtension}?`, canPlay);
+    };
+    
     // Check if the video file exists
     const verifyFileExists = async () => {
+      console.log(`Checking if video exists: ${src}`);
       const exists = await checkVideoExists(src);
+      console.log(`Video file exists: ${exists}`);
       setFileExists(exists);
       
       // If file doesn't exist, trigger error handling
       if (!exists) {
+        console.error(`Video file not found: ${src}`);
         setHasError(true);
         
         if (onError) {
@@ -78,9 +98,24 @@ const EventVideo: React.FC<EventVideoProps> = ({
             timestamp: new Date().toISOString()
           });
         }
+      } else {
+        // Try a direct fetch with more details
+        try {
+          const response = await fetch(src);
+          const contentType = response.headers.get('content-type');
+          console.log(`Video content type: ${contentType}`);
+          if (response.ok) {
+            console.log(`Video fetch successful, status: ${response.status}`);
+          } else {
+            console.error(`Video fetch failed, status: ${response.status}`);
+          }
+        } catch (err) {
+          console.error('Error fetching video:', err);
+        }
       }
     };
     
+    testVideoCapabilities();
     verifyFileExists();
   }, [src, onError]);
   
