@@ -564,13 +564,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // since we have stored the data in the database
       const responseStatus = checkoutUrl ? 201 : 207; // Use 207 Multi-Status to indicate partial success
       
+      // Create response object with the proper properties
       const responseObj: any = {
         message: checkoutUrl 
           ? "Registration successful" 
           : "Registration saved but checkout creation failed",
         registration,
-        checkoutUrl
+        checkoutUrl // This property is used by the client
       };
+      
+      // Log the response being sent back to client
+      console.log('Sending registration response:', {
+        status: responseStatus,
+        checkoutUrl: checkoutUrl ? checkoutUrl.substring(0, 100) + '...' : null,
+        hasCheckoutUrl: !!checkoutUrl
+      });
       
       // If there was a Shopify error, include it in the response
       if (shopifyError && !checkoutUrl) {

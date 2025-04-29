@@ -1409,21 +1409,29 @@ export default function EventDetail() {
                   description: "Preparing your registration...",
                 });
                 
+                // Map form fields to match server expected format
+                const formData = {
+                  ...registrationForm,
+                  eventId: eventId,
+                  option: registrationForm.registrationType, // Map to the server-expected property name
+                };
+                
+                console.log('Submitting registration data:', formData);
+                
                 // Submit to backend API
                 const response = await fetch(`/api/events/${eventId}/register`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({
-                    ...registrationForm,
-                    eventId: eventId,
-                  }),
+                  body: JSON.stringify(formData),
                 });
                 
                 const data = await response.json();
+                console.log('Registration response received:', data);
                 
                 if (!response.ok) {
+                  console.error('Registration request failed:', response.status, data);
                   throw new Error(data.message || 'Failed to register');
                 }
                 
