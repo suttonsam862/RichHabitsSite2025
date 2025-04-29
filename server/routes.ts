@@ -414,8 +414,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Processing registration for event ${event.title}`, validatedData);
       
+      // Format data for different events; make sure day1, day2, day3 are boolean values
+      const registrationData = {
+        ...validatedData,
+        day1: validatedData.day1 === true,
+        day2: validatedData.day2 === true,
+        day3: validatedData.day3 === true
+      };
+      
+      console.log('Saving registration with data:', registrationData);
+      
       // Create event registration in our database
-      const registration = await storage.createEventRegistration(validatedData);
+      const registration = await storage.createEventRegistration(registrationData);
       
       // For registered events, get the Shopify checkout URL
       let checkoutUrl = null;
