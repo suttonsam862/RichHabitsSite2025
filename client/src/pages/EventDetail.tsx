@@ -982,7 +982,7 @@ export default function EventDetail() {
                   <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
                     <video 
                       className="w-full h-auto object-cover"
-                      src="/src/assets/videos/0424.mov"
+                      src="/assets/0424.mov"
                       autoPlay
                       loop
                       muted
@@ -997,7 +997,7 @@ export default function EventDetail() {
                     <div className="relative">
                       <video 
                         className="w-full h-auto"
-                        src="/src/assets/videos/0331.mov"
+                        src="/assets/0331.mov"
                         autoPlay
                         loop
                         muted
@@ -1017,7 +1017,7 @@ export default function EventDetail() {
                       <div className="relative">
                         <video 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                          src="/src/assets/videos/0425.mov"
+                          src="/assets/0425.mov"
                           autoPlay
                           loop
                           muted
@@ -1228,7 +1228,7 @@ export default function EventDetail() {
                       <div className="relative">
                         <video 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                          src="/src/assets/videos/0425.mov"
+                          src="/assets/0425.mov"
                           autoPlay
                           loop
                           muted
@@ -1280,7 +1280,7 @@ export default function EventDetail() {
                     <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
                     <video 
                       className="w-full h-auto object-cover relative z-10"
-                      src="/src/assets/videos/trcvid.mov"
+                      src="/assets/trcvid.mov"
                       autoPlay
                       loop
                       muted
@@ -1318,7 +1318,7 @@ export default function EventDetail() {
                       <div className="relative">
                         <video 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300 relative z-10"
-                          src="/src/assets/videos/0425.mov"
+                          src="/assets/0425.mov"
                           autoPlay
                           loop
                           muted
