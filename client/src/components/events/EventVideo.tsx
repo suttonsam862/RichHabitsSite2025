@@ -5,6 +5,7 @@ import {
   logMediaError, 
   MediaErrorData,
   inferMimeTypeFromExtension,
+  canBrowserPlayMedia
 } from '../../utils/mediaErrorUtils';
 
 // Helper functions
@@ -19,29 +20,9 @@ const checkVideoExists = async (url: string): Promise<boolean> => {
 };
 
 // Custom browser capability detection
-const canBrowserPlayFileType = (fileType: string): boolean => {
-  const video = document.createElement('video');
-  
-  // Try inferred MIME type
-  const mimeType = inferMimeTypeFromExtension(fileType);
-  if (mimeType) {
-    return video.canPlayType(mimeType) !== '';
-  }
-  
-  // If no MIME type could be inferred, do basic format check
-  if (fileType.match(/\.(mp4)$/i)) {
-    return video.canPlayType('video/mp4') !== '';
-  }
-  
-  if (fileType.match(/\.(webm)$/i)) {
-    return video.canPlayType('video/webm') !== '';
-  }
-  
-  if (fileType.match(/\.(ogg|ogv)$/i)) {
-    return video.canPlayType('video/ogg') !== '';
-  }
-  
-  return false;
+const canBrowserPlayFileType = (fileType: string): {canPlay: boolean, supportLevel: string} => {
+  // Use the improved function from utils
+  return canBrowserPlayMedia(fileType);
 };
 
 // Get browser supported video formats 
@@ -125,8 +106,15 @@ const EventVideo: React.FC<EventVideoProps> = ({
       console.log('Browser supported video formats:', supportedFormats);
       
       const fileExtension = src.split('.').pop()?.toLowerCase();
-      const canPlay = canBrowserPlayFileType(fileExtension || '');
+      const { canPlay, supportLevel } = canBrowserPlayFileType(fileExtension || '');
       console.log(`Can browser play ${fileExtension}?`, canPlay);
+      console.log(`Browser support level for ${fileExtension}: "${supportLevel}"`);
+      
+      if (supportLevel === 'maybe') {
+        console.warn(`[EventVideo] Browser reports limited "${supportLevel}" support for ${fileExtension} files. May not work in all situations.`);
+      } else if (supportLevel === 'probably') {
+        console.log(`[EventVideo] Browser reports strong "${supportLevel}" support for ${fileExtension} files.`);
+      }
       
       // Get MIME type and check it
       const mimeType = inferMimeTypeFromExtension(src);

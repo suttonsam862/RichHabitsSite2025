@@ -259,32 +259,54 @@ export function parseAudioError(audioElement: HTMLAudioElement): MediaErrorData 
 /**
  * Detect if a browser can play a specific file
  */
-export function canBrowserPlayMedia(fileType: string): boolean {
+export function canBrowserPlayMedia(fileType: string): {canPlay: boolean, supportLevel: string} {
   const video = document.createElement('video');
   const audio = document.createElement('audio');
+  let supportLevel = '';
+  let canPlay = false;
   
   // Video formats
   if (fileType.match(/^video\//)) {
-    return video.canPlayType(fileType) !== '';
+    supportLevel = video.canPlayType(fileType);
+    canPlay = supportLevel !== '';
+    return { canPlay, supportLevel };
   }
   
   // Audio formats
   if (fileType.match(/^audio\//)) {
-    return audio.canPlayType(fileType) !== '';
+    supportLevel = audio.canPlayType(fileType);
+    canPlay = supportLevel !== '';
+    return { canPlay, supportLevel };
   }
   
   // Try to infer type from extension
-  if (fileType.match(/\.(mp4|webm|ogg|mov)$/i)) {
+  if (fileType.match(/\.(mp4|webm|ogg)$/i)) {
     const mimeType = inferMimeTypeFromExtension(fileType);
-    return video.canPlayType(mimeType) !== '';
+    supportLevel = video.canPlayType(mimeType);
+    canPlay = supportLevel !== '';
+    return { canPlay, supportLevel };
+  }
+  
+  // Special handling for MOV files (less compatible)
+  if (fileType.match(/\.(mov)$/i)) {
+    const mimeType = inferMimeTypeFromExtension(fileType);
+    supportLevel = video.canPlayType(mimeType);
+    canPlay = supportLevel !== '';
+    
+    // Additional warning for MOV files
+    console.warn('[mediaErrorUtils] MOV files have limited browser support. Consider converting to MP4.');
+    
+    return { canPlay, supportLevel };
   }
   
   if (fileType.match(/\.(mp3|wav|aac|m4a|flac)$/i)) {
     const mimeType = inferMimeTypeFromExtension(fileType);
-    return audio.canPlayType(mimeType) !== '';
+    supportLevel = audio.canPlayType(mimeType);
+    canPlay = supportLevel !== '';
+    return { canPlay, supportLevel };
   }
   
-  return false;
+  return { canPlay: false, supportLevel: '' };
 }
 
 /**

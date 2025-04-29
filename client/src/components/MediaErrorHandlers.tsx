@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useRef, ComponentProps } from 'react';
 import MediaErrorBoundary from './MediaErrorBoundary';
+import { 
+  canBrowserPlayMedia, 
+  inferMimeTypeFromExtension, 
+  parseVideoError, 
+  parseImageError,
+  logMediaError 
+} from '../utils/mediaErrorUtils';
 
 // Types for the components
 type VideoWithErrorHandlingProps = ComponentProps<'video'> & {
@@ -59,21 +66,34 @@ function useMediaErrorHandler(mediaType: 'video' | 'image' | 'audio', src: strin
   
   const handleError = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     const mediaElement = event.currentTarget;
-    const error = mediaElement.error;
     
-    // Log detailed error information
-    const errorInfo = {
-      mediaType,
-      src,
-      errorCode: error ? error.code : 'unknown',
-      errorMessage: error ? error.message : 'Unknown error',
-      networkState: mediaElement.networkState,
-      readyState: mediaElement.readyState,
-      currentSrc: mediaElement.currentSrc,
-      timestamp: new Date().toISOString()
-    };
+    // Use our specialized error parsing utilities depending on media type
+    let errorInfo: MediaErrorData;
+    if (mediaType === 'video' && event.currentTarget instanceof HTMLVideoElement) {
+      errorInfo = parseVideoError(event.currentTarget);
+    } else if (mediaType === 'image' && event.currentTarget instanceof HTMLImageElement) {
+      // Cast to unknown first to avoid type issues
+      const imageEvent = event as unknown as React.SyntheticEvent<HTMLImageElement, Event>;
+      errorInfo = parseImageError(imageEvent);
+    } else {
+      // Fallback for other media types or in case of type mismatch
+      const error = mediaElement.error;
+      errorInfo = {
+        type: MediaErrorType.UNKNOWN,
+        mediaType: mediaType as 'video' | 'image' | 'audio' | 'general',
+        message: error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
+        url: src,
+        errorCode: error ? error.code : undefined,
+        networkState: mediaElement.networkState,
+        readyState: mediaElement.readyState,
+        retryable: true,
+        recommendations: ['Check the media source', 'Verify browser compatibility']
+      };
+    }
     
-    console.error(`${mediaType} load error:`, errorInfo);
+    // Log the error using our enhanced logging utility
+    logMediaError(errorInfo);
     
     setHasError(true);
     setIsLoading(false);
@@ -127,14 +147,20 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
         // Log any potential MIME type issues
         const fileExtension = src.split('.').pop()?.toLowerCase();
         if (fileExtension) {
-          const video = document.createElement('video');
+          // Use our enhanced capability detection
+          const mimeType = inferMimeTypeFromExtension(fileExtension);
+          const { canPlay, supportLevel } = canBrowserPlayMedia(fileExtension);
           
-          if (fileExtension === 'mp4') {
-            const canPlay = video.canPlayType('video/mp4');
-            console.log(`[MediaErrorHandlers] Browser reports MP4 support as: '${canPlay}'`);
-          } else if (fileExtension === 'webm') {
-            const canPlay = video.canPlayType('video/webm');
-            console.log(`[MediaErrorHandlers] Browser reports WebM support as: '${canPlay}'`);
+          console.log(`[MediaErrorHandlers] Browser can play ${fileExtension}: ${canPlay}`);
+          console.log(`[MediaErrorHandlers] Browser support level for ${fileExtension}: '${supportLevel}'`);
+          
+          if (mimeType) {
+            console.log(`[MediaErrorHandlers] Inferred MIME type: ${mimeType}`);
+          }
+          
+          // Special warning for MOV files - they have limited browser support
+          if (fileExtension === 'mov') {
+            console.warn(`[MediaErrorHandlers] MOV format has limited browser support. Consider converting to MP4.`);
           }
         }
       }
@@ -174,9 +200,11 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
           className={className}
           crossOrigin={!isLocalVideo ? "anonymous" : undefined}
           playsInline // Add playsInline attribute for better mobile support
+          preload={props.preload || "auto"} // Set preload to auto by default for better loading
           onError={handleError as any}
           onLoadedData={handleLoad}
           onLoadStart={() => console.log(`[MediaErrorHandlers] Video load started: ${src}`)}
+          onCanPlayThrough={() => console.log(`[MediaErrorHandlers] Video can play through completely: ${src}`)}
           onLoadedMetadata={() => {
             if (internalRef.current) {
               console.log(`[MediaErrorHandlers] Video metadata loaded. Duration: ${internalRef.current.duration}s`);
