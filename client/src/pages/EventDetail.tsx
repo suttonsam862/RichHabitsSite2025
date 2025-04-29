@@ -1293,16 +1293,17 @@ export default function EventDetail() {
                   {/* First Video */}
                   <div className="relative recruiting-border rounded-lg overflow-hidden mb-8 shadow-lg">
                     <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
-                    <video 
+                    <EventVideo 
                       className="w-full h-auto object-cover relative z-10"
                       src="/assets/0424.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
+                      autoplay={true}
+                      loop={true}
+                      muted={true}
+                      controls={false}
                       style={{ maxHeight: "360px" }}
-                      onPlay={(e) => { e.currentTarget.volume = 0; }}
-                    ></video>
+                      title="Texas Recruiting Clinic Highlights"
+                      onError={(error) => console.error("Video error:", error)}
+                    />
                     <div className="recruiting-stripe"></div>
                   </div>
                   
@@ -1331,15 +1332,16 @@ export default function EventDetail() {
                     <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
                     <a href="/events/1" className="block">
                       <div className="relative">
-                        <video 
+                        <EventVideo 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300 relative z-10"
-                          src="/assets/0424.mp4"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          onPlay={(e) => { e.currentTarget.volume = 0; }}
-                        ></video>
+                          src="/assets/slamcamp.mp4"
+                          autoplay={true}
+                          loop={true}
+                          muted={true}
+                          controls={false}
+                          title="Birmingham Slam Camp"
+                          onError={(error) => console.error("Video error in slam camp preview:", error)}
+                        />
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-20">
                           <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                             <span className="font-bold" style={{ color: '#ff6b00' }}>Visit Birmingham Slam Camp →</span>
