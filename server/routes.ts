@@ -540,6 +540,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.error('Error message:', error.message);
             console.error('Error stack:', error.stack);
           }
+          
+          // Improved error details for debugging
+          if (typeof error === 'object' && error !== null) {
+            const errorObj = error as any;
+            if (errorObj.response) {
+              try {
+                // If there's a GraphQL response with errors
+                console.error('GraphQL error details:', JSON.stringify(errorObj.response, null, 2));
+              } catch (e) {
+                console.error('Could not stringify error.response');
+              }
+            }
+          }
+          
           shopifyError = error;
           // We'll continue with the database registration but will return the error later
         }

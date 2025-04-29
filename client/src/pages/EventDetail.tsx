@@ -1451,22 +1451,33 @@ export default function EventDetail() {
                 
                 // Attempt to extract a more detailed error message
                 let errorMessage = "An unknown error occurred";
+                let errorDetails = {};
                 
                 if (error instanceof Error) {
                   errorMessage = error.message;
+                  console.log('Error message:', errorMessage);
                   
-                  // Check if the error message contains a JSON string with additional details
-                  if (error.message.includes('{') && error.message.includes('}')) {
+                  // Check if the error is from Shopify API
+                  if (errorMessage.includes('shopify') || errorMessage.includes('checkout')) {
+                    errorMessage = "There was an issue processing your registration with Shopify. Please try again.";
+                  }
+                  
+                  // Check if the error message contains JSON
+                  if (errorMessage.includes('{') && errorMessage.includes('}')) {
                     try {
-                      // Try to extract the JSON part from the error message
-                      const jsonMatch = error.message.match(/{.*}/);
-                      if (jsonMatch) {
-                        const errorDetails = JSON.parse(jsonMatch[0]);
+                      // Extract and parse any JSON in the error message
+                      const jsonRegex = /{[^{}]*({[^{}]*})*[^{}]*}/g;
+                      const jsonMatch = errorMessage.match(jsonRegex);
+                      
+                      if (jsonMatch && jsonMatch.length > 0) {
+                        errorDetails = JSON.parse(jsonMatch[0]);
                         console.log('Parsed error details:', errorDetails);
                         
-                        // Format a more user-friendly error message
-                        if (errorDetails.tags) {
-                          errorMessage = `Registration data format error: ${JSON.stringify(errorDetails)}`;
+                        // Create a more user-friendly error message
+                        if (errorDetails.error) {
+                          errorMessage = errorDetails.error;
+                        } else if (errorDetails.message) {
+                          errorMessage = errorDetails.message;
                         }
                       }
                     } catch (parseError) {
