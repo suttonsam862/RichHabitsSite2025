@@ -167,12 +167,32 @@ export default function Events() {
       
       // If checkout URL exists, redirect the user
       if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        // Otherwise just show success message
+        console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
+        // Use timeout to ensure toast is seen before redirect
         toast({
-          title: "Registration submitted!",
-          description: `You've registered for ${selectedEvent.title}. Check your email for confirmation.`,
+          title: "Registration successful!",
+          description: "Redirecting to secure checkout...",
+          duration: 3000
+        });
+        
+        // Slight delay to ensure toast is visible before redirect
+        setTimeout(() => {
+          window.location.href = data.checkoutUrl;
+        }, 1000);
+      } else {
+        // Otherwise show partial success message and info about the error
+        console.warn('Registration saved but checkout failed:', data);
+        
+        // Check if we have specific Shopify error info
+        const errorDetail = data.shopifyError 
+          ? `Error: ${data.shopifyError}` 
+          : 'The system could not generate a checkout link';
+        
+        toast({
+          title: "Registration saved",
+          description: `Your registration information was saved, but we couldn't create the checkout. ${errorDetail}. Please contact support.`,
+          variant: "destructive",
+          duration: 10000
         });
         
         setShowRegistrationDialog(false);

@@ -419,6 +419,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // For registered events, get the Shopify checkout URL
       let checkoutUrl = null;
+      let shopifyError = null;
+      
       if (eventId === 1 || eventId === 2 || eventId === 3 || eventId === 4) { // All events support Shopify checkout
         try {
           // Create a simplified mapping of event IDs to their keys
@@ -506,7 +508,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               applyDiscount
             );
             
-            console.log('Checkout created successfully');
+            console.log('Checkout created successfully:', checkout);
             
             if (checkout && checkout.webUrl) {
               checkoutUrl = checkout.webUrl;
@@ -517,24 +519,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           } catch (error) {
             console.error('Error in Shopify checkout creation:', error);
+            shopifyError = error;
             throw error; // Re-throw to be caught by outer try/catch
           }
-        } catch (shopifyError) {
-          console.error('Error creating Shopify checkout:', shopifyError);
-          if (shopifyError instanceof Error) {
-            console.error('Error message:', shopifyError.message);
-            console.error('Error stack:', shopifyError.stack);
+        } catch (error) {
+          console.error('Error creating Shopify checkout:', error);
+          if (error instanceof Error) {
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
           }
-          throw shopifyError; // Throw the error to return proper error response
+          shopifyError = error;
+          // We'll continue with the database registration but will return the error later
         }
       }
 
       
-      res.status(201).json({
-        message: "Registration successful",
+      // Even if checkout URL creation failed, we consider the registration successful
+      // since we have stored the data in the database
+      const responseStatus = checkoutUrl ? 201 : 207; // Use 207 Multi-Status to indicate partial success
+      
+      const responseObj: any = {
+        message: checkoutUrl 
+          ? "Registration successful" 
+          : "Registration saved but checkout creation failed",
         registration,
         checkoutUrl
-      });
+      };
+      
+      // If there was a Shopify error, include it in the response
+      if (shopifyError && !checkoutUrl) {
+        responseObj.shopifyError = shopifyError instanceof Error 
+          ? shopifyError.message 
+          : 'Unknown error creating checkout';
+        
+        console.warn('Returning registration without checkout URL due to error:', responseObj.shopifyError);
+      }
+      
+      res.status(responseStatus).json(responseObj);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid request data", errors: error.errors });

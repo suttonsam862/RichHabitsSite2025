@@ -484,40 +484,71 @@ export async function createEventRegistrationCheckout(
   // Try to use the more customized Admin API checkout first
   try {
     const customer = {
-      firstName: registrationData.firstName,
-      lastName: registrationData.lastName,
+      firstName: registrationData.contactName.split(' ')[0] || registrationData.firstName,
+      lastName: registrationData.contactName.split(' ').slice(1).join(' ') || registrationData.lastName,
       email: registrationData.email,
       phone: registrationData.phone || ''
     };
     
     console.log('Attempting to create custom checkout with Admin API...');
+    console.log('Product variant ID:', productVariantId);
+    console.log('Customer data:', JSON.stringify(customer, null, 2));
+    console.log('Custom attributes:', JSON.stringify(customAttributes, null, 2));
+    
     const checkout = await createCustomCheckout(productVariantId, 1, customer, customAttributes);
     
+    // Verify checkout URL presence
+    if (!checkout || !checkout.webUrl) {
+      console.error('Admin API checkout created but missing webUrl:', checkout);
+      throw new Error('Checkout created but missing redirect URL');
+    }
+    
+    console.log('Successfully created checkout with Admin API:', checkout.webUrl);
+    
     // If universal discount should be applied, we'll append the discount code to the checkout URL
-    if (applyDiscount && checkout && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
+    if (applyDiscount && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
       console.log('Applying universal discount code to checkout URL');
       const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
+      
       // Append the discount code parameter to the checkout URL
       const separator = checkout.webUrl.includes('?') ? '&' : '?';
       checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
+      console.log('Updated checkout URL with discount:', checkout.webUrl);
     }
     
     return checkout;
   } catch (error) {
     console.warn('Admin API checkout creation failed, falling back to Storefront API', error);
+    
     // Fall back to the regular Storefront API checkout if Admin API fails
-    const checkout = await createCheckout(productVariantId, 1, customAttributes);
-    
-    // If universal discount should be applied, we'll append the discount code to the checkout URL
-    if (applyDiscount && checkout && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
-      console.log('Applying universal discount code to checkout URL');
-      const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
-      // Append the discount code parameter to the checkout URL
-      const separator = checkout.webUrl.includes('?') ? '&' : '?';
-      checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
+    try {
+      console.log('Attempting fallback to Storefront API checkout...');
+      const checkout = await createCheckout(productVariantId, 1, customAttributes);
+      
+      // Verify checkout URL presence
+      if (!checkout || !checkout.webUrl) {
+        console.error('Storefront API checkout created but missing webUrl:', checkout);
+        throw new Error('Fallback checkout created but missing redirect URL');
+      }
+      
+      console.log('Successfully created fallback checkout with Storefront API:', checkout.webUrl);
+      
+      // If universal discount should be applied, we'll append the discount code to the checkout URL
+      if (applyDiscount && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
+        console.log('Applying universal discount code to checkout URL');
+        const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
+        
+        // Append the discount code parameter to the checkout URL
+        const separator = checkout.webUrl.includes('?') ? '&' : '?';
+        checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
+        console.log('Updated checkout URL with discount:', checkout.webUrl);
+      }
+      
+      return checkout;
+    } catch (fallbackError) {
+      console.error('Both checkout methods failed:', fallbackError);
+      throw new Error(`Failed to create checkout with both methods: ${error.message} and then ${fallbackError.message}`);
     }
-    
-    return checkout;
   }
 }
 

@@ -1712,15 +1712,24 @@ export default function EventDetail() {
                       console.log('Test checkout response:', data);
                       
                       if (data.checkoutUrl) {
+                        console.log('Test checkout URL created:', data.checkoutUrl);
                         toast({
                           title: "Test Checkout Created",
                           description: "Redirecting to Shopify checkout...",
+                          duration: 5000
                         });
-                        window.location.href = data.checkoutUrl;
+                        
+                        // Slight delay to ensure toast is visible before redirect
+                        setTimeout(() => {
+                          window.location.href = data.checkoutUrl;
+                        }, 1500);
                       } else {
+                        console.error('Test checkout failed - no URL returned:', data);
                         toast({
                           title: "Test Failed",
-                          description: "No checkout URL returned"
+                          description: "No checkout URL returned. See console for details.",
+                          variant: "destructive",
+                          duration: 7000
                         });
                       }
                     } catch (error) {
