@@ -1689,6 +1689,53 @@ export default function EventDetail() {
               >
                 {isSubmitting ? "Processing..." : "Complete Registration"}
               </Button>
+              
+              {/* Test button (only in development) */}
+              {import.meta.env.DEV && (
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`/api/events/${eventId}/test-register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          ...registrationForm,
+                          registrationType: registrationForm.registrationType, 
+                          firstName: "Test User",
+                          email: "test@example.com"
+                        })
+                      });
+                      
+                      const data = await response.json();
+                      console.log('Test checkout response:', data);
+                      
+                      if (data.checkoutUrl) {
+                        toast({
+                          title: "Test Checkout Created",
+                          description: "Redirecting to Shopify checkout...",
+                        });
+                        window.location.href = data.checkoutUrl;
+                      } else {
+                        toast({
+                          title: "Test Failed",
+                          description: "No checkout URL returned"
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Test error:', error);
+                      toast({
+                        title: "Test Failed",
+                        description: "Error creating test checkout",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  Test Registration
+                </Button>
+              )}
             </div>
           </form>
         </DialogContent>

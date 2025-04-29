@@ -417,39 +417,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create event registration in our database
       const registration = await storage.createEventRegistration(validatedData);
       
-      // For registered events, connect to Shopify checkout
+      // For registered events, get the Shopify checkout URL
       let checkoutUrl = null;
       if (eventId === 1 || eventId === 2 || eventId === 3 || eventId === 4) { // All events support Shopify checkout
         try {
-          let eventName, eventKey;
+          // Create a simplified mapping of event IDs to their keys
+          const eventKeyMap = {
+            1: 'birmingham-slam-camp',
+            2: 'national-champ-camp',
+            3: 'texas-recruiting-clinic',
+            4: 'cory-land-tour'
+          };
           
-          // Map event ID to the proper name and key
-          switch(event.id) {
-            case 1:
-              eventName = 'Birmingham Slam Camp';
-              eventKey = 'birmingham-slam-camp';
-              break;
-            case 2:
-              eventName = 'National Champ Camp';
-              eventKey = 'national-champ-camp';
-              break;
-            case 3:
-              eventName = 'Texas Recruiting Clinic';
-              eventKey = 'texas-recruiting-clinic';
-              break;
-            case 4:
-              eventName = 'Cory Land Tour';
-              eventKey = 'cory-land-tour';
-              break;
-            default:
-              eventName = 'Unknown Event';
-              eventKey = 'birmingham-slam-camp'; // Default fallback
-          }
+          const eventKey = eventKeyMap[eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
+          const eventName = event.title;
           
           // Type safety for event keys
           const validEventKey = eventKey as keyof typeof EVENT_PRODUCTS;
           
           console.log(`Creating Shopify checkout for ${eventName}...`);
+          
+          // Determine which product variant to use based on registration type
+          let variantId = '';
+          if (validatedData.registrationType === 'full') {
+            variantId = EVENT_PRODUCTS[validEventKey]?.fullCamp?.variantId || '';
+            console.log('Using full camp variant ID:', variantId);
+          } else {
+            variantId = EVENT_PRODUCTS[validEventKey]?.singleDay?.variantId || '';
+            console.log('Using single day variant ID:', variantId);
+          }
+          
+          if (!variantId) {
+            console.error('No Shopify variant ID configured for this event registration type');
+            throw new Error('No Shopify variant ID configured for this event registration type');
+          }
+          
+          // For Cory Land Tour, validate day selection for single-day registrations
+          if (eventId === 4 && validatedData.registrationType === 'single') {
+            const anyDaySelected = validatedData.day1 || validatedData.day2 || validatedData.day3;
+            if (!anyDaySelected) {
+              return res.status(400).json({ 
+                message: "Please select at least one day for the Cory Land Tour single day registration" 
+              });
+            }
+          }
+          
           // Format the registration data for Shopify
           const registrationData: EventRegistrationData = {
             firstName: validatedData.firstName,
@@ -470,40 +482,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
             registrationData.day1 = validatedData.day1 || false;
             registrationData.day2 = validatedData.day2 || false;
             registrationData.day3 = validatedData.day3 || false;
-            
-            // Validate that at least one day is selected for single day registration
-            if (validatedData.registrationType === 'single' && 
-                !registrationData.day1 && !registrationData.day2 && !registrationData.day3) {
-              return res.status(400).json({ 
-                message: "Please select at least one day for the Cory Land Tour single day registration" 
-              });
-            }
-          }
-          console.log('Registration data prepared:', JSON.stringify(registrationData));
-          
-          // Determine which product variant to use based on registration type
-          let variantId = '';
-          if (validatedData.registrationType === 'full') {
-            variantId = EVENT_PRODUCTS[validEventKey]?.fullCamp?.variantId || '';
-            console.log('Using full camp variant ID:', variantId);
-          } else {
-            variantId = EVENT_PRODUCTS[validEventKey]?.singleDay?.variantId || '';
-            console.log('Using single day variant ID:', variantId);
           }
           
-          // If we have a valid variantId, create a checkout in Shopify
-          if (variantId) {
-            console.log('Creating checkout with variant ID:', variantId);
-            
-            // Check for applyDiscount in request or body
-            const applyDiscount = req.query.applyDiscount === 'true' || 
-                                  req.body.applyDiscount === true;
-            
-            // Log when the discount code is applied
-            if (applyDiscount) {
-              console.log('Will apply universal discount code to checkout URL');
-            }
-            
+          console.log('Registration data prepared:', JSON.stringify(registrationData, null, 2));
+          
+          // Create checkout in Shopify
+          console.log('Creating checkout with variant ID:', variantId);
+          
+          // Check for discount
+          const applyDiscount = req.query.applyDiscount === 'true' || 
+                                req.body.applyDiscount === true;
+          
+          if (applyDiscount) {
+            console.log('Will apply universal discount code to checkout URL');
+          }
+          
+          // Create checkout with more error handling
+          try {
             const checkout = await createEventRegistrationCheckout(
               eventId.toString(),
               variantId,
@@ -511,16 +506,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
               applyDiscount
             );
             
-            console.log('Checkout response received:', JSON.stringify(checkout));
+            console.log('Checkout created successfully');
             
             if (checkout && checkout.webUrl) {
               checkoutUrl = checkout.webUrl;
               console.log('Checkout URL created:', checkoutUrl);
             } else {
-              console.warn('No webUrl in checkout response');
+              console.error('No webUrl in checkout response');
+              throw new Error('No checkout URL returned from Shopify');
             }
-          } else {
-            console.warn('No Shopify variant ID configured for this event registration type');
+          } catch (error) {
+            console.error('Error in Shopify checkout creation:', error);
+            throw error; // Re-throw to be caught by outer try/catch
           }
         } catch (shopifyError) {
           console.error('Error creating Shopify checkout:', shopifyError);
@@ -528,7 +525,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.error('Error message:', shopifyError.message);
             console.error('Error stack:', shopifyError.stack);
           }
-          // Continue with registration process even if Shopify checkout fails
+          throw shopifyError; // Throw the error to return proper error response
         }
       }
 
@@ -620,6 +617,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // API route to test event registration checkout directly
+  app.post("/api/events/:id/test-register", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const eventId = parseInt(id);
+      
+      console.log(`Test registration for event ID ${eventId}`, req.body);
+      
+      // Use a simplified event registration form
+      const registrationData: EventRegistrationData = {
+        firstName: req.body.firstName || "Test",
+        lastName: req.body.lastName || "User",
+        contactName: req.body.contactName || "Parent Name",
+        email: req.body.email || "test@example.com",
+        phone: req.body.phone || "123-456-7890",
+        tShirtSize: req.body.tShirtSize || "AL",
+        grade: req.body.grade || "10th",
+        schoolName: req.body.schoolName || "Test School",
+        clubName: req.body.clubName || "Test Club",
+        medicalReleaseAccepted: true,
+        option: (req.body.registrationType === 'full' ? 'full' : 'single') as 'full' | 'single',
+        day1: req.body.day1 || false,
+        day2: req.body.day2 || false,
+        day3: req.body.day3 || false
+      };
+      
+      // Create a simplified mapping of event IDs to their keys
+      const eventKeyMap = {
+        1: 'birmingham-slam-camp',
+        2: 'national-champ-camp',
+        3: 'texas-recruiting-clinic',
+        4: 'cory-land-tour'
+      };
+      
+      const eventKey = eventKeyMap[eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
+      
+      // Type safety for event keys
+      const validEventKey = eventKey as keyof typeof EVENT_PRODUCTS;
+      
+      // Determine which product variant to use based on registration type
+      let variantId = '';
+      if (req.body.registrationType === 'full') {
+        variantId = EVENT_PRODUCTS[validEventKey]?.fullCamp?.variantId || '';
+      } else {
+        variantId = EVENT_PRODUCTS[validEventKey]?.singleDay?.variantId || '';
+      }
+      
+      if (!variantId) {
+        return res.status(400).json({ message: "No valid variant ID found for this registration type" });
+      }
+      
+      // Create checkout in Shopify
+      console.log('Test API: Creating checkout with variant ID:', variantId);
+      
+      const checkout = await createEventRegistrationCheckout(
+        eventId.toString(),
+        variantId,
+        registrationData,
+        false // don't apply discount for test
+      );
+      
+      res.json({
+        message: "Test registration checkout created",
+        checkoutUrl: checkout.webUrl,
+        registrationData
+      });
+    } catch (error) {
+      console.error('Error in test registration:', error);
+      res.status(500).json({ 
+        message: "Error creating test registration checkout", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+
   // Test endpoint for Shopify
   app.all("/api/test-shopify-checkout", async (req, res) => {
     try {
