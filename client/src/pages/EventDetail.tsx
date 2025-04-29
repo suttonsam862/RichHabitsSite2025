@@ -1206,30 +1206,32 @@ export default function EventDetail() {
                   
                   {/* First Video */}
                   <div className="relative rounded-lg overflow-hidden mb-8 shadow-lg">
-                    <video 
+                    <EventVideo 
                       className="w-full h-auto object-cover"
-                      src="/assets/0424.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
+                      src="/assets/0405.mp4"
+                      autoplay={true}
+                      loop={true}
+                      muted={true}
+                      controls={false}
                       style={{ maxHeight: "360px" }}
-                      onPlay={(e) => { e.currentTarget.volume = 0; }}
-                    ></video>
+                      title="Camp Experience Video"
+                      onError={(error) => console.error("Video error in camp experience:", error)}
+                    />
                   </div>
                   
                   {/* Featured Camp Video */}
                   <div className="mb-8 rounded-xl overflow-hidden shadow-lg border-2 border-[#041e42]">
                     <div className="relative">
-                      <video 
+                      <EventVideo 
                         className="w-full h-auto"
                         src="/assets/0331.mp4"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        onPlay={(e) => { e.currentTarget.volume = 0; }}
-                      ></video>
+                        autoplay={true}
+                        loop={true}
+                        muted={true}
+                        controls={false}
+                        title="National Champ Camp Highlights"
+                        onError={(error) => console.error("Video error in national champ camp:", error)}
+                      />
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#041e42]/80 to-transparent p-4">
                         <h4 className="text-white font-bold text-lg">National Champ Camp Highlights</h4>
                         <p className="text-white/80 text-sm">Experience the intensity and focus of Penn State champion training</p>
@@ -1241,15 +1243,16 @@ export default function EventDetail() {
                   <div className="mb-8 rounded-xl overflow-hidden shadow-lg cursor-pointer group relative">
                     <a href="/events/1" className="block">
                       <div className="relative">
-                        <video 
+                        <EventVideo 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                          src="/assets/0424.mp4"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          onPlay={(e) => { e.currentTarget.volume = 0; }}
-                        ></video>
+                          src="/assets/slamcamp.mp4"
+                          autoplay={true}
+                          loop={true}
+                          muted={true}
+                          controls={false}
+                          title="Birmingham Slam Camp Preview"
+                          onError={(error) => console.error("Video error in slam camp preview:", error)}
+                        />
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                           <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                             <span className="font-bold text-[#ff6b00]">Visit Birmingham Slam Camp →</span>

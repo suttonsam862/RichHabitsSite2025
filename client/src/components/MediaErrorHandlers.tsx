@@ -131,7 +131,16 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
       <MediaErrorBoundary 
         mediaType="video"
         fallback={fallback || defaultFallback}
-        onError={onError}
+        onError={(error, errorInfo) => {
+          // This wrapper safely converts the potentially incompatible onError prop
+          if (typeof onError === 'function') {
+            try {
+              onError(error, errorInfo);
+            } catch (conversionError) {
+              console.error('Error in onError handler:', conversionError);
+            }
+          }
+        }}
       >
         <video
           ref={combinedRef}
@@ -178,7 +187,16 @@ export const ImageWithErrorHandling: React.FC<ImageWithErrorHandlingProps> = ({
     <MediaErrorBoundary 
       mediaType="image"
       fallback={fallback || defaultFallback}
-      onError={onError}
+      onError={(error, errorInfo) => {
+        // This wrapper safely converts the potentially incompatible onError prop
+        if (typeof onError === 'function') {
+          try {
+            onError(error, errorInfo);
+          } catch (conversionError) {
+            console.error('Error in onError handler:', conversionError);
+          }
+        }
+      }}
     >
       <img
         src={src}
@@ -221,7 +239,16 @@ export const AudioWithErrorHandling: React.FC<AudioWithErrorHandlingProps> = ({
     <MediaErrorBoundary 
       mediaType="audio"
       fallback={fallback || defaultFallback}
-      onError={onError}
+      onError={(error, errorInfo) => {
+        // This wrapper safely converts the potentially incompatible onError prop
+        if (typeof onError === 'function') {
+          try {
+            onError(error, errorInfo);
+          } catch (conversionError) {
+            console.error('Error in onError handler:', conversionError);
+          }
+        }
+      }}
     >
       <audio
         src={src}
