@@ -3,13 +3,11 @@ import { VideoWithErrorHandling } from '../MediaErrorHandlers';
 import { 
   parseVideoError, 
   logMediaError, 
-  MediaErrorData, 
-  canBrowserPlayMedia,
-  getSupportedMediaFormats,
-  checkResourceExists
+  MediaErrorData,
+  inferMimeTypeFromExtension,
 } from '../../utils/mediaErrorUtils';
 
-// Helper function to check if a video file actually exists on the server
+// Helper functions
 const checkVideoExists = async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url, { method: 'HEAD' });
@@ -18,6 +16,49 @@ const checkVideoExists = async (url: string): Promise<boolean> => {
     console.error('Error checking video existence:', error);
     return false;
   }
+};
+
+// Custom browser capability detection
+const canBrowserPlayFileType = (fileType: string): boolean => {
+  const video = document.createElement('video');
+  
+  // Try inferred MIME type
+  const mimeType = inferMimeTypeFromExtension(fileType);
+  if (mimeType) {
+    return video.canPlayType(mimeType) !== '';
+  }
+  
+  // If no MIME type could be inferred, do basic format check
+  if (fileType.match(/\.(mp4)$/i)) {
+    return video.canPlayType('video/mp4') !== '';
+  }
+  
+  if (fileType.match(/\.(webm)$/i)) {
+    return video.canPlayType('video/webm') !== '';
+  }
+  
+  if (fileType.match(/\.(ogg|ogv)$/i)) {
+    return video.canPlayType('video/ogg') !== '';
+  }
+  
+  return false;
+};
+
+// Get browser supported video formats 
+const getSupportedVideoFormats = (): string[] => {
+  const video = document.createElement('video');
+  
+  // Test video formats
+  const videoFormats = [
+    { type: 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"', shortName: 'mp4 (H.264)' },
+    { type: 'video/webm; codecs="vp8, vorbis"', shortName: 'webm (VP8)' },
+    { type: 'video/webm; codecs="vp9"', shortName: 'webm (VP9)' },
+    { type: 'video/ogg; codecs="theora"', shortName: 'ogg' }
+  ];
+  
+  return videoFormats
+    .filter(format => video.canPlayType(format.type) !== '')
+    .map(format => format.shortName);
 };
 
 interface EventVideoProps {
@@ -67,24 +108,34 @@ const EventVideo: React.FC<EventVideoProps> = ({
     
     // Test browser video capabilities
     const testVideoCapabilities = () => {
-      const supportedFormats = getSupportedMediaFormats();
-      console.log('Browser supported video formats:', supportedFormats.video);
+      const supportedFormats = getSupportedVideoFormats();
+      console.log('Browser supported video formats:', supportedFormats);
       
       const fileExtension = src.split('.').pop()?.toLowerCase();
-      const canPlay = canBrowserPlayMedia(fileExtension || '');
+      const canPlay = canBrowserPlayFileType(fileExtension || '');
       console.log(`Can browser play ${fileExtension}?`, canPlay);
+      
+      // Get MIME type and check it
+      const mimeType = inferMimeTypeFromExtension(src);
+      console.log(`Inferred MIME type for ${src}: ${mimeType}`);
+      
+      if (mimeType) {
+        const video = document.createElement('video');
+        const canPlayType = video.canPlayType(mimeType);
+        console.log(`Browser canPlayType response for ${mimeType}: '${canPlayType}'`);
+      }
     };
     
     // Check if the video file exists
     const verifyFileExists = async () => {
-      console.log(`Checking if video exists: ${src}`);
+      console.log(`[EventVideo] Checking if video exists: ${src}`);
       const exists = await checkVideoExists(src);
-      console.log(`Video file exists: ${exists}`);
+      console.log(`[EventVideo] Video file exists: ${exists}`);
       setFileExists(exists);
       
       // If file doesn't exist, trigger error handling
       if (!exists) {
-        console.error(`Video file not found: ${src}`);
+        console.error(`[EventVideo] Video file not found: ${src}`);
         setHasError(true);
         
         if (onError) {
@@ -103,14 +154,26 @@ const EventVideo: React.FC<EventVideoProps> = ({
         try {
           const response = await fetch(src);
           const contentType = response.headers.get('content-type');
-          console.log(`Video content type: ${contentType}`);
+          console.log(`[EventVideo] Video content type: ${contentType}`);
           if (response.ok) {
-            console.log(`Video fetch successful, status: ${response.status}`);
+            console.log(`[EventVideo] Video fetch successful, status: ${response.status}`);
+            
+            // Test if the video element can actually play the video
+            if (videoRef.current) {
+              console.log(`[EventVideo] Testing video playback capabilities for: ${src}`);
+              videoRef.current.onloadedmetadata = () => {
+                console.log(`[EventVideo] Video metadata loaded successfully. Duration: ${videoRef.current?.duration}s`);
+              };
+              videoRef.current.oncanplay = () => {
+                console.log(`[EventVideo] Video can be played now`);
+                setIsPlaying(true);
+              };
+            }
           } else {
-            console.error(`Video fetch failed, status: ${response.status}`);
+            console.error(`[EventVideo] Video fetch failed, status: ${response.status}`);
           }
         } catch (err) {
-          console.error('Error fetching video:', err);
+          console.error('[EventVideo] Error fetching video:', err);
         }
       }
     };

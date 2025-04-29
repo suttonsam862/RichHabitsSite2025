@@ -114,6 +114,31 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
         (ref as React.MutableRefObject<HTMLVideoElement>).current = element;
       }
     };
+
+    // Check if we're using a local or remote video
+    const isLocalVideo = src?.startsWith('/') || src?.startsWith('./') || src?.startsWith('../');
+    
+    // Diagnostic logging
+    useEffect(() => {
+      if (src) {
+        console.log(`[MediaErrorHandlers] Video source: ${src}`);
+        console.log(`[MediaErrorHandlers] Is local video: ${isLocalVideo}`);
+        
+        // Log any potential MIME type issues
+        const fileExtension = src.split('.').pop()?.toLowerCase();
+        if (fileExtension) {
+          const video = document.createElement('video');
+          
+          if (fileExtension === 'mp4') {
+            const canPlay = video.canPlayType('video/mp4');
+            console.log(`[MediaErrorHandlers] Browser reports MP4 support as: '${canPlay}'`);
+          } else if (fileExtension === 'webm') {
+            const canPlay = video.canPlayType('video/webm');
+            console.log(`[MediaErrorHandlers] Browser reports WebM support as: '${canPlay}'`);
+          }
+        }
+      }
+    }, [src, isLocalVideo]);
     
     // Custom fallback UI for video errors
     const defaultFallback = (
@@ -123,6 +148,7 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
           <p className="text-gray-600">Video could not be loaded</p>
+          {src && <p className="text-xs text-gray-500 mt-1">{src.split('/').pop()}</p>}
         </div>
       </div>
     );
@@ -146,8 +172,16 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
           ref={combinedRef}
           src={src}
           className={className}
+          crossOrigin={!isLocalVideo ? "anonymous" : undefined}
+          playsInline // Add playsInline attribute for better mobile support
           onError={handleError as any}
           onLoadedData={handleLoad}
+          onLoadStart={() => console.log(`[MediaErrorHandlers] Video load started: ${src}`)}
+          onLoadedMetadata={() => {
+            if (internalRef.current) {
+              console.log(`[MediaErrorHandlers] Video metadata loaded. Duration: ${internalRef.current.duration}s`);
+            }
+          }}
           {...props}
         >
           {children}
