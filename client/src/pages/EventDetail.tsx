@@ -1073,8 +1073,8 @@ export default function EventDetail() {
                             </svg>
                           </div>
                           <div>
-                            <span className="font-medium text-white">Day 1: July 10, 2025</span>
-                            <p className="text-purple-200 text-sm mt-1">Focus on neutral position techniques and setups</p>
+                            <span className="font-medium text-white">Day 1: July 23, 2025</span>
+                            <p className="text-purple-200 text-sm mt-1">Athens High School - Focus on neutral position techniques and setups</p>
                           </div>
                         </li>
                         <li className="flex items-start">
@@ -1085,8 +1085,8 @@ export default function EventDetail() {
                             </svg>
                           </div>
                           <div>
-                            <span className="font-medium text-white">Day 2: July 11, 2025</span>
-                            <p className="text-purple-200 text-sm mt-1">Focus on mat wrestling and top position control</p>
+                            <span className="font-medium text-white">Day 2: July 24, 2025</span>
+                            <p className="text-purple-200 text-sm mt-1">Ironclad Wrestling Club - Focus on mat wrestling and top position control</p>
                           </div>
                         </li>
                         <li className="flex items-start">
@@ -1097,8 +1097,8 @@ export default function EventDetail() {
                             </svg>
                           </div>
                           <div>
-                            <span className="font-medium text-white">Day 3: July 12, 2025</span>
-                            <p className="text-purple-200 text-sm mt-1">Focus on bottom position escapes and advanced techniques</p>
+                            <span className="font-medium text-white">Day 3: July 25, 2025</span>
+                            <p className="text-purple-200 text-sm mt-1">South AL Location (TBD) - Focus on bottom position escapes and advanced techniques</p>
                           </div>
                         </li>
                       </ul>
@@ -1349,7 +1349,115 @@ export default function EventDetail() {
             Complete the form below to register for this event. All fields are required unless marked as optional.
           </DialogDescription>
           
-          <form className="space-y-6 mt-4">
+          <form 
+            className="space-y-6 mt-4" 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              
+              // Validate the form data
+              const requiredFields = [
+                { field: 'firstName', label: 'First Name' },
+                { field: 'lastName', label: 'Last Name' },
+                { field: 'contactName', label: 'Parent/Guardian Name' },
+                { field: 'email', label: 'Email' },
+                { field: 'tShirtSize', label: 'T-Shirt Size' },
+                { field: 'grade', label: 'Grade' },
+                { field: 'schoolName', label: 'School Name' }
+              ];
+              
+              const missingFields = requiredFields.filter(
+                ({ field }) => !registrationForm[field as keyof typeof registrationForm]
+              );
+              
+              if (missingFields.length > 0) {
+                toast({
+                  title: "Missing Information",
+                  description: `Please fill in all required fields: ${missingFields.map(f => f.label).join(', ')}`,
+                  variant: "destructive"
+                });
+                return;
+              }
+              
+              if (!registrationForm.medicalReleaseAccepted) {
+                toast({
+                  title: "Medical Release Required",
+                  description: "You must accept the medical release waiver to register",
+                  variant: "destructive"
+                });
+                return;
+              }
+              
+              // Validate day selection for Cory Land Tour
+              if (event.id === 4 && registrationForm.registrationType === 'single') {
+                const daySelected = registrationForm.day1 || registrationForm.day2 || registrationForm.day3;
+                if (!daySelected) {
+                  toast({
+                    title: "Day Selection Required",
+                    description: "Please select at least one day for the Cory Land Tour",
+                    variant: "destructive"
+                  });
+                  return;
+                }
+              }
+              
+              try {
+                setIsSubmitting(true);
+                
+                // Notify user we're processing
+                toast({
+                  title: "Registration In Progress",
+                  description: "Preparing your registration...",
+                });
+                
+                // Submit to backend API
+                const response = await fetch(`/api/events/${eventId}/register`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    ...registrationForm,
+                    eventId: eventId,
+                  }),
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                  throw new Error(data.message || 'Failed to register');
+                }
+                
+                if (data.checkoutUrl) {
+                  // Registration successful, redirect to checkout
+                  toast({
+                    title: "Registration Successful",
+                    description: "Taking you to the secure payment page...",
+                  });
+                  
+                  // Close dialog and redirect after a short delay
+                  setTimeout(() => {
+                    setShowRegistrationDialog(false);
+                    window.location.href = data.checkoutUrl;
+                  }, 1500);
+                } else {
+                  toast({
+                    title: "Registration Received",
+                    description: "Your registration has been submitted, but payment processing is currently unavailable.",
+                  });
+                  setShowRegistrationDialog(false);
+                }
+              } catch (error) {
+                console.error('Registration error:', error);
+                toast({
+                  title: "Registration Failed",
+                  description: error instanceof Error ? error.message : "An unknown error occurred",
+                  variant: "destructive"
+                });
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
@@ -1358,6 +1466,7 @@ export default function EventDetail() {
                   value={registrationForm.firstName}
                   onChange={(e) => setRegistrationForm({...registrationForm, firstName: e.target.value})}
                   placeholder="First name" 
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -1575,114 +1684,10 @@ export default function EventDetail() {
                 Cancel
               </Button>
               <Button 
-                type="button" 
+                type="submit" 
                 disabled={isSubmitting}
-                onClick={async () => {
-                  // Validate the form data
-                  const requiredFields = [
-                    { field: 'firstName', label: 'First Name' },
-                    { field: 'lastName', label: 'Last Name' },
-                    { field: 'contactName', label: 'Parent/Guardian Name' },
-                    { field: 'email', label: 'Email' },
-                    { field: 'tShirtSize', label: 'T-Shirt Size' },
-                    { field: 'grade', label: 'Grade' },
-                    { field: 'schoolName', label: 'School Name' }
-                  ];
-                  
-                  const missingFields = requiredFields.filter(
-                    ({ field }) => !registrationForm[field as keyof typeof registrationForm]
-                  );
-                  
-                  if (missingFields.length > 0) {
-                    toast({
-                      title: "Missing Information",
-                      description: `Please fill in all required fields: ${missingFields.map(f => f.label).join(', ')}`,
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-                  
-                  if (!registrationForm.medicalReleaseAccepted) {
-                    toast({
-                      title: "Medical Release Required",
-                      description: "You must accept the medical release waiver to register",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-                  
-                  // Validate day selection for Cory Land Tour
-                  if (event.id === 4 && registrationForm.registrationType === 'single') {
-                    const daySelected = registrationForm.day1 || registrationForm.day2 || registrationForm.day3;
-                    if (!daySelected) {
-                      toast({
-                        title: "Day Selection Required",
-                        description: "Please select at least one day for the Cory Land Tour",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-                  }
-                  
-                  try {
-                    setIsSubmitting(true);
-                    
-                    // Notify user we're processing
-                    toast({
-                      title: "Registration In Progress",
-                      description: "Preparing your registration...",
-                    });
-                    
-                    // Submit to backend API
-                    const response = await fetch(`/api/events/${eventId}/register`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        ...registrationForm,
-                        eventId: eventId,
-                      }),
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (!response.ok) {
-                      throw new Error(data.message || 'Failed to register');
-                    }
-                    
-                    if (data.checkoutUrl) {
-                      // Registration successful, redirect to checkout
-                      toast({
-                        title: "Registration Successful",
-                        description: "Taking you to the secure payment page...",
-                      });
-                      
-                      // Close dialog and redirect after a short delay
-                      setTimeout(() => {
-                        setShowRegistrationDialog(false);
-                        window.location.href = data.checkoutUrl;
-                      }, 1500);
-                    } else {
-                      toast({
-                        title: "Registration Received",
-                        description: "Your registration has been submitted, but payment processing is currently unavailable.",
-                      });
-                      setShowRegistrationDialog(false);
-                    }
-                  } catch (error) {
-                    console.error('Registration error:', error);
-                    toast({
-                      title: "Registration Failed",
-                      description: error instanceof Error ? error.message : "An unknown error occurred",
-                      variant: "destructive"
-                    });
-                  } finally {
-                    setIsSubmitting(false);
-                  }
-                }}
               >
-                Complete Registration
+                {isSubmitting ? "Processing..." : "Complete Registration"}
               </Button>
             </div>
           </form>
