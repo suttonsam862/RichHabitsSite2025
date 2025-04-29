@@ -4,14 +4,14 @@ import MediaErrorBoundary from './MediaErrorBoundary';
 // Types for the components
 type VideoWithErrorHandlingProps = ComponentProps<'video'> & {
   fallback?: React.ReactNode;
-  onError?: (error: Error, info: React.ErrorInfo) => void;
+  onError?: React.ReactEventHandler<HTMLVideoElement> | ((error: Error, info: React.ErrorInfo) => void);
   errorMessage?: string;
   className?: string;
 };
 
 type ImageWithErrorHandlingProps = ComponentProps<'img'> & {
   fallback?: React.ReactNode;
-  onError?: (error: Error, info: React.ErrorInfo) => void;
+  onError?: React.ReactEventHandler<HTMLImageElement> | ((error: Error, info: React.ErrorInfo) => void);
   errorMessage?: string;
   placeholderSrc?: string;
   className?: string;
@@ -19,7 +19,7 @@ type ImageWithErrorHandlingProps = ComponentProps<'img'> & {
 
 type AudioWithErrorHandlingProps = ComponentProps<'audio'> & {
   fallback?: React.ReactNode;
-  onError?: (error: Error, info: React.ErrorInfo) => void;
+  onError?: React.ReactEventHandler<HTMLAudioElement> | ((error: Error, info: React.ErrorInfo) => void);
   errorMessage?: string;
   className?: string;
 };

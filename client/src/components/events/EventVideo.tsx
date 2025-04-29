@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { VideoWithErrorHandling } from '../MediaErrorHandlers';
-import { parseVideoError, logMediaError } from '../../utils/mediaErrorUtils';
+import { parseVideoError, logMediaError, MediaErrorData } from '../../utils/mediaErrorUtils';
 
 interface EventVideoProps {
   src: string;
@@ -12,7 +12,8 @@ interface EventVideoProps {
   loop?: boolean;
   preload?: 'auto' | 'metadata' | 'none';
   title?: string;
-  onError?: (error: any) => void;
+  onError?: (error: MediaErrorData | any) => void;
+  style?: CSSProperties;
 }
 
 /**
@@ -28,7 +29,8 @@ const EventVideo: React.FC<EventVideoProps> = ({
   loop = false,
   preload = 'metadata',
   title,
-  onError
+  onError,
+  style
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -132,6 +134,7 @@ const EventVideo: React.FC<EventVideoProps> = ({
       preload={preload}
       onError={handleVideoError}
       fallback={hasError ? fallbackUI : undefined}
+      style={style}
     >
       Your browser does not support HTML5 video.
     </VideoWithErrorHandling>

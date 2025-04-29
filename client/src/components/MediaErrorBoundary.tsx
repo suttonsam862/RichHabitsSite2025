@@ -106,7 +106,7 @@ class MediaErrorBoundary extends Component<Props, State> {
   
   private isMediaRelatedError(error: Error, errorInfo: ErrorInfo): boolean {
     const errorMessage = error.message.toLowerCase();
-    const stackTrace = errorInfo.componentStack.toLowerCase();
+    const stackTrace = errorInfo.componentStack?.toLowerCase() || '';
     
     const mediaErrorKeywords = [
       'video', 'image', 'audio', 'media', 'src', 'source', 'load',
