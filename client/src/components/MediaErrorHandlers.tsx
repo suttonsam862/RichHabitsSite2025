@@ -5,7 +5,9 @@ import {
   inferMimeTypeFromExtension, 
   parseVideoError, 
   parseImageError,
-  logMediaError 
+  logMediaError,
+  MediaErrorData,
+  MediaErrorType
 } from '../utils/mediaErrorUtils';
 
 // Types for the components

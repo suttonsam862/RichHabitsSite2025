@@ -679,8 +679,11 @@ export async function createEventRegistrationCheckout(
     console.log('Product variant ID:', productVariantId);
     console.log('Customer data:', JSON.stringify(customer, null, 2));
     console.log('Custom attributes:', JSON.stringify(customAttributes, null, 2));
+    if (price) {
+      console.log('Price override for checkout:', price);
+    }
     
-    const checkout = await createCustomCheckout(productVariantId, 1, customer, customAttributes);
+    const checkout = await createCustomCheckout(productVariantId, 1, customer, customAttributes, price);
     
     // Verify checkout URL presence
     if (!checkout || !checkout.webUrl) {
