@@ -312,7 +312,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: 4,
           title: "Cory Land Tour",
           category: "Wrestling",
-          date: "July 10-12, 2025",
+          date: "July 23-25, 2025",
           time: "9:00 AM - 4:00 PM",
           location: "Multiple Locations Across Alabama",
           description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
@@ -351,18 +351,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
         eventId
       });
       
-      // Get the event to check if it exists
-      const event = await storage.getEvent(eventId);
-      if (!event) {
-        return res.status(404).json({ message: "Event not found" });
+      // Define event - get from db or use special case data
+      let event;
+      
+      // Special cases for events that might not be in the database yet
+      if (eventId === 2) { // National Champ Camp
+        event = {
+          id: 2,
+          title: "National Champ Camp",
+          category: "Wrestling",
+          date: "June 4-7, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Rancho High School, Las Vegas",
+          description: "The flagship wrestling camp led by NCAA Champions from Penn State. Features technique sessions, live wrestling, and mental preparation workshops. Special spotlight matches for all participants.",
+          price: "$349 full camp, $175 per day",
+          shopifyProductId: "national-champ-camp",
+          image: "/assets/image_1745552776326.png",
+          maxParticipants: 200,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+      } else if (eventId === 3) { // Texas Recruiting Clinic 
+        event = {
+          id: 3,
+          title: "Texas Recruiting Clinic",
+          category: "Wrestling",
+          date: "June 12-13, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Arlington Martin High School, Texas",
+          description: "An intensive two-day clinic focused on connecting high school wrestlers with college coaches. Features technique sessions, competitive matches, and direct meetings with coaching staff from 5 different college programs.",
+          price: "$249",
+          shopifyProductId: "texas-recruiting-clinic",
+          image: "/assets/DSC09273.JPG",
+          maxParticipants: 150,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+      } else if (eventId === 4) { // Cory Land Tour
+        event = {
+          id: 4,
+          title: "Cory Land Tour",
+          category: "Wrestling",
+          date: "July 23-25, 2025",
+          time: "9:00 AM - 4:00 PM",
+          location: "Multiple Locations Across Alabama",
+          description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
+          price: "$99 per day or $200 for all three days",
+          shopifyProductId: "cory-land-tour",
+          image: "/assets/DSC09354.JPG",
+          maxParticipants: 75,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+      } else {
+        // Regular case for other events
+        event = await storage.getEvent(eventId);
+        
+        if (!event) {
+          return res.status(404).json({ message: "Event not found" });
+        }
       }
+      
+      console.log(`Processing registration for event ${event.title}`, validatedData);
       
       // Create event registration in our database
       const registration = await storage.createEventRegistration(validatedData);
       
       // For registered events, connect to Shopify checkout
       let checkoutUrl = null;
-      if (event.id === 1 || event.id === 2 || event.id === 3 || event.id === 4) { // All events support Shopify checkout
+      if (eventId === 1 || eventId === 2 || eventId === 3 || eventId === 4) { // All events support Shopify checkout
         try {
           let eventName, eventKey;
           
