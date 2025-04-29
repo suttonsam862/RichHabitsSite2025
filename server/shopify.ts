@@ -332,6 +332,24 @@ export async function createCustomCheckout(variantId: string, quantity: number =
     
     console.log('Formatted line item properties:', JSON.stringify(lineItemProperties, null, 2));
     
+    // Extract registration title and event information
+    let registrationTitle = '';
+    let eventName = '';
+    
+    const titleAttribute = formattedAttributes.find(attr => attr.key === 'Registration_Title');
+    if (titleAttribute) {
+      registrationTitle = titleAttribute.value;
+    }
+    
+    const eventAttribute = formattedAttributes.find(attr => attr.key === 'Event_Name');
+    if (eventAttribute) {
+      eventName = eventAttribute.value;
+    }
+    
+    // Create descriptive notes for the order
+    const orderNote = registrationTitle || 
+      `${customer.firstName} ${customer.lastName} - ${eventName || 'Event'} Registration`;
+    
     const draftOrderData = {
       draft_order: {
         line_items: [
@@ -347,8 +365,9 @@ export async function createCustomCheckout(variantId: string, quantity: number =
           email: customer.email,
           phone: customer.phone || ''
         },
+        note: orderNote, // Add descriptive note
         use_customer_default_address: false,
-        tags: "Online Registration, Rich Habits Event",
+        tags: `Online Registration, Rich Habits Event, ${eventName}`,
         note_attributes: formattedAttributes.map(attr => ({
           name: attr.key,
           value: attr.value
@@ -471,8 +490,32 @@ export async function createEventRegistrationCheckout(
   registrationData: EventRegistrationData,
   applyDiscount: boolean = false
 ) {
+  // Get the event name based on the event ID
+  let eventName = '';
+  switch (eventId) {
+    case '1':
+      eventName = 'Birmingham Slam Camp';
+      break;
+    case '2':
+      eventName = 'National Champ Camp';
+      break;
+    case '3':
+      eventName = 'Texas Recruiting Clinic';
+      break;
+    case '4':
+      eventName = 'Cory Land Tour';
+      break;
+    default:
+      eventName = 'Wrestling Event';
+  }
+
+  // Create a more descriptive title for the checkout, including camper name and event
+  const checkoutTitle = `${registrationData.firstName} ${registrationData.lastName} - ${eventName} Registration`;
+  
   const customAttributes = [
     { key: 'Event_ID', value: eventId },
+    { key: 'Event_Name', value: eventName },
+    { key: 'Registration_Title', value: checkoutTitle },
     { key: 'Camper_First_Name', value: registrationData.firstName },
     { key: 'Camper_Last_Name', value: registrationData.lastName },
     { key: 'Contact_Name', value: registrationData.contactName },
