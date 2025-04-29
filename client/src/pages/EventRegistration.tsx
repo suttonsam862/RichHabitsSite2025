@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-import { forceNavigate } from '@/utils/redirectUtils';
+import ShopifyCheckoutFrame from '@/components/ShopifyCheckoutFrame';
 
 export default function EventRegistration() {
   const [location, navigate] = useLocation();
@@ -40,6 +40,8 @@ export default function EventRegistration() {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCheckoutFrame, setShowCheckoutFrame] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState<string>('');
   
   // Fetch event data from API
   useEffect(() => {
@@ -157,36 +159,38 @@ export default function EventRegistration() {
       
       if (data.checkoutUrl) {
         // Log the checkout URL for debugging
-        console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
+        console.log('Loading Shopify checkout in iframe:', data.checkoutUrl);
         
-        // Registration successful, redirect to checkout
+        // Registration successful, show embedded checkout
         toast({
           title: "Registration Successful",
-          description: "Taking you to the secure payment page...",
+          description: "Loading secure payment form...",
         });
         
         // Ensure the URL is properly formatted
-        let checkoutUrl = data.checkoutUrl;
-        if (!checkoutUrl.startsWith('http')) {
-          checkoutUrl = 'https://' + checkoutUrl;
-          console.log('Fixed checkout URL format:', checkoutUrl);
+        let formattedCheckoutUrl = data.checkoutUrl;
+        if (!formattedCheckoutUrl.startsWith('http')) {
+          formattedCheckoutUrl = 'https://' + formattedCheckoutUrl;
+          console.log('Fixed checkout URL format:', formattedCheckoutUrl);
         }
         
-        // Instead of direct redirect, use our intermediate redirect page
+        // Show the checkout in an iframe
         try {
-          console.log('Redirecting to checkout via redirect page:', checkoutUrl);
-          
-          // Encode the checkout URL to safely pass it as a parameter
-          const encodedCheckoutUrl = encodeURIComponent(checkoutUrl);
-          
-          // Navigate to our redirect page with the checkout URL as a parameter
-          navigate(`/redirect?url=${encodedCheckoutUrl}`);
+          // Set the checkout URL and show the iframe
+          setCheckoutUrl(formattedCheckoutUrl);
+          setShowCheckoutFrame(true);
         } catch (error) {
-          console.error('Error during redirection:', error);
+          console.error('Error showing checkout frame:', error);
           
-          // Fallback to direct redirect if our redirect page fails
+          // Fallback to redirect if iframe fails
+          toast({
+            title: "Checkout Error",
+            description: "Redirecting to external checkout page...",
+          });
+          
+          // Fallback method - direct redirect
           setTimeout(() => {
-            window.location.href = checkoutUrl;
+            window.location.href = formattedCheckoutUrl;
           }, 500);
         }
       } else {
@@ -269,6 +273,14 @@ export default function EventRegistration() {
         <title>Register for {event.title} | Rich Habits</title>
         <meta name="description" content={`Register for ${event.title} - ${event.location} - ${event.dates}`} />
       </Helmet>
+      
+      {/* Embedded Shopify checkout iframe */}
+      {showCheckoutFrame && checkoutUrl && (
+        <ShopifyCheckoutFrame 
+          checkoutUrl={checkoutUrl} 
+          onClose={() => setShowCheckoutFrame(false)} 
+        />
+      )}
       
       <div className="bg-white">
         <Container className="py-8 md:py-12">

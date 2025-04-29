@@ -1,144 +1,143 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { Helmet } from 'react-helmet';
+import ShopifyCheckoutFrame from '@/components/ShopifyCheckoutFrame';
 
 export default function ShopifyRedirect() {
-  const [, setLocation] = useLocation();
+  const [location, navigate] = useLocation();
+  const [checkoutUrl, setCheckoutUrl] = useState<string>('');
   const [countdown, setCountdown] = useState(5);
+  const [redirecting, setRedirecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
-    // Get the checkout URL from the URL parameters
-    const params = new URLSearchParams(window.location.search);
-    const encodedCheckoutUrl = params.get('url');
-    
-    if (!encodedCheckoutUrl) {
-      setError('No checkout URL provided. Please try again or contact support.');
-      return;
-    }
-    
     try {
-      // Decode the URL
-      const checkoutUrl = decodeURIComponent(encodedCheckoutUrl);
-      console.log('Decoded checkout URL:', checkoutUrl);
+      // Extract the URL from the query parameters
+      const params = new URLSearchParams(window.location.search);
+      const encodedUrl = params.get('url');
       
-      // Check if it's a valid URL
-      if (!checkoutUrl.includes('checkout') && !checkoutUrl.includes('cart')) {
-        setError('Invalid checkout URL. Please try again or contact support.');
+      if (!encodedUrl) {
+        setError('No checkout URL provided. Please return to the registration page.');
         return;
       }
       
+      // Decode the URL
+      const decodedUrl = decodeURIComponent(encodedUrl);
+      setCheckoutUrl(decodedUrl);
+      
       // Start countdown
-      const countdownInterval = setInterval(() => {
-        setCountdown(prev => {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
           if (prev <= 1) {
-            clearInterval(countdownInterval);
-            
-            // Ensure URL has protocol
-            let formattedUrl = checkoutUrl;
-            if (!formattedUrl.startsWith('http')) {
-              formattedUrl = 'https://' + formattedUrl;
-            }
-            
-            // Redirect to Shopify
-            console.log('Redirecting to:', formattedUrl);
-            window.location.href = formattedUrl;
+            clearInterval(timer);
+            setRedirecting(true);
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
       
-      // Provide immediate way to go back if needed
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          clearInterval(countdownInterval);
-          setLocation('/events');
-        }
-      };
-      
-      window.addEventListener('keydown', handleKeyDown);
-      
-      return () => {
-        clearInterval(countdownInterval);
-        window.removeEventListener('keydown', handleKeyDown);
-      };
-    } catch (err) {
-      console.error('Error in redirect page:', err);
-      setError('An error occurred during redirect. Please try again.');
+      return () => clearInterval(timer);
+    } catch (error) {
+      console.error('Error processing redirect URL:', error);
+      setError('Failed to process the checkout URL. Please try again.');
     }
-  }, [setLocation]);
+  }, []);
   
-  // If there's an error, show it
+  // Redirect after countdown
+  useEffect(() => {
+    if (redirecting && checkoutUrl) {
+      // We'll handle this with our embedded checkout instead of redirecting
+    }
+  }, [redirecting, checkoutUrl]);
+  
+  // Handle manual redirect
+  const handleManualRedirect = () => {
+    if (checkoutUrl) {
+      window.open(checkoutUrl, '_self');
+    }
+  };
+  
+  // Handle back to registration
+  const handleBackToRegistration = () => {
+    // Extract event ID from URL if available, otherwise default to events page
+    try {
+      const referrer = document.referrer;
+      if (referrer && referrer.includes('/events/')) {
+        const eventIdMatch = referrer.match(/\/events\/(\d+)\/register/);
+        if (eventIdMatch && eventIdMatch[1]) {
+          navigate(`/events/${eventIdMatch[1]}`);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting event ID:', error);
+    }
+    
+    // Default fallback
+    navigate('/events');
+  };
+  
+  // Handle closing the checkout frame
+  const handleCloseCheckout = () => {
+    handleBackToRegistration();
+  };
+  
   if (error) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <div className="max-w-md p-8 bg-white rounded-lg shadow-lg text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <Helmet>
+          <title>Checkout Error | Rich Habits</title>
+        </Helmet>
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
           <div className="text-red-500 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold mb-4">Checkout Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <div className="flex justify-center space-x-4">
-            <button 
-              onClick={() => window.history.back()} 
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
-            >
-              Go Back
-            </button>
-            <button 
-              onClick={() => setLocation('/events')}
-              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-            >
-              Event List
-            </button>
-          </div>
+          <h1 className="text-xl font-bold text-gray-800 mb-4">Checkout Error</h1>
+          <p className="mb-6 text-gray-600">{error}</p>
+          <button
+            onClick={handleBackToRegistration}
+            className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
+          >
+            Return to Registration
+          </button>
         </div>
       </div>
     );
   }
   
-  // Show the redirect page
+  if (checkoutUrl) {
+    return (
+      <ShopifyCheckoutFrame 
+        checkoutUrl={checkoutUrl} 
+        onClose={handleCloseCheckout} 
+      />
+    );
+  }
+  
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white">
-      <div className="max-w-md p-8 bg-white rounded-lg shadow-lg text-center">
-        <div className="text-primary mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-          </svg>
-        </div>
-        <h2 className="text-xl font-bold mb-4">Redirecting to Checkout</h2>
-        <p className="text-gray-600 mb-4">
-          You are being redirected to the secure payment page. 
-          This will happen automatically in <span className="font-semibold">{countdown}</span> seconds.
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+      <Helmet>
+        <title>Redirecting to Checkout | Rich Habits</title>
+      </Helmet>
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
+        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+        <h1 className="text-xl font-bold text-gray-800 mb-2">Preparing Your Checkout</h1>
+        <p className="mb-6 text-gray-600">
+          You will be redirected to the secure payment page in {countdown} {countdown === 1 ? 'second' : 'seconds'}...
         </p>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-          <div 
-            className="bg-primary h-2.5 rounded-full transition-all duration-1000 ease-linear" 
-            style={{ width: `${(5 - countdown) * 20}%` }}
-          ></div>
-        </div>
-        <div className="flex justify-center space-x-4">
-          <button 
-            onClick={() => window.history.back()} 
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+        <div className="flex space-x-4">
+          <button
+            onClick={handleBackToRegistration}
+            className="flex-1 py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
           >
             Cancel
           </button>
-          <button 
-            onClick={() => {
-              const params = new URLSearchParams(window.location.search);
-              const encodedUrl = params.get('url');
-              if (encodedUrl) {
-                let checkoutUrl = decodeURIComponent(encodedUrl);
-                if (!checkoutUrl.startsWith('http')) {
-                  checkoutUrl = 'https://' + checkoutUrl;
-                }
-                window.location.href = checkoutUrl;
-              }
-            }}
-            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+          <button
+            onClick={handleManualRedirect}
+            className="flex-1 py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
           >
             Continue Now
           </button>
