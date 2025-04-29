@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import path from "path";
+import fs from "fs";
 
 const app = express();
 app.use(express.json());
@@ -34,6 +36,62 @@ app.use((req, res, next) => {
   });
 
   next();
+});
+
+// Special handler for media files to ensure correct MIME types
+// This runs before all the catch-all handlers to ensure proper content-types
+app.get('/assets/:filename', (req, res, next) => {
+  const filename = req.params.filename;
+  const filePath = path.join(process.cwd(), 'public', 'assets', filename);
+  
+  if (!fs.existsSync(filePath)) {
+    return next(); // File not found, pass to next handler
+  }
+  
+  // Define MIME types based on file extensions
+  const extension = path.extname(filename).toLowerCase();
+  let contentType = 'application/octet-stream'; // Default
+  
+  switch (extension) {
+    case '.mp4':
+      contentType = 'video/mp4';
+      break;
+    case '.mov':
+      contentType = 'video/quicktime';
+      break;
+    case '.webm':
+      contentType = 'video/webm';
+      break;
+    case '.jpg':
+    case '.jpeg':
+      contentType = 'image/jpeg';
+      break;
+    case '.png':
+      contentType = 'image/png';
+      break;
+    case '.webp':
+      contentType = 'image/webp';
+      break;
+    case '.gif':
+      contentType = 'image/gif';
+      break;
+    case '.svg':
+      contentType = 'image/svg+xml';
+      break;
+  }
+  
+  const fileStream = fs.createReadStream(filePath);
+  res.setHeader('Content-Type', contentType);
+  
+  // Improved error handling
+  fileStream.on('error', (error) => {
+    log(`Error streaming file ${filename}: ${error.message}`, 'media');
+    if (!res.headersSent) {
+      res.status(500).send('Error streaming file');
+    }
+  });
+  
+  fileStream.pipe(res);
 });
 
 (async () => {
