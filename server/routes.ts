@@ -105,7 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: firstVariant ? `$${parseFloat(firstVariant.price).toFixed(2)}` : "",
           collection: handle,
           availableForSale: firstVariant ? firstVariant.available : false,
-          variants: product.variants.map(variant => ({
+          variants: product.variants.map((variant) => ({
             id: variant.id.toString(),
             title: variant.title,
             price: `$${parseFloat(variant.price).toFixed(2)}`,
