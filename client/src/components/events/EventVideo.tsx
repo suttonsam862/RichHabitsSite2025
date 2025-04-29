@@ -99,7 +99,20 @@ const EventVideo: React.FC<EventVideoProps> = ({
   
   // Check file extension for better error messages
   const fileExtension = src.split('.').pop()?.toLowerCase();
-  const isValidExtension = ['mp4', 'webm', 'ogg'].includes(fileExtension || ''); // Removed 'mov' as it's less compatible
+  const isValidExtension = ['mp4', 'webm', 'ogg'].includes(fileExtension || ''); // MOV format is not supported in many browsers
+  
+  // Log file extension info
+  useEffect(() => {
+    if (fileExtension) {
+      console.log(`[EventVideo] Video file extension: ${fileExtension}`);
+      console.log(`[EventVideo] Is standard web video format: ${isValidExtension}`);
+      
+      // Special warning for MOV files
+      if (fileExtension === 'mov') {
+        console.warn('[EventVideo] MOV format is not reliably supported across browsers. Convert to MP4 for better compatibility.');
+      }
+    }
+  }, [fileExtension, isValidExtension]);
   
   // Reset error state when source changes
   useEffect(() => {

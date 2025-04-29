@@ -1213,9 +1213,30 @@ export default function EventDetail() {
                       loop={true}
                       muted={true}
                       controls={false}
+                      preload="auto"
                       style={{ maxHeight: "360px" }}
                       title="Camp Experience Video"
-                      onError={(error) => console.error("Video error in camp experience:", error)}
+                      onError={(error) => {
+                        console.error("Video error in camp experience:", error);
+                        
+                        // Additional detailed logging for diagnostics
+                        if (error && error.src) {
+                          const videoPath = error.src.split('/').pop();
+                          console.error(`Failed to load video: ${videoPath}`);
+                        }
+                        
+                        // Try to provide more context about the error
+                        if (error && error.errorCode) {
+                          let errorMessage = 'Unknown error';
+                          switch(error.errorCode) {
+                            case 1: errorMessage = 'The fetching process was aborted'; break;
+                            case 2: errorMessage = 'Network error occurred while fetching'; break;
+                            case 3: errorMessage = 'Error occurred while decoding the video'; break;
+                            case 4: errorMessage = 'Video format not supported by the browser'; break;
+                          }
+                          console.error(`Video error code ${error.errorCode}: ${errorMessage}`);
+                        }
+                      }}
                     />
                   </div>
                   
@@ -1229,8 +1250,29 @@ export default function EventDetail() {
                         loop={true}
                         muted={true}
                         controls={false}
+                        preload="auto"
                         title="National Champ Camp Highlights"
-                        onError={(error) => console.error("Video error in national champ camp:", error)}
+                        onError={(error) => {
+                          console.error("Video error in national champ camp:", error);
+                          
+                          // Additional detailed logging for diagnostics
+                          if (error && error.src) {
+                            const videoPath = error.src.split('/').pop();
+                            console.error(`Failed to load video: ${videoPath}`);
+                          }
+                          
+                          // Try to provide more context about the error
+                          if (error && error.errorCode) {
+                            let errorMessage = 'Unknown error';
+                            switch(error.errorCode) {
+                              case 1: errorMessage = 'The fetching process was aborted'; break;
+                              case 2: errorMessage = 'Network error occurred while fetching'; break;
+                              case 3: errorMessage = 'Error occurred while decoding the video'; break;
+                              case 4: errorMessage = 'Video format not supported by the browser'; break;
+                            }
+                            console.error(`Video error code ${error.errorCode}: ${errorMessage}`);
+                          }
+                        }}
                       />
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#041e42]/80 to-transparent p-4">
                         <h4 className="text-white font-bold text-lg">National Champ Camp Highlights</h4>
@@ -1250,8 +1292,29 @@ export default function EventDetail() {
                           loop={true}
                           muted={true}
                           controls={false}
+                          preload="auto"
                           title="Birmingham Slam Camp Preview"
-                          onError={(error) => console.error("Video error in slam camp preview:", error)}
+                          onError={(error) => {
+                            console.error("Video error in slam camp preview:", error);
+                            
+                            // Additional detailed logging for diagnostics
+                            if (error && error.src) {
+                              const videoPath = error.src.split('/').pop();
+                              console.error(`Failed to load video: ${videoPath}`);
+                            }
+                            
+                            // Try to provide more context about the error
+                            if (error && error.errorCode) {
+                              let errorMessage = 'Unknown error';
+                              switch(error.errorCode) {
+                                case 1: errorMessage = 'The fetching process was aborted'; break;
+                                case 2: errorMessage = 'Network error occurred while fetching'; break;
+                                case 3: errorMessage = 'Error occurred while decoding the video'; break;
+                                case 4: errorMessage = 'Video format not supported by the browser'; break;
+                              }
+                              console.error(`Video error code ${error.errorCode}: ${errorMessage}`);
+                            }
+                          }}
                         />
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                           <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
@@ -1303,9 +1366,30 @@ export default function EventDetail() {
                       loop={true}
                       muted={true}
                       controls={false}
+                      preload="auto"
                       style={{ maxHeight: "360px" }}
                       title="Texas Recruiting Clinic Highlights"
-                      onError={(error) => console.error("Video error:", error)}
+                      onError={(error) => {
+                        console.error("Video error in Texas Recruiting Clinic:", error);
+                          
+                        // Additional detailed logging for diagnostics
+                        if (error && error.src) {
+                          const videoPath = error.src.split('/').pop();
+                          console.error(`Failed to load video: ${videoPath}`);
+                        }
+                          
+                        // Try to provide more context about the error
+                        if (error && error.errorCode) {
+                          let errorMessage = 'Unknown error';
+                          switch(error.errorCode) {
+                            case 1: errorMessage = 'The fetching process was aborted'; break;
+                            case 2: errorMessage = 'Network error occurred while fetching'; break;
+                            case 3: errorMessage = 'Error occurred while decoding the video'; break;
+                            case 4: errorMessage = 'Video format not supported by the browser'; break;
+                          }
+                          console.error(`Video error code ${error.errorCode}: ${errorMessage}`);
+                        }
+                      }}
                     />
                     <div className="recruiting-stripe"></div>
                   </div>
@@ -1342,8 +1426,29 @@ export default function EventDetail() {
                           loop={true}
                           muted={true}
                           controls={false}
+                          preload="auto"
                           title="Birmingham Slam Camp"
-                          onError={(error) => console.error("Video error in slam camp preview:", error)}
+                          onError={(error) => {
+                            console.error("Video error in slam camp preview:", error);
+                            
+                            // Additional detailed logging for diagnostics
+                            if (error && error.src) {
+                              const videoPath = error.src.split('/').pop();
+                              console.error(`Failed to load video: ${videoPath}`);
+                            }
+                            
+                            // Try to provide more context about the error
+                            if (error && error.errorCode) {
+                              let errorMessage = 'Unknown error';
+                              switch(error.errorCode) {
+                                case 1: errorMessage = 'The fetching process was aborted'; break;
+                                case 2: errorMessage = 'Network error occurred while fetching'; break;
+                                case 3: errorMessage = 'Error occurred while decoding the video'; break;
+                                case 4: errorMessage = 'Video format not supported by the browser'; break;
+                              }
+                              console.error(`Video error code ${error.errorCode}: ${errorMessage}`);
+                            }
+                          }}
                         />
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-20">
                           <div className="bg-white/90 px-4 py-2 rounded-md shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">

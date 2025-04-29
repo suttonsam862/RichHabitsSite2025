@@ -27,7 +27,7 @@ type AudioWithErrorHandlingProps = ComponentProps<'audio'> & {
 /**
  * Custom hook to handle media errors and logging
  */
-export const useMediaErrorHandler = (mediaType: 'video' | 'image' | 'audio', src: string) => {
+function useMediaErrorHandler(mediaType: 'video' | 'image' | 'audio', src: string) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorDetails, setErrorDetails] = useState<any>(null);
@@ -296,6 +296,9 @@ export const AudioWithErrorHandling: React.FC<AudioWithErrorHandlingProps> = ({
     </MediaErrorBoundary>
   );
 };
+
+// Export the media error handler hook
+export { useMediaErrorHandler };
 
 // Logger component to add to app for monitoring all media errors
 export const MediaErrorLogger: React.FC = () => {
