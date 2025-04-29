@@ -191,7 +191,7 @@ export const ImageWithErrorHandling: React.FC<ImageWithErrorHandlingProps> = ({
         // This wrapper safely converts the potentially incompatible onError prop
         if (typeof onError === 'function') {
           try {
-            onError(error, errorInfo);
+            onError(error);
           } catch (conversionError) {
             console.error('Error in onError handler:', conversionError);
           }
@@ -243,7 +243,7 @@ export const AudioWithErrorHandling: React.FC<AudioWithErrorHandlingProps> = ({
         // This wrapper safely converts the potentially incompatible onError prop
         if (typeof onError === 'function') {
           try {
-            onError(error, errorInfo);
+            onError(error);
           } catch (conversionError) {
             console.error('Error in onError handler:', conversionError);
           }
@@ -329,7 +329,7 @@ export const MediaErrorLogger: React.FC = () => {
   );
 };
 
-export default {
+export {
   VideoWithErrorHandling,
   ImageWithErrorHandling,
   AudioWithErrorHandling,
