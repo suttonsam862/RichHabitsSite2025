@@ -172,23 +172,19 @@ export default function EventRegistration() {
           console.log('Fixed checkout URL format:', checkoutUrl);
         }
         
-        // Use our robust redirect utility
+        // Instead of direct redirect, use our intermediate redirect page
         try {
-          console.log('Using forceNavigate utility to redirect to Shopify checkout');
-          forceNavigate(checkoutUrl);
+          console.log('Redirecting to checkout via redirect page:', checkoutUrl);
+          
+          // Encode the checkout URL to safely pass it as a parameter
+          const encodedCheckoutUrl = encodeURIComponent(checkoutUrl);
+          
+          // Navigate to our redirect page with the checkout URL as a parameter
+          navigate(`/redirect?url=${encodedCheckoutUrl}`);
         } catch (error) {
           console.error('Error during redirection:', error);
           
-          // Fallback methods if the main function fails
-          // Method 1: Create and click a temporary anchor element
-          const link = document.createElement('a');
-          link.href = checkoutUrl;
-          link.target = '_self'; // Replace the current window
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          // Method 2: Last resort
+          // Fallback to direct redirect if our redirect page fails
           setTimeout(() => {
             window.location.href = checkoutUrl;
           }, 500);

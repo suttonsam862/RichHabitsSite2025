@@ -11,6 +11,7 @@ import CustomApparel from "@/pages/CustomApparel";
 import Events from "@/pages/Events";
 import EventDetail from "@/pages/EventDetail";
 import EventRegistration from "@/pages/EventRegistration";
+import ShopifyRedirect from "@/pages/ShopifyRedirect";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/events/:id/register" component={EventRegistration} />
+      <Route path="/redirect" component={ShopifyRedirect} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/admin" component={Admin} />
@@ -37,14 +39,17 @@ function Router() {
 }
 
 function App() {
+  // Check if the current path is the redirect page
+  const isRedirectPage = window.location.pathname === '/redirect';
+  
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow pt-16">
+        {!isRedirectPage && <Header />}
+        <main className={`flex-grow ${!isRedirectPage ? 'pt-16' : ''}`}>
           <Router />
         </main>
-        <Footer />
+        {!isRedirectPage && <Footer />}
       </div>
     </QueryClientProvider>
   );
