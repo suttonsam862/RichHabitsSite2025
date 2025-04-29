@@ -53,9 +53,9 @@ export function robustRedirect(url: string, openInNewTab: boolean = true): void 
 /**
  * Forces the browser to navigate to the provided URL, closing the current page
  * This is useful for checkout flows where you want to ensure the user is directed
- * to the payment page.
+ * to the payment page. Specifically designed for Shopify checkout redirects.
  * 
- * @param url The URL to navigate to
+ * @param url The Shopify checkout URL to navigate to
  */
 export function forceNavigate(url: string): void {
   if (!url) {
@@ -63,35 +63,99 @@ export function forceNavigate(url: string): void {
     return;
   }
 
-  console.log(`Force navigating to: ${url}`);
+  // Format the URL properly if needed
+  let formattedUrl = url;
+  if (!formattedUrl.startsWith('http')) {
+    formattedUrl = 'https://' + formattedUrl;
+  }
+
+  console.log(`Force navigating to Shopify checkout: ${formattedUrl}`);
   
   try {
-    // Try multiple methods to ensure navigation happens
+    // For Shopify redirect, we'll use a more aggressive approach
     
-    // Method 1: Use window.location.replace (most reliable)
-    window.location.replace(url);
+    // First, create an anchor and trigger it with window.open
+    const shopifyRedirectLink = document.createElement('a');
+    shopifyRedirectLink.href = formattedUrl;
+    shopifyRedirectLink.target = '_self'; // Replace current window
+    shopifyRedirectLink.setAttribute('data-checkout-redirect', 'true');
+    document.body.appendChild(shopifyRedirectLink);
     
-    // Method 2: Fallback to window.location.href
+    // Click the link
+    shopifyRedirectLink.click();
+    
+    // Remove the link
+    document.body.removeChild(shopifyRedirectLink);
+    
+    // Secondary redirect methods
     setTimeout(() => {
-      if (window.location.href !== url) {
-        console.log('First redirect method failed, using window.location.href');
-        window.location.href = url;
-      }
+      // Method 2: Try window.location.replace with a slight delay
+      console.log('Applying secondary redirect method using window.location.replace');
+      window.location.replace(formattedUrl);
+      
+      // Method 3: Final attempt with direct assignment and form submission
+      setTimeout(() => {
+        console.log('Applying tertiary redirect methods...');
+        
+        // Direct assignment
+        window.location.href = formattedUrl;
+        
+        // Submit a form (good for bypassing some browser restrictions)
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = formattedUrl;
+        form.target = '_self';
+        form.style.display = 'none';
+        document.body.appendChild(form);
+        form.submit();
+      }, 300);
     }, 200);
     
-    // Method 3: Create a form and submit it
+    // Display a redirect message to the user
+    const redirectMessage = document.createElement('div');
+    redirectMessage.style.position = 'fixed';
+    redirectMessage.style.top = '50%';
+    redirectMessage.style.left = '50%';
+    redirectMessage.style.transform = 'translate(-50%, -50%)';
+    redirectMessage.style.background = 'white';
+    redirectMessage.style.padding = '20px';
+    redirectMessage.style.borderRadius = '8px';
+    redirectMessage.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    redirectMessage.style.zIndex = '9999';
+    redirectMessage.style.textAlign = 'center';
+    
+    redirectMessage.innerHTML = `
+      <h3 style="margin-top: 0; font-size: 18px;">Redirecting to Checkout</h3>
+      <p>You are being redirected to the secure payment page...</p>
+      <div style="margin: 15px 0;">
+        <div style="width: 30px; height: 30px; border: 3px solid #f3f3f3; 
+             border-top: 3px solid #2563eb; border-radius: 50%; 
+             display: inline-block; animation: spin 1s linear infinite;"></div>
+      </div>
+      <a href="${formattedUrl}" style="color: #2563eb; display: block; margin-top: 10px;">
+        Click here if you are not redirected automatically
+      </a>
+      <style>
+        @keyframes spin { 
+          0% { transform: rotate(0deg); } 
+          100% { transform: rotate(360deg); } 
+        }
+      </style>
+    `;
+    
+    document.body.appendChild(redirectMessage);
+    
+    // Remove the message after a while if for some reason we're still on the page
     setTimeout(() => {
-      const form = document.createElement('form');
-      form.method = 'GET';
-      form.action = url;
-      form.style.display = 'none';
-      document.body.appendChild(form);
-      form.submit();
-    }, 400);
+      if (document.body.contains(redirectMessage)) {
+        document.body.removeChild(redirectMessage);
+      }
+    }, 8000);
+    
   } catch (error) {
     console.error('Error during force navigation:', error);
     
-    // Last resort
-    window.location.href = url;
+    // Last resort if all else fails
+    window.open(formattedUrl, '_self');
   }
 }

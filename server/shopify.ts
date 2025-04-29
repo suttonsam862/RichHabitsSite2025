@@ -726,19 +726,37 @@ export async function createEventRegistrationCheckout(
       if (checkout.webUrl) {
         console.log('Original storefront checkout URL:', checkout.webUrl);
         
-        // Ensure the URL starts with https:// for security
-        if (!checkout.webUrl.startsWith('https://')) {
-          if (checkout.webUrl.startsWith('http://')) {
-            checkout.webUrl = 'https://' + checkout.webUrl.substring(7);
-          } else {
-            checkout.webUrl = 'https://' + checkout.webUrl;
+        // Completely reformat the URL to ensure consistent format
+        let formattedUrl = checkout.webUrl;
+        
+        // Extract just the path portion if it's a full URL
+        if (formattedUrl.includes('://')) {
+          try {
+            const urlObj = new URL(formattedUrl);
+            // Keep the path and query parameters
+            formattedUrl = urlObj.pathname + urlObj.search + urlObj.hash;
+          } catch (e) {
+            console.log('URL parsing failed, using original URL:', e);
           }
         }
         
-        // Add domain if URL might be a relative path
-        if (checkout.webUrl.startsWith('/')) {
-          checkout.webUrl = `https://${SHOPIFY_STORE_DOMAIN}${checkout.webUrl}`;
+        // Ensure it has a leading slash if it's just a path
+        if (!formattedUrl.startsWith('/') && !formattedUrl.includes('://')) {
+          formattedUrl = '/' + formattedUrl;
         }
+        
+        // Now add the domain with https
+        if (!formattedUrl.includes('://')) {
+          formattedUrl = `https://${SHOPIFY_STORE_DOMAIN}${formattedUrl}`;
+        }
+        
+        // Ensure the URL starts with https:// for security
+        if (formattedUrl.startsWith('http://')) {
+          formattedUrl = 'https://' + formattedUrl.substring(7);
+        }
+        
+        console.log('Reformed checkout URL:', formattedUrl);
+        checkout.webUrl = formattedUrl;
         
         console.log('Formatted storefront checkout URL:', checkout.webUrl);
       }
