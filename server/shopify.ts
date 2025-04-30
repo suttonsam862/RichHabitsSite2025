@@ -729,30 +729,22 @@ export async function createEventRegistrationCheckout(
         // Completely reformat the URL to ensure consistent format
         let formattedUrl = checkout.webUrl;
         
-        // Extract just the path portion if it's a full URL
-        if (formattedUrl.includes('://')) {
-          try {
-            const urlObj = new URL(formattedUrl);
-            // Keep the path and query parameters
-            formattedUrl = urlObj.pathname + urlObj.search + urlObj.hash;
-          } catch (e) {
-            console.log('URL parsing failed, using original URL:', e);
-          }
+        // IMPORTANT: Instead of parsing and reformatting URLs which causes domain issues,
+        // we'll just replace rich-habits.com with rich-habits-2022.myshopify.com if needed
+        // and ensure we have https
+
+        if (formattedUrl.includes('rich-habits.com')) {
+          formattedUrl = formattedUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
+          console.log('Replaced domain name to:', formattedUrl);
         }
-        
-        // Ensure it has a leading slash if it's just a path
-        if (!formattedUrl.startsWith('/') && !formattedUrl.includes('://')) {
-          formattedUrl = '/' + formattedUrl;
-        }
-        
-        // Now add the domain with https
-        if (!formattedUrl.includes('://')) {
-          formattedUrl = `https://${SHOPIFY_STORE_DOMAIN}${formattedUrl}`;
-        }
-        
+
         // Ensure the URL starts with https:// for security
-        if (formattedUrl.startsWith('http://')) {
-          formattedUrl = 'https://' + formattedUrl.substring(7);
+        if (!formattedUrl.startsWith('https://')) {
+          if (formattedUrl.startsWith('http://')) {
+            formattedUrl = 'https://' + formattedUrl.substring(7);
+          } else if (!formattedUrl.includes('://')) {
+            formattedUrl = 'https://' + formattedUrl;
+          }
         }
         
         console.log('Reformed checkout URL:', formattedUrl);
