@@ -20,7 +20,24 @@ export default function ShopifyRedirect() {
       const encodedUrl = params.get('url');
       const variantId = params.get('variantId');
       
+      // Check localStorage for a fallback URL (might have been stored in the registration process)
+      const fallbackUrl = localStorage.getItem('shopify_fallback_url');
+      
       if (!encodedUrl && !variantId) {
+        if (fallbackUrl) {
+          // We have a fallback URL stored, use it to try direct checkout
+          console.log('Using stored fallback URL:', fallbackUrl);
+          setCartUrl(fallbackUrl);
+          setLoading(false);
+          
+          // Automatically try to redirect after a short delay
+          setTimeout(() => {
+            window.location.href = fallbackUrl;
+            setRedirectAttempted(true);
+          }, 300);
+          return;
+        }
+        
         setError('No checkout information provided. Please return to the registration page.');
         setLoading(false);
         return;
@@ -30,7 +47,24 @@ export default function ShopifyRedirect() {
       if (variantId) {
         console.log('Adding variant to embedded cart:', variantId);
         
-        // Create a cart or add to existing one
+        // Try getting a fallback URL from localStorage first
+        const storedFallbackUrl = localStorage.getItem('shopify_fallback_url');
+        
+        // If we have a fallback URL and the variant ID looks problematic, use the fallback directly
+        if (storedFallbackUrl && (variantId.includes('undefined') || variantId.length < 3)) {
+          console.log('Using stored fallback URL instead of potentially problematic variant ID:', variantId);
+          setCartUrl(storedFallbackUrl);
+          setLoading(false);
+          
+          // Automatically try to redirect after a short delay
+          setTimeout(() => {
+            window.location.href = storedFallbackUrl;
+            setRedirectAttempted(true);
+          }, 300);
+          return;
+        }
+        
+        // If no problems with the variant ID, create a cart or add to existing one
         const handleCart = async () => {
           try {
             let cartId = localStorage.getItem('shopify_cart_id');
@@ -88,15 +122,34 @@ export default function ShopifyRedirect() {
             // Attempt to create a direct checkout URL as fallback
             try {
               const shopifyDomain = 'rich-habits-2022.myshopify.com';
-              const fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
+              
               // Make sure URLs with variant IDs use the format Shopify expects
               // For direct cart URLs: https://store-domain.myshopify.com/cart/{variantId}:{quantity}
-              let processedFallbackUrl = fallbackUrl;
               
-              // For direct cart URLs, don't include 'gid://' prefix in the variantId
-              if (processedFallbackUrl.includes('/cart/')) {
-                const rawVariantId = variantId.replace('gid://shopify/ProductVariant/', '');
-                processedFallbackUrl = `https://${shopifyDomain}/cart/${rawVariantId}:1`;
+              // Extract just the numerical ID without any prefixes
+              let rawVariantId = variantId;
+              if (rawVariantId.includes('/')) {
+                // Handle GraphQL global ID format: gid://shopify/ProductVariant/12345
+                const matches = rawVariantId.match(/ProductVariant\/([0-9]+)/);
+                if (matches && matches[1]) {
+                  rawVariantId = matches[1];
+                } else {
+                  // Try simpler extraction
+                  rawVariantId = rawVariantId.split('/').pop() || rawVariantId;
+                }
+              }
+              
+              // Ensure it's just a number
+              rawVariantId = rawVariantId.replace(/\D/g, '');
+              
+              const processedFallbackUrl = `https://${shopifyDomain}/cart/${rawVariantId}:1`;
+              console.log('Created clean fallback URL with raw variant ID:', rawVariantId);
+              
+              // Store the fallback URL in localStorage for potential future use
+              try {
+                localStorage.setItem('shopify_fallback_url', processedFallbackUrl);
+              } catch (e) {
+                console.warn('Could not save fallback URL to localStorage:', e);
               }
               
               console.log('Setting fallback cart URL:', processedFallbackUrl);
@@ -104,7 +157,7 @@ export default function ShopifyRedirect() {
               
               // Automatically redirect to the fallback URL after a short delay
               setTimeout(() => {
-                console.log('Redirecting to fallback cart URL:', fallbackUrl);
+                console.log('Redirecting to fallback cart URL:', processedFallbackUrl);
                 window.location.href = processedFallbackUrl;
               }, 500);
               
@@ -319,6 +372,11 @@ export default function ShopifyRedirect() {
   };
   
   if (error) {
+    // Clear any previous error styling if we're injecting HTML directly
+    if (document.getElementById('error-container')) {
+      document.getElementById('error-container')!.remove();
+    }
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
         <Helmet>

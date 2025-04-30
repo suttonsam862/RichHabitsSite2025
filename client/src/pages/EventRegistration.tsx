@@ -196,6 +196,13 @@ export default function EventRegistration() {
         shouldRedirect = true;
         redirectUrl = data.fallbackUrl;
         
+        // Store the fallback URL in localStorage so we can use it if needed later
+        try {
+          localStorage.setItem('shopify_fallback_url', data.fallbackUrl);
+        } catch (e) {
+          console.warn('Could not save fallback URL to localStorage:', e);
+        }
+        
         // Show a special toast for fallback mode
         toast({
           title: "Registration Successful",

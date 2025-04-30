@@ -711,6 +711,11 @@ export async function createEventRegistrationCheckout(
     // This is a relative URL that will work in both production and development environments
     let cartUrl = `/redirect?variantId=${encodeURIComponent(simpleVariantId)}`;
     
+    // Create a direct Shopify cart URL as fallback (using the raw Shopify cart format)
+    // Format: https://your-store.myshopify.com/cart/{variantId}:{quantity}
+    const directShopifyCartUrl = `https://${SHOPIFY_STORE_DOMAIN}/cart/${simpleVariantId}:1`;
+    console.log('Created fallback direct Shopify cart URL:', directShopifyCartUrl);
+    
     // Add all custom properties as encoded URL parameters
     if (noteAttributesArray.length > 0) {
       cartUrl += '&' + noteAttributesArray.join('&');
@@ -724,11 +729,13 @@ export async function createEventRegistrationCheckout(
     console.log('Created direct cart URL:', cartUrl);
     
     // Return the cart URL in the same format as our checkout object for compatibility
+    // Include both our internal redirect URL and a direct Shopify cart URL as fallback
     return {
       id: `cart-${Date.now()}`, // Generate a unique ID
       webUrl: cartUrl,
       subtotalPrice: price ? price.toString() : '0.00',
-      totalPrice: price ? price.toString() : '0.00'
+      totalPrice: price ? price.toString() : '0.00',
+      fallbackUrl: directShopifyCartUrl // Direct Shopify cart URL as fallback
     };
   } catch (error) {
     console.error('Error creating cart URL:', error);
