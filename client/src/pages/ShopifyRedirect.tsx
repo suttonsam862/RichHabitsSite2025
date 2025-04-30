@@ -9,6 +9,17 @@ export default function ShopifyRedirect() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Direct redirect to Shopify checkout (memoized)
+  const redirectToShopify = useCallback(() => {
+    if (checkoutUrl) {
+      console.log('Redirecting directly to Shopify:', checkoutUrl);
+      navigateToShopifyCheckout(checkoutUrl);
+    } else {
+      setError('No checkout URL available for redirect.');
+    }
+  }, [checkoutUrl]);
+
+  // Process URL from query parameters
   useEffect(() => {
     try {
       // Extract the URL from the query parameters
@@ -36,18 +47,6 @@ export default function ShopifyRedirect() {
       console.log('Processed checkout URL:', processedUrl);
       setCheckoutUrl(processedUrl);
       setLoading(false);
-      
-      // Add a fallback direct redirect if the iframe approach fails
-      const timer = setTimeout(() => {
-        // After 10 seconds, if we're still on this page, automatically redirect
-        console.log('Fallback redirect timer triggered');
-        if (document.visibilityState === 'visible') {
-          console.log('Automatically redirecting to Shopify...');
-          redirectToShopify();
-        }
-      }, 10000);
-      
-      return () => clearTimeout(timer);
     } catch (error) {
       console.error('Error processing redirect URL:', error);
       setError('Failed to process the checkout URL. Please try again.');
@@ -55,15 +54,21 @@ export default function ShopifyRedirect() {
     }
   }, []);
   
-  // Direct redirect to Shopify checkout
-  const redirectToShopify = () => {
-    if (checkoutUrl) {
-      console.log('Redirecting directly to Shopify:', checkoutUrl);
-      navigateToShopifyCheckout(checkoutUrl);
-    } else {
-      setError('No checkout URL available for redirect.');
-    }
-  };
+  // Add a fallback direct redirect timer
+  useEffect(() => {
+    if (!checkoutUrl || loading) return;
+    
+    const timer = setTimeout(() => {
+      // After 10 seconds, if we're still on this page, automatically redirect
+      console.log('Fallback redirect timer triggered');
+      if (document.visibilityState === 'visible') {
+        console.log('Automatically redirecting to Shopify...');
+        redirectToShopify();
+      }
+    }, 10000);
+    
+    return () => clearTimeout(timer);
+  }, [checkoutUrl, loading, redirectToShopify]);
   
   // Open checkout in a new window/tab
   const openInNewWindow = () => {

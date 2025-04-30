@@ -46,54 +46,47 @@ export function navigateToShopifyCheckout(checkoutUrl: string) {
     let processedUrl = ensureHttpsUrl(checkoutUrl);
     console.log('Using processed URL:', processedUrl);
     
-    // Create a direct URL element - this is a more robust way to navigate
-    // that can avoid some browser security restrictions on redirects
-    const directLink = document.createElement('a');
-    directLink.href = processedUrl;
-    directLink.style.display = 'none';
-    directLink.target = '_self';
-    directLink.rel = 'noopener noreferrer';
-    directLink.innerHTML = 'Checkout';
+    // Most direct approach - immediately set location.href 
+    // This is the most reliable for redirecting the entire page
+    window.location.href = processedUrl;
     
-    // Add to DOM, click it, then clean up
-    document.body.appendChild(directLink);
-    directLink.click();
-    
-    // Fallback: If the click doesn't work, try form submission
-    // This approach can sometimes bypass restrictions that affect direct navigation
+    // Backup approach with small delay (for browsers where immediate redirect might be blocked)
     setTimeout(() => {
-      console.log('Link click fallback: Using form submit');
-      const form = document.createElement('form');
-      form.method = 'GET';
-      form.action = processedUrl;
-      form.target = '_self';
-      document.body.appendChild(form);
-      form.submit();
-      
-      // Cleanup
-      setTimeout(() => {
-        document.body.removeChild(form);
-      }, 100);
-    }, 200);
-    
-    // Final fallback: Direct location change as last resort
-    setTimeout(() => {
-      console.log('Form submit fallback: Using location.href');
-      window.location.href = processedUrl;
-    }, 500);
-    
-    // Cleanup the link element
-    setTimeout(() => {
-      if (document.body.contains(directLink)) {
-        document.body.removeChild(directLink);
+      console.log('Delayed redirect fallback');
+      if (window.location.href !== processedUrl && document.visibilityState === 'visible') {
+        // Try again if we're still on the same page
+        window.location.replace(processedUrl);
       }
-    }, 100);
+    }, 300);
+    
+    // Final fallback with form submit (works better in some old browsers)
+    setTimeout(() => {
+      console.log('Form submit fallback');
+      if (window.location.href !== processedUrl && document.visibilityState === 'visible') {
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = processedUrl;
+        form.target = '_self';
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(() => {
+          if (document.body.contains(form)) {
+            document.body.removeChild(form);
+          }
+        }, 100);
+      }
+    }, 800);
   } catch (e) {
     console.error('Failed to navigate to checkout:', e);
     
     // Final fallback: Just open in a new window
     console.log('All navigation methods failed, opening in new window');
-    window.open(checkoutUrl, '_blank');
+    try {
+      window.open(checkoutUrl, '_blank');
+    } catch (err) {
+      // Last resort - alert with URL if all methods fail
+      alert('Unable to open checkout automatically. Please copy this URL and open it manually: ' + checkoutUrl);
+    }
   }
 }
 
@@ -109,38 +102,79 @@ export function openShopifyCheckoutInNewWindow(checkoutUrl: string): boolean {
     const processedUrl = ensureHttpsUrl(checkoutUrl);
     console.log('Opening in new window with processed URL:', processedUrl);
     
-    // Try using an anchor tag first (can bypass some security restrictions)
+    // Try direct window.open first - most reliable in modern browsers
+    const newWindow = window.open(processedUrl, '_blank');
+    
+    if (newWindow) {
+      newWindow.focus();
+      return true;
+    }
+    
+    // Fallback: Try creating an anchor element with target="_blank" 
+    // This may work in some browsers that block direct window.open calls
     const link = document.createElement('a');
     link.href = processedUrl;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.style.display = 'none';
+    
+    // Make it visible briefly and look like a button for better popup chances
+    link.style.position = 'fixed';
+    link.style.bottom = '20px';
+    link.style.right = '20px';
+    link.style.padding = '10px';
+    link.style.backgroundColor = '#000';
+    link.style.color = '#fff';
+    link.style.borderRadius = '4px';
+    link.style.zIndex = '9999';
+    link.innerHTML = 'Open Checkout';
     
     document.body.appendChild(link);
+    
+    // First click programmatically
     link.click();
     
-    // Fallback to window.open
-    setTimeout(() => {
-      const newWindow = window.open(processedUrl, '_blank');
-      if (newWindow) {
-        newWindow.focus();
-      }
-      
-      // Clean up the link element
+    // If we're still here after 500ms, alert the user to click manually
+    const timer = setTimeout(() => {
       if (document.body.contains(link)) {
-        document.body.removeChild(link);
+        alert('Please click the "Open Checkout" button to complete your purchase. Your browser may be blocking popups.');
+        link.style.animation = 'pulse 1s infinite';
+        
+        // Add a close button next to it
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Dismiss';
+        closeBtn.style.position = 'fixed';
+        closeBtn.style.bottom = '20px';
+        closeBtn.style.right = '150px';
+        closeBtn.style.padding = '10px';
+        closeBtn.style.backgroundColor = '#444';
+        closeBtn.style.color = '#fff';
+        closeBtn.style.borderRadius = '4px';
+        closeBtn.style.zIndex = '9999';
+        
+        closeBtn.onclick = () => {
+          if (document.body.contains(link)) document.body.removeChild(link);
+          if (document.body.contains(closeBtn)) document.body.removeChild(closeBtn);
+        };
+        
+        document.body.appendChild(closeBtn);
       }
-    }, 100);
+    }, 500);
+    
+    // Remove the link if user navigates away
+    window.addEventListener('beforeunload', () => {
+      clearTimeout(timer);
+      if (document.body.contains(link)) document.body.removeChild(link);
+    }, { once: true });
     
     return true;
   } catch (e) {
     console.error('Failed to open checkout in new window:', e);
     
-    // Last resort fallback
+    // Last resort fallback - show a message with the URL
     try {
-      window.open(checkoutUrl, '_blank');
+      alert('Unable to open checkout in a new window. Please copy this URL and open it manually: ' + checkoutUrl);
     } catch (err) {
-      console.error('Even fallback window.open failed:', err);
+      console.error('Even alert fallback failed:', err);
     }
     
     return false;
