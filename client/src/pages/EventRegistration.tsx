@@ -166,21 +166,33 @@ export default function EventRegistration() {
           description: "Redirecting to secure payment...",
         });
         
-        // Ensure the URL is properly formatted
+        // Process the checkout URL properly
         let formattedCheckoutUrl = data.checkoutUrl;
-        if (!formattedCheckoutUrl.startsWith('http')) {
-          formattedCheckoutUrl = 'https://' + formattedCheckoutUrl;
-          console.log('Fixed checkout URL format:', formattedCheckoutUrl);
+        
+        // If it's a relative URL starting with /, use it within our own application
+        if (formattedCheckoutUrl.startsWith('/')) {
+          console.log('Using internal redirect to:', formattedCheckoutUrl);
+          
+          // Short timeout to allow the success toast to be seen
+          setTimeout(() => {
+            // For internal redirects, use the navigate function
+            navigate(formattedCheckoutUrl);
+          }, 1000);
+        } else {
+          // External URL (Shopify direct), ensure it's properly formatted
+          if (!formattedCheckoutUrl.startsWith('http')) {
+            formattedCheckoutUrl = 'https://' + formattedCheckoutUrl;
+            console.log('Fixed external checkout URL format:', formattedCheckoutUrl);
+          }
+          
+          console.log('Redirecting to external Shopify URL:', formattedCheckoutUrl);
+          
+          // Short timeout to allow the success toast to be seen
+          setTimeout(() => {
+            // Redirect directly to Shopify checkout
+            window.location.href = formattedCheckoutUrl;
+          }, 1000);
         }
-        
-        // Rather than using an iframe, redirect the user directly to Shopify
-        console.log('Redirecting to Shopify:', formattedCheckoutUrl);
-        
-        // Short timeout to allow the success toast to be seen
-        setTimeout(() => {
-          // Redirect directly to Shopify checkout
-          window.location.href = formattedCheckoutUrl;
-        }, 1000);
       } else {
         toast({
           title: "Registration Received",
