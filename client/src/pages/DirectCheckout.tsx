@@ -1,165 +1,136 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
-import { Helmet } from 'react-helmet';
-
 /**
  * This page creates a direct, reliable checkout experience with Shopify
  * using a simplified approach that avoids JavaScript complexity.
  */
+import { useEffect, useState } from 'react';
+import { useLocation } from 'wouter';
+import { useToast } from '@/hooks/use-toast';
+
 export default function DirectCheckout() {
   const [, navigate] = useLocation();
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [variantId, setVariantId] = useState<string | null>(null);
-  const [directCheckoutUrl, setDirectCheckoutUrl] = useState<string | null>(null);
-  const [hasAttemptedRedirect, setHasAttemptedRedirect] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Extract the variant ID from URL parameters
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const rawVariantId = params.get('variantId');
-      
-      if (!rawVariantId) {
-        setError('No product information provided. Please try again.');
-        setLoading(false);
-        return;
-      }
-      
-      // Process variant ID to make sure we have just the numeric part
-      let processedId = rawVariantId;
-      
-      // Handle gid://shopify format
-      if (processedId.includes('/')) {
-        const matches = processedId.match(/ProductVariant\/([0-9]+)/);
-        if (matches && matches[1]) {
-          processedId = matches[1];
-        } else {
-          // Simpler fallback extraction
-          processedId = processedId.split('/').pop() || processedId;
+    async function processCheckout() {
+      try {
+        // Parse the URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const variantId = params.get('variantId');
+
+        if (!variantId) {
+          throw new Error('No variant ID provided in URL');
         }
+
+        console.log('Processing direct checkout with variant ID:', variantId);
+
+        // Show initial toast
+        toast({
+          title: "Preparing Checkout",
+          description: "Connecting to Shopify...",
+        });
+
+        // Create a simplified direct cart URL for Shopify
+        let checkoutUrl = '';
+        
+        // First try to get a clean variant ID number
+        let formattedVariantId = variantId;
+        
+        // If it's a GraphQL ID (contains 'gid://' or has ProductVariant/ format), extract the numeric part
+        if (formattedVariantId.includes('gid://') || formattedVariantId.includes('ProductVariant/')) {
+          // Extract the numeric part from full GraphQL ID
+          const idMatch = formattedVariantId.match(/ProductVariant\/([0-9]+)/);
+          if (idMatch && idMatch[1]) {
+            formattedVariantId = idMatch[1];
+          } else {
+            // If the pattern doesn't match exactly, try a more general approach
+            // by taking the last segment after any slash
+            formattedVariantId = formattedVariantId.split('/').pop() || formattedVariantId;
+          }
+        }
+        
+        // Remove any non-numeric characters to get a pure ID
+        formattedVariantId = formattedVariantId.replace(/\D/g, '');
+        
+        if (!formattedVariantId) {
+          throw new Error('Failed to parse variant ID');
+        }
+
+        console.log('Formatted variant ID for direct cart URL:', formattedVariantId);
+
+        // Create a simple cart URL with the variant ID
+        const shopifyDomain = 'rich-habits-2022.myshopify.com';
+        checkoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1`;
+
+        console.log('Generated direct checkout URL:', checkoutUrl);
+
+        // Show a toast before redirecting
+        toast({
+          title: "Redirecting to Checkout",
+          description: "Taking you to the secure payment page...",
+        });
+
+        // Redirect after a short delay to allow the toast to show
+        setTimeout(() => {
+          window.location.href = checkoutUrl;
+        }, 1000);
+
+      } catch (error) {
+        console.error('Checkout error:', error);
+        setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        
+        // Show error toast
+        toast({
+          title: "Checkout Error",
+          description: error instanceof Error ? error.message : 'An unknown error occurred',
+          variant: "destructive"
+        });
+
+        setIsLoading(false);
       }
-      
-      // Remove any non-numeric characters
-      processedId = processedId.replace(/\D/g, '');
-      
-      if (!processedId || processedId.length < 3) {
-        setError('Invalid product information. Please try again.');
-        setLoading(false);
-        return;
-      }
-      
-      setVariantId(processedId);
-      
-      // Build direct Shopify checkout URL
-      const shopifyDomain = 'rich-habits-2022.myshopify.com';
-      const url = `https://${shopifyDomain}/cart/${processedId}:1`;
-      setDirectCheckoutUrl(url);
-      
-      // Auto-redirect to Shopify
-      window.location.href = url;
-      setHasAttemptedRedirect(true);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error preparing checkout:', err);
-      setError('An error occurred while preparing your checkout. Please try again.');
-      setLoading(false);
     }
-  }, []);
-  
-  const handleManualRedirect = () => {
-    if (directCheckoutUrl) {
-      window.location.href = directCheckoutUrl;
-    }
-  };
-  
-  const handleBackToEvents = () => {
-    navigate('/events');
-  };
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Helmet>
-          <title>Preparing Checkout | Rich Habits</title>
-        </Helmet>
-        <div className="text-center p-8 max-w-md w-full bg-white rounded-lg shadow-md">
-          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-          <h1 className="text-2xl font-bold mt-6 mb-2">Preparing Your Checkout</h1>
-          <p className="text-gray-600">Just a moment while we connect to Shopify...</p>
-        </div>
-      </div>
-    );
-  }
-  
+
+    processCheckout();
+  }, [toast]);
+
+  // If there's an error, show it
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Helmet>
-          <title>Checkout Error | Rich Habits</title>
-        </Helmet>
-        <div className="text-center p-8 max-w-md w-full bg-white rounded-lg shadow-md">
-          <div className="text-red-500 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Checkout Error</h1>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <div className="flex flex-col space-y-4">
+            <a 
+              href="/" 
+              className="px-4 py-2 bg-primary text-white rounded-md text-center hover:bg-primary/90 transition-colors"
+            >
+              Return to Home
+            </a>
+            <button
+              onClick={() => window.history.back()}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-center hover:bg-gray-300 transition-colors"
+            >
+              Go Back
+            </button>
           </div>
-          <h1 className="text-2xl font-bold mb-4">Checkout Error</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={handleBackToEvents}
-            className="bg-primary text-white px-6 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors"
-          >
-            Return to Events
-          </button>
         </div>
       </div>
     );
   }
-  
+
+  // Loading state
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Helmet>
-        <title>Continue to Checkout | Rich Habits</title>
-      </Helmet>
-      <div className="text-center p-8 max-w-md w-full bg-white rounded-lg shadow-md">
-        <div className="text-green-500 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Preparing Your Checkout</h1>
+        <div className="flex justify-center mb-6">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
         </div>
-        <h1 className="text-2xl font-bold mb-2">Continue to Checkout</h1>
-        <p className="text-gray-600 mb-6">
-          {hasAttemptedRedirect 
-            ? "We're redirecting you to Shopify's secure checkout. If you're not automatically redirected, please click the button below."
-            : "Click the button below to continue to Shopify's secure checkout."}
+        <p className="text-gray-600 text-center">
+          Please wait while we connect to Shopify for secure checkout...
         </p>
-        
-        <div className="space-y-4">
-          <button
-            onClick={handleManualRedirect}
-            className="w-full bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition-colors"
-          >
-            Continue to Checkout
-          </button>
-          
-          <button
-            onClick={handleBackToEvents}
-            className="w-full bg-gray-200 text-gray-800 px-6 py-3 rounded-md font-medium hover:bg-gray-300 transition-colors"
-          >
-            Return to Events
-          </button>
-          
-          {directCheckoutUrl && (
-            <div className="mt-8 p-4 bg-gray-50 rounded-md text-left">
-              <p className="font-medium text-sm mb-2">Having trouble with the buttons?</p>
-              <p className="text-sm mb-2">Copy and paste this link in your browser:</p>
-              <div className="p-2 bg-white border border-gray-200 rounded overflow-x-auto">
-                <code className="text-xs break-all">{directCheckoutUrl}</code>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

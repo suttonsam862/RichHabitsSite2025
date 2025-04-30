@@ -647,7 +647,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const eventKey = eventKeyMap[registrationData.eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
         // Type safety for event keys
         const validEventKey = eventKey as keyof typeof EVENT_PRODUCTS;
-        const optionKey = registrationData.option === 'full' ? 'fullCamp' : 'singleDay';
+        // Get the registration type, checking multiple possible fields
+        let registrationType = 'full';
+        if (typeof registrationData.registrationType === 'string') {
+          registrationType = registrationData.registrationType;
+        } else if (typeof (registrationData as any).option === 'string') {
+          registrationType = (registrationData as any).option;
+        }
+        
+        const optionKey = registrationType === 'full' ? 'fullCamp' : 'singleDay';
         
         // Get the variant ID from our mapping
         const productVariantId = EVENT_PRODUCTS[validEventKey]?.[optionKey as keyof (typeof EVENT_PRODUCTS)[typeof validEventKey]]?.variantId || '';
