@@ -15,12 +15,27 @@ export default function DirectCheckout() {
   useEffect(() => {
     async function processCheckout() {
       try {
-        // Parse the URL query parameters
+        // Parse the URL query parameters and get data from localStorage if available
         const params = new URLSearchParams(window.location.search);
-        const variantId = params.get('variantId');
-
+        let variantId = params.get('variantId');
+        const storedFallbackUrl = localStorage.getItem('shopify_fallback_url');
+        
+        // Check if we have a valid variant ID
         if (!variantId) {
-          throw new Error('No variant ID provided in URL');
+          // Try to extract a variant ID from the fallback URL if available
+          if (storedFallbackUrl) {
+            console.log('No variant ID in URL, checking stored fallback URL:', storedFallbackUrl);
+            const cartMatch = storedFallbackUrl.match(/\/cart\/([0-9]+):/);
+            if (cartMatch && cartMatch[1]) {
+              variantId = cartMatch[1];
+              console.log('Extracted variant ID from fallback URL:', variantId);
+            }
+          }
+          
+          // If we still don't have a variant ID, throw an error
+          if (!variantId) {
+            throw new Error('No variant ID provided in URL or in stored fallback');
+          }
         }
 
         console.log('Processing direct checkout with variant ID:', variantId);
@@ -78,14 +93,32 @@ export default function DirectCheckout() {
 
       } catch (error) {
         console.error('Checkout error:', error);
-        setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        setError(errorMessage);
         
         // Show error toast
         toast({
           title: "Checkout Error",
-          description: error instanceof Error ? error.message : 'An unknown error occurred',
+          description: errorMessage,
           variant: "destructive"
         });
+        
+        // If we have a fallback URL in localStorage, offer it as a last resort
+        const fallbackUrl = localStorage.getItem('shopify_fallback_url');
+        if (fallbackUrl) {
+          console.log('Providing fallback URL as last resort:', fallbackUrl);
+          setTimeout(() => {
+            toast({
+              title: "Alternative Checkout Available",
+              description: "We'll try an alternative method for checkout in a moment...",
+            });
+            
+            // Redirect to the fallback URL after a short delay
+            setTimeout(() => {
+              window.location.href = fallbackUrl;
+            }, 3000);
+          }, 2000);
+        }
 
         setIsLoading(false);
       }

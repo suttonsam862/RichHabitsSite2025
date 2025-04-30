@@ -24,7 +24,7 @@ export default function EventRegistration() {
     schoolName: '',
     clubName: '',
     medicalReleaseAccepted: false,
-    registrationType: 'full', // 'full' or 'single'
+    option: 'full', // 'full' or 'single' - consistent with backend API
     day1: false, // for Cory Land Tour
     day2: false, // for Cory Land Tour
     day3: false, // for Cory Land Tour
@@ -109,7 +109,7 @@ export default function EventRegistration() {
     }
     
     // Validate day selection for Cory Land Tour
-    if (event.id === 4 && registrationForm.registrationType === 'single') {
+    if (event.id === 4 && registrationForm.option === 'single') {
       const daySelected = registrationForm.day1 || registrationForm.day2 || registrationForm.day3;
       if (!daySelected) {
         toast({
@@ -130,11 +130,11 @@ export default function EventRegistration() {
         description: "Preparing your registration...",
       });
       
-      // Map form fields to match server expected format
+      // Prepare form data with consistent naming
       const formData = {
         ...registrationForm,
         eventId: eventId,
-        option: registrationForm.registrationType, // Map to the server-expected property name
+        // No mapping needed since we now use consistent naming (option) in both the form and API
       };
       
       console.log('Submitting registration data:', formData);
@@ -291,13 +291,13 @@ export default function EventRegistration() {
   const getPrice = () => {
     switch (event.id) {
       case 1: // Birmingham Slam Camp
-        return registrationForm.registrationType === 'full' ? '$249' : '$149 per day';
+        return registrationForm.option === 'full' ? '$249' : '$149 per day';
       case 2: // National Champ Camp
-        return registrationForm.registrationType === 'full' ? '$349' : '$175 per day';
+        return registrationForm.option === 'full' ? '$349' : '$175 per day';
       case 3: // Texas Recruiting Clinic
-        return registrationForm.registrationType === 'full' ? '$249' : '$149 per day';
+        return registrationForm.option === 'full' ? '$249' : '$149 per day';
       case 4: // Cory Land Tour
-        if (registrationForm.registrationType === 'full') {
+        if (registrationForm.option === 'full') {
           return '$200 for all days';
         } else {
           const selectedDays = [registrationForm.day1, registrationForm.day2, registrationForm.day3].filter(Boolean).length;
@@ -461,8 +461,8 @@ export default function EventRegistration() {
                   <div className="space-y-4">
                     <Label>Registration Type</Label>
                     <RadioGroup 
-                      value={registrationForm.registrationType}
-                      onValueChange={(value) => setRegistrationForm({...registrationForm, registrationType: value as 'full' | 'single'})}
+                      value={registrationForm.option}
+                      onValueChange={(value) => setRegistrationForm({...registrationForm, option: value as 'full' | 'single'})}
                       className="space-y-3"
                     >
                       <div className="flex items-start space-x-3">
@@ -498,7 +498,7 @@ export default function EventRegistration() {
                   </div>
                   
                   {/* Day selection for Cory Land Tour */}
-                  {event.id === 4 && registrationForm.registrationType === 'single' && (
+                  {event.id === 4 && registrationForm.option === 'single' && (
                     <div className="space-y-4 border rounded-md p-4 bg-gray-50">
                       <Label className="font-medium">Select Day(s)</Label>
                       <p className="text-sm text-gray-500 mb-2">Choose which locations you'll attend:</p>
