@@ -9,6 +9,8 @@ export default function ShopifyRedirect() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [redirectAttempted, setRedirectAttempted] = useState(false);
+  const [redirectAttempts, setRedirectAttempts] = useState(0);
+  const maxRedirectAttempts = 3;
 
   // Process URL from query parameters
   useEffect(() => {
@@ -87,14 +89,59 @@ export default function ShopifyRedirect() {
             try {
               const shopifyDomain = 'rich-habits-2022.myshopify.com';
               const fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
-              console.log('Setting fallback cart URL:', fallbackUrl);
-              setCartUrl(fallbackUrl);
+              // Make sure URLs with variant IDs use the format Shopify expects
+              // For direct cart URLs: https://store-domain.myshopify.com/cart/{variantId}:{quantity}
+              let processedFallbackUrl = fallbackUrl;
+              
+              // For direct cart URLs, don't include 'gid://' prefix in the variantId
+              if (processedFallbackUrl.includes('/cart/')) {
+                const rawVariantId = variantId.replace('gid://shopify/ProductVariant/', '');
+                processedFallbackUrl = `https://${shopifyDomain}/cart/${rawVariantId}:1`;
+              }
+              
+              console.log('Setting fallback cart URL:', processedFallbackUrl);
+              setCartUrl(processedFallbackUrl);
               
               // Automatically redirect to the fallback URL after a short delay
               setTimeout(() => {
                 console.log('Redirecting to fallback cart URL:', fallbackUrl);
-                window.location.href = fallbackUrl;
-              }, 1500);
+                window.location.href = processedFallbackUrl;
+              }, 500);
+              
+              // Set a second fallback for browsers that might block the redirect
+              setTimeout(() => {
+                if (document.visibilityState === 'visible') {
+                  console.log('Second attempt at redirecting to fallback cart URL');
+                  
+                  // Try different redirect methods
+                  try {
+                    // Method 1: window.location.replace
+                    window.location.replace(processedFallbackUrl);
+                    
+                    // Method 2: Create and click a link
+                    setTimeout(() => {
+                      const link = document.createElement('a');
+                      link.href = processedFallbackUrl;
+                      link.target = '_self';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      
+                      // Method 3: Form submission
+                      setTimeout(() => {
+                        const form = document.createElement('form');
+                        form.method = 'GET';
+                        form.action = processedFallbackUrl;
+                        form.target = '_self';
+                        document.body.appendChild(form);
+                        form.submit();
+                      }, 300);
+                    }, 300);
+                  } catch (e) {
+                    console.error('Multiple redirect attempts failed:', e);
+                  }
+                }
+              }, 2000);
             } catch (fallbackError) {
               console.error('Error creating fallback URL:', fallbackError);
             }
@@ -226,11 +273,45 @@ export default function ShopifyRedirect() {
     navigate('/events');
   };
   
-  // Direct redirect to Shopify cart
+  // Direct redirect to Shopify cart with multiple fallback methods
   const redirectToCart = () => {
     if (cartUrl) {
-      console.log('Manual redirect to cart page:', cartUrl);
-      window.location.href = cartUrl;
+      setRedirectAttempts(prev => prev + 1);
+      console.log(`Manual redirect to cart page (attempt ${redirectAttempts + 1}):`, cartUrl);
+      
+      // Use different redirect techniques based on the attempt number
+      if (redirectAttempts === 0) {
+        // Simple redirect for first attempt
+        window.location.href = cartUrl;
+      } else if (redirectAttempts === 1) {
+        // Try location.replace for second attempt
+        window.location.replace(cartUrl);
+      } else {
+        // Use all available methods for third attempt
+        try {
+          // Method 1: Create and click a link element
+          const link = document.createElement('a');
+          link.href = cartUrl;
+          link.target = '_self';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Method 2: Use form submission after a short delay
+          setTimeout(() => {
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = cartUrl;
+            form.target = '_self';
+            document.body.appendChild(form);
+            form.submit();
+          }, 200);
+        } catch (e) {
+          console.error('Multiple redirect attempts failed:', e);
+          setError(`Unable to redirect to checkout. Please copy the link below and paste it in your browser's address bar.`);
+        }
+      }
+      
       setRedirectAttempted(true);
     } else {
       setError('No cart URL available for redirect.');
@@ -251,6 +332,7 @@ export default function ShopifyRedirect() {
           </div>
           <h1 className="text-xl font-bold text-gray-800 mb-4">Checkout Error</h1>
           <p className="mb-6 text-gray-600">{error}</p>
+          <p className="mb-6 text-sm text-gray-500">We're having trouble connecting to our checkout service. Let's try a direct approach to Shopify instead.</p>
           <div className="flex flex-col space-y-3">
             {cartUrl && (
               <button
