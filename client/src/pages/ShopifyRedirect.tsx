@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
-import { navigateToShopifyCheckout } from '@/utils/shopifyUtils';
+import shopifyClient, { addToCart } from '@/lib/shopifyClient';
 
 export default function ShopifyRedirect() {
   const [location, navigate] = useLocation();
@@ -13,49 +13,146 @@ export default function ShopifyRedirect() {
   // Process URL from query parameters
   useEffect(() => {
     try {
-      // Extract the URL from the query parameters
+      // Extract the URL and variant ID from the query parameters
       const params = new URLSearchParams(window.location.search);
       const encodedUrl = params.get('url');
+      const variantId = params.get('variantId');
       
-      if (!encodedUrl) {
-        setError('No checkout URL provided. Please return to the registration page.');
+      if (!encodedUrl && !variantId) {
+        setError('No checkout information provided. Please return to the registration page.');
         setLoading(false);
         return;
       }
       
-      // Decode the URL
-      const decodedUrl = decodeURIComponent(encodedUrl);
-      console.log('Cart URL decoded:', decodedUrl);
-      
-      // Ensure the URL is well-formed
-      let processedUrl = decodedUrl;
-      if (!processedUrl.startsWith('http')) {
-        processedUrl = 'https://' + processedUrl.replace(/^\/\//, '');
-      } else if (processedUrl.startsWith('http://')) {
-        processedUrl = 'https://' + processedUrl.substring(7);
+      // If we have a variant ID, we'll add it to our embedded cart
+      if (variantId) {
+        console.log('Adding variant to embedded cart:', variantId);
+        
+        // Create a cart or add to existing one
+        const handleCart = async () => {
+          try {
+            let cartId = localStorage.getItem('shopify_cart_id');
+            let updatedCart;
+            
+            if (!cartId) {
+              const newCart = await shopifyClient.checkout.create();
+              if (newCart && newCart.id) {
+                localStorage.setItem('shopify_cart_id', newCart.id);
+                cartId = newCart.id;
+              } else {
+                throw new Error('Failed to create cart');
+              }
+            }
+            
+            // Add the item to the cart
+            updatedCart = await addToCart(cartId, variantId, 1);
+            
+            // Navigate to our embedded cart
+            navigate('/embedded-cart', { replace: true });
+          } catch (error) {
+            console.error('Error handling cart:', error);
+            setError('Failed to add item to cart. Please try again.');
+            setLoading(false);
+          }
+        };
+        
+        handleCart();
+        return;
       }
       
-      // Ensure we're using the myshopify.com domain
-      if (processedUrl.includes('rich-habits.com')) {
-        processedUrl = processedUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
-      }
-      
-      console.log('Processed cart URL:', processedUrl);
-      setCartUrl(processedUrl);
-      setLoading(false);
-      
-      // Immediately attempt to redirect
-      if (processedUrl) {
-        console.log('Auto-redirecting to cart...');
-        window.location.href = processedUrl;
-        setRedirectAttempted(true);
+      // If we have a URL, handle the legacy checkout URL approach
+      if (encodedUrl) {
+        // Decode the URL
+        const decodedUrl = decodeURIComponent(encodedUrl);
+        console.log('Cart URL decoded:', decodedUrl);
+        
+        // Ensure the URL is well-formed
+        let processedUrl = decodedUrl;
+        if (!processedUrl.startsWith('http')) {
+          processedUrl = 'https://' + processedUrl.replace(/^\/\//, '');
+        } else if (processedUrl.startsWith('http://')) {
+          processedUrl = 'https://' + processedUrl.substring(7);
+        }
+        
+        // Ensure we're using the myshopify.com domain
+        if (processedUrl.includes('rich-habits.com')) {
+          processedUrl = processedUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
+        }
+        
+        // Extract variant ID from Shopify cart URL if available
+        const urlObj = new URL(processedUrl);
+        const urlParams = new URLSearchParams(urlObj.search);
+        const urlVariantId = urlParams.get('id');
+        
+        if (urlVariantId) {
+          // Use our embedded cart approach
+          const handleLegacyCart = async () => {
+            try {
+              let cartId = localStorage.getItem('shopify_cart_id');
+              
+              if (!cartId) {
+                const newCart = await shopifyClient.checkout.create();
+                if (newCart && newCart.id) {
+                  localStorage.setItem('shopify_cart_id', newCart.id);
+                  cartId = newCart.id;
+                } else {
+                  throw new Error('Failed to create cart');
+                }
+              }
+              
+              // Extract any custom attributes from the URL
+              const customAttributes: { key: string; value: string }[] = [];
+              urlParams.forEach((value, key) => {
+                if (key.startsWith('attributes[') && key.endsWith(']')) {
+                  const attrKey = key.slice(11, -1); // Extract key from attributes[key]
+                  customAttributes.push({ key: attrKey, value });
+                }
+              });
+              
+              // Add the item to the cart
+              await addToCart(cartId, urlVariantId, 1, customAttributes);
+              
+              // Navigate to our embedded cart
+              navigate('/embedded-cart', { replace: true });
+            } catch (error) {
+              console.error('Error handling legacy cart:', error);
+              
+              // Fallback to direct URL approach
+              console.log('Processed cart URL:', processedUrl);
+              setCartUrl(processedUrl);
+              setLoading(false);
+              
+              // Immediately attempt to redirect
+              if (processedUrl) {
+                console.log('Auto-redirecting to cart...');
+                window.location.href = processedUrl;
+                setRedirectAttempted(true);
+              }
+            }
+          };
+          
+          handleLegacyCart();
+          return;
+        }
+        
+        // If we can't extract a variant ID, fall back to the original approach
+        console.log('Processed cart URL:', processedUrl);
+        setCartUrl(processedUrl);
+        setLoading(false);
+        
+        // Immediately attempt to redirect
+        if (processedUrl) {
+          console.log('Auto-redirecting to cart...');
+          window.location.href = processedUrl;
+          setRedirectAttempted(true);
+        }
       }
     } catch (error) {
       console.error('Error processing redirect URL:', error);
       setError('Failed to process the checkout URL. Please try again.');
       setLoading(false);
     }
-  }, []);
+  }, [navigate]);
   
   // Handle back to registration
   const handleBackToRegistration = () => {

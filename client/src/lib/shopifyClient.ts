@@ -1,12 +1,12 @@
 import Client from 'shopify-buy';
 
-// Fix for TypeScript
-declare module 'shopify-buy' {}
-
 // Initialize a new Shopify client
+// We need to hardcode the token since it's a public token intended for client-side use
 const shopifyClient = Client.buildClient({
   domain: 'rich-habits-2022.myshopify.com',
-  storefrontAccessToken: import.meta.env.SHOPIFY_STOREFRONT_TOKEN || '',
+  // Using the Shopify Storefront token directly here as it's meant to be public
+  // and used on the client-side (unlike the admin API token which must remain private)
+  storefrontAccessToken: import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || 'b0ba3ad2da5c1c5ade553d1bc8d198db',
 });
 
 export default shopifyClient;

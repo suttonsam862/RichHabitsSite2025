@@ -707,9 +707,9 @@ export async function createEventRegistrationCheckout(
       `attributes[${encodeURIComponent(attr.key)}]=${encodeURIComponent(String(attr.value))}`
     );
     
-    // Create a cart URL that adds the item and redirects back to our embedded cart page
-    // instead of to Shopify's cart page which would result in a 404
-    let cartUrl = `https://rich-habits-2022.myshopify.com/cart/add?id=${simpleVariantId}&quantity=1&return_to=https://rich-habits.com/embedded-cart`;
+    // Create a redirect URL that will pass the variant ID to our embedded cart system
+    // We'll use our own redirect page that will handle adding to cart on the client side
+    let cartUrl = `/redirect?variantId=${encodeURIComponent(simpleVariantId)}`;
     
     // Add all custom properties as encoded URL parameters
     if (noteAttributesArray.length > 0) {
