@@ -284,11 +284,23 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
     // Create checkout object with the structure our app expects
     const cart = data.data.cartCreate.cart;
     
-    // Make sure the URL uses the rich-habits.com domain instead of myshopify.com
+    // CRITICAL FIX: The URL needs to use rich-habits-2022.myshopify.com for the checkout to work
+    // Do NOT convert to rich-habits.com as this causes 404 errors
     let checkoutUrl = cart.checkoutUrl;
-    if (checkoutUrl.includes('myshopify.com')) {
-      const url = new URL(checkoutUrl);
-      checkoutUrl = checkoutUrl.replace(url.hostname, 'rich-habits.com');
+    
+    // Log the original URL for debugging
+    console.log('Original Storefront API checkout URL:', checkoutUrl);
+    
+    // We need to ensure the URL is using the myshopify.com domain, not the custom domain
+    if (checkoutUrl.includes('rich-habits.com')) {
+      checkoutUrl = checkoutUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
+      console.log('Replaced rich-habits.com with myshopify domain:', checkoutUrl);
+    }
+    
+    // Ensure it has HTTPS
+    if (checkoutUrl.startsWith('http://')) {
+      checkoutUrl = 'https://' + checkoutUrl.substring(7);
+      console.log('Ensured HTTPS protocol:', checkoutUrl);
     }
     
     return {
@@ -538,6 +550,13 @@ export async function createCustomCheckout(
     if (checkoutUrl) {
       // Log the original URL for debugging
       console.log('Original checkout URL:', checkoutUrl);
+      
+      // CRITICAL FIX: Ensure we're using the rich-habits-2022.myshopify.com domain
+      // and not rich-habits.com to avoid 404 errors
+      if (checkoutUrl.includes('rich-habits.com')) {
+        checkoutUrl = checkoutUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
+        console.log('Replaced rich-habits.com with myshopify domain:', checkoutUrl);
+      }
       
       // Ensure the URL starts with https:// for security
       if (!checkoutUrl.startsWith('https://')) {
