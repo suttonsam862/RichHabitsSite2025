@@ -156,15 +156,19 @@ export default function EventRegistration() {
         throw new Error(data.message || 'Failed to register');
       }
       
+      // Registration successful, show toast message
+      toast({
+        title: "Registration Successful",
+        description: "Preparing your checkout...",
+      });
+      
+      let shouldRedirect = false;
+      let redirectUrl = '';
+      
+      // Check if we have a checkout URL - primary option
       if (data.checkoutUrl) {
-        // Log the checkout URL for debugging
-        console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
-        
-        // Registration successful, redirect to checkout
-        toast({
-          title: "Registration Successful",
-          description: "Redirecting to secure payment...",
-        });
+        console.log('Checkout URL received:', data.checkoutUrl);
+        shouldRedirect = true;
         
         // Process the checkout URL properly
         let formattedCheckoutUrl = data.checkoutUrl;
@@ -172,12 +176,7 @@ export default function EventRegistration() {
         // If it's a relative URL starting with /, use it within our own application
         if (formattedCheckoutUrl.startsWith('/')) {
           console.log('Using internal redirect to:', formattedCheckoutUrl);
-          
-          // Short timeout to allow the success toast to be seen
-          setTimeout(() => {
-            // For internal redirects, use the navigate function
-            navigate(formattedCheckoutUrl);
-          }, 1000);
+          redirectUrl = formattedCheckoutUrl;
         } else {
           // External URL (Shopify direct), ensure it's properly formatted
           if (!formattedCheckoutUrl.startsWith('http')) {
@@ -185,21 +184,40 @@ export default function EventRegistration() {
             console.log('Fixed external checkout URL format:', formattedCheckoutUrl);
           }
           
-          console.log('Redirecting to external Shopify URL:', formattedCheckoutUrl);
-          
-          // Short timeout to allow the success toast to be seen
-          setTimeout(() => {
-            // Redirect directly to Shopify checkout
-            window.location.href = formattedCheckoutUrl;
-          }, 1000);
+          console.log('Using external Shopify URL:', formattedCheckoutUrl);
+          redirectUrl = formattedCheckoutUrl;
         }
-      } else {
+      } 
+      // Check if we have a fallback URL
+      else if (data.fallbackUrl) {
+        console.log('Using fallback checkout URL:', data.fallbackUrl);
+        shouldRedirect = true;
+        redirectUrl = data.fallbackUrl;
+      }
+      // No checkout URL available
+      else {
+        console.warn('No checkout or fallback URL received');
         toast({
           title: "Registration Received",
           description: "Your registration has been submitted, but payment processing is currently unavailable.",
         });
         // Redirect back to the event page
         navigate(`/events/${eventId}`);
+        return;
+      }
+      
+      // If we have a URL to redirect to, do it after a short delay
+      if (shouldRedirect && redirectUrl) {
+        // Short timeout to allow the success toast to be seen
+        setTimeout(() => {
+          if (redirectUrl.startsWith('/')) {
+            // For internal redirects, use the navigate function
+            navigate(redirectUrl);
+          } else {
+            // For external URLs, use direct window location
+            window.location.href = redirectUrl;
+          }
+        }, 1000);
       }
     } catch (error) {
       console.error('Registration error:', error);

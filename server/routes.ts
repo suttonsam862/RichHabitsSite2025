@@ -571,7 +571,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (!checkoutUrl) {
           const shopifyDomain = process.env.SHOPIFY_STORE_DOMAIN || 'rich-habits-2022.myshopify.com';
           const eventId = registrationData.eventId.toString();
-          const optionKey = registrationData.option === 'full' ? 'fullCamp' : 'singleDay';
+          const optionKey = (registrationData as any).option === 'full' || 
+                           registrationData.registrationType === 'full' 
+                           ? 'fullCamp' : 'singleDay';
           
           // Get the appropriate variant ID for this event and option
           let variantId = '';
@@ -592,22 +594,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
               break;
           }
           
-          if (shopifyKey && EVENT_PRODUCTS[shopifyKey]) {
-            const eventProduct = EVENT_PRODUCTS[shopifyKey];
-            const variantDetails = eventProduct[optionKey];
-            if (variantDetails) {
-              variantId = variantDetails.variantId.replace('gid://shopify/ProductVariant/', '');
-              console.log(`Using fallback variant ID ${variantId} for ${shopifyKey} (${optionKey})`);
-              
-              // Build classic Shopify cart URL with attributes
-              fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
-              
-              // Add key registration details as attributes
-              fallbackUrl += `?attributes[Registration_ID]=${registration.id}`;
-              fallbackUrl += `&attributes[Event_Name]=${encodeURIComponent(eventName || '')}`;
-              fallbackUrl += `&attributes[Camper_Name]=${encodeURIComponent(registrationData.firstName + ' ' + registrationData.lastName)}`;
-              
-              console.log('Created fallback URL:', fallbackUrl);
+          if (shopifyKey) {
+            // Use type assertion to handle the string indexing
+            const eventProducts = EVENT_PRODUCTS as any;
+            if (eventProducts[shopifyKey]) {
+              const eventProduct = eventProducts[shopifyKey];
+              const variantDetails = eventProduct[optionKey];
+              if (variantDetails) {
+                variantId = variantDetails.variantId.replace('gid://shopify/ProductVariant/', '');
+                console.log(`Using fallback variant ID ${variantId} for ${shopifyKey} (${optionKey})`);
+                
+                // Build classic Shopify cart URL with attributes
+                fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
+                
+                // Add key registration details as attributes
+                fallbackUrl += `?attributes[Registration_ID]=${registration.id}`;
+                fallbackUrl += `&attributes[Event_Name]=${encodeURIComponent(registrationData.eventId.toString())}`;
+                fallbackUrl += `&attributes[Camper_Name]=${encodeURIComponent(registrationData.firstName + ' ' + registrationData.lastName)}`;
+                
+                console.log('Created fallback URL:', fallbackUrl);
+              }
             }
           }
         }
