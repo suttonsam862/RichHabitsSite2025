@@ -12,6 +12,7 @@ import Events from "@/pages/Events";
 import EventDetail from "@/pages/EventDetail";
 import EventRegistration from "@/pages/EventRegistration";
 import ShopifyRedirect from "@/pages/ShopifyRedirect";
+import DirectCheckout from "@/pages/DirectCheckout";
 import EmbeddedCart from "@/pages/EmbeddedCart";
 import AddToCart from "@/pages/AddToCart";
 import About from "@/pages/About";
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/events/:id/register" component={EventRegistration} />
       <Route path="/redirect" component={ShopifyRedirect} />
+      <Route path="/direct-checkout" component={DirectCheckout} />
       <Route path="/embedded-cart" component={EmbeddedCart} />
       <Route path="/add-to-cart" component={AddToCart} />
       <Route path="/about" component={About} />
@@ -48,7 +50,8 @@ function App() {
   const isSpecialPage = 
     pathname === '/redirect' || 
     pathname === '/embedded-cart' || 
-    pathname === '/add-to-cart';
+    pathname === '/add-to-cart' ||
+    pathname === '/direct-checkout';
   
   return (
     <QueryClientProvider client={queryClient}>

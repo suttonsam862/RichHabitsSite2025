@@ -627,12 +627,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ? "Registration successful" 
           : "Registration saved but checkout creation failed",
         registration,
-        checkoutUrl // This property is used by the client
+        checkoutUrl, // This property is used by the client
       };
       
       // Add fallback URL if available
       if (fallbackUrl) {
         responseObj.fallbackUrl = fallbackUrl;
+      }
+      
+      // Always include the variant ID for direct checkout
+      try {
+        const eventKeyMap = {
+          1: 'birmingham-slam-camp',
+          2: 'national-champ-camp',
+          3: 'texas-recruiting-clinic',
+          4: 'cory-land-tour'
+        };
+        
+        const eventKey = eventKeyMap[registrationData.eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
+        // Type safety for event keys
+        const validEventKey = eventKey as keyof typeof EVENT_PRODUCTS;
+        const optionKey = registrationData.option === 'full' ? 'fullCamp' : 'singleDay';
+        
+        // Get the variant ID from our mapping
+        const productVariantId = EVENT_PRODUCTS[validEventKey]?.[optionKey as keyof (typeof EVENT_PRODUCTS)[typeof validEventKey]]?.variantId || '';
+        
+        if (productVariantId) {
+          responseObj.variantId = productVariantId;
+          console.log('Including variant ID in response:', productVariantId);
+        }
+      } catch (error) {
+        console.error('Error getting variant ID for response:', error);
       }
       
       // Log the response being sent back to client

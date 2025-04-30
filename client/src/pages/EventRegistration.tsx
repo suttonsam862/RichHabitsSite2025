@@ -167,7 +167,15 @@ export default function EventRegistration() {
       let isInternalRedirect = false;
       
       // Check if we have a checkout URL - primary option
-      if (data.checkoutUrl) {
+      // If the data includes a product variant ID, use it to create a direct checkout
+      if (data.variantId) {
+        console.log('Variant ID received:', data.variantId);
+        shouldRedirect = true;
+        redirectUrl = `/direct-checkout?variantId=${encodeURIComponent(data.variantId)}`;
+        console.log('Using our simplified direct checkout path:', redirectUrl);
+      
+      // If there's a checkout URL provided by the server, use it as a fallback
+      } else if (data.checkoutUrl) {
         console.log('Checkout URL received:', data.checkoutUrl);
         shouldRedirect = true;
         
