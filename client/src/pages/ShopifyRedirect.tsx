@@ -6,8 +6,7 @@ import ShopifyCheckoutFrame from '@/components/ShopifyCheckoutFrame';
 export default function ShopifyRedirect() {
   const [location, navigate] = useLocation();
   const [checkoutUrl, setCheckoutUrl] = useState<string>('');
-  const [countdown, setCountdown] = useState(5);
-  const [redirecting, setRedirecting] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,26 +17,65 @@ export default function ShopifyRedirect() {
       
       if (!encodedUrl) {
         setError('No checkout URL provided. Please return to the registration page.');
+        setLoading(false);
         return;
       }
       
       // Decode the URL
       const decodedUrl = decodeURIComponent(encodedUrl);
       console.log('Checkout URL decoded:', decodedUrl);
-      setCheckoutUrl(decodedUrl);
       
-      // Skip countdown and immediately show iframe
-      setRedirecting(true);
+      // Ensure the URL is well-formed with https://
+      let processedUrl = decodedUrl;
+      if (!processedUrl.startsWith('http')) {
+        processedUrl = 'https://' + processedUrl.replace(/^\/\//, '');
+      } else if (processedUrl.startsWith('http://')) {
+        processedUrl = 'https://' + processedUrl.substring(7);
+      }
+      
+      console.log('Processed checkout URL:', processedUrl);
+      setCheckoutUrl(processedUrl);
+      setLoading(false);
+      
+      // Add a fallback direct redirect if the iframe approach fails
+      const timer = setTimeout(() => {
+        // After 10 seconds, if we're still on this page, automatically redirect
+        console.log('Fallback redirect timer triggered');
+        if (document.visibilityState === 'visible') {
+          console.log('Automatically redirecting to Shopify...');
+          redirectToShopify(processedUrl);
+        }
+      }, 10000);
+      
+      return () => clearTimeout(timer);
     } catch (error) {
       console.error('Error processing redirect URL:', error);
       setError('Failed to process the checkout URL. Please try again.');
+      setLoading(false);
     }
   }, []);
   
-  // Handle manual redirect
-  const handleManualRedirect = () => {
+  // Direct redirect to Shopify checkout
+  const redirectToShopify = (url: string = checkoutUrl) => {
+    if (url) {
+      console.log('Redirecting directly to Shopify:', url);
+      window.location.href = url;
+    } else {
+      setError('No checkout URL available for redirect.');
+    }
+  };
+  
+  // Open checkout in a new window/tab
+  const openInNewWindow = () => {
     if (checkoutUrl) {
-      window.open(checkoutUrl, '_self');
+      const checkoutWindow = window.open(checkoutUrl, '_blank');
+      if (checkoutWindow) {
+        checkoutWindow.focus();
+      } else {
+        alert('Please allow popups for this site to open the checkout in a new window.');
+      }
+    } else {
+      setError('No checkout URL available to open.');
     }
   };
   
@@ -80,12 +118,31 @@ export default function ShopifyRedirect() {
           </div>
           <h1 className="text-xl font-bold text-gray-800 mb-4">Checkout Error</h1>
           <p className="mb-6 text-gray-600">{error}</p>
-          <button
-            onClick={handleBackToRegistration}
-            className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
-          >
-            Return to Registration
-          </button>
+          <div className="flex flex-col space-y-3">
+            <button
+              onClick={handleBackToRegistration}
+              className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
+            >
+              Return to Registration
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <Helmet>
+          <title>Preparing Checkout | Rich Habits</title>
+        </Helmet>
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h1 className="text-xl font-bold text-gray-800 mb-2">Preparing Your Checkout</h1>
+          <p className="mb-6 text-gray-600">
+            Please wait while we prepare your secure checkout page...
+          </p>
         </div>
       </div>
     );
@@ -93,36 +150,47 @@ export default function ShopifyRedirect() {
   
   if (checkoutUrl) {
     return (
-      <ShopifyCheckoutFrame 
-        checkoutUrl={checkoutUrl} 
-        onClose={handleCloseCheckout} 
-      />
+      <>
+        <Helmet>
+          <title>Complete Your Registration | Rich Habits</title>
+        </Helmet>
+        <ShopifyCheckoutFrame 
+          checkoutUrl={checkoutUrl} 
+          onClose={handleCloseCheckout} 
+        />
+      </>
     );
   }
   
+  // Fallback if somehow we get here without a URL or loading state
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
       <Helmet>
-        <title>Redirecting to Checkout | Rich Habits</title>
+        <title>Checkout | Rich Habits</title>
       </Helmet>
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
-        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-        <h1 className="text-xl font-bold text-gray-800 mb-2">Preparing Your Checkout</h1>
+        <h1 className="text-xl font-bold text-gray-800 mb-2">Checkout Options</h1>
         <p className="mb-6 text-gray-600">
-          You will be redirected to the secure payment page in {countdown} {countdown === 1 ? 'second' : 'seconds'}...
+          Please select how you would like to proceed with your checkout:
         </p>
-        <div className="flex space-x-4">
+        <div className="flex flex-col space-y-3">
           <button
-            onClick={handleBackToRegistration}
-            className="flex-1 py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+            onClick={() => redirectToShopify()}
+            className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            Cancel
+            Go to Shopify Checkout
           </button>
           <button
-            onClick={handleManualRedirect}
-            className="flex-1 py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
+            onClick={openInNewWindow}
+            className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
           >
-            Continue Now
+            Open in New Window
+          </button>
+          <button
+            onClick={handleBackToRegistration}
+            className="w-full py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+          >
+            Return to Registration
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface ShopifyCheckoutFrameProps {
   checkoutUrl: string;
@@ -8,13 +8,25 @@ interface ShopifyCheckoutFrameProps {
 export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCheckoutFrameProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   
   useEffect(() => {
-    // Format the URL if needed
+    // Check if we have a valid URL format
     if (!checkoutUrl) {
       setError('No checkout URL provided');
       return;
     }
+    
+    // Ensure the URL is absolute with HTTPS
+    let processedUrl = checkoutUrl;
+    if (!processedUrl.startsWith('http')) {
+      processedUrl = 'https://' + processedUrl.replace(/^\/\//, '');
+    } else if (processedUrl.startsWith('http://')) {
+      processedUrl = 'https://' + processedUrl.substring(7);
+    }
+    
+    console.log('Using processed checkout URL:', processedUrl);
     
     // Set a timeout to ensure we show loading state for at least a brief moment
     const timer = setTimeout(() => {
@@ -24,15 +36,50 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
     return () => clearTimeout(timer);
   }, [checkoutUrl]);
   
+  // Handle iframe load event
+  const handleIframeLoad = () => {
+    setIframeLoaded(true);
+    setLoading(false);
+    
+    // Check if the iframe has loaded a 404 page
+    try {
+      const iframe = iframeRef.current;
+      if (iframe && iframe.contentWindow) {
+        // Most browsers block cross-origin access, so this might fail
+        // But we can at least try to detect obvious page title changes
+        const iframeTitle = iframe.contentWindow.document.title;
+        if (iframeTitle.includes('404') || iframeTitle.includes('Not Found')) {
+          handleIframeError();
+        }
+      }
+    } catch (e) {
+      // Accessing cross-origin iframe content will throw an error
+      console.log('Could not access iframe content due to security restrictions');
+    }
+  };
+  
   // Handle iframe errors
   const handleIframeError = () => {
-    setError('Failed to load the checkout page. Please try again or click "Open in New Window".');
+    console.error('Checkout iframe failed to load properly');
+    setError('The checkout page cannot be displayed in this embedded view. Please use the "Open in New Window" button to complete your purchase securely.');
     setLoading(false);
+  };
+  
+  // Direct redirect to Shopify checkout
+  const redirectToShopify = () => {
+    // Immediately redirect to the checkout URL
+    window.location.href = checkoutUrl;
   };
   
   // Open checkout in a new window/tab
   const openInNewWindow = () => {
-    window.open(checkoutUrl, '_blank');
+    // Open in a new window and focus on it
+    const checkoutWindow = window.open(checkoutUrl, '_blank');
+    if (checkoutWindow) {
+      checkoutWindow.focus();
+    } else {
+      alert('Please allow popups for this site to open the checkout in a new window.');
+    }
   };
   
   return (
@@ -42,6 +89,12 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
         <div className="p-4 border-b flex justify-between items-center bg-gray-50">
           <h2 className="text-lg font-medium">Complete Your Registration</h2>
           <div className="flex space-x-2">
+            <button
+              onClick={redirectToShopify}
+              className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Go to Shopify Checkout
+            </button>
             <button
               onClick={openInNewWindow}
               className="px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary/90"
@@ -75,14 +128,43 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium mb-2">Checkout Error</h3>
+            <h3 className="text-lg font-medium mb-2">Checkout Cannot Be Embedded</h3>
             <p className="text-gray-600 mb-6">{error}</p>
-            <div className="flex space-x-4">
+            <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
+              <button 
+                onClick={redirectToShopify}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Go to Shopify Checkout
+              </button>
+              <button 
+                onClick={openInNewWindow}
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+              >
+                Open in New Window
+              </button>
               <button 
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
               >
-                Go Back
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Direct link message if iframe fails */}
+        {!loading && !error && !iframeLoaded && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-6 text-center z-10">
+            <p className="text-gray-600 mb-6">
+              If the checkout doesn't appear, please use one of these options:
+            </p>
+            <div className="flex space-x-4">
+              <button 
+                onClick={redirectToShopify}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Go to Shopify Checkout
               </button>
               <button 
                 onClick={openInNewWindow}
@@ -96,8 +178,10 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
         
         {/* Iframe for Shopify checkout */}
         <iframe
+          ref={iframeRef}
           src={checkoutUrl}
           className={`flex-grow w-full ${loading || error ? 'hidden' : 'block'}`}
+          onLoad={handleIframeLoad}
           onError={handleIframeError}
           title="Shopify Checkout"
           sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation"
