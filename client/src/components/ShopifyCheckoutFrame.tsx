@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { navigateToShopifyCheckout, openShopifyCheckoutInNewWindow } from '@/utils/shopifyUtils';
 
 interface ShopifyCheckoutFrameProps {
   checkoutUrl: string;
@@ -85,46 +86,22 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
   // Direct redirect to Shopify checkout
   const redirectToShopify = () => {
     const url = processedUrl || checkoutUrl;
-    console.log('Redirecting to Shopify checkout:', url);
+    console.log('Redirecting to Shopify checkout using utility:', url);
     
-    // Show the URL in an alert for debugging
-    alert(`Debug: About to redirect to ${url}`);
-    
-    try {
-      // Immediately redirect to the checkout URL
-      window.location.assign(url);
-      
-      // Fallback if assign doesn't work
-      setTimeout(() => {
-        window.location.href = url;
-      }, 100);
-    } catch (e) {
-      const error = e as Error;
-      console.error('Error redirecting:', error);
-      alert(`Error redirecting: ${error.message || 'Unknown error'}. Please try the Open in New Window button.`);
-    }
+    // Use our robust utility function to handle the redirect
+    navigateToShopifyCheckout(url);
   };
   
   // Open checkout in a new window/tab
   const openInNewWindow = () => {
     const url = processedUrl || checkoutUrl;
-    console.log('Opening in new window:', url);
+    console.log('Opening in new window using utility:', url);
     
-    // Show the URL in an alert for debugging
-    alert(`Debug: About to open in new window: ${url}`);
+    // Use our utility function to open in new window
+    const success = openShopifyCheckoutInNewWindow(url);
     
-    try {
-      // Open in a new window and focus on it
-      const checkoutWindow = window.open(url, '_blank');
-      if (checkoutWindow) {
-        checkoutWindow.focus();
-      } else {
-        alert('Please allow popups for this site to open the checkout in a new window.');
-      }
-    } catch (e) {
-      const error = e as Error;
-      console.error('Error opening window:', error);
-      alert(`Error opening window: ${error.message || 'Unknown error'}. Your browser may be blocking popups.`);
+    if (!success) {
+      alert('Please allow popups for this site to open the checkout in a new window.');
     }
   };
   
