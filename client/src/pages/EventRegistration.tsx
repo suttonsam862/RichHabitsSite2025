@@ -164,6 +164,7 @@ export default function EventRegistration() {
       
       let shouldRedirect = false;
       let redirectUrl = '';
+      let isInternalRedirect = false;
       
       // Check if we have a checkout URL - primary option
       if (data.checkoutUrl) {
@@ -177,6 +178,7 @@ export default function EventRegistration() {
         if (formattedCheckoutUrl.startsWith('/')) {
           console.log('Using internal redirect to:', formattedCheckoutUrl);
           redirectUrl = formattedCheckoutUrl;
+          isInternalRedirect = true;
         } else {
           // External URL (Shopify direct), ensure it's properly formatted
           if (!formattedCheckoutUrl.startsWith('http')) {
@@ -188,11 +190,17 @@ export default function EventRegistration() {
           redirectUrl = formattedCheckoutUrl;
         }
       } 
-      // Check if we have a fallback URL
+      // Check if we have a fallback URL from the server
       else if (data.fallbackUrl) {
-        console.log('Using fallback checkout URL:', data.fallbackUrl);
+        console.log('Server provided fallback checkout URL:', data.fallbackUrl);
         shouldRedirect = true;
         redirectUrl = data.fallbackUrl;
+        
+        // Show a special toast for fallback mode
+        toast({
+          title: "Registration Successful",
+          description: "Using direct checkout method for payment...",
+        });
       }
       // No checkout URL available
       else {

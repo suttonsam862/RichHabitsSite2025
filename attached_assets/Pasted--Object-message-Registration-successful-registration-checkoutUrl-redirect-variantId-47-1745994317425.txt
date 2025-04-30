@@ -1,0 +1,20 @@
+
+Object {message: "Registration successful", registration: {…}, checkoutUrl: "/redirect?variantId=47808555679981&attributes[Event_ID]=3&attributes[Event_Name]=Texas%20Recruiting…"}
+Checkout URL received: /redirect?variantId=47808555679981&attributes[Event_ID]=3&attributes[Event_Name]=Texas%20Recruiting%20Clinic&attributes[Registration_Title]=Sam%20Sutton%20-%20Texas%20Recruiting%20Clinic%20Registration&attributes[Camper_First_Name]=Sam&attributes[Camper_Last_Name]=Sutton&attributes[Contact_Name]=Sam%20Sutton&attributes[Contact_Email]=suttonsam862%40gmail.com&attributes[Contact_Phone]=2055869574&attributes[T_Shirt_Size]=Adult%20M&attributes[Grade]=14th&attributes[School_Name]=Tarleton%20State%20University&attributes[Club_Name]=Not%20provided&attributes[Medical_Release_Accepted]=Yes&attributes[Registration_Type]=full
+Using internal redirect to: /redirect?variantId=47808555679981&attributes[Event_ID]=3&attributes[Event_Name]=Texas%20Recruiting%20Clinic&attributes[Registration_Title]=Sam%20Sutton%20-%20Texas%20Recruiting%20Clinic%20Registration&attributes[Camper_First_Name]=Sam&attributes[Camper_Last_Name]=Sutton&attributes[Contact_Name]=Sam%20Sutton&attributes[Contact_Email]=suttonsam862%40gmail.com&attributes[Contact_Phone]=2055869574&attributes[T_Shirt_Size]=Adult%20M&attributes[Grade]=14th&attributes[School_Name]=Tarleton%20State%20University&attributes[Club_Name]=Not%20provided&attributes[Medical_Release_Accepted]=Yes&attributes[Registration_Type]=full
+Adding variant to embedded cart: 47808555679981
+Error handling cart: 
+Error {}
+
+at t.value (https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error details: 
+Object {message: "The cartCreate mutation failed due to an unknown error.", stack: "Error: The cartCreate mutation failed due to an unknown error.↵    at…"}
+
+at t.value (https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://2858eed7-bd32-4395-8724-e22d5762740d-00-2xdfl80r6zi99.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Setting fallback cart URL: https://rich-habits-2022.myshopify.com/cart/47808555679981:1

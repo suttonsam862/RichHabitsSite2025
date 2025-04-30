@@ -89,6 +89,12 @@ export default function ShopifyRedirect() {
               const fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
               console.log('Setting fallback cart URL:', fallbackUrl);
               setCartUrl(fallbackUrl);
+              
+              // Automatically redirect to the fallback URL after a short delay
+              setTimeout(() => {
+                console.log('Redirecting to fallback cart URL:', fallbackUrl);
+                window.location.href = fallbackUrl;
+              }, 1500);
             } catch (fallbackError) {
               console.error('Error creating fallback URL:', fallbackError);
             }
@@ -246,12 +252,30 @@ export default function ShopifyRedirect() {
           <h1 className="text-xl font-bold text-gray-800 mb-4">Checkout Error</h1>
           <p className="mb-6 text-gray-600">{error}</p>
           <div className="flex flex-col space-y-3">
+            {cartUrl && (
+              <button
+                onClick={redirectToCart}
+                className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Try Direct Checkout
+              </button>
+            )}
             <button
               onClick={handleBackToRegistration}
               className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
             >
               Return to Registration
             </button>
+            
+            {cartUrl && (
+              <div className="mt-4 p-3 bg-gray-100 rounded-md text-left text-sm">
+                <p className="font-medium mb-1">Having trouble?</p>
+                <p>Copy and paste this link in your browser:</p>
+                <div className="mt-1 p-2 bg-white rounded border border-gray-300 overflow-x-auto">
+                  <code className="text-xs break-all">{cartUrl}</code>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
