@@ -591,7 +591,8 @@ export async function createCustomCheckout(
   }
 }
 
-// Function to create a checkout from an event registration
+// COMPLETE REWRITE: This function uses a direct "Add to Cart" URL that works more reliably
+// This approach bypasses the need for the Checkout API which has been problematic
 export async function createEventRegistrationCheckout(
   eventId: string,
   productVariantId: string,
@@ -647,6 +648,7 @@ export async function createEventRegistrationCheckout(
   // Create a more descriptive title for the checkout, including camper name and event
   const checkoutTitle = `${registrationData.firstName} ${registrationData.lastName} - ${eventName} Registration`;
   
+  // Format the custom attributes as note attributes for the cart
   const customAttributes = [
     { key: 'Event_ID', value: eventId },
     { key: 'Event_Name', value: eventName },
@@ -685,111 +687,52 @@ export async function createEventRegistrationCheckout(
     customAttributes.push({ key: 'Day_3_SouthAL', value: registrationData.day3 ? 'Yes' : 'No' });
   }
 
-  // Try to use the more customized Admin API checkout first
   try {
-    const customer = {
-      firstName: registrationData.contactName.split(' ')[0] || registrationData.firstName,
-      lastName: registrationData.contactName.split(' ').slice(1).join(' ') || registrationData.lastName,
-      email: registrationData.email,
-      phone: registrationData.phone || ''
+    console.log('Creating direct add-to-cart URL with variant ID:', productVariantId);
+    
+    // Extract the simple ID from the Storefront API global ID
+    let simpleVariantId = productVariantId;
+    if (productVariantId.includes('/')) {
+      simpleVariantId = productVariantId.split('/').pop() || '';
+    }
+    
+    // Verify we have a valid numeric variant ID
+    if (!simpleVariantId || isNaN(parseInt(simpleVariantId))) {
+      console.error('Invalid variant ID format:', productVariantId);
+      throw new Error('Invalid variant ID format. Expected numeric ID.');
+    }
+    
+    // Build the custom properties object for the cart URL
+    const noteAttributesArray = customAttributes.map(attr => 
+      `attributes[${encodeURIComponent(attr.key)}]=${encodeURIComponent(String(attr.value))}`
+    );
+    
+    // Create a cart URL that directly adds the item with all properties
+    // This is the most reliable way to add items to a Shopify cart
+    let cartUrl = `https://rich-habits-2022.myshopify.com/cart/add?id=${simpleVariantId}&quantity=1`;
+    
+    // Add all custom properties as encoded URL parameters
+    if (noteAttributesArray.length > 0) {
+      cartUrl += '&' + noteAttributesArray.join('&');
+    }
+    
+    // Add discount code if applicable
+    if (applyDiscount && process.env.UNIVERSAL_DISCOUNT_CODE) {
+      cartUrl += `&discount=${encodeURIComponent(process.env.UNIVERSAL_DISCOUNT_CODE)}`;
+    }
+    
+    console.log('Created direct cart URL:', cartUrl);
+    
+    // Return the cart URL in the same format as our checkout object for compatibility
+    return {
+      id: `cart-${Date.now()}`, // Generate a unique ID
+      webUrl: cartUrl,
+      subtotalPrice: price ? price.toString() : '0.00',
+      totalPrice: price ? price.toString() : '0.00'
     };
-    
-    console.log('Attempting to create custom checkout with Admin API...');
-    console.log('Product variant ID:', productVariantId);
-    console.log('Customer data:', JSON.stringify(customer, null, 2));
-    console.log('Custom attributes:', JSON.stringify(customAttributes, null, 2));
-    if (price) {
-      console.log('Price override for checkout:', price);
-    }
-    
-    const checkout = await createCustomCheckout(productVariantId, 1, customer, customAttributes, price);
-    
-    // Verify checkout URL presence
-    if (!checkout || !checkout.webUrl) {
-      console.error('Admin API checkout created but missing webUrl:', checkout);
-      throw new Error('Checkout created but missing redirect URL');
-    }
-    
-    console.log('Successfully created checkout with Admin API:', checkout.webUrl);
-    
-    // If universal discount should be applied, we'll append the discount code to the checkout URL
-    if (applyDiscount && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
-      console.log('Applying universal discount code to checkout URL');
-      const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
-      
-      // Append the discount code parameter to the checkout URL
-      const separator = checkout.webUrl.includes('?') ? '&' : '?';
-      checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
-      console.log('Updated checkout URL with discount:', checkout.webUrl);
-    }
-    
-    return checkout;
-  } catch (adminApiError) {
-    // Properly typed error capturing
-    console.warn('Admin API checkout creation failed, falling back to Storefront API', adminApiError);
-    
-    // Fall back to the regular Storefront API checkout if Admin API fails
-    try {
-      console.log('Attempting fallback to Storefront API checkout...');
-      const checkout = await createCheckout(productVariantId, 1, customAttributes);
-      
-      // Verify checkout URL presence
-      if (!checkout || !checkout.webUrl) {
-        console.error('Storefront API checkout created but missing webUrl:', checkout);
-        throw new Error('Fallback checkout created but missing redirect URL');
-      }
-      
-      console.log('Successfully created fallback checkout with Storefront API:', checkout.webUrl);
-      
-      // Format the checkout URL
-      if (checkout.webUrl) {
-        console.log('Original storefront checkout URL:', checkout.webUrl);
-        
-        // Completely reformat the URL to ensure consistent format
-        let formattedUrl = checkout.webUrl;
-        
-        // IMPORTANT: Instead of parsing and reformatting URLs which causes domain issues,
-        // we'll just replace rich-habits.com with rich-habits-2022.myshopify.com if needed
-        // and ensure we have https
-
-        if (formattedUrl.includes('rich-habits.com')) {
-          formattedUrl = formattedUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
-          console.log('Replaced domain name to:', formattedUrl);
-        }
-
-        // Ensure the URL starts with https:// for security
-        if (!formattedUrl.startsWith('https://')) {
-          if (formattedUrl.startsWith('http://')) {
-            formattedUrl = 'https://' + formattedUrl.substring(7);
-          } else if (!formattedUrl.includes('://')) {
-            formattedUrl = 'https://' + formattedUrl;
-          }
-        }
-        
-        console.log('Reformed checkout URL:', formattedUrl);
-        checkout.webUrl = formattedUrl;
-        
-        console.log('Formatted storefront checkout URL:', checkout.webUrl);
-      }
-      
-      // If universal discount should be applied, we'll append the discount code to the checkout URL
-      if (applyDiscount && checkout.webUrl && process.env.UNIVERSAL_DISCOUNT_CODE) {
-        console.log('Applying universal discount code to checkout URL');
-        const discountCode = process.env.UNIVERSAL_DISCOUNT_CODE;
-        
-        // Append the discount code parameter to the checkout URL
-        const separator = checkout.webUrl.includes('?') ? '&' : '?';
-        checkout.webUrl = `${checkout.webUrl}${separator}discount=${discountCode}`;
-        console.log('Updated checkout URL with discount:', checkout.webUrl);
-      }
-      
-      return checkout;
-    } catch (fallbackError) {
-      console.error('Both checkout methods failed:', fallbackError);
-      const errorMsg = adminApiError instanceof Error ? adminApiError.message : String(adminApiError);
-      const fallbackErrorMsg = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
-      throw new Error(`Failed to create checkout with both methods: ${errorMsg} and then ${fallbackErrorMsg}`);
-    }
+  } catch (error) {
+    console.error('Error creating cart URL:', error);
+    throw new Error(`Failed to create direct cart URL: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

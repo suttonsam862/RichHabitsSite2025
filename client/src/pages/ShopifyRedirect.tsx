@@ -1,23 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
-import { navigateToShopifyCheckout, openShopifyCheckoutInNewWindow } from '@/utils/shopifyUtils';
+import { navigateToShopifyCheckout } from '@/utils/shopifyUtils';
 
 export default function ShopifyRedirect() {
   const [location, navigate] = useLocation();
-  const [checkoutUrl, setCheckoutUrl] = useState<string>('');
+  const [cartUrl, setCartUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Direct redirect to Shopify checkout (memoized)
-  const redirectToShopify = useCallback(() => {
-    if (checkoutUrl) {
-      console.log('Redirecting directly to Shopify:', checkoutUrl);
-      navigateToShopifyCheckout(checkoutUrl);
-    } else {
-      setError('No checkout URL available for redirect.');
-    }
-  }, [checkoutUrl]);
+  const [redirectAttempted, setRedirectAttempted] = useState(false);
 
   // Process URL from query parameters
   useEffect(() => {
@@ -34,9 +25,9 @@ export default function ShopifyRedirect() {
       
       // Decode the URL
       const decodedUrl = decodeURIComponent(encodedUrl);
-      console.log('Checkout URL decoded:', decodedUrl);
+      console.log('Cart URL decoded:', decodedUrl);
       
-      // Ensure the URL is well-formed with https://
+      // Ensure the URL is well-formed
       let processedUrl = decodedUrl;
       if (!processedUrl.startsWith('http')) {
         processedUrl = 'https://' + processedUrl.replace(/^\/\//, '');
@@ -44,43 +35,27 @@ export default function ShopifyRedirect() {
         processedUrl = 'https://' + processedUrl.substring(7);
       }
       
-      console.log('Processed checkout URL:', processedUrl);
-      setCheckoutUrl(processedUrl);
+      // Ensure we're using the myshopify.com domain
+      if (processedUrl.includes('rich-habits.com')) {
+        processedUrl = processedUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
+      }
+      
+      console.log('Processed cart URL:', processedUrl);
+      setCartUrl(processedUrl);
       setLoading(false);
+      
+      // Immediately attempt to redirect
+      if (processedUrl) {
+        console.log('Auto-redirecting to cart...');
+        window.location.href = processedUrl;
+        setRedirectAttempted(true);
+      }
     } catch (error) {
       console.error('Error processing redirect URL:', error);
       setError('Failed to process the checkout URL. Please try again.');
       setLoading(false);
     }
   }, []);
-  
-  // Add a fallback direct redirect timer
-  useEffect(() => {
-    if (!checkoutUrl || loading) return;
-    
-    const timer = setTimeout(() => {
-      // After 10 seconds, if we're still on this page, automatically redirect
-      console.log('Fallback redirect timer triggered');
-      if (document.visibilityState === 'visible') {
-        console.log('Automatically redirecting to Shopify...');
-        redirectToShopify();
-      }
-    }, 10000);
-    
-    return () => clearTimeout(timer);
-  }, [checkoutUrl, loading, redirectToShopify]);
-  
-  // Open checkout in a new window/tab
-  const openInNewWindow = () => {
-    if (checkoutUrl) {
-      const success = openShopifyCheckoutInNewWindow(checkoutUrl);
-      if (!success) {
-        alert('Please allow popups for this site to open the checkout in a new window.');
-      }
-    } else {
-      setError('No checkout URL available to open.');
-    }
-  };
   
   // Handle back to registration
   const handleBackToRegistration = () => {
@@ -102,9 +77,15 @@ export default function ShopifyRedirect() {
     navigate('/events');
   };
   
-  // Handle closing the checkout frame
-  const handleCloseCheckout = () => {
-    handleBackToRegistration();
+  // Direct redirect to Shopify cart
+  const redirectToCart = () => {
+    if (cartUrl) {
+      console.log('Manual redirect to cart page:', cartUrl);
+      window.location.href = cartUrl;
+      setRedirectAttempted(true);
+    } else {
+      setError('No cart URL available for redirect.');
+    }
   };
   
   if (error) {
@@ -151,91 +132,52 @@ export default function ShopifyRedirect() {
     );
   }
   
-  if (checkoutUrl) {
-    // Instead of showing the iframe, auto-redirect after a short delay
-    useEffect(() => {
-      // Redirect to Shopify checkout after 1.5 seconds
-      const redirectTimer = setTimeout(() => {
-        console.log('Auto-redirecting to Shopify checkout...');
-        redirectToShopify();
-      }, 1500);
-      
-      return () => clearTimeout(redirectTimer);
-    }, [checkoutUrl, redirectToShopify]);
-    
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-        <Helmet>
-          <title>Complete Your Registration | Rich Habits</title>
-        </Helmet>
-        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
-          <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <h1 className="text-xl font-bold text-gray-800 mb-2">Redirecting to Checkout</h1>
-          <p className="mb-6 text-gray-600">
-            You are being redirected to the secure checkout page...
-          </p>
-          
-          <p className="text-gray-600 mb-6">
-            If the checkout doesn't appear, please use one of these options:
-          </p>
-          <div className="flex flex-col space-y-3">
-            <button
-              type="button"
-              onClick={() => redirectToShopify()}
-              className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-center"
-            >
-              Go to Shopify Checkout
-            </button>
-            <button
-              type="button"
-              onClick={openInNewWindow}
-              className="w-full py-2 px-4 bg-black text-white rounded hover:bg-black/90 text-center"
-            >
-              Open in New Window
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  // Fallback if somehow we get here without a URL or loading state
+  // If we have a cart URL but the auto-redirect didn't work, show manual options
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
       <Helmet>
-        <title>Checkout | Rich Habits</title>
+        <title>Complete Your Registration | Rich Habits</title>
       </Helmet>
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
-        <h1 className="text-xl font-bold text-gray-800 mb-2">Checkout Options</h1>
+        <div className="text-green-500 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h1 className="text-xl font-bold text-gray-800 mb-2">Your Registration is Ready</h1>
         <p className="mb-6 text-gray-600">
-          Please select how you would like to proceed with your checkout:
+          {redirectAttempted 
+            ? "Your cart should be opening now. If it doesn't appear, please click the button below."
+            : "Click the button below to continue to the Shopify cart to complete your registration."
+          }
         </p>
+        
         <div className="flex flex-col space-y-3">
           <button
             type="button"
-            onClick={() => {
-              navigateToShopifyCheckout(checkoutUrl);
-            }}
+            onClick={redirectToCart}
             className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-center"
           >
-            Go to Shopify Checkout
+            Continue to Checkout
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              openShopifyCheckoutInNewWindow(checkoutUrl);
-            }}
-            className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90 text-center"
-          >
-            Open in New Window
-          </button>
+          
           <button
             type="button"
             onClick={handleBackToRegistration}
             className="w-full py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
           >
-            Return to Registration
+            Return to Events
           </button>
+          
+          {cartUrl && (
+            <div className="mt-4 p-3 bg-gray-100 rounded-md text-left text-sm">
+              <p className="font-medium mb-1">Having trouble?</p>
+              <p>Copy and paste this link in your browser:</p>
+              <div className="mt-1 p-2 bg-white rounded border border-gray-300 overflow-x-auto">
+                <code className="text-xs break-all">{cartUrl}</code>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
