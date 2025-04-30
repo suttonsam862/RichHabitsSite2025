@@ -159,14 +159,14 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
             <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
               <button 
                 type="button"
-                onClick={() => window.location.href = processedUrl || checkoutUrl}
+                onClick={() => navigateToShopifyCheckout(processedUrl || checkoutUrl)}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
               >
                 Go to Shopify Checkout
               </button>
               <button 
                 type="button"
-                onClick={() => window.open(processedUrl || checkoutUrl, "_blank")}
+                onClick={() => openShopifyCheckoutInNewWindow(processedUrl || checkoutUrl)}
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-center"
               >
                 Open in New Window
@@ -191,14 +191,14 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
             <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
               <button 
                 type="button"
-                onClick={() => window.location.href = processedUrl || checkoutUrl}
+                onClick={() => navigateToShopifyCheckout(processedUrl || checkoutUrl)}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
               >
                 Go to Shopify Checkout
               </button>
               <button 
                 type="button"
-                onClick={() => window.open(processedUrl || checkoutUrl, "_blank")}
+                onClick={() => openShopifyCheckoutInNewWindow(processedUrl || checkoutUrl)}
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-center"
               >
                 Open in New Window
