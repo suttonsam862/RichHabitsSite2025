@@ -174,21 +174,48 @@ export default function ShopifyRedirect() {
           Please select how you would like to proceed with your checkout:
         </p>
         <div className="flex flex-col space-y-3">
-          <a
-            href={checkoutUrl}
-            target="_self"
+          <button
+            type="button"
+            onClick={() => {
+              console.log('Redirecting to Shopify checkout:', checkoutUrl);
+              alert(`Debug: About to redirect to ${checkoutUrl}`);
+              try {
+                window.location.assign(checkoutUrl);
+                setTimeout(() => {
+                  window.location.href = checkoutUrl;
+                }, 100);
+              } catch (e) {
+                const error = e as Error;
+                console.error('Error redirecting:', error);
+                alert(`Error redirecting: ${error.message || 'Unknown error'}. Please try the Open in New Window button.`);
+              }
+            }}
             className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-center"
           >
             Go to Shopify Checkout
-          </a>
-          <a
-            href={checkoutUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              console.log('Opening in new window:', checkoutUrl);
+              alert(`Debug: About to open in new window: ${checkoutUrl}`);
+              try {
+                const checkoutWindow = window.open(checkoutUrl, '_blank');
+                if (checkoutWindow) {
+                  checkoutWindow.focus();
+                } else {
+                  alert('Please allow popups for this site to open the checkout in a new window.');
+                }
+              } catch (e) {
+                const error = e as Error;
+                console.error('Error opening window:', error);
+                alert(`Error opening window: ${error.message || 'Unknown error'}. Your browser may be blocking popups.`);
+              }
+            }}
             className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90 text-center"
           >
             Open in New Window
-          </a>
+          </button>
           <button
             type="button"
             onClick={handleBackToRegistration}

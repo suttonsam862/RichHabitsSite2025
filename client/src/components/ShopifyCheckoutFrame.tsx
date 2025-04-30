@@ -84,9 +84,25 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
   
   // Direct redirect to Shopify checkout
   const redirectToShopify = () => {
-    console.log('Redirecting to Shopify checkout:', processedUrl || checkoutUrl);
-    // Immediately redirect to the checkout URL
-    window.location.href = processedUrl || checkoutUrl;
+    const url = processedUrl || checkoutUrl;
+    console.log('Redirecting to Shopify checkout:', url);
+    
+    // Show the URL in an alert for debugging
+    alert(`Debug: About to redirect to ${url}`);
+    
+    try {
+      // Immediately redirect to the checkout URL
+      window.location.assign(url);
+      
+      // Fallback if assign doesn't work
+      setTimeout(() => {
+        window.location.href = url;
+      }, 100);
+    } catch (e) {
+      const error = e as Error;
+      console.error('Error redirecting:', error);
+      alert(`Error redirecting: ${error.message || 'Unknown error'}. Please try the Open in New Window button.`);
+    }
   };
   
   // Open checkout in a new window/tab
@@ -94,12 +110,21 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
     const url = processedUrl || checkoutUrl;
     console.log('Opening in new window:', url);
     
-    // Open in a new window and focus on it
-    const checkoutWindow = window.open(url, '_blank');
-    if (checkoutWindow) {
-      checkoutWindow.focus();
-    } else {
-      alert('Please allow popups for this site to open the checkout in a new window.');
+    // Show the URL in an alert for debugging
+    alert(`Debug: About to open in new window: ${url}`);
+    
+    try {
+      // Open in a new window and focus on it
+      const checkoutWindow = window.open(url, '_blank');
+      if (checkoutWindow) {
+        checkoutWindow.focus();
+      } else {
+        alert('Please allow popups for this site to open the checkout in a new window.');
+      }
+    } catch (e) {
+      const error = e as Error;
+      console.error('Error opening window:', error);
+      alert(`Error opening window: ${error.message || 'Unknown error'}. Your browser may be blocking popups.`);
     }
   };
   
@@ -155,21 +180,20 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
             <h3 className="text-lg font-medium mb-2">Checkout Cannot Be Embedded</h3>
             <p className="text-gray-600 mb-6">{error}</p>
             <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <a 
-                href={processedUrl || checkoutUrl}
-                target="_self"
+              <button 
+                type="button"
+                onClick={() => window.location.href = processedUrl || checkoutUrl}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
               >
                 Go to Shopify Checkout
-              </a>
-              <a 
-                href={processedUrl || checkoutUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              </button>
+              <button 
+                type="button"
+                onClick={() => window.open(processedUrl || checkoutUrl, "_blank")}
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-center"
               >
                 Open in New Window
-              </a>
+              </button>
               <button 
                 type="button"
                 onClick={onClose}
@@ -188,21 +212,20 @@ export default function ShopifyCheckoutFrame({ checkoutUrl, onClose }: ShopifyCh
               If the checkout doesn't appear, please use one of these options:
             </p>
             <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <a 
-                href={processedUrl || checkoutUrl}
-                target="_self"
+              <button 
+                type="button"
+                onClick={() => window.location.href = processedUrl || checkoutUrl}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
               >
                 Go to Shopify Checkout
-              </a>
-              <a 
-                href={processedUrl || checkoutUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              </button>
+              <button 
+                type="button"
+                onClick={() => window.open(processedUrl || checkoutUrl, "_blank")}
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-center"
               >
                 Open in New Window
-              </a>
+              </button>
             </div>
           </div>
         )}
