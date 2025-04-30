@@ -10,7 +10,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-import ShopifyCheckoutFrame from '@/components/ShopifyCheckoutFrame';
 
 export default function EventRegistration() {
   const [location, navigate] = useLocation();
@@ -159,12 +158,12 @@ export default function EventRegistration() {
       
       if (data.checkoutUrl) {
         // Log the checkout URL for debugging
-        console.log('Loading Shopify checkout in iframe:', data.checkoutUrl);
+        console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
         
-        // Registration successful, show embedded checkout
+        // Registration successful, redirect to checkout
         toast({
           title: "Registration Successful",
-          description: "Loading secure payment form...",
+          description: "Redirecting to secure payment...",
         });
         
         // Ensure the URL is properly formatted
@@ -174,10 +173,14 @@ export default function EventRegistration() {
           console.log('Fixed checkout URL format:', formattedCheckoutUrl);
         }
         
-        console.log('Showing checkout in iframe:', formattedCheckoutUrl);
-        // Show the checkout in an iframe - directly set state without try/catch (setState can't throw)
-        setCheckoutUrl(formattedCheckoutUrl);
-        setShowCheckoutFrame(true);
+        // Rather than using an iframe, redirect the user directly to Shopify
+        console.log('Redirecting to Shopify:', formattedCheckoutUrl);
+        
+        // Short timeout to allow the success toast to be seen
+        setTimeout(() => {
+          // Redirect directly to Shopify checkout
+          window.location.href = formattedCheckoutUrl;
+        }, 1000);
       } else {
         toast({
           title: "Registration Received",
@@ -259,13 +262,7 @@ export default function EventRegistration() {
         <meta name="description" content={`Register for ${event.title} - ${event.location} - ${event.dates}`} />
       </Helmet>
       
-      {/* Embedded Shopify checkout iframe */}
-      {showCheckoutFrame && checkoutUrl && (
-        <ShopifyCheckoutFrame 
-          checkoutUrl={checkoutUrl} 
-          onClose={() => setShowCheckoutFrame(false)} 
-        />
-      )}
+      {/* No iframe needed - we're redirecting directly to Shopify */}
       
       <div className="bg-white">
         <Container className="py-8 md:py-12">
