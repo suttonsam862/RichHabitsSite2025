@@ -174,19 +174,23 @@ export default function ShopifyRedirect() {
           Please select how you would like to proceed with your checkout:
         </p>
         <div className="flex flex-col space-y-3">
-          <button
-            onClick={() => redirectToShopify()}
-            className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700"
+          <a
+            href={checkoutUrl}
+            target="_self"
+            className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-center"
           >
             Go to Shopify Checkout
-          </button>
-          <button
-            onClick={openInNewWindow}
-            className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90"
+          </a>
+          <a
+            href={checkoutUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90 text-center"
           >
             Open in New Window
-          </button>
+          </a>
           <button
+            type="button"
             onClick={handleBackToRegistration}
             className="w-full py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
           >
