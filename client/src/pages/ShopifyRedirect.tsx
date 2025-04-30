@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
-import ShopifyCheckoutFrame from '@/components/ShopifyCheckoutFrame';
 import { navigateToShopifyCheckout, openShopifyCheckoutInNewWindow } from '@/utils/shopifyUtils';
 
 export default function ShopifyRedirect() {
@@ -44,7 +43,7 @@ export default function ShopifyRedirect() {
         console.log('Fallback redirect timer triggered');
         if (document.visibilityState === 'visible') {
           console.log('Automatically redirecting to Shopify...');
-          redirectToShopify(processedUrl);
+          redirectToShopify();
         }
       }, 10000);
       
@@ -57,10 +56,10 @@ export default function ShopifyRedirect() {
   }, []);
   
   // Direct redirect to Shopify checkout
-  const redirectToShopify = (url: string = checkoutUrl) => {
-    if (url) {
-      console.log('Redirecting directly to Shopify:', url);
-      navigateToShopifyCheckout(url);
+  const redirectToShopify = () => {
+    if (checkoutUrl) {
+      console.log('Redirecting directly to Shopify:', checkoutUrl);
+      navigateToShopifyCheckout(checkoutUrl);
     } else {
       setError('No checkout URL available for redirect.');
     }
@@ -148,16 +147,50 @@ export default function ShopifyRedirect() {
   }
   
   if (checkoutUrl) {
+    // Instead of showing the iframe, auto-redirect after a short delay
+    useEffect(() => {
+      // Redirect to Shopify checkout after 1.5 seconds
+      const redirectTimer = setTimeout(() => {
+        console.log('Auto-redirecting to Shopify checkout...');
+        redirectToShopify();
+      }, 1500);
+      
+      return () => clearTimeout(redirectTimer);
+    }, [checkoutUrl, redirectToShopify]);
+    
     return (
-      <>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
         <Helmet>
           <title>Complete Your Registration | Rich Habits</title>
         </Helmet>
-        <ShopifyCheckoutFrame 
-          checkoutUrl={checkoutUrl} 
-          onClose={handleCloseCheckout} 
-        />
-      </>
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h1 className="text-xl font-bold text-gray-800 mb-2">Redirecting to Checkout</h1>
+          <p className="mb-6 text-gray-600">
+            You are being redirected to the secure checkout page...
+          </p>
+          
+          <p className="text-gray-600 mb-6">
+            If the checkout doesn't appear, please use one of these options:
+          </p>
+          <div className="flex flex-col space-y-3">
+            <button
+              type="button"
+              onClick={() => redirectToShopify()}
+              className="w-full py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 text-center"
+            >
+              Go to Shopify Checkout
+            </button>
+            <button
+              type="button"
+              onClick={openInNewWindow}
+              className="w-full py-2 px-4 bg-black text-white rounded hover:bg-black/90 text-center"
+            >
+              Open in New Window
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
   
