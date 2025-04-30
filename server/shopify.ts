@@ -707,8 +707,8 @@ export async function createEventRegistrationCheckout(
       `attributes[${encodeURIComponent(attr.key)}]=${encodeURIComponent(String(attr.value))}`
     );
     
-    // Create a redirect URL that will pass the variant ID to our embedded cart system
-    // We'll use our own redirect page that will handle adding to cart on the client side
+    // Create a cart URL with our redirect system to handle adding items to our embedded cart
+    // This is a relative URL that will work in both production and development environments
     let cartUrl = `/redirect?variantId=${encodeURIComponent(simpleVariantId)}`;
     
     // Add all custom properties as encoded URL parameters
