@@ -564,6 +564,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // since we have stored the data in the database
       const responseStatus = checkoutUrl ? 201 : 207; // Use 207 Multi-Status to indicate partial success
       
+      // Create a direct classic Shopify cart URL as fallback
+      let fallbackUrl = '';
+      
+      try {
+        if (!checkoutUrl) {
+          const shopifyDomain = process.env.SHOPIFY_STORE_DOMAIN || 'rich-habits-2022.myshopify.com';
+          const eventId = registrationData.eventId.toString();
+          const optionKey = registrationData.option === 'full' ? 'fullCamp' : 'singleDay';
+          
+          // Get the appropriate variant ID for this event and option
+          let variantId = '';
+          let shopifyKey = '';
+          
+          switch (eventId) {
+            case '1':
+              shopifyKey = 'birmingham-slam-camp';
+              break;
+            case '2':
+              shopifyKey = 'national-champ-camp';
+              break;
+            case '3':
+              shopifyKey = 'texas-recruiting-clinic';
+              break;
+            case '4':
+              shopifyKey = 'cory-land-tour';
+              break;
+          }
+          
+          if (shopifyKey && EVENT_PRODUCTS[shopifyKey]) {
+            const eventProduct = EVENT_PRODUCTS[shopifyKey];
+            const variantDetails = eventProduct[optionKey];
+            if (variantDetails) {
+              variantId = variantDetails.variantId.replace('gid://shopify/ProductVariant/', '');
+              console.log(`Using fallback variant ID ${variantId} for ${shopifyKey} (${optionKey})`);
+              
+              // Build classic Shopify cart URL with attributes
+              fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
+              
+              // Add key registration details as attributes
+              fallbackUrl += `?attributes[Registration_ID]=${registration.id}`;
+              fallbackUrl += `&attributes[Event_Name]=${encodeURIComponent(eventName || '')}`;
+              fallbackUrl += `&attributes[Camper_Name]=${encodeURIComponent(registrationData.firstName + ' ' + registrationData.lastName)}`;
+              
+              console.log('Created fallback URL:', fallbackUrl);
+            }
+          }
+        }
+      } catch (fallbackError) {
+        console.error('Error creating fallback URL:', fallbackError);
+      }
+      
       // Create response object with the proper properties
       const responseObj: any = {
         message: checkoutUrl 
@@ -572,6 +623,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         registration,
         checkoutUrl // This property is used by the client
       };
+      
+      // Add fallback URL if available
+      if (fallbackUrl) {
+        responseObj.fallbackUrl = fallbackUrl;
+      }
       
       // Log the response being sent back to client
       console.log('Sending registration response:', {

@@ -44,15 +44,54 @@ export default function ShopifyRedirect() {
               }
             }
             
+            // Format the variant ID properly for Shopify Buy SDK
+            // It needs to be in the format "gid://shopify/ProductVariant/12345"
+            const formattedVariantId = variantId.includes('/') 
+              ? variantId 
+              : `gid://shopify/ProductVariant/${variantId}`;
+              
+            console.log('Formatted variant ID for Shopify Buy SDK:', formattedVariantId);
+              
             // Add the item to the cart
-            updatedCart = await addToCart(cartId, variantId, 1);
+            updatedCart = await addToCart(cartId, formattedVariantId, 1);
             
             // Navigate to our embedded cart
             navigate('/embedded-cart', { replace: true });
           } catch (error) {
             console.error('Error handling cart:', error);
-            setError('Failed to add item to cart. Please try again.');
+            
+            // Display a more helpful error message based on the error type
+            let errorMessage = 'Failed to add item to cart. Please try again.';
+            
+            if (error instanceof Error) {
+              console.error('Error details:', {
+                message: error.message,
+                stack: error.stack
+              });
+              
+              // Set a more specific error message
+              errorMessage = `Checkout error: ${error.message}`;
+              
+              // Handle specific known errors
+              if (error.message.includes('variant')) {
+                errorMessage = 'Unable to find this product in our store. Please contact customer support.';
+              } else if (error.message.includes('network') || error.message.includes('fetch')) {
+                errorMessage = 'Network error. Please check your connection and try again.';
+              }
+            }
+            
+            setError(errorMessage);
             setLoading(false);
+            
+            // Attempt to create a direct checkout URL as fallback
+            try {
+              const shopifyDomain = 'rich-habits-2022.myshopify.com';
+              const fallbackUrl = `https://${shopifyDomain}/cart/${variantId}:1`;
+              console.log('Setting fallback cart URL:', fallbackUrl);
+              setCartUrl(fallbackUrl);
+            } catch (fallbackError) {
+              console.error('Error creating fallback URL:', fallbackError);
+            }
           }
         };
         
@@ -109,8 +148,15 @@ export default function ShopifyRedirect() {
                 }
               });
               
+              // Format the variant ID properly for Shopify Buy SDK
+              const formattedUrlVariantId = urlVariantId.includes('/') 
+                ? urlVariantId 
+                : `gid://shopify/ProductVariant/${urlVariantId}`;
+                
+              console.log('Formatted legacy variant ID for SDK:', formattedUrlVariantId);
+                
               // Add the item to the cart
-              await addToCart(cartId, urlVariantId, 1, customAttributes);
+              await addToCart(cartId, formattedUrlVariantId, 1, customAttributes);
               
               // Navigate to our embedded cart
               navigate('/embedded-cart', { replace: true });

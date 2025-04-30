@@ -58,20 +58,43 @@ export async function getCart(cartId: string) {
 // Function to add a product to an existing cart
 export async function addToCart(cartId: string, variantId: string, quantity: number = 1, customAttributes: any[] = []) {
   try {
+    console.log('Adding to cart:', { cartId, variantId, quantity, customAttributes });
+    
+    // Ensure the variant ID is in the correct format for Shopify Storefront API
+    // It should look like "gid://shopify/ProductVariant/12345"
+    let formattedVariantId = variantId;
+    if (!variantId.startsWith('gid://')) {
+      formattedVariantId = `gid://shopify/ProductVariant/${variantId}`;
+      console.log('Reformatted variant ID:', formattedVariantId);
+    }
+    
     // Add the line item to the cart
     const lineItems = [
       {
-        variantId,
+        variantId: formattedVariantId,
         quantity,
         customAttributes
       }
     ];
     
+    console.log('Sending line items to Shopify:', lineItems);
+    
     const updatedCart = await shopifyClient.checkout.addLineItems(cartId, lineItems);
+    console.log('Cart updated successfully:', updatedCart);
     
     return updatedCart;
   } catch (error) {
     console.error('Error adding to cart:', error);
-    throw error;
+    
+    // Log more detailed error information
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    } else {
+      console.error('Unknown error type:', typeof error);
+    }
+    
+    // Rethrow with a more helpful message
+    throw new Error(`Failed to add item to cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
