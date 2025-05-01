@@ -11,6 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { RegistrationProgress, type RegistrationStep } from '@/components/RegistrationProgress';
+import { 
+  updateRegistrationStatus, 
+  hasInProgressRegistration, 
+  handleRegistrationError,
+  getCompletedRegistrations 
+} from '@/lib/registrationUtils';
 
 export default function EventRegistration() {
   const [location, navigate] = useLocation();
@@ -44,6 +50,65 @@ export default function EventRegistration() {
   const [checkoutUrl, setCheckoutUrl] = useState<string>('');
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('form');
   
+  // Attempt to recover from previously interrupted registration
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem('registration_form_data');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        
+        // Check if the saved data is for the current event and not too old (within last 24 hours)
+        const savedTimestamp = new Date(parsedData.timestamp).getTime();
+        const now = new Date().getTime();
+        const isRecent = (now - savedTimestamp) < (24 * 60 * 60 * 1000); // 24 hours
+        
+        if (parsedData.eventId === eventId && isRecent) {
+          // Show recovery option
+          toast({
+            title: "Registration Data Found",
+            description: "We found your previous registration information. Would you like to restore it?",
+            action: (
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => {
+                    // Remove eventId and timestamp from the saved data
+                    const { eventId, timestamp, ...formData } = parsedData;
+                    setRegistrationForm(prevState => ({ ...prevState, ...formData }));
+                    toast({
+                      title: "Data Restored",
+                      description: "Your previous registration information has been restored."
+                    });
+                  }}
+                  className="px-3 py-1 text-xs rounded-md bg-primary text-white hover:bg-primary/90"
+                >
+                  Restore
+                </button>
+                <button 
+                  onClick={() => {
+                    localStorage.removeItem('registration_form_data');
+                    toast({
+                      title: "Data Cleared",
+                      description: "Previous registration information has been cleared."
+                    });
+                  }}
+                  className="px-3 py-1 text-xs rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
+                >
+                  Ignore
+                </button>
+              </div>
+            ),
+          });
+        } else {
+          // Clear outdated data
+          localStorage.removeItem('registration_form_data');
+        }
+      }
+    } catch (error) {
+      console.warn('Could not recover registration data:', error);
+      localStorage.removeItem('registration_form_data');
+    }
+  }, [eventId, toast]);
+
   // Fetch event data from API
   useEffect(() => {
     async function fetchEvent() {
@@ -161,6 +226,9 @@ export default function EventRegistration() {
       setIsSubmitting(true);
       setCurrentStep('processing');
       
+      // Update registration status in our centralized system
+      updateRegistrationStatus(eventId, 'processing');
+      
       // Notify user we're processing
       toast({
         title: "Registration In Progress",
@@ -211,6 +279,7 @@ export default function EventRegistration() {
       });
       
       setCurrentStep('checkout');
+      updateRegistrationStatus(eventId, 'checkout');
       
       let shouldRedirect = false;
       let redirectUrl = '';
@@ -293,17 +362,12 @@ export default function EventRegistration() {
         }, 1000);
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      // Use our centralized error handling
+      const errorObj = error instanceof Error ? error : new Error('Unknown registration error');
+      handleRegistrationError(eventId, errorObj);
       
-      // Attempt to extract a more detailed error message
-      let errorMessage = "An unknown error occurred";
-      let errorDetails = {};
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'object' && error !== null) {
-        errorDetails = error;
-      }
+      // Extract message for the toast
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       
       // Display the error to the user
       toast({
