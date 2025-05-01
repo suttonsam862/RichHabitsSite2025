@@ -784,6 +784,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error fetching event coaches", error: (error as Error).message });
     }
   });
+  
+  // API endpoint to get the correct variant ID for an event
+  app.get("/api/events/:eventId/variant", async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const option = req.query.option as string || 'fullCamp';
+      
+      // Map event ID to Shopify product key
+      let shopifyKey = '';
+      
+      switch (parseInt(eventId)) {
+        case 1:
+          shopifyKey = 'birmingham-slam-camp';
+          break;
+        case 2:
+          shopifyKey = 'national-champ-camp';
+          break;
+        case 3:
+          shopifyKey = 'texas-recruiting-clinic';
+          break;
+        case 4:
+          shopifyKey = 'cory-land-tour';
+          break;
+        default:
+          return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Ensure option is valid
+      const validOption = option === 'fullCamp' || option === 'singleDay' ? option : 'fullCamp';
+      
+      // Get variant details from EVENT_PRODUCTS constant
+      const eventProduct = EVENT_PRODUCTS[shopifyKey as keyof typeof EVENT_PRODUCTS];
+      if (!eventProduct) {
+        return res.status(404).json({ message: "Product not found for event" });
+      }
+      
+      const variantDetails = eventProduct[validOption as keyof typeof eventProduct];
+      if (!variantDetails) {
+        return res.status(404).json({ message: "Variant not found for option" });
+      }
+      
+      // Return the variant ID and price
+      res.json({
+        variantId: variantDetails.variantId,
+        price: variantDetails.price
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching variant details", error: (error as Error).message });
+    }
+  });
 
   // Admin API routes for coach management
   app.post("/api/coaches", async (req, res) => {

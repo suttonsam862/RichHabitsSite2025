@@ -131,14 +131,15 @@ export default function DirectCheckout() {
         // Create a simple cart URL with the variant ID
         const shopifyDomain = 'rich-habits-2022.myshopify.com';
         
-        // Get event ID for success redirect
-        const eventId = params.get('eventId') || '';
+        // Get event name for success redirect
+        // Note: eventId is already extracted from URL params above
+        const currentEventId = params.get('eventId') || '';
         const eventName = params.get('eventName') || '';
         
         // Build checkout URL - make sure it's properly encoded
         const successParams = new URLSearchParams({
           success: 'true',
-          eventId: eventId.toString(),
+          eventId: currentEventId.toString(),
           eventName: eventName
         });
         
@@ -150,26 +151,62 @@ export default function DirectCheckout() {
         // Debug the success URL to ensure it's properly formatted
         console.log('Success redirect URL:', successRedirectUrl);
         
-        // Use the more reliable cart/add API as primary checkout method
-        // Shopify requires the variant ID to be in numeric format without any prefixes
-        checkoutUrl = `https://${shopifyDomain}/cart/add?id=${formattedVariantId}&quantity=1&return_to=${successRedirectUrl}`;
+        // Get option type from URL params
+        const optionType = params.get('option') || 'full';
         
-        // Store the direct cart URL as a fallback
-        const alternativeCheckoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1?return_to=${successRedirectUrl}`;
-        localStorage.setItem('shopify_fallback_url', alternativeCheckoutUrl);
-
-        console.log('Generated direct checkout URL:', checkoutUrl);
-
-        // Show a toast before redirecting
+        // First, show loading toast
         toast({
-          title: "Redirecting to Checkout",
-          description: "Taking you to the secure payment page...",
+          title: "Preparing Checkout",
+          description: "Getting product details from Shopify...",
         });
-
-        // Redirect after a short delay to allow the toast to show
-        setTimeout(() => {
-          window.location.href = checkoutUrl;
-        }, 1000);
+        
+        // Get the correct variant ID from our API
+        fetch(`/api/events/${currentEventId}/variant?option=${optionType === 'full' ? 'fullCamp' : 'singleDay'}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (!data.variantId) {
+              throw new Error(`Variant ID not found for event ${currentEventId}`);
+            }
+            
+            // Extract numeric ID from Shopify Global ID
+            const numericId = data.variantId.replace('gid://shopify/ProductVariant/', '');
+            
+            // Create direct checkout URL with reliable cart/add API
+            const cartUrl = `https://${shopifyDomain}/cart/add?id=${numericId}&quantity=1&return_to=${successRedirectUrl}`;
+            
+            // Create fallback URL
+            const fallbackUrl = `https://${shopifyDomain}/cart/${numericId}:1?return_to=${successRedirectUrl}`;
+            localStorage.setItem('shopify_fallback_url', fallbackUrl);
+            
+            console.log('Generated checkout URL with event-specific variant:', cartUrl);
+            
+            // Show toast before redirecting
+            toast({
+              title: "Redirecting to Checkout",
+              description: "Taking you to the secure payment page...",
+            });
+            
+            // Redirect to Shopify checkout
+            setTimeout(() => {
+              window.location.href = cartUrl;
+            }, 800);
+          })
+          .catch(error => {
+            console.error('Error getting variant ID:', error);
+            setError(`Checkout error: ${error.message}`);
+            setIsLoading(false);
+            
+            toast({
+              title: "Checkout Error",
+              description: `Could not get product details: ${error.message}`,
+              variant: "destructive"
+            });
+          });
 
       } catch (error) {
         console.error('Checkout error:', error);

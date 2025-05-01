@@ -766,56 +766,56 @@ export interface EventRegistrationData {
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 // For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})
 export const EVENT_PRODUCTS = {
-  // Cory Land Tour - ID 4 - $200 full camp / $99 per day
-  'cory-land-tour': {
+  // Texas Recruiting Clinic - ID 3 - $249
+  'texas-recruiting-clinic': {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
-      price: 200.00  // All days for $200
+      variantId: 'gid://shopify/ProductVariant/47811555745981', // Unique variant ID
+      price: 249.00  // Full clinic for $249
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949406105837', 
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
-      price: 99.00  // $99 per day
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47811555745981', // Unique variant ID
+      price: 249.00  // Same price since this event doesn't have day options
     }
   },
   // Birmingham Slam Camp - ID 1 - $249 full camp / $149 single day
   'birmingham-slam-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      productId: 'gid://shopify/Product/8949561434349',
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Original ID kept for backward compatibility
       price: 249.00  // Full camp for $249
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      productId: 'gid://shopify/Product/8949561434349',
+      variantId: 'gid://shopify/ProductVariant/47808556006661',
       price: 149.00  // Single day for $149
     }
   },
   // National Champ Camp - ID 2 - $349 full camp / $175 per day
   'national-champ-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      productId: 'gid://shopify/Product/8949561467117',
+      variantId: 'gid://shopify/ProductVariant/47808556039429',
       price: 349.00  // Full camp for $349
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
+      productId: 'gid://shopify/Product/8949561467117',
+      variantId: 'gid://shopify/ProductVariant/47808556072197',
       price: 175.00  // Single day for $175
     }
   },
-  // Texas Recruiting Clinic - ID 3 - $249 full camp / $149 single day
-  'texas-recruiting-clinic': {
+  // Cory Land Tour - ID 4 - $200 full camp / $99 per day
+  'cory-land-tour': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
-      price: 249.00  // Full clinic for $249
+      productId: 'gid://shopify/Product/8949561499885',
+      variantId: 'gid://shopify/ProductVariant/47808556104965',
+      price: 200.00  // All days for $200
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47808555679981',
-      price: 149.00  // Single day for $149
+      productId: 'gid://shopify/Product/8949561499885',
+      variantId: 'gid://shopify/ProductVariant/47808556137733',
+      price: 99.00  // $99 per day
     }
   }
 };
