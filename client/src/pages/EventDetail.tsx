@@ -173,7 +173,7 @@ export default function EventDetail() {
             {
               name: "Micky Phillippi",
               title: "Assistant Coach, University of Pittsburgh",
-              image: "/assets/crop (1).webp",
+              image: "/assets/ZAHID_Valencia-headshot.jpg",
               school: "University of Pittsburgh",
               schoolLogo: pittLogo,
               bio: "Micky Phillippi serves as an assistant coach at the University of Pittsburgh. As a former standout wrestler, Phillippi brings technical expertise and a deep understanding of what college programs look for in recruits."
