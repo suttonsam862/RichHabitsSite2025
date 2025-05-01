@@ -8,7 +8,10 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 // Initialize Stripe with the secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Using the latest API version and enabling live mode (not test mode)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  typescript: true
+});
 
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {

@@ -827,12 +827,12 @@ export const EVENT_PRODUCTS = {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406105837', // Temporarily using Slam Camp product
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Using actual variant ID from Shopify
-      price: 200.00  // All days price
+      price: 249.00  // All 3 days price - updated to match website display
     },
     singleDay: {
       productId: 'gid://shopify/Product/8949406105837', // Temporarily using Slam Camp product
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Using actual variant ID from Shopify
-      price: 99.00  // Single day price
+      price: 99.00  // Single day price - updated to match website display
     }
   }
 };
