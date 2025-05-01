@@ -770,12 +770,12 @@ export const EVENT_PRODUCTS = {
   'texas-recruiting-clinic': {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47811555745981', // Unique variant ID
+      variantId: 'gid://shopify/ProductVariant/47811555745981', // Unique variant ID for full clinic
       price: 249.00  // Full clinic for $249
     },
     singleDay: {
       productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47811555745981', // Unique variant ID
+      variantId: 'gid://shopify/ProductVariant/47811555778749', // Different variant ID for single day option
       price: 249.00  // Same price since this event doesn't have day options
     }
   },
