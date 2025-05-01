@@ -87,7 +87,7 @@ const CoachList = ({ eventId }: CoachListProps) => {
           <div key={coach.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
             <div className="aspect-square overflow-hidden relative">
               <img 
-                src={coach.image} 
+                src={`/attached_assets/${coach.image.split('/').pop()}`} 
                 alt={coach.name} 
                 className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
               />

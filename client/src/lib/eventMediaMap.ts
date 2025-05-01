@@ -72,7 +72,7 @@ const eventMediaMap: Record<number, EventMedia> = {
   // Event ID 3: Texas Recruiting Clinic
   3: {
     banner: "/assets/RecruitingWebsiteimage4.png",
-    mainVideo: "/assets/trcvid-new.mp4",
+    mainVideo: "/assets/0425.mp4",
     highlightVideo: "/assets/trcvid-new.mp4",
     featureVideo: "/assets/0405.mp4",
     promoVideo: "/assets/0331.mp4",
