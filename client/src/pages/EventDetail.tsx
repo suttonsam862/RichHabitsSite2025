@@ -721,36 +721,44 @@ export default function EventDetail() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {(event.id === 3 ? [
                         {
-                          name: "Zahid Valencia",
-                          title: "3x NCAA Champion, Arizona State University",
-                          bio: "Olympic hopeful and multi-time national champion. Will provide world-class technical instruction and recruiting advice.",
+                          name: "Grant Leeth",
+                          title: "NCAA All-American, University of Missouri",
+                          bio: "Former University of Missouri standout specializing in technical wrestling and recruiting process guidance.",
                           image: "/assets/VALENCIA_Zahid-headshot.jpg",
-                          school: "Arizona State University",
+                          school: "University of Missouri",
                           schoolLogo: pittLogo
                         },
                         {
-                          name: "Michael McGee",
-                          title: "NCAA All-American, Arizona State University",
-                          bio: "ACC Champion and NCAA All-American. Specializes in lightweight technique and academic excellence in recruiting.",
+                          name: "Josh Shields",
+                          title: "NCAA All-American, Arizona State",
+                          bio: "PAC-12 Champion and multiple NCAA qualifier. Expert in recruitment preparation and college transition.",
                           image: "/assets/Michael_McGee_JouQS.jpg",
-                          school: "Arizona State University",
+                          school: "Arizona State",
                           schoolLogo: ouLogo
                         },
                         {
-                          name: "Nick Suriano",
-                          title: "NCAA Champion, Michigan/Rutgers",
-                          bio: "First NCAA champion in Rutgers history and Michigan national champion. Expert in creating recruiting opportunities.",
+                          name: "Micky Phillippi",
+                          title: "NCAA All-American, University of Pittsburgh",
+                          bio: "3x ACC Champion and NCAA All-American. Specializes in technical wrestling and preparing for college competition.",
                           image: "/assets/VALENCIA_Zahid-headshot.jpg",
-                          school: "University of Michigan",
+                          school: "University of Pittsburgh",
                           schoolLogo: brownLogo
                         },
                         {
-                          name: "Korbin Myers",
-                          title: "NCAA All-American, Virginia Tech",
-                          bio: "Multiple-time ACC champion and national qualifier. Specializes in recruiting strategies for academic institutions.",
+                          name: "Mark Hall",
+                          title: "NCAA Champion, Penn State",
+                          bio: "NCAA Champion and multiple-time All-American. Offers elite technical instruction and recruiting advice.",
                           image: "/assets/Michael_McGee_JouQS.jpg",
-                          school: "Virginia Tech",
+                          school: "Penn State University",
                           schoolLogo: gmuLogo
+                        },
+                        {
+                          name: "Max Murin",
+                          title: "NCAA All-American, University of Iowa",
+                          bio: "Big Ten standout and NCAA All-American. Specializes in competitive mindset and recruiting process expertise.",
+                          image: "/assets/VALENCIA_Zahid-headshot.jpg",
+                          school: "University of Iowa",
+                          schoolLogo: tarletonLogo
                         }
                       ] : event.coaches || []).map((coach: any, index: number) => (
                         <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">

@@ -7,7 +7,9 @@ import {
   customApparelInquiries, type CustomApparelInquiry, type InsertCustomApparelInquiry,
   contactSubmissions, type ContactSubmission, type InsertContactSubmission,
   newsletterSubscribers, type NewsletterSubscriber, type InsertNewsletterSubscriber,
-  collaborations, type Collaboration, type InsertCollaboration
+  collaborations, type Collaboration, type InsertCollaboration,
+  coaches, type Coach, type InsertCoach,
+  eventCoaches, type EventCoach, type InsertEventCoach
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";

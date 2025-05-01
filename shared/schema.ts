@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -253,5 +253,48 @@ export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 export type InsertNewsletterSubscriber = z.infer<typeof insertNewsletterSubscriberSchema>;
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 
+// Coaches table
+export const coaches = pgTable("coaches", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  title: text("title").notNull(),
+  bio: text("bio").notNull(),
+  image: text("image").notNull(),
+  school: text("school"),
+  schoolLogo: text("school_logo"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertCoachSchema = createInsertSchema(coaches).pick({
+  name: true,
+  title: true,
+  bio: true,
+  image: true,
+  school: true,
+  schoolLogo: true
+});
+
+// Event coaches junction table
+export const eventCoaches = pgTable("event_coaches", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  coachId: integer("coach_id").notNull().references(() => coaches.id, { onDelete: 'cascade' }),
+  displayOrder: integer("display_order").default(0),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const insertEventCoachSchema = createInsertSchema(eventCoaches).pick({
+  eventId: true,
+  coachId: true,
+  displayOrder: true
+});
+
 export type InsertCollaboration = z.infer<typeof insertCollaborationSchema>;
 export type Collaboration = typeof collaborations.$inferSelect;
+
+export type InsertCoach = z.infer<typeof insertCoachSchema>;
+export type Coach = typeof coaches.$inferSelect;
+
+export type InsertEventCoach = z.infer<typeof insertEventCoachSchema>;
+export type EventCoach = typeof eventCoaches.$inferSelect;
