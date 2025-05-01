@@ -766,56 +766,56 @@ export interface EventRegistrationData {
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 // For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})
 export const EVENT_PRODUCTS = {
-  // Texas Recruiting Clinic - ID 3 - $249
+  // Texas Recruiting Clinic - ID 3 - Using the Recruiting Showcase product
   'texas-recruiting-clinic': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47811555745981', // Unique variant ID for full clinic
-      price: 249.00  // Full clinic for $249
+      productId: 'gid://shopify/Product/8949406236909',
+      variantId: 'gid://shopify/ProductVariant/47808556531949', // Actual variant ID from Shopify
+      price: 350.00  // Full clinic price
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949406105837',
-      variantId: 'gid://shopify/ProductVariant/47811555778749', // Different variant ID for single day option
-      price: 249.00  // Same price since this event doesn't have day options
+      productId: 'gid://shopify/Product/8949406236909',
+      variantId: 'gid://shopify/ProductVariant/47808556531949', // Same variant since this event doesn't have day options
+      price: 350.00  // Same price since this event doesn't have day options
     }
   },
-  // Birmingham Slam Camp - ID 1 - $249 full camp / $149 single day
+  // Birmingham Slam Camp - ID 1 - Using the Birmingham Slam Camp product
   'birmingham-slam-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949561434349',
-      variantId: 'gid://shopify/ProductVariant/47808555679981', // Original ID kept for backward compatibility
-      price: 249.00  // Full camp for $249
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Actual variant ID from Shopify
+      price: 250.00  // Full camp price
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949561434349',
-      variantId: 'gid://shopify/ProductVariant/47808556006661',
-      price: 149.00  // Single day for $149
+      productId: 'gid://shopify/Product/8949406105837',
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Same variant since this event doesn't have multiple options yet
+      price: 250.00  // Single day price (same until variants are added)
     }
   },
-  // National Champ Camp - ID 2 - $349 full camp / $175 per day
+  // National Champ Camp - ID 2 - Using the National Champ Camp product
   'national-champ-camp': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949561467117',
-      variantId: 'gid://shopify/ProductVariant/47808556039429',
-      price: 349.00  // Full camp for $349
+      productId: 'gid://shopify/Product/8948577272045',
+      variantId: 'gid://shopify/ProductVariant/47800987943149', // Actual variant ID from Shopify
+      price: 350.00  // Full camp price
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949561467117',
-      variantId: 'gid://shopify/ProductVariant/47808556072197',
-      price: 175.00  // Single day for $175
+      productId: 'gid://shopify/Product/8948577272045',
+      variantId: 'gid://shopify/ProductVariant/47800987943149', // Same variant since this event doesn't have multiple options yet
+      price: 350.00  // Single day price (same until variants are added)
     }
   },
-  // Cory Land Tour - ID 4 - $200 full camp / $99 per day
+  // Cory Land Tour - ID 4 - Using placeholder product until created in Shopify
   'cory-land-tour': {
     fullCamp: {
-      productId: 'gid://shopify/Product/8949561499885',
-      variantId: 'gid://shopify/ProductVariant/47808556104965',
-      price: 200.00  // All days for $200
+      productId: 'gid://shopify/Product/8949406105837', // Temporarily using Slam Camp product
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Using actual variant ID from Shopify
+      price: 200.00  // All days price
     },
     singleDay: {
-      productId: 'gid://shopify/Product/8949561499885',
-      variantId: 'gid://shopify/ProductVariant/47808556137733',
-      price: 99.00  // $99 per day
+      productId: 'gid://shopify/Product/8949406105837', // Temporarily using Slam Camp product
+      variantId: 'gid://shopify/ProductVariant/47808555679981', // Using actual variant ID from Shopify
+      price: 99.00  // Single day price
     }
   }
 };
