@@ -33,6 +33,18 @@ export interface IStorage {
   getEvent(id: number): Promise<Event | undefined>;
   createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
   
+  // Coach methods
+  getCoaches(): Promise<Coach[]>;
+  getCoach(id: number): Promise<Coach | undefined>;
+  createCoach(data: InsertCoach): Promise<Coach>;
+  updateCoach(id: number, data: Partial<InsertCoach>): Promise<Coach>;
+  deleteCoach(id: number): Promise<boolean>;
+  
+  // Event Coach methods
+  getEventCoaches(eventId: number): Promise<Coach[]>;
+  addCoachToEvent(data: InsertEventCoach): Promise<EventCoach>;
+  removeCoachFromEvent(eventId: number, coachId: number): Promise<boolean>;
+  
   // Custom apparel methods
   createCustomApparelInquiry(data: InsertCustomApparelInquiry): Promise<CustomApparelInquiry>;
   
@@ -177,6 +189,71 @@ export class DatabaseStorage implements IStorage {
       .delete(collaborations)
       .where(eq(collaborations.id, id))
       .returning({ id: collaborations.id });
+    return result.length > 0;
+  }
+
+  // Coach methods
+  async getCoaches(): Promise<Coach[]> {
+    return await db.select().from(coaches);
+  }
+
+  async getCoach(id: number): Promise<Coach | undefined> {
+    const [coach] = await db.select().from(coaches).where(eq(coaches.id, id));
+    return coach;
+  }
+
+  async createCoach(data: InsertCoach): Promise<Coach> {
+    const [coach] = await db
+      .insert(coaches)
+      .values(data)
+      .returning();
+    return coach;
+  }
+
+  async updateCoach(id: number, data: Partial<InsertCoach>): Promise<Coach> {
+    const [updatedCoach] = await db
+      .update(coaches)
+      .set(data)
+      .where(eq(coaches.id, id))
+      .returning();
+    return updatedCoach;
+  }
+
+  async deleteCoach(id: number): Promise<boolean> {
+    const result = await db
+      .delete(coaches)
+      .where(eq(coaches.id, id))
+      .returning({ id: coaches.id });
+    return result.length > 0;
+  }
+
+  // Event Coach methods
+  async getEventCoaches(eventId: number): Promise<Coach[]> {
+    // Get all coaches for a specific event with a join query
+    const relations = await db
+      .select({ coach: coaches })
+      .from(eventCoaches)
+      .where(eq(eventCoaches.eventId, eventId))
+      .innerJoin(coaches, eq(eventCoaches.coachId, coaches.id))
+      .orderBy(eventCoaches.displayOrder);
+    
+    // Extract the coach objects from the relations
+    return relations.map(r => r.coach);
+  }
+
+  async addCoachToEvent(data: InsertEventCoach): Promise<EventCoach> {
+    const [relation] = await db
+      .insert(eventCoaches)
+      .values(data)
+      .returning();
+    return relation;
+  }
+
+  async removeCoachFromEvent(eventId: number, coachId: number): Promise<boolean> {
+    const result = await db
+      .delete(eventCoaches)
+      .where(eq(eventCoaches.eventId, eventId) && eq(eventCoaches.coachId, coachId))
+      .returning({ id: eventCoaches.id });
     return result.length > 0;
   }
 }

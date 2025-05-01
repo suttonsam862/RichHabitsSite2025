@@ -8,7 +8,9 @@ import {
   insertCustomApparelInquirySchema, 
   insertEventRegistrationSchema,
   insertNewsletterSubscriberSchema,
-  insertCollaborationSchema
+  insertCollaborationSchema,
+  insertCoachSchema,
+  insertEventCoachSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
@@ -744,6 +746,142 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid request data", errors: error.errors });
       }
       res.status(500).json({ message: "Error submitting contact form", error: (error as Error).message });
+    }
+  });
+
+  // API routes for coaches
+  app.get("/api/coaches", async (req, res) => {
+    try {
+      const coaches = await storage.getCoaches();
+      res.json(coaches);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching coaches", error: (error as Error).message });
+    }
+  });
+
+  app.get("/api/coaches/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const coach = await storage.getCoach(parseInt(id));
+      
+      if (!coach) {
+        return res.status(404).json({ message: "Coach not found" });
+      }
+      
+      res.json(coach);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching coach", error: (error as Error).message });
+    }
+  });
+
+  // API routes for event coaches
+  app.get("/api/events/:eventId/coaches", async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const coaches = await storage.getEventCoaches(parseInt(eventId));
+      res.json(coaches);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching event coaches", error: (error as Error).message });
+    }
+  });
+
+  // Admin API routes for coach management
+  app.post("/api/coaches", async (req, res) => {
+    try {
+      // Validate request body
+      const validatedData = insertCoachSchema.parse(req.body);
+      
+      // Create coach
+      const coach = await storage.createCoach(validatedData);
+      
+      res.status(201).json({
+        message: "Coach created successfully",
+        coach
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating coach", error: (error as Error).message });
+    }
+  });
+
+  app.put("/api/coaches/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      // Validate request body
+      const validatedData = insertCoachSchema.partial().parse(req.body);
+      
+      // Update coach
+      const coach = await storage.updateCoach(parseInt(id), validatedData);
+      
+      res.json({
+        message: "Coach updated successfully",
+        coach
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error updating coach", error: (error as Error).message });
+    }
+  });
+
+  app.delete("/api/coaches/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await storage.deleteCoach(parseInt(id));
+      
+      if (!result) {
+        return res.status(404).json({ message: "Coach not found" });
+      }
+      
+      res.json({ message: "Coach deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting coach", error: (error as Error).message });
+    }
+  });
+
+  // API routes for managing event-coach relationships
+  app.post("/api/events/:eventId/coaches", async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const { coachId, displayOrder } = req.body;
+      
+      // Validate request data
+      const validatedData = insertEventCoachSchema.parse({
+        eventId: parseInt(eventId),
+        coachId: parseInt(coachId),
+        displayOrder: displayOrder || 0
+      });
+      
+      // Add coach to event
+      const relation = await storage.addCoachToEvent(validatedData);
+      
+      res.status(201).json({
+        message: "Coach added to event successfully",
+        relation
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error adding coach to event", error: (error as Error).message });
+    }
+  });
+
+  app.delete("/api/events/:eventId/coaches/:coachId", async (req, res) => {
+    try {
+      const { eventId, coachId } = req.params;
+      const result = await storage.removeCoachFromEvent(parseInt(eventId), parseInt(coachId));
+      
+      if (!result) {
+        return res.status(404).json({ message: "Coach-event relationship not found" });
+      }
+      
+      res.json({ message: "Coach removed from event successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error removing coach from event", error: (error as Error).message });
     }
   });
 
