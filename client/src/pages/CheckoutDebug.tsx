@@ -1,174 +1,264 @@
+/**
+ * This page provides debugging tools for Shopify checkout URLs
+ * to help identify and fix issues with the checkout process.
+ */
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Container } from '@/components/ui/container';
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AlertTriangle } from "lucide-react";
+import { useToast } from '../hooks/use-toast';
+import { Container } from '../components/Container';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { Separator } from '../components/ui/separator';
+import { createDirectShopifyCartUrl, createAddToCartUrl, attemptDirectCheckout, SHOPIFY_DOMAIN } from '../lib/shopifyRedirectFix';
 
 export default function CheckoutDebug() {
-  const [variantId, setVariantId] = useState<string>('47808556531949'); // Texas Recruiting Clinic
-  const [loading, setLoading] = useState<boolean>(false);
-  
-  // Use the Shopify domain
-  const shopifyDomain = 'rich-habits-2022.myshopify.com';
+  const [variantId, setVariantId] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('1');
+  const [returnUrl, setReturnUrl] = useState<string>('');
+  const [directCartUrl, setDirectCartUrl] = useState<string>('');
+  const [addToCartUrl, setAddToCartUrl] = useState<string>('');
+  const { toast } = useToast();
 
-  // Generate test checkout URLs
-  const generateCheckoutUrl = () => {
-    // Ensure variant ID is clean
-    const cleanVariantId = variantId.replace(/\D/g, '');
-    
-    // Create the base URL with checkout_url parameter to prevent redirection
-    const baseUrl = `https://${shopifyDomain}/cart/add?id=${cleanVariantId}&quantity=1&checkout_url=https://${shopifyDomain}/checkout`;
-    
-    // Create a success redirect URL (for testing return to our app)
-    const successRedirectUrl = encodeURIComponent(
-      `${window.location.origin}/checkout-debug?success=true&variantId=${cleanVariantId}`
+  // Function to generate URLs based on input
+  const generateUrls = () => {
+    if (!variantId.trim()) {
+      toast({
+        title: "Variant ID Required",
+        description: "Please enter a Shopify product variant ID to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Generate direct cart URL
+      const directUrl = createDirectShopifyCartUrl(variantId, parseInt(quantity) || 1);
+      setDirectCartUrl(directUrl);
+
+      // Generate add to cart URL
+      const cartUrl = createAddToCartUrl(
+        variantId, 
+        parseInt(quantity) || 1,
+        returnUrl.trim() ? returnUrl : undefined
+      );
+      setAddToCartUrl(cartUrl);
+
+      toast({
+        title: "URLs Generated",
+        description: "Checkout URLs have been created successfully.",
+      });
+    } catch (error) {
+      console.error('Error generating URLs:', error);
+      toast({
+        title: "URL Generation Error",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Function to attempt checkout with current variant ID
+  const tryCheckout = () => {
+    if (!variantId.trim()) {
+      toast({
+        title: "Variant ID Required",
+        description: "Please enter a Shopify product variant ID to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      toast({
+        title: "Attempting Checkout",
+        description: "Redirecting to Shopify...",
+      });
+
+      // Use our utility to attempt checkout with multiple fallback methods
+      attemptDirectCheckout(variantId, parseInt(quantity) || 1);
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Checkout Error",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast({
+          title: "Copied to Clipboard",
+          description: "The URL has been copied to your clipboard.",
+        });
+      },
+      (err) => {
+        toast({
+          title: "Copy Failed",
+          description: "Could not copy to clipboard: " + err,
+          variant: "destructive"
+        });
+      }
     );
-    
-    // Create primary checkout URL with return_to parameter
-    const checkoutUrl = `${baseUrl}&return_to=${successRedirectUrl}`;
-    
-    // Create alternative format URL (cart/{variant}:1)
-    const altCheckoutUrl = `https://${shopifyDomain}/cart/${cleanVariantId}:1?checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
-    
-    return {
-      checkoutUrl,
-      altCheckoutUrl
-    };
   };
-
-  // Test primary checkout URL
-  const testPrimaryCheckout = () => {
-    setLoading(true);
-    const { checkoutUrl } = generateCheckoutUrl();
-    // Store the URLs in localStorage for access after redirect
-    localStorage.setItem('debug_checkout_url', checkoutUrl);
-    window.location.href = checkoutUrl;
-  };
-
-  // Test alternative checkout URL
-  const testAltCheckout = () => {
-    setLoading(true);
-    const { altCheckoutUrl } = generateCheckoutUrl();
-    // Store the URLs in localStorage for access after redirect
-    localStorage.setItem('debug_alt_checkout_url', altCheckoutUrl);
-    window.location.href = altCheckoutUrl;
-  };
-
-  // Test direct URL without return_to parameter
-  const testDirectCheckout = () => {
-    setLoading(true);
-    const cleanVariantId = variantId.replace(/\D/g, '');
-    const directUrl = `https://${shopifyDomain}/cart/add?id=${cleanVariantId}&quantity=1&checkout_url=https://${shopifyDomain}/checkout`;
-    localStorage.setItem('debug_direct_url', directUrl);
-    window.location.href = directUrl;
-  };
-  
-  // Check if we returned from a checkout test
-  const params = new URLSearchParams(window.location.search);
-  const success = params.get('success') === 'true';
 
   return (
-    <Container>
-      <div className="py-10">
-        <h1 className="text-2xl font-bold mb-2">Checkout Debug Tool</h1>
+    <Container className="py-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Shopify Checkout Debug Tool</h1>
         <p className="text-gray-600 mb-6">
-          This page lets you test different checkout URL formats directly to diagnose and fix any issues.
+          This tool helps diagnose and fix Shopify checkout issues by creating reliable checkout URLs.
         </p>
-        
-        {success && (
-          <div className="p-4 bg-green-50 border border-green-200 rounded-md mb-6">
-            <h2 className="text-green-800 font-medium mb-2">Return Successful!</h2>
-            <p className="text-green-700 text-sm">
-              You were successfully redirected back from Shopify checkout, which means the return_to parameter worked correctly.
-            </p>
-          </div>
-        )}
-        
-        <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mb-6">
-          <div className="flex items-start">
-            <AlertTriangle className="h-5 w-5 text-amber-600 mr-2 mt-0.5" />
-            <div>
-              <h3 className="text-amber-800 font-medium mb-1">IMPORTANT</h3>
-              <p className="text-amber-700 text-sm">
-                This tool is for debugging purposes only. Add <code>checkout_url=https://{shopifyDomain}/checkout</code> to all
-                checkout URLs to prevent Shopify from redirecting to a non-existent 404 page on the custom domain.
-              </p>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Input Parameters</CardTitle>
+            <CardDescription>
+              Enter a Shopify variant ID to generate checkout URLs
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="variantId">Variant ID <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="variantId"
+                    placeholder="e.g., 47808556531949 or gid://shopify/ProductVariant/47808556531949"
+                    value={variantId}
+                    onChange={(e) => setVariantId(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500">
+                    Enter a Shopify variant ID in any format (numeric or GraphQL)
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    placeholder="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="returnUrl">Return URL (Optional)</Label>
+                <Input
+                  id="returnUrl"
+                  placeholder="e.g., https://your-site.com/success"
+                  value={returnUrl}
+                  onChange={(e) => setReturnUrl(e.target.value)}
+                />
+                <p className="text-xs text-gray-500">
+                  Where to redirect after checkout (leave empty for default)
+                </p>
+              </div>
             </div>
-          </div>
+          </CardContent>
+          <CardFooter className="flex justify-between flex-wrap gap-4">
+            <Button onClick={generateUrls}>Generate Checkout URLs</Button>
+            <Button variant="outline" onClick={tryCheckout}>Test Direct Checkout</Button>
+          </CardFooter>
+        </Card>
+
+        {(directCartUrl || addToCartUrl) && (
+          <Tabs defaultValue="direct-cart">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="direct-cart">Direct Cart URL</TabsTrigger>
+              <TabsTrigger value="add-to-cart">Add to Cart URL</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="direct-cart">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Direct Cart URL</CardTitle>
+                  <CardDescription>
+                    More reliable method that directly accesses the cart with a specific format
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-3 bg-gray-50 rounded-md overflow-x-auto">
+                    <pre className="text-xs md:text-sm break-all whitespace-pre-wrap">
+                      {directCartUrl}
+                    </pre>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <div className="flex flex-wrap gap-3">
+                    <Button size="sm" variant="outline" onClick={() => copyToClipboard(directCartUrl)}>
+                      Copy URL
+                    </Button>
+                    <Button size="sm" onClick={() => window.open(directCartUrl, '_blank')}>
+                      Test URL
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="add-to-cart">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add to Cart URL</CardTitle>
+                  <CardDescription>
+                    Standard method using the cart/add endpoint (may be subject to redirection issues)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-3 bg-gray-50 rounded-md overflow-x-auto">
+                    <pre className="text-xs md:text-sm break-all whitespace-pre-wrap">
+                      {addToCartUrl}
+                    </pre>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <div className="flex flex-wrap gap-3">
+                    <Button size="sm" variant="outline" onClick={() => copyToClipboard(addToCartUrl)}>
+                      Copy URL
+                    </Button>
+                    <Button size="sm" onClick={() => window.open(addToCartUrl, '_blank')}>
+                      Test URL
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        )}
+
+        <Separator className="my-8" />
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
+          <h2 className="font-bold text-amber-800 mb-2">Important Notes</h2>
+          <ul className="list-disc list-inside text-amber-700 space-y-1 text-sm">
+            <li>Shopify redirects from rich-habits-2022.myshopify.com to rich-habits.com which can cause checkout errors</li>
+            <li>This tool helps bypass this issue by using a specific URL format that avoids the domain redirection</li>
+            <li>The direct cart URL format is the most reliable method for bypassing domain redirection issues</li>
+            <li>All generated URLs will force the checkout to stay on the myshopify.com domain</li>
+          </ul>
         </div>
 
-        <div className="bg-white rounded-md border p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Checkout URL Generator</h2>
-          
-          <div className="mb-4">
-            <Label htmlFor="variantId" className="block mb-2">Variant ID</Label>
-            <Input
-              id="variantId"
-              type="text"
-              value={variantId}
-              onChange={(e) => setVariantId(e.target.value)}
-              className="max-w-md"
-              placeholder="Enter Shopify variant ID"
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              Example variant IDs: 47808556531949 (Texas), 47808555679981 (Birmingham), 47800987943149 (National)
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Button 
-              onClick={testPrimaryCheckout} 
-              disabled={loading}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Test Primary Checkout URL
-            </Button>
-            
-            <Button 
-              onClick={testAltCheckout}
-              disabled={loading}
-              className="bg-secondary hover:bg-secondary/90"
-            >
-              Test Alternative Checkout URL
-            </Button>
-            
-            <Button 
-              onClick={testDirectCheckout}
-              disabled={loading}
-              variant="outline"
-            >
-              Test Direct Checkout (No Return URL)
-            </Button>
-          </div>
-        </div>
-        
-        <Separator className="my-6" />
-        
-        <div className="bg-gray-50 rounded-md p-6">
-          <h2 className="text-xl font-semibold mb-4">URL Formats</h2>
-          
-          <div className="mb-4">
-            <h3 className="font-medium text-gray-700 mb-2">Primary Format (cart/add)</h3>
-            <div className="bg-gray-100 p-3 rounded text-sm font-mono overflow-x-auto">
-              https://{shopifyDomain}/cart/add?id=VARIANT_ID&quantity=1&checkout_url=https://{shopifyDomain}/checkout&return_to=ENCODED_RETURN_URL
-            </div>
-          </div>
-          
-          <div className="mb-4">
-            <h3 className="font-medium text-gray-700 mb-2">Alternative Format (cart/VARIANT:QTY)</h3>
-            <div className="bg-gray-100 p-3 rounded text-sm font-mono overflow-x-auto">
-              https://{shopifyDomain}/cart/VARIANT_ID:1?checkout_url=https://{shopifyDomain}/checkout&return_to=ENCODED_RETURN_URL
-            </div>
-          </div>
-          
-          <div className="mb-4">
-            <h3 className="font-medium text-gray-700 mb-2">Direct Format (No Return)</h3>
-            <div className="bg-gray-100 p-3 rounded text-sm font-mono overflow-x-auto">
-              https://{shopifyDomain}/cart/add?id=VARIANT_ID&quantity=1&checkout_url=https://{shopifyDomain}/checkout
-            </div>
-          </div>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h2 className="font-bold text-gray-800 mb-2">How to Use This Tool</h2>
+          <ol className="list-decimal list-inside text-gray-700 space-y-1 text-sm">
+            <li>Enter a Shopify variant ID (in any format)</li>
+            <li>Set the quantity (defaults to 1)</li>
+            <li>Optionally add a return URL for after checkout</li>
+            <li>Click "Generate Checkout URLs" to create checkout links</li>
+            <li>Use "Test Direct Checkout" to immediately attempt a checkout with the entered variant ID</li>
+            <li>Copy the generated URLs or test them directly with the provided buttons</li>
+          </ol>
+          <p className="mt-4 text-sm text-gray-600">
+            Current Shopify domain: <code className="bg-gray-200 px-1 py-0.5 rounded">{SHOPIFY_DOMAIN}</code>
+          </p>
         </div>
       </div>
     </Container>

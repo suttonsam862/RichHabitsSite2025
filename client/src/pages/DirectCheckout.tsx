@@ -8,6 +8,7 @@ import { useToast } from '../hooks/use-toast';
 import { RegistrationProgress } from '../components/RegistrationProgress';
 import { Container } from '../components/Container';
 import { AlertCircle } from 'lucide-react';
+import { attemptDirectCheckout, createDirectShopifyCartUrl } from '../lib/shopifyRedirectFix';
 import { 
   trackCheckoutCompleted,
   handleRegistrationError,
@@ -176,20 +177,8 @@ export default function DirectCheckout() {
             // Extract numeric ID from Shopify Global ID
             const numericId = data.variantId.replace('gid://shopify/ProductVariant/', '');
             
-            // Create direct checkout URL with reliable cart/add API
-            // Extract numeric ID without prefix if in global ID format
-            const cleanNumericId = numericId.replace('gid://shopify/ProductVariant/', '');
-            console.log('Using variant ID for checkout:', cleanNumericId);
-            
-            // Force Shopify to use the myshopify domain for cart operations to prevent domain redirection issues
-const cartUrl = `https://${shopifyDomain}/cart/add?id=${cleanNumericId}&quantity=1&checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
-            
-            // Create fallback URL - also using clean numeric ID
-            // Also force the fallback URL to use the myshopify domain for cart operations
-const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
-            localStorage.setItem('shopify_fallback_url', fallbackUrl);
-            
-            console.log('Generated checkout URL with event-specific variant:', cartUrl);
+            // Use our direct checkout utility that handles domain redirection issues
+            console.log('Using variant ID for direct checkout:', data.variantId);
             
             // Show toast before redirecting
             toast({
@@ -197,9 +186,11 @@ const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?checkout_
               description: "Taking you to the secure payment page...",
             });
             
-            // Redirect to Shopify checkout
+            // Use our reliable checkout fix that creates multiple fallback options
+            // This bypasses the rich-habits.com redirect issue
             setTimeout(() => {
-              window.location.href = cartUrl;
+              // Attempt direct checkout with proper success URL handling
+              attemptDirectCheckout(data.variantId, 1);
             }, 800);
           })
           .catch(error => {
@@ -426,17 +417,13 @@ const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?checkout_
                       
                       console.log('Retry using cleaned variant ID:', formattedVid);
                       
-                      // Try both checkout methods for better reliability
-                      // Force Shopify to use myshopify domain to prevent domain redirection issues
-                      const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedVid}&quantity=1&checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
+                      console.log('Manual checkout using clean variant ID:', formattedVid);
                       
-                      // Also store a fallback URL using the alternative cart format
-                      // Also force checkout on myshopify domain
-                      const fallbackCartUrl = `https://${shopifyDomain}/cart/${formattedVid}:1?checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
-                      localStorage.setItem('shopify_fallback_url', fallbackCartUrl);
-                      
-                      // Redirect after a short delay
-                      setTimeout(() => { window.location.href = directUrl; }, 500);
+                      // Use our special checkout fix utility that handles domain redirect issues
+                      // This utility will try multiple methods to ensure successful checkout
+                      setTimeout(() => {
+                        attemptDirectCheckout(formattedVid, 1);
+                      }, 500);
                     } else {
                       toast({
                         title: "Retry Failed",
@@ -513,17 +500,13 @@ const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?checkout_
                   formattedId = formattedId.replace(/\D/g, '');
                   console.log('Manual checkout using clean variant ID:', formattedId);
                   
-                  // Use the more reliable cart/add API instead of direct cart URL
-                  // Force Shopify to use myshopify domain to prevent domain redirection issues
-                  const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedId}&quantity=1&checkout_url=https://${shopifyDomain}/checkout`;
-                  
                   toast({
                     title: "Proceeding to Shopify",
                     description: "Redirecting you directly to the Shopify checkout...",
                   });
                   
-                  // Redirect to Shopify
-                  window.location.href = directUrl;
+                  // Use our reliable checkout utility that bypasses the domain redirect issue
+                  attemptDirectCheckout(formattedId, 1);
                 }
               }}
               className="px-4 py-2 bg-amber-600 text-white rounded-md text-center hover:bg-amber-700 transition-colors w-full"
