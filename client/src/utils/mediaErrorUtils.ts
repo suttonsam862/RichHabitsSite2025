@@ -406,7 +406,8 @@ export function getSupportedMediaFormats(): {
     { type: 'video/webm; codecs="vp9"', shortName: 'webm (VP9)' },
     { type: 'video/ogg; codecs="theora"', shortName: 'ogg' },
     { type: 'video/mp4; codecs="av01"', shortName: 'AV1' },
-    { type: 'video/mp4; codecs="hvc1"', shortName: 'HEVC/H.265' }
+    { type: 'video/mp4; codecs="hvc1"', shortName: 'HEVC/H.265' },
+    { type: 'video/quicktime', shortName: 'mov (QuickTime)' }
   ];
   
   // Test audio formats

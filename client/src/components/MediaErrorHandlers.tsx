@@ -198,7 +198,6 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
       >
         <video
           ref={combinedRef}
-          src={src}
           className={className}
           crossOrigin={!isLocalVideo ? "anonymous" : undefined}
           playsInline // Add playsInline attribute for better mobile support
@@ -214,6 +213,12 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
           }}
           {...props}
         >
+          {/* Special handling for MOV files which may need explicit source with type */}
+          {src && src.toLowerCase().endsWith('.mov') ? (
+            <source src={src} type="video/quicktime" />
+          ) : (
+            <source src={src} type={inferMimeTypeFromExtension(src || '')} />
+          )}
           {children}
         </video>
       </MediaErrorBoundary>
