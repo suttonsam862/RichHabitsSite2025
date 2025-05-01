@@ -47,8 +47,19 @@ export default function DirectCheckout() {
   }, [toast]);
   
   useEffect(() => {
+    let timeoutId: number;
+
     async function processCheckout() {
       try {
+        // Set a timeout to show a retry option if the process takes too long
+        timeoutId = window.setTimeout(() => {
+          toast({
+            title: "Checkout taking longer than expected",
+            description: "You can try clicking the 'Proceed to Shopify' button below if you're not redirected soon.",
+          });
+          setIsLoading(false);
+          setError("The checkout process appears to be taking longer than expected, but you can proceed manually.");
+        }, 8000); // 8 seconds timeout
         // Parse the URL query parameters and get data from localStorage if available
         const params = new URLSearchParams(window.location.search);
         let variantId = params.get('variantId');
@@ -183,6 +194,13 @@ export default function DirectCheckout() {
     }
 
     processCheckout();
+    
+    // Cleanup function to clear the timeout if component unmounts
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [toast]);
 
   // If there's an error, show it with recovery options
@@ -301,9 +319,37 @@ export default function DirectCheckout() {
           <div className="flex justify-center mb-6">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
           </div>
-          <p className="text-gray-600 text-center">
+          <p className="text-gray-600 text-center mb-6">
             Please wait while we connect to Shopify for secure checkout...
           </p>
+          
+          {/* Manual checkout button that appears after 3 seconds */}
+          <div className="text-center mt-6 transition-opacity duration-500 ease-in opacity-0 animate-fadeIn">
+            <button
+              onClick={() => {
+                // Manually proceed to Shopify checkout
+                const params = new URLSearchParams(window.location.search);
+                const variantId = params.get('variantId');
+                
+                if (variantId) {
+                  const shopifyDomain = 'rich-habits-2022.myshopify.com';
+                  const formattedId = variantId.replace(/\D/g, '');
+                  const directUrl = `https://${shopifyDomain}/cart/${formattedId}:1`;
+                  
+                  toast({
+                    title: "Proceeding to Shopify",
+                    description: "Redirecting you directly to the Shopify checkout...",
+                  });
+                  
+                  // Redirect to Shopify
+                  window.location.href = directUrl;
+                }
+              }}
+              className="px-4 py-2 bg-amber-600 text-white rounded-md text-center hover:bg-amber-700 transition-colors w-full"
+            >
+              Proceed to Shopify Checkout
+            </button>
+          </div>
         </div>
       </div>
     </>
