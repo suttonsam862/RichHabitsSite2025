@@ -135,12 +135,20 @@ export default function DirectCheckout() {
         const eventId = params.get('eventId') || '';
         const eventName = params.get('eventName') || '';
         
-        // Build checkout URL
-        let successRedirectUrl = window.location.origin + 
-            `/direct-checkout?success=true&eventId=${eventId}&eventName=${eventName}`;
+        // Build checkout URL - make sure it's properly encoded
+        const successParams = new URLSearchParams({
+          success: 'true',
+          eventId: eventId.toString(),
+          eventName: eventName
+        });
         
-        // URL encode the success redirect
-        successRedirectUrl = encodeURIComponent(successRedirectUrl);
+        // Create the full success URL with proper encoding
+        const successRedirectUrl = encodeURIComponent(
+          `${window.location.origin}/direct-checkout?${successParams.toString()}`
+        );
+        
+        // Debug the success URL to ensure it's properly formatted
+        console.log('Success redirect URL:', successRedirectUrl);
         
         // Add product to cart with quantity=1 and include success redirect
         checkoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1?return_to=${successRedirectUrl}`;
@@ -340,10 +348,17 @@ export default function DirectCheckout() {
                       const eventId = params.get('eventId') || '';
                       const eventName = params.get('eventName') || '';
                       
-                      // Create success redirect URL
-                      let successRedirectUrl = window.location.origin + 
-                          `/direct-checkout?success=true&eventId=${eventId}&eventName=${eventName}`;
-                      successRedirectUrl = encodeURIComponent(successRedirectUrl);
+                      // Create success redirect URL with proper URL encoding
+                      const successParams = new URLSearchParams({
+                        success: 'true',
+                        eventId: eventId.toString(),
+                        eventName: eventName
+                      });
+                      
+                      // Create the full success URL with proper encoding
+                      const successRedirectUrl = encodeURIComponent(
+                        `${window.location.origin}/direct-checkout?${successParams.toString()}`
+                      );
                       
                       // Create the direct URL with return_to parameter
                       const directUrl = `https://${shopifyDomain}/cart/${variantId.replace(/\D/g, '')}:1?return_to=${successRedirectUrl}`;

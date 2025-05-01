@@ -354,7 +354,11 @@ export default function EventDetail() {
           src={getEventMedia(event.id).banner} 
           alt={event.title} 
           className="w-full h-auto object-cover" 
-          style={{ maxHeight: event.id === 3 ? "250px" : "auto", objectPosition: event.id === 3 ? "center center" : "center top" }}
+          style={{ 
+            maxHeight: event.id === 3 ? "250px" : "auto", 
+            objectPosition: event.id === 3 ? "center center" : "center top",
+            aspectRatio: event.id === 3 ? "10/2" : "auto"
+          }}
         />
         {/* Event-specific effects */}
         {event.id === 1 && <div className="sun-glow"></div>}
@@ -715,7 +719,24 @@ export default function EventDetail() {
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                      {(event.id === 3 ? [
+                        {
+                          name: "Micky Phillippi",
+                          title: "NCAA All-American, University of Pittsburgh",
+                          bio: "3x ACC Champion and 3x NCAA All-American at Pittsburgh. Expert in technical wrestling and recruiting process advising.",
+                          image: "/assets/VALENCIA_Zahid-headshot.jpg",
+                          school: "University of Pittsburgh",
+                          schoolLogo: pittLogo
+                        },
+                        {
+                          name: "Dom Demas",
+                          title: "2x All-American, University of Oklahoma",
+                          bio: "Big 12 Champion and multiple time NCAA qualifier. Specializes in dynamic offense and recruiting preparation.",
+                          image: "/assets/Michael_McGee_JouQS.jpg",
+                          school: "University of Oklahoma",
+                          schoolLogo: ouLogo
+                        }
+                      ] : event.coaches || []).map((coach: any, index: number) => (
                         <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
                           <div className="aspect-square overflow-hidden relative">
                             <img 
