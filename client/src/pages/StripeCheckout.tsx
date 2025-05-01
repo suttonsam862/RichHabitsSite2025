@@ -4,7 +4,7 @@ import { useToast } from '../hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Container } from '../components/ui/container';
-import { RegistrationProgress } from '../components/events/RegistrationProgress';
+import { RegistrationProgress } from '@/components/events/RegistrationProgress';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
 // Make sure to call loadStripe outside of a component's render to avoid

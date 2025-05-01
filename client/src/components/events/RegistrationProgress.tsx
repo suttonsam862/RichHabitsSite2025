@@ -1,7 +1,6 @@
 import React from 'react';
-import { ChevronRight, Check } from 'lucide-react';
 
-type Step = 'register' | 'checkout' | 'complete';
+export type Step = 'form' | 'processing' | 'checkout' | 'complete';
 
 interface RegistrationProgressProps {
   currentStep: Step;
@@ -9,58 +8,82 @@ interface RegistrationProgressProps {
 
 export const RegistrationProgress: React.FC<RegistrationProgressProps> = ({ currentStep }) => {
   const steps: { key: Step; label: string }[] = [
-    { key: 'register', label: 'Registration' },
+    { key: 'form', label: 'Registration Form' },
+    { key: 'processing', label: 'Processing' },
     { key: 'checkout', label: 'Payment' },
-    { key: 'complete', label: 'Confirmation' },
+    { key: 'complete', label: 'Complete' },
   ];
 
   const getStepStatus = (step: Step) => {
-    if (currentStep === 'complete') {
-      // If we're at the complete step, all previous steps are complete
-      return 'complete';
-    }
-    if (currentStep === 'checkout' && step === 'register') {
-      // If we're at checkout, registration is complete
-      return 'complete';
-    }
-    if (currentStep === step) {
-      return 'current';
-    }
-    return 'incomplete';
+    if (step === currentStep) return 'current';
+    
+    const currentIndex = steps.findIndex((s) => s.key === currentStep);
+    const stepIndex = steps.findIndex((s) => s.key === step);
+    
+    return stepIndex < currentIndex ? 'complete' : 'upcoming';
   };
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between max-w-lg mx-auto">
-        {steps.map((step, index) => (
-          <React.Fragment key={step.key}>
-            <div className="flex flex-col items-center">
-              <div
-                className={`flex items-center justify-center h-8 w-8 rounded-full text-sm font-medium ${getStepStatus(step.key) === 'complete' 
-                  ? 'bg-primary text-white' 
-                  : getStepStatus(step.key) === 'current'
-                    ? 'bg-primary/20 text-primary border-2 border-primary'
-                    : 'bg-gray-200 text-gray-500'}`}
-              >
-                {getStepStatus(step.key) === 'complete' ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  index + 1
-                )}
-              </div>
-              <div className="mt-2 text-sm font-medium text-gray-600">{step.label}</div>
-            </div>
-            {index < steps.length - 1 && (
-              <div className="w-16 h-[1px] bg-gray-300 flex-1 mx-2">
+    <div className="flex items-center justify-center max-w-3xl mx-auto">
+      <ol className="flex items-center w-full">
+        {steps.map((step, index) => {
+          const status = getStepStatus(step.key);
+          const isLast = index === steps.length - 1;
+          
+          return (
+            <li key={step.key} className={`flex items-center ${isLast ? 'w-auto' : 'w-full'}`}>
+              <div className="flex flex-col items-center">
                 <div
-                  className={`h-full ${getStepStatus(step.key) === 'complete' ? 'bg-primary' : 'bg-transparent'}`}
-                  style={{ width: getStepStatus(step.key) === 'complete' ? '100%' : '0%' }}
-                />
+                  className={`
+                    flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium
+                    ${status === 'complete' ? 'bg-primary text-white' : ''}
+                    ${status === 'current' ? 'bg-primary text-white ring-4 ring-primary/30' : ''}
+                    ${status === 'upcoming' ? 'bg-gray-200 text-gray-500' : ''}
+                  `}
+                >
+                  {status === 'complete' ? (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                  ) : (
+                    index + 1
+                  )}
+                </div>
+                <span
+                  className={`
+                    hidden sm:block text-xs font-medium mt-1
+                    ${status === 'complete' ? 'text-primary' : ''}
+                    ${status === 'current' ? 'text-primary font-semibold' : ''}
+                    ${status === 'upcoming' ? 'text-gray-500' : ''}
+                  `}
+                >
+                  {step.label}
+                </span>
               </div>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+              
+              {!isLast && (
+                <div
+                  className={`
+                    w-full h-0.5 mx-2
+                    ${status === 'upcoming' ? 'bg-gray-200' : 'bg-primary'}
+                  `}
+                ></div>
+              )}
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 };

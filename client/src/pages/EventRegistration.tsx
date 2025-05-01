@@ -355,19 +355,22 @@ export default function EventRegistration() {
         return;
       }
       
-      // If we have a URL to redirect to, do it after a short delay
-      if (shouldRedirect && redirectUrl) {
-        // Short timeout to allow the success toast to be seen
-        setTimeout(() => {
-          if (redirectUrl.startsWith('/')) {
-            // For internal redirects, use the navigate function
-            navigate(redirectUrl);
-          } else {
-            // For external URLs, use direct window location
-            window.location.href = redirectUrl;
-          }
-        }, 1000);
-      }
+      // Instead of using Shopify checkout, always use our Stripe checkout
+      // Create Stripe checkout URL with the necessary parameters
+      const stripeCheckoutUrl = `/stripe-checkout?eventId=${eventId}&eventName=${encodeURIComponent(event.title)}&option=${encodeURIComponent(registrationForm.option)}`;
+      
+      console.log('Using Stripe checkout instead of Shopify:', stripeCheckoutUrl);
+      
+      toast({
+        title: "Registration Successful",
+        description: "Redirecting to secure payment...",
+      });
+      
+      // Short timeout to allow the success toast to be seen
+      setTimeout(() => {
+        // Always use our new Stripe checkout instead of the original redirect
+        navigate(stripeCheckoutUrl);
+      }, 1000);
     } catch (error) {
       // Use our centralized error handling
       const errorObj = error instanceof Error ? error : new Error('Unknown registration error');
