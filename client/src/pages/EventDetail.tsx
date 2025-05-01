@@ -354,6 +354,7 @@ export default function EventDetail() {
           src={getEventMedia(event.id).banner} 
           alt={event.title} 
           className="w-full h-auto object-cover" 
+          style={{ maxHeight: event.id === 3 ? "250px" : "auto", objectPosition: event.id === 3 ? "center center" : "center top" }}
         />
         {/* Event-specific effects */}
         {event.id === 1 && <div className="sun-glow"></div>}
