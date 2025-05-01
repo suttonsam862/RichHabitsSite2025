@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import EventVideo from '@/components/events/EventVideo';
 import EventImage from '@/components/events/EventImage';
 import FloatingSchoolLogos from '@/components/event/FloatingSchoolLogos';
+import CoachList from '@/components/events/CoachList';
 import { getEventMedia } from '@/lib/eventMediaMap';
 
 // This function converts "/src/assets/..." paths to "/assets/..." paths that work in production

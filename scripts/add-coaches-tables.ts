@@ -40,17 +40,68 @@ async function addCoachesTables() {
     // Add the Texas Recruiting Clinic coaches
     const texasRecruitingClinicId = 3;
     
-    // Insert each coach
-    await db.execute(sql`
-      INSERT INTO coaches (name, title, bio, image, school, school_logo)
-      VALUES
-        ('Grant Leeth', 'NCAA All-American, University of Missouri', 'Former University of Missouri standout specializing in technical wrestling and recruiting process guidance.', '/assets/VALENCIA_Zahid-headshot.jpg', 'University of Missouri', '/assets/pittLogo.png'),
-        ('Josh Shields', 'NCAA All-American, Arizona State', 'PAC-12 Champion and multiple NCAA qualifier. Expert in recruitment preparation and college transition.', '/assets/Michael_McGee_JouQS.jpg', 'Arizona State', '/assets/ouLogo.png'),
-        ('Micky Phillippi', 'NCAA All-American, University of Pittsburgh', '3x ACC Champion and NCAA All-American. Specializes in technical wrestling and preparing for college competition.', '/assets/VALENCIA_Zahid-headshot.jpg', 'University of Pittsburgh', '/assets/brownLogo.png'),
-        ('Mark Hall', 'NCAA Champion, Penn State', 'NCAA Champion and multiple-time All-American. Offers elite technical instruction and recruiting advice.', '/assets/Michael_McGee_JouQS.jpg', 'Penn State University', '/assets/gmuLogo.png'),
-        ('Max Murin', 'NCAA All-American, University of Iowa', 'Big Ten standout and NCAA All-American. Specializes in competitive mindset and recruiting process expertise.', '/assets/VALENCIA_Zahid-headshot.jpg', 'University of Iowa', '/assets/tarletonLogo.png')
-      ON CONFLICT (name) DO NOTHING;
-    `);
+    // Coach data for Texas Recruiting Clinic
+    const coachesData = [
+      {
+        name: 'Grant Leeth',
+        title: 'NCAA All-American, University of Missouri',
+        bio: 'Former University of Missouri standout specializing in technical wrestling and recruiting process guidance.',
+        image: '/assets/VALENCIA_Zahid-headshot.jpg',
+        school: 'University of Missouri',
+        schoolLogo: '/assets/pittLogo.png'
+      },
+      {
+        name: 'Josh Shields',
+        title: 'NCAA All-American, Arizona State',
+        bio: 'PAC-12 Champion and multiple NCAA qualifier. Expert in recruitment preparation and college transition.',
+        image: '/assets/Michael_McGee_JouQS.jpg',
+        school: 'Arizona State',
+        schoolLogo: '/assets/ouLogo.png'
+      },
+      {
+        name: 'Micky Phillippi',
+        title: 'NCAA All-American, University of Pittsburgh',
+        bio: '3x ACC Champion and NCAA All-American. Specializes in technical wrestling and preparing for college competition.',
+        image: '/assets/VALENCIA_Zahid-headshot.jpg',
+        school: 'University of Pittsburgh',
+        schoolLogo: '/assets/brownLogo.png'
+      },
+      {
+        name: 'Mark Hall',
+        title: 'NCAA Champion, Penn State',
+        bio: 'NCAA Champion and multiple-time All-American. Offers elite technical instruction and recruiting advice.',
+        image: '/assets/Michael_McGee_JouQS.jpg',
+        school: 'Penn State University',
+        schoolLogo: '/assets/gmuLogo.png'
+      },
+      {
+        name: 'Max Murin',
+        title: 'NCAA All-American, University of Iowa',
+        bio: 'Big Ten standout and NCAA All-American. Specializes in competitive mindset and recruiting process expertise.',
+        image: '/assets/VALENCIA_Zahid-headshot.jpg',
+        school: 'University of Iowa',
+        schoolLogo: '/assets/tarletonLogo.png'
+      }
+    ];
+    
+    // Insert each coach individually after checking if they exist
+    for (const coach of coachesData) {
+      // Check if coach already exists
+      const existingCoach = await db.execute(sql`
+        SELECT id FROM coaches WHERE name = ${coach.name};
+      `);
+      
+      // Only insert if coach doesn't exist
+      if (existingCoach.rows.length === 0) {
+        await db.execute(sql`
+          INSERT INTO coaches (name, title, bio, image, school, school_logo)
+          VALUES (${coach.name}, ${coach.title}, ${coach.bio}, ${coach.image}, ${coach.school}, ${coach.schoolLogo});
+        `);
+        console.log(`Added coach: ${coach.name}`);
+      } else {
+        console.log(`Coach ${coach.name} already exists`);
+      }
+    }
     console.log("Added Texas Recruiting Clinic coaches to database");
     
     // Get the IDs of the coaches we just created
@@ -63,12 +114,23 @@ async function addCoachesTables() {
     // Connect coaches to event
     for (const coach of coachIds.rows) {
       const displayOrder = coachIds.rows.indexOf(coach);
-      // Insert into junction table
-      await db.execute(sql`
-        INSERT INTO event_coaches (event_id, coach_id, display_order)
-        VALUES (${texasRecruitingClinicId}, ${coach.id}, ${displayOrder})
-        ON CONFLICT (event_id, coach_id) DO NOTHING;
+      
+      // Check if relationship already exists
+      const existingRelation = await db.execute(sql`
+        SELECT id FROM event_coaches 
+        WHERE event_id = ${texasRecruitingClinicId} AND coach_id = ${coach.id};
       `);
+      
+      // Only insert if relationship doesn't exist
+      if (existingRelation.rows.length === 0) {
+        await db.execute(sql`
+          INSERT INTO event_coaches (event_id, coach_id, display_order)
+          VALUES (${texasRecruitingClinicId}, ${coach.id}, ${displayOrder});
+        `);
+        console.log(`Added coach ${coach.name} to event ${texasRecruitingClinicId}`);
+      } else {
+        console.log(`Coach ${coach.name} is already connected to event ${texasRecruitingClinicId}`);
+      }
     }
     console.log("Connected coaches to Texas Recruiting Clinic event");
     
