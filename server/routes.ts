@@ -15,6 +15,7 @@ import {
 import { z } from "zod";
 import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
 import { createPaymentIntent, handleSuccessfulPayment, handleStripeWebhook } from "./stripe";
+import { validateDiscountCode, updatePaymentIntent } from "./discounts";
 
 // Shopify configuration - in a real app, store these in environment variables
 const SHOPIFY_ADMIN_API_KEY = process.env.SHOPIFY_ADMIN_API_KEY || "";
@@ -1269,8 +1270,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Stripe payment routes
   app.post('/api/events/:eventId/create-payment-intent', createPaymentIntent);
+  app.post('/api/events/:eventId/update-payment-intent', updatePaymentIntent);
   app.post('/api/events/:eventId/stripe-payment-success', handleSuccessfulPayment);
   app.post('/api/stripe/webhook', handleStripeWebhook);
+  
+  // Discount code routes
+  app.post('/api/discount/validate', validateDiscountCode);
 
   const httpServer = createServer(app);
 

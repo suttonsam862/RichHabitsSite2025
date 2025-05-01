@@ -28,6 +28,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: C
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [discountCode, setDiscountCode] = useState<string>('');
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
+  const [discount, setDiscount] = useState<{ valid: boolean; amount: number; code: string } | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,9 +103,138 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: C
     }
   };
 
+  // Handler for applying discount code
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      toast({
+        title: "Missing Discount Code",
+        description: "Please enter a discount code",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsApplyingDiscount(true);
+      setError(null);
+      
+      const response = await fetch(`/api/discount/validate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: discountCode,
+          eventId: eventId,
+          email: sessionStorage.getItem('registration_email') || '',
+          amount: amount
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to validate discount code');
+      }
+      
+      const data = await response.json();
+      
+      if (data.valid) {
+        setDiscount({
+          valid: true,
+          amount: data.discountAmount,
+          code: discountCode
+        });
+        
+        // Update the payment intent with the discounted amount
+        const updatePaymentResponse = await fetch(`/api/events/${eventId}/update-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentIntentId: clientSecret?.split('_secret')[0],
+            discountAmount: data.discountAmount
+          }),
+        });
+        
+        if (!updatePaymentResponse.ok) {
+          throw new Error('Failed to update payment with discount');
+        }
+        
+        const updateData = await updatePaymentResponse.json();
+        // We need to access the parent component's setAmount function
+        // This will happen through the onDiscountApplied callback prop
+        
+        toast({
+          title: "Discount Applied",
+          description: `${data.discountAmount === amount ? "100% discount applied. Your registration is free!" : `Discount of $${data.discountAmount.toFixed(2)} applied!`}`,
+        });
+      } else {
+        toast({
+          title: "Invalid Discount",
+          description: data.message || 'This discount code is not valid',
+          variant: "destructive"
+        });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to apply discount code');
+      toast({
+        title: "Discount Error",
+        description: err instanceof Error ? err.message : 'Failed to apply discount code',
+        variant: "destructive"
+      });
+    } finally {
+      setIsApplyingDiscount(false);
+    }
+  };
+  
+  // Calculate the final amount based on any applied discount
+  const finalAmount = discount?.valid ? 
+    Math.max(0, amount - discount.amount) : 
+    amount;
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Discount Code Section */}
+      <div className="mb-6 p-4 border rounded-md bg-gray-50">
+        <div className="font-medium text-gray-700 mb-2">Have a discount code?</div>
+        <div className="flex space-x-2">
+          <input 
+            type="text" 
+            value={discountCode}
+            onChange={(e) => setDiscountCode(e.target.value)}
+            placeholder="Enter code"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+            disabled={isApplyingDiscount || discount?.valid}
+          />
+          <button
+            type="button"
+            onClick={handleApplyDiscount}
+            disabled={isApplyingDiscount || discount?.valid || !discountCode.trim()}
+            className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isApplyingDiscount ? (
+              <span className="animate-pulse">Applying...</span>
+            ) : discount?.valid ? (
+              "Applied"
+            ) : (
+              "Apply"
+            )}
+          </button>
+        </div>
+        {discount?.valid && (
+          <div className="mt-2 text-sm text-green-600 flex items-center">
+            <span className="mr-1">✓</span> 
+            {discount.amount === amount 
+              ? "100% discount applied. Your registration is free!" 
+              : `$${discount.amount.toFixed(2)} discount applied!`
+            }
+          </div>
+        )}
+      </div>
+      
       <PaymentElement />
+      
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
           <div className="flex items-center mb-1">
@@ -112,9 +244,10 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: C
           <p>{error}</p>
         </div>
       )}
+      
       <button
         type="submit"
-        disabled={!stripe || !elements || isProcessing}
+        disabled={!stripe || !elements || isProcessing || (finalAmount <= 0)}
         className="w-full px-4 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isProcessing ? (
@@ -122,8 +255,10 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: C
             <span className="mr-2">Processing</span>
             <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
           </span>
+        ) : finalAmount <= 0 ? (
+          "Registration Complete (100% Discount)"
         ) : (
-          `Pay $${amount ? amount.toFixed(2) : '0.00'}`
+          `Pay $${finalAmount.toFixed(2)}`
         )}
       </button>
     </form>
