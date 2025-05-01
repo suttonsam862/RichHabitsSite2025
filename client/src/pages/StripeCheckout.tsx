@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { useToast } from '../hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Container } from '../components/Container';
+import { Container } from '../components/ui/container';
 import { RegistrationProgress } from '../components/events/RegistrationProgress';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -81,7 +81,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess }: CheckoutF
           toast({
             title: 'Payment Successful',
             description: 'Your payment was successful, but we had trouble recording your registration. Please contact support with your payment confirmation.',
-            variant: 'warning',
+            variant: 'destructive',
           });
           onSuccess();
         }

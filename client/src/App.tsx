@@ -13,6 +13,7 @@ import EventDetail from "@/pages/EventDetail";
 import EventRegistration from "@/pages/EventRegistration";
 import ShopifyRedirect from "@/pages/ShopifyRedirect";
 import DirectCheckout from "@/pages/DirectCheckout";
+import StripeCheckout from "@/pages/StripeCheckout";
 import EmbeddedCart from "@/pages/EmbeddedCart";
 import AddToCart from "@/pages/AddToCart";
 import CheckoutDebug from "@/pages/CheckoutDebug";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/events/:id/register" component={EventRegistration} />
       <Route path="/redirect" component={ShopifyRedirect} />
       <Route path="/direct-checkout" component={DirectCheckout} />
+      <Route path="/stripe-checkout" component={StripeCheckout} />
       <Route path="/embedded-cart" component={EmbeddedCart} />
       <Route path="/add-to-cart" component={AddToCart} />
       <Route path="/about" component={About} />
@@ -53,7 +55,8 @@ function App() {
     pathname === '/redirect' || 
     pathname === '/embedded-cart' || 
     pathname === '/add-to-cart' ||
-    pathname === '/direct-checkout';
+    pathname === '/direct-checkout' ||
+    pathname === '/stripe-checkout';
   
   return (
     <QueryClientProvider client={queryClient}>

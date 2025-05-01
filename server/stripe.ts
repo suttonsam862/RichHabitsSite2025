@@ -79,7 +79,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       currency: 'usd',
       metadata: {
         eventId: eventId.toString(),
-        eventName: event.name,
+        eventName: event.title, // use title field instead of name
         option,
       },
       automatic_payment_methods: {
