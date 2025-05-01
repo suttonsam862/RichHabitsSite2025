@@ -20,9 +20,10 @@ interface CheckoutFormProps {
   eventId: string;
   eventName: string;
   onSuccess: () => void;
+  amount: number;
 }
 
-const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess }: CheckoutFormProps) => {
+const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -122,7 +123,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess }: CheckoutF
             <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
           </span>
         ) : (
-          `Pay $${Math.round(Number(clientSecret?.split('_secret_')[0]) / 100)}`
+          `Pay $${amount ? amount.toFixed(2) : '0.00'}`
         )}
       </button>
     </form>
@@ -132,6 +133,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess }: CheckoutF
 export default function StripeCheckout() {
   const [, navigate] = useLocation();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [amount, setAmount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -174,6 +176,10 @@ export default function StripeCheckout() {
         
         if (data.clientSecret) {
           setClientSecret(data.clientSecret);
+          // Set the amount for display on the button
+          if (data.amount) {
+            setAmount(data.amount);
+          }
         } else {
           throw new Error('No client secret returned');
         }
@@ -309,6 +315,7 @@ export default function StripeCheckout() {
                     eventId={eventId} 
                     eventName={decodeURIComponent(eventName)}
                     onSuccess={handlePaymentSuccess}
+                    amount={amount}
                   />
                 </Elements>
               )}
