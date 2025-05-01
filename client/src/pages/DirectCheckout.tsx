@@ -4,10 +4,10 @@
  */
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
-import { useToast } from '@/hooks/use-toast';
-import { RegistrationProgress } from '@/components/RegistrationProgress';
+import { useToast } from '../hooks/use-toast';
+import { RegistrationProgress } from '../components/RegistrationProgress';
 import { Container } from '../components/Container';
-import { trackCheckoutCompleted, handleRegistrationError } from '@/lib/registrationUtils';
+import { trackCheckoutCompleted, handleRegistrationError } from '../lib/registrationUtils';
 
 export default function DirectCheckout() {
   const [, navigate] = useLocation();
