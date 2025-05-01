@@ -150,8 +150,13 @@ export default function DirectCheckout() {
         // Debug the success URL to ensure it's properly formatted
         console.log('Success redirect URL:', successRedirectUrl);
         
-        // Add product to cart with quantity=1 and include success redirect
-        checkoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1?return_to=${successRedirectUrl}`;
+        // Use the more reliable cart/add API as primary checkout method
+        // Shopify requires the variant ID to be in numeric format without any prefixes
+        checkoutUrl = `https://${shopifyDomain}/cart/add?id=${formattedVariantId}&quantity=1&return_to=${successRedirectUrl}`;
+        
+        // Store the direct cart URL as a fallback
+        const alternativeCheckoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1?return_to=${successRedirectUrl}`;
+        localStorage.setItem('shopify_fallback_url', alternativeCheckoutUrl);
 
         console.log('Generated direct checkout URL:', checkoutUrl);
 
@@ -360,8 +365,24 @@ export default function DirectCheckout() {
                         `${window.location.origin}/direct-checkout?${successParams.toString()}`
                       );
                       
-                      // Create the direct URL with return_to parameter
-                      const directUrl = `https://${shopifyDomain}/cart/${variantId.replace(/\D/g, '')}:1?return_to=${successRedirectUrl}`;
+                      // First, properly format the variant ID by extracting numeric part only
+                      let formattedVid = variantId;
+                      if (formattedVid.includes('gid://') || formattedVid.includes('ProductVariant/')) {
+                        const idMatch = formattedVid.match(/ProductVariant\/([0-9]+)/);
+                        if (idMatch && idMatch[1]) {
+                          formattedVid = idMatch[1];
+                        } else {
+                          formattedVid = formattedVid.split('/').pop() || formattedVid;
+                        }
+                      }
+                      formattedVid = formattedVid.replace(/\D/g, '');
+                      
+                      // Try both checkout methods for better reliability
+                      const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedVid}&quantity=1&return_to=${successRedirectUrl}`;
+                      
+                      // Also store a fallback URL using the alternative cart format
+                      const fallbackCartUrl = `https://${shopifyDomain}/cart/${formattedVid}:1?return_to=${successRedirectUrl}`;
+                      localStorage.setItem('shopify_fallback_url', fallbackCartUrl);
                       
                       // Redirect after a short delay
                       setTimeout(() => { window.location.href = directUrl; }, 500);
@@ -426,7 +447,9 @@ export default function DirectCheckout() {
                 if (variantId) {
                   const shopifyDomain = 'rich-habits-2022.myshopify.com';
                   const formattedId = variantId.replace(/\D/g, '');
-                  const directUrl = `https://${shopifyDomain}/cart/${formattedId}:1`;
+                  
+                  // Use the more reliable cart/add API instead of direct cart URL
+                  const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedId}&quantity=1`;
                   
                   toast({
                     title: "Proceeding to Shopify",
