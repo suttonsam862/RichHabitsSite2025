@@ -510,7 +510,7 @@ export default function EventDetail() {
               {event.id !== 1 && event.id !== 2 && (
                 <div className="col-span-full">
                   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
-                    <img src={event.image} alt={event.title} className="w-full h-auto max-h-[120px] object-cover object-center" />
+                    <img src={getEventMedia(event.id).thumbnailImage} alt={event.title} className="w-full h-auto max-h-[120px] object-cover object-center" />
                   </div>
                 </div>
               )}
@@ -1094,7 +1094,7 @@ export default function EventDetail() {
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-purple-400">
                           <EventImage 
-                            src="/assets/crop.webp" 
+                            src={getEventMedia(event.id).thumbnailImage} 
                             alt="Cory Land" 
                             className="w-full h-full object-cover object-top"
                             fallbackSrc="/assets/coaches/default-avatar.webp"
@@ -1129,7 +1129,7 @@ export default function EventDetail() {
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-[#1e88e5]">
                           <img 
-                            src="/assets/DSC09283--.JPG" 
+                            src={getEventMedia(event.id).thumbnailImage} 
                             alt="Vincenzo Joseph" 
                             className="w-full h-full object-cover object-top"
                           />
@@ -1256,7 +1256,7 @@ export default function EventDetail() {
                       <div className="relative">
                         <EventVideo 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                          src="/assets/slamcamp.mp4"
+                          src={getEventMedia(1).promoVideo}
                           autoplay={true}
                           loop={true}
                           muted={true}
@@ -1330,7 +1330,7 @@ export default function EventDetail() {
                     <div className="recruiting-diamond-pattern absolute inset-0 opacity-10"></div>
                     <EventVideo 
                       className="w-full h-auto object-cover relative z-10"
-                      src="/assets/0424.mp4"
+                      src={getEventMedia(event.id).mainVideo}
                       autoplay={true}
                       loop={true}
                       muted={true}
@@ -1390,7 +1390,7 @@ export default function EventDetail() {
                       <div className="relative">
                         <EventVideo 
                           className="w-full h-auto group-hover:scale-105 transition-transform duration-300 relative z-10"
-                          src="/assets/slamcamp.mp4"
+                          src={getEventMedia(1).promoVideo}
                           autoplay={true}
                           loop={true}
                           muted={true}
