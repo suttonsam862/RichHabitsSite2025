@@ -21,9 +21,10 @@ interface CheckoutFormProps {
   eventName: string;
   onSuccess: () => void;
   amount: number;
+  onDiscountApplied?: (newAmount: number) => void;
 }
 
-const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: CheckoutFormProps) => {
+const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onDiscountApplied }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -162,8 +163,11 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount }: C
         }
         
         const updateData = await updatePaymentResponse.json();
-        // We need to access the parent component's setAmount function
-        // This will happen through the onDiscountApplied callback prop
+        
+        // Call the callback to update the parent component's amount state
+        if (onDiscountApplied && updateData.amount !== undefined) {
+          onDiscountApplied(updateData.amount);
+        }
         
         toast({
           title: "Discount Applied",
@@ -343,6 +347,10 @@ export default function StripeCheckout() {
     setSuccess(true);
   };
 
+  const handleDiscountApplied = (newAmount: number) => {
+    setAmount(newAmount);
+  };
+
   // Success view after payment is completed
   if (success) {
     return (
@@ -451,6 +459,7 @@ export default function StripeCheckout() {
                     eventName={decodeURIComponent(eventName)}
                     onSuccess={handlePaymentSuccess}
                     amount={amount}
+                    onDiscountApplied={handleDiscountApplied}
                   />
                 </Elements>
               )}

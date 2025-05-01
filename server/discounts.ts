@@ -23,6 +23,9 @@ export const validateDiscountCode = async (req: Request, res: Response) => {
   try {
     const { code, eventId, email, amount } = req.body;
     
+    console.log('Validating discount code:', { code, eventId, email, amount });
+    console.log('Admin code:', ADMIN_DISCOUNT_CODE, 'Admin email:', ADMIN_EMAIL);
+    
     if (!code) {
       return res.status(400).json({
         valid: false,

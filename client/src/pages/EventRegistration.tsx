@@ -249,6 +249,12 @@ export default function EventRegistration() {
           eventId,
           timestamp: new Date().toISOString()
         }));
+        
+        // Also save email to sessionStorage for discount code validation
+        if (registrationForm.email) {
+          sessionStorage.setItem('registration_email', registrationForm.email);
+          console.log('Saved email to sessionStorage for discount code validation:', registrationForm.email);
+        }
       } catch (e) {
         console.warn('Unable to save registration data to localStorage:', e);
       }
