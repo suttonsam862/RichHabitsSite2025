@@ -721,20 +721,36 @@ export default function EventDetail() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {(event.id === 3 ? [
                         {
-                          name: "Micky Phillippi",
-                          title: "NCAA All-American, University of Pittsburgh",
-                          bio: "3x ACC Champion and 3x NCAA All-American at Pittsburgh. Expert in technical wrestling and recruiting process advising.",
+                          name: "Zahid Valencia",
+                          title: "3x NCAA Champion, Arizona State University",
+                          bio: "Olympic hopeful and multi-time national champion. Will provide world-class technical instruction and recruiting advice.",
                           image: "/assets/VALENCIA_Zahid-headshot.jpg",
-                          school: "University of Pittsburgh",
+                          school: "Arizona State University",
                           schoolLogo: pittLogo
                         },
                         {
-                          name: "Dom Demas",
-                          title: "2x All-American, University of Oklahoma",
-                          bio: "Big 12 Champion and multiple time NCAA qualifier. Specializes in dynamic offense and recruiting preparation.",
+                          name: "Michael McGee",
+                          title: "NCAA All-American, Arizona State University",
+                          bio: "ACC Champion and NCAA All-American. Specializes in lightweight technique and academic excellence in recruiting.",
                           image: "/assets/Michael_McGee_JouQS.jpg",
-                          school: "University of Oklahoma",
+                          school: "Arizona State University",
                           schoolLogo: ouLogo
+                        },
+                        {
+                          name: "Nick Suriano",
+                          title: "NCAA Champion, Michigan/Rutgers",
+                          bio: "First NCAA champion in Rutgers history and Michigan national champion. Expert in creating recruiting opportunities.",
+                          image: "/assets/VALENCIA_Zahid-headshot.jpg",
+                          school: "University of Michigan",
+                          schoolLogo: brownLogo
+                        },
+                        {
+                          name: "Korbin Myers",
+                          title: "NCAA All-American, Virginia Tech",
+                          bio: "Multiple-time ACC champion and national qualifier. Specializes in recruiting strategies for academic institutions.",
+                          image: "/assets/Michael_McGee_JouQS.jpg",
+                          school: "Virginia Tech",
+                          schoolLogo: gmuLogo
                         }
                       ] : event.coaches || []).map((coach: any, index: number) => (
                         <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
