@@ -129,14 +129,139 @@ export function trackCheckoutCompleted(eventId: number): void {
 }
 
 /**
+ * Custom error types to handle specific registration scenarios
+ */
+export enum RegistrationErrorType {
+  NETWORK = 'network',
+  TIMEOUT = 'timeout',
+  VALIDATION = 'validation',
+  PAYMENT = 'payment',
+  SERVER = 'server',
+  SHOPIFY = 'shopify',
+  UNKNOWN = 'unknown'
+}
+
+/**
+ * Extended error interface with additional information for registration errors
+ */
+export interface RegistrationError {
+  message: string;
+  type: RegistrationErrorType;
+  eventId?: number;
+  recoverable: boolean;
+  suggestedAction?: string;
+  technicalDetails?: string;
+}
+
+/**
+ * Create a structured registration error
+ */
+export function createRegistrationError(
+  message: string,
+  type: RegistrationErrorType = RegistrationErrorType.UNKNOWN,
+  recoverable: boolean = true,
+  suggestedAction?: string,
+  technicalDetails?: string
+): RegistrationError {
+  return {
+    message,
+    type,
+    recoverable,
+    suggestedAction,
+    technicalDetails
+  };
+}
+
+/**
  * Handle errors in the registration process
  */
-export function handleRegistrationError(eventId: number, error: Error | string): void {
-  const errorMessage = typeof error === 'string' ? error : error.message;
+export function handleRegistrationError(eventId: number, error: Error | string | RegistrationError): void {
+  let processedError: RegistrationError;
+  
+  if (typeof error === 'string') {
+    // Create structured error from string
+    processedError = createRegistrationError(error);
+  } else if ((error as RegistrationError).type !== undefined) {
+    // Already a RegistrationError
+    processedError = error as RegistrationError;
+  } else {
+    // Standard Error object
+    const errorMessage = error.message;
+    
+    // Determine error type based on message content
+    let errorType = RegistrationErrorType.UNKNOWN;
+    let recoverable = true;
+    let suggestedAction: string | undefined;
+    
+    // Network errors
+    if (
+      errorMessage.includes('network') ||
+      errorMessage.includes('fetch') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('ECONNREFUSED')
+    ) {
+      errorType = RegistrationErrorType.NETWORK;
+      suggestedAction = 'Please check your internet connection and try again.';
+    }
+    // Timeout errors
+    else if (
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('timed out')
+    ) {
+      errorType = RegistrationErrorType.TIMEOUT;
+      suggestedAction = 'The request took too long to complete. Please try again.';
+    }
+    // Shopify-specific errors
+    else if (
+      errorMessage.includes('shopify') ||
+      errorMessage.includes('checkout') ||
+      errorMessage.includes('variant') ||
+      errorMessage.includes('cart')
+    ) {
+      errorType = RegistrationErrorType.SHOPIFY;
+      suggestedAction = 'There was an issue connecting to our payment provider. Please try the alternate checkout method.';
+    }
+    // Create structured error
+    processedError = createRegistrationError(errorMessage, errorType, recoverable, suggestedAction);
+  }
+  
+  // Add event ID to the error if not already present
+  processedError.eventId = eventId;
   
   // Update status to error
-  updateRegistrationStatus(eventId, 'error', errorMessage);
+  updateRegistrationStatus(eventId, 'error', processedError.message);
+  
+  // Store detailed error info in session storage
+  try {
+    sessionStorage.setItem('last_registration_error', JSON.stringify(processedError));
+  } catch (e) {
+    console.warn('Could not store detailed error information:', e);
+  }
   
   // Log the error for debugging
-  console.error('Registration error:', error);
+  console.error('Registration error:', processedError);
+}
+
+/**
+ * Get the last registration error if available
+ */
+export function getLastRegistrationError(): RegistrationError | null {
+  try {
+    const errorJson = sessionStorage.getItem('last_registration_error');
+    return errorJson ? JSON.parse(errorJson) : null;
+  } catch (e) {
+    console.warn('Could not retrieve last registration error:', e);
+    return null;
+  }
+}
+
+/**
+ * Clear the last registration error
+ */
+export function clearLastRegistrationError(): void {
+  try {
+    sessionStorage.removeItem('last_registration_error');
+  } catch (e) {
+    console.warn('Could not clear last registration error:', e);
+  }
 }

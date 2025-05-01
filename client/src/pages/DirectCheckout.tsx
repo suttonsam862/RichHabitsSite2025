@@ -7,7 +7,16 @@ import { useLocation } from 'wouter';
 import { useToast } from '../hooks/use-toast';
 import { RegistrationProgress } from '../components/RegistrationProgress';
 import { Container } from '../components/Container';
-import { trackCheckoutCompleted, handleRegistrationError } from '../lib/registrationUtils';
+import { AlertCircle } from 'lucide-react';
+import { 
+  trackCheckoutCompleted,
+  handleRegistrationError,
+  getLastRegistrationError,
+  clearLastRegistrationError,
+  createRegistrationError,
+  RegistrationErrorType,
+  RegistrationError
+} from '../lib/registrationUtils';
 
 export default function DirectCheckout() {
   const [, navigate] = useLocation();
@@ -157,18 +166,66 @@ export default function DirectCheckout() {
         const eventId = Number(params.get('eventId')) || 0;
         const eventName = params.get('eventName') || 'this event';
         
-        // Use our centralized error handling if we have an event ID
-        if (eventId) {
-          handleRegistrationError(eventId, error instanceof Error ? error : new Error('Checkout failed'));
+        // Create a properly structured registration error
+        let registrationError: RegistrationError;
+        
+        if (error instanceof Error) {
+          // Detect different error types
+          let errorType = RegistrationErrorType.UNKNOWN;
+          let recoverable = true;
+          let suggestedAction: string | undefined;
+          
+          // Analyze error message to categorize it
+          const errorMessage = error.message;
+          
+          if (errorMessage.includes('variant') || 
+              errorMessage.includes('parse') || 
+              errorMessage.includes('ID')) {
+            // Product/variant identification issues
+            errorType = RegistrationErrorType.SHOPIFY;
+            suggestedAction = 'We had trouble identifying the event registration product. Please try the direct checkout button.';
+          }
+          else if (errorMessage.includes('timeout') || 
+                  errorMessage.includes('longer than expected')) {
+            // Timeout issues
+            errorType = RegistrationErrorType.TIMEOUT;
+            suggestedAction = 'The checkout process is taking too long. Try the alternative checkout option.';
+          }
+          else if (errorMessage.includes('network') || 
+                  errorMessage.includes('connect')) {
+            // Network issues
+            errorType = RegistrationErrorType.NETWORK;
+            suggestedAction = 'Please check your internet connection and try again.';
+          }
+          
+          registrationError = createRegistrationError(
+            errorMessage,
+            errorType,
+            recoverable,
+            suggestedAction,
+            `Error occurred during checkout for event ID: ${eventId}. Original error: ${errorMessage}`
+          );
+        } else {
+          // Generic error handling for non-Error objects
+          registrationError = createRegistrationError(
+            'An unknown error occurred during checkout',
+            RegistrationErrorType.UNKNOWN,
+            true,
+            'Please try the alternative checkout method or contact support.'
+          );
         }
         
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        setError(`${errorMessage}${eventId ? ` (Event: ${decodeURIComponent(eventName || '')})` : ''}`);
+        // Add event ID and handle the error
+        registrationError.eventId = eventId;
+        handleRegistrationError(eventId, registrationError);
         
-        // Show error toast
+        // Set the error message for the UI (include event info)
+        setError(`${registrationError.message}${eventId ? ` (Event: ${decodeURIComponent(eventName || '')})` : ''}`);
+        
+        // Show error toast with actionable suggestion
         toast({
           title: "Checkout Error",
-          description: errorMessage,
+          description: registrationError.suggestedAction || registrationError.message,
           variant: "destructive"
         });
         
@@ -217,8 +274,28 @@ export default function DirectCheckout() {
         </div>
         <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
           <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Checkout Error</h1>
-            <p className="text-gray-700 mb-6">{error}</p>
+            <div className="flex items-center mb-4">
+              <AlertCircle className="h-6 w-6 text-red-600 mr-2" />
+              <h1 className="text-2xl font-bold text-red-600">Checkout Error</h1>
+            </div>
+            <p className="text-gray-700 mb-4">{error}</p>
+            
+            {/* Display more helpful error details */}
+            {getLastRegistrationError() && (
+              <div className="p-4 bg-gray-50 rounded-md mb-6 text-sm">
+                <h3 className="font-medium text-gray-800 mb-2">What happened?</h3>
+                <p className="text-gray-600 mb-3">
+                  {getLastRegistrationError()?.suggestedAction || 
+                   'There was an issue connecting to our payment system.'}
+                </p>
+                <h3 className="font-medium text-gray-800 mb-2">What can you do?</h3>
+                <ul className="list-disc list-inside text-gray-600 space-y-1">
+                  <li>Try the alternative checkout option below</li>
+                  <li>Check your internet connection</li>
+                  <li>Return to the events page and try again</li>
+                </ul>
+              </div>
+            )}
             <div className="space-y-5">
               {fallbackUrl && (
                 <div className="p-4 border border-amber-200 bg-amber-50 rounded-md mb-4">
