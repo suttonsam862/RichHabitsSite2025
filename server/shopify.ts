@@ -292,9 +292,17 @@ export async function createCheckout(variantId: string, quantity: number = 1, cu
     console.log('Original Storefront API checkout URL:', checkoutUrl);
     
     // We need to ensure the URL is using the myshopify.com domain, not the custom domain
+    // CRITICAL: Ensure we're using the myshopify domain and not the custom domain
     if (checkoutUrl.includes('rich-habits.com')) {
       checkoutUrl = checkoutUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
       console.log('Replaced rich-habits.com with myshopify domain:', checkoutUrl);
+    }
+    
+    // Also ensure the checkout_url parameter is present to force the myshopify domain for checkout
+    if (!checkoutUrl.includes('checkout_url=')) {
+      const separator = checkoutUrl.includes('?') ? '&' : '?';
+      checkoutUrl += `${separator}checkout_url=https://rich-habits-2022.myshopify.com/checkout`;
+      console.log('Added checkout_url parameter to force myshopify domain:', checkoutUrl);
     }
     
     // Ensure it has HTTPS
@@ -558,6 +566,13 @@ export async function createCustomCheckout(
         console.log('Replaced rich-habits.com with myshopify domain:', checkoutUrl);
       }
       
+      // Also ensure the checkout_url parameter is present to force the myshopify domain for checkout
+      if (!checkoutUrl.includes('checkout_url=')) {
+        const separator = checkoutUrl.includes('?') ? '&' : '?';
+        checkoutUrl += `${separator}checkout_url=https://rich-habits-2022.myshopify.com/checkout`;
+        console.log('Added checkout_url parameter to force myshopify domain in draft order:', checkoutUrl);
+      }
+      
       // Ensure the URL starts with https:// for security
       if (!checkoutUrl.startsWith('https://')) {
         if (checkoutUrl.startsWith('http://')) {
@@ -709,11 +724,13 @@ export async function createEventRegistrationCheckout(
     
     // Create a cart URL with our redirect system to handle adding items to our embedded cart
     // This is a relative URL that will work in both production and development environments
-    let cartUrl = `/redirect?variantId=${encodeURIComponent(simpleVariantId)}`;
+    // Also include checkout_url parameter to force the myshopify domain for checkout
+    let cartUrl = `/redirect?variantId=${encodeURIComponent(simpleVariantId)}&checkout_url=${encodeURIComponent(`https://${SHOPIFY_STORE_DOMAIN}/checkout`)}`;
     
     // Create a direct Shopify cart URL as fallback (using the raw Shopify cart format)
     // Format: https://your-store.myshopify.com/cart/{variantId}:{quantity}
-    const directShopifyCartUrl = `https://${SHOPIFY_STORE_DOMAIN}/cart/${simpleVariantId}:1`;
+    // Force checkout on myshopify domain to prevent 404s from domain redirection
+    const directShopifyCartUrl = `https://${SHOPIFY_STORE_DOMAIN}/cart/${simpleVariantId}:1?checkout_url=https://${SHOPIFY_STORE_DOMAIN}/checkout`;
     console.log('Created fallback direct Shopify cart URL:', directShopifyCartUrl);
     
     // Add all custom properties as encoded URL parameters

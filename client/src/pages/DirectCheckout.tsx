@@ -181,10 +181,12 @@ export default function DirectCheckout() {
             const cleanNumericId = numericId.replace('gid://shopify/ProductVariant/', '');
             console.log('Using variant ID for checkout:', cleanNumericId);
             
-            const cartUrl = `https://${shopifyDomain}/cart/add?id=${cleanNumericId}&quantity=1&return_to=${successRedirectUrl}`;
+            // Force Shopify to use the myshopify domain for cart operations to prevent domain redirection issues
+const cartUrl = `https://${shopifyDomain}/cart/add?id=${cleanNumericId}&quantity=1&checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
             
             // Create fallback URL - also using clean numeric ID
-            const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?return_to=${successRedirectUrl}`;
+            // Also force the fallback URL to use the myshopify domain for cart operations
+const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
             localStorage.setItem('shopify_fallback_url', fallbackUrl);
             
             console.log('Generated checkout URL with event-specific variant:', cartUrl);
@@ -425,10 +427,12 @@ export default function DirectCheckout() {
                       console.log('Retry using cleaned variant ID:', formattedVid);
                       
                       // Try both checkout methods for better reliability
-                      const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedVid}&quantity=1&return_to=${successRedirectUrl}`;
+                      // Force Shopify to use myshopify domain to prevent domain redirection issues
+                      const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedVid}&quantity=1&checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
                       
                       // Also store a fallback URL using the alternative cart format
-                      const fallbackCartUrl = `https://${shopifyDomain}/cart/${formattedVid}:1?return_to=${successRedirectUrl}`;
+                      // Also force checkout on myshopify domain
+                      const fallbackCartUrl = `https://${shopifyDomain}/cart/${formattedVid}:1?checkout_url=https://${shopifyDomain}/checkout&return_to=${successRedirectUrl}`;
                       localStorage.setItem('shopify_fallback_url', fallbackCartUrl);
                       
                       // Redirect after a short delay
@@ -510,7 +514,8 @@ export default function DirectCheckout() {
                   console.log('Manual checkout using clean variant ID:', formattedId);
                   
                   // Use the more reliable cart/add API instead of direct cart URL
-                  const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedId}&quantity=1`;
+                  // Force Shopify to use myshopify domain to prevent domain redirection issues
+                  const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedId}&quantity=1&checkout_url=https://${shopifyDomain}/checkout`;
                   
                   toast({
                     title: "Proceeding to Shopify",
