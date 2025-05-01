@@ -23,6 +23,7 @@ export default function DirectCheckout() {
     
     if (isSuccess) {
       const eventId = Number(params.get('eventId')) || 0;
+      const eventName = params.get('eventName') || 'event';
       
       // Mark registration as complete in our tracking system
       if (eventId) {
@@ -31,8 +32,13 @@ export default function DirectCheckout() {
       
       toast({
         title: "Registration Complete",
-        description: "Your payment has been processed successfully!",
+        description: `Your payment has been processed successfully! You're now registered for ${decodeURIComponent(eventName)}.`,
       });
+      
+      // Redirect to events page after a short delay
+      setTimeout(() => {
+        navigate('/events');
+      }, 3000);
       
       // No need to continue with checkout
       setIsLoading(false);
@@ -104,7 +110,20 @@ export default function DirectCheckout() {
 
         // Create a simple cart URL with the variant ID
         const shopifyDomain = 'rich-habits-2022.myshopify.com';
-        checkoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1`;
+        
+        // Get event ID for success redirect
+        const eventId = params.get('eventId') || '';
+        const eventName = params.get('eventName') || '';
+        
+        // Build checkout URL
+        let successRedirectUrl = window.location.origin + 
+            `/direct-checkout?success=true&eventId=${eventId}&eventName=${eventName}`;
+        
+        // URL encode the success redirect
+        successRedirectUrl = encodeURIComponent(successRedirectUrl);
+        
+        // Add product to cart with quantity=1 and include success redirect
+        checkoutUrl = `https://${shopifyDomain}/cart/${formattedVariantId}:1?return_to=${successRedirectUrl}`;
 
         console.log('Generated direct checkout URL:', checkoutUrl);
 
@@ -125,6 +144,7 @@ export default function DirectCheckout() {
         // Extract event ID from URL if available
         const params = new URLSearchParams(window.location.search);
         const eventId = Number(params.get('eventId')) || 0;
+        const eventName = params.get('eventName') || 'this event';
         
         // Use our centralized error handling if we have an event ID
         if (eventId) {
@@ -132,7 +152,7 @@ export default function DirectCheckout() {
         }
         
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        setError(errorMessage);
+        setError(`${errorMessage}${eventId ? ` (Event: ${decodeURIComponent(eventName || '')})` : ''}`);
         
         // Show error toast
         toast({
@@ -220,7 +240,18 @@ export default function DirectCheckout() {
                       
                       // Create a direct Shopify URL
                       const shopifyDomain = 'rich-habits-2022.myshopify.com';
-                      const directUrl = `https://${shopifyDomain}/cart/${variantId.replace(/\D/g, '')}:1`;
+                      
+                      // Get event details from URL
+                      const eventId = params.get('eventId') || '';
+                      const eventName = params.get('eventName') || '';
+                      
+                      // Create success redirect URL
+                      let successRedirectUrl = window.location.origin + 
+                          `/direct-checkout?success=true&eventId=${eventId}&eventName=${eventName}`;
+                      successRedirectUrl = encodeURIComponent(successRedirectUrl);
+                      
+                      // Create the direct URL with return_to parameter
+                      const directUrl = `https://${shopifyDomain}/cart/${variantId.replace(/\D/g, '')}:1?return_to=${successRedirectUrl}`;
                       
                       // Redirect after a short delay
                       setTimeout(() => { window.location.href = directUrl; }, 500);

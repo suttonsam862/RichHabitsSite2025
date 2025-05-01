@@ -185,13 +185,20 @@ export default function EventRegistration() {
       });
     }
     
-    // Day selection validation for Cory Land Tour
-    if (event.id === 4 && registrationForm.option === 'single' && 
-        !registrationForm.day1 && !registrationForm.day2 && !registrationForm.day3) {
-      validationErrors.push({
-        field: 'daySelection',
-        message: 'Please select at least one day for the Cory Land Tour'
-      });
+    // Day selection validation for Cory Land Tour (event ID 4)
+    if (event.id === 4) {
+      if (registrationForm.option === 'single' && 
+          !registrationForm.day1 && !registrationForm.day2 && !registrationForm.day3) {
+        validationErrors.push({
+          field: 'daySelection',
+          message: 'Please select at least one day for the Cory Land Tour'
+        });
+      }
+    } 
+    // Single day selection validation for non-Cory Land Tour events
+    else if (registrationForm.option === 'single') {
+      // Future enhancement - if specific day selection is needed for other events
+      // This space is reserved for additional validation
     }
     
     // If validation errors exist, display them and prevent form submission
@@ -290,7 +297,7 @@ export default function EventRegistration() {
       if (data.variantId) {
         console.log('Variant ID received:', data.variantId);
         shouldRedirect = true;
-        redirectUrl = `/direct-checkout?variantId=${encodeURIComponent(data.variantId)}`;
+        redirectUrl = `/direct-checkout?variantId=${encodeURIComponent(data.variantId)}&eventId=${eventId}&eventName=${encodeURIComponent(event.title)}`;
         console.log('Using our simplified direct checkout path:', redirectUrl);
       
       // If there's a checkout URL provided by the server, use it as a fallback
