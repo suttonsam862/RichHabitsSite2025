@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
-import { Container } from '@/components/ui/container';
+import { Container } from '@/components/Container';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { RegistrationProgress, type RegistrationStep } from '@/components/RegistrationProgress';
 
 export default function EventRegistration() {
   const [location, navigate] = useLocation();
@@ -41,6 +42,7 @@ export default function EventRegistration() {
   const [error, setError] = useState<string | null>(null);
   const [showCheckoutFrame, setShowCheckoutFrame] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>('form');
   
   // Fetch event data from API
   useEffect(() => {
@@ -75,7 +77,10 @@ export default function EventRegistration() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate the form data
+    // Implement comprehensive form validation
+    const validationErrors: {field: string, message: string}[] = [];
+    
+    // Check required fields
     const requiredFields = [
       { field: 'firstName', label: 'First Name' },
       { field: 'lastName', label: 'Last Name' },
@@ -91,11 +96,53 @@ export default function EventRegistration() {
     );
     
     if (missingFields.length > 0) {
+      missingFields.forEach(({ field, label }) => {
+        validationErrors.push({
+          field,
+          message: `${label} is required`
+        });
+      });
+    }
+    
+    // Email validation
+    if (registrationForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registrationForm.email)) {
+      validationErrors.push({
+        field: 'email',
+        message: 'Please enter a valid email address'
+      });
+    }
+    
+    // Phone validation (if provided)
+    if (registrationForm.phone && !/^[0-9\-\+\(\)\s\.]{7,}$/.test(registrationForm.phone)) {
+      validationErrors.push({
+        field: 'phone',
+        message: 'Please enter a valid phone number'
+      });
+    }
+    
+    // Day selection validation for Cory Land Tour
+    if (event.id === 4 && registrationForm.option === 'single' && 
+        !registrationForm.day1 && !registrationForm.day2 && !registrationForm.day3) {
+      validationErrors.push({
+        field: 'daySelection',
+        message: 'Please select at least one day for the Cory Land Tour'
+      });
+    }
+    
+    // If validation errors exist, display them and prevent form submission
+    if (validationErrors.length > 0) {
+      // Group errors by field for more organized display
+      const errorMessages = validationErrors.map(err => err.message);
+      
+      // Show toast with error summary
       toast({
-        title: "Missing Information",
-        description: `Please fill in all required fields: ${missingFields.map(f => f.label).join(', ')}`,
+        title: "Form Validation Error",
+        description: errorMessages.join('. '),
         variant: "destructive"
       });
+      
+      // Highlight fields with errors
+      console.log('Validation errors:', validationErrors);
       return;
     }
     
@@ -108,27 +155,28 @@ export default function EventRegistration() {
       return;
     }
     
-    // Validate day selection for Cory Land Tour
-    if (event.id === 4 && registrationForm.option === 'single') {
-      const daySelected = registrationForm.day1 || registrationForm.day2 || registrationForm.day3;
-      if (!daySelected) {
-        toast({
-          title: "Day Selection Required",
-          description: "Please select at least one day for the Cory Land Tour",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
+    // Cory Land Tour day selection is already validated above
     
     try {
       setIsSubmitting(true);
+      setCurrentStep('processing');
       
       // Notify user we're processing
       toast({
         title: "Registration In Progress",
         description: "Preparing your registration...",
       });
+      
+      // Save form data to localStorage in case we need to recover later
+      try {
+        localStorage.setItem('registration_form_data', JSON.stringify({
+          ...registrationForm,
+          eventId,
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.warn('Unable to save registration data to localStorage:', e);
+      }
       
       // Prepare form data with consistent naming
       const formData = {
@@ -161,6 +209,8 @@ export default function EventRegistration() {
         title: "Registration Successful",
         description: "Preparing your checkout...",
       });
+      
+      setCurrentStep('checkout');
       
       let shouldRedirect = false;
       let redirectUrl = '';
@@ -318,6 +368,11 @@ export default function EventRegistration() {
       {/* No iframe needed - we're redirecting directly to Shopify */}
       
       <div className="bg-white">
+        <div className="bg-gray-50 py-4 border-b">
+          <Container>
+            <RegistrationProgress currentStep={currentStep} />
+          </Container>
+        </div>
         <Container className="py-8 md:py-12">
           <div className="max-w-3xl mx-auto">
             <a href={`/events/${eventId}`} className="text-primary hover:text-primary/80 flex items-center mb-6">

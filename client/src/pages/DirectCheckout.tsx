@@ -5,6 +5,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
+import { RegistrationProgress } from '@/components/RegistrationProgress';
+import { Container } from '@/components/Container';
 
 export default function DirectCheckout() {
   const [, navigate] = useLocation();
@@ -155,16 +157,23 @@ export default function DirectCheckout() {
 
   // Loading state
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Preparing Your Checkout</h1>
-        <div className="flex justify-center mb-6">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-        </div>
-        <p className="text-gray-600 text-center">
-          Please wait while we connect to Shopify for secure checkout...
-        </p>
+    <>
+      <div className="bg-gray-50 py-4 border-b">
+        <Container>
+          <RegistrationProgress currentStep="checkout" />
+        </Container>
       </div>
-    </div>
+      <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Preparing Your Checkout</h1>
+          <div className="flex justify-center mb-6">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+          </div>
+          <p className="text-gray-600 text-center">
+            Please wait while we connect to Shopify for secure checkout...
+          </p>
+        </div>
+      </div>
+    </>
   );
 }
