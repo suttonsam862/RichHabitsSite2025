@@ -8,9 +8,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 // Initialize Stripe with the secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {
@@ -20,20 +18,32 @@ const getEventPrice = async (eventId: number, option: string): Promise<number> =
       throw new Error(`Event with ID ${eventId} not found`);
     }
 
-    // Check if the price is set in the event
-    if (option === 'full' && event.fullCampPrice) {
-      return event.fullCampPrice * 100; // Convert to cents for Stripe
-    } else if (option === 'single' && event.singleDayPrice) {
-      return event.singleDayPrice * 100; // Convert to cents for Stripe
+    // Parse the price from the event description
+    const priceStr = event.price || '';
+    const fullPriceMatch = priceStr.match(/\$([0-9]+)\s+full\s+camp/i);
+    const singleDayMatch = priceStr.match(/\$([0-9]+)\s+(?:per|single)\s+day/i);
+    
+    if (option === 'full' && fullPriceMatch && fullPriceMatch[1]) {
+      return parseInt(fullPriceMatch[1], 10) * 100; // Convert to cents for Stripe
+    } else if (option === 'single' && singleDayMatch && singleDayMatch[1]) {
+      return parseInt(singleDayMatch[1], 10) * 100; // Convert to cents for Stripe
     }
 
-    // Fallback to pre-defined prices if not set in the event
-    if (EVENT_PRODUCTS[eventId]) {
-      const productMapping = EVENT_PRODUCTS[eventId];
+    // Fallback to pre-defined prices based on the event key
+    const eventKeyMap: Record<number, string> = {
+      1: 'birmingham-slam-camp',
+      2: 'national-champ-camp',
+      3: 'texas-recruiting-clinic',
+      4: 'cory-land-tour'
+    };
+    
+    const eventKey = eventKeyMap[eventId];
+    if (eventKey && EVENT_PRODUCTS[eventKey as keyof typeof EVENT_PRODUCTS]) {
+      const productMapping = EVENT_PRODUCTS[eventKey as keyof typeof EVENT_PRODUCTS];
       if (option === 'full' && productMapping.fullCamp) {
-        return productMapping.fullCampPrice * 100;
+        return productMapping.fullCamp.price * 100;
       } else if (option === 'single' && productMapping.singleDay) {
-        return productMapping.singleDayPrice * 100;
+        return productMapping.singleDay.price * 100;
       }
     }
 

@@ -1267,6 +1267,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stripe payment routes
+  app.post('/api/events/:eventId/create-payment-intent', createPaymentIntent);
+  app.post('/api/events/:eventId/stripe-payment-success', handleSuccessfulPayment);
+  app.post('/api/stripe/webhook', handleStripeWebhook);
+
   const httpServer = createServer(app);
 
   return httpServer;
