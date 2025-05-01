@@ -142,7 +142,8 @@ export default function ShopifyRedirect() {
               // Ensure it's just a number
               rawVariantId = rawVariantId.replace(/\D/g, '');
               
-              const processedFallbackUrl = `https://${shopifyDomain}/cart/${rawVariantId}:1`;
+              // Force checkout on myshopify domain to prevent 404s from domain redirection
+              const processedFallbackUrl = `https://${shopifyDomain}/cart/${rawVariantId}:1?checkout_url=https://${shopifyDomain}/checkout`;
               console.log('Created clean fallback URL with raw variant ID:', rawVariantId);
               
               // Store the fallback URL in localStorage for potential future use
@@ -222,6 +223,14 @@ export default function ShopifyRedirect() {
         // Ensure we're using the myshopify.com domain
         if (processedUrl.includes('rich-habits.com')) {
           processedUrl = processedUrl.replace('rich-habits.com', 'rich-habits-2022.myshopify.com');
+        }
+        
+        // Also ensure the checkout_url parameter is present to force checkout on myshopify domain
+        if (!processedUrl.includes('checkout_url=')) {
+          const urlObj = new URL(processedUrl);
+          urlObj.searchParams.append('checkout_url', 'https://rich-habits-2022.myshopify.com/checkout');
+          processedUrl = urlObj.toString();
+          console.log('Added checkout_url parameter to processed URL:', processedUrl);
         }
         
         // Extract variant ID from Shopify cart URL if available

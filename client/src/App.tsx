@@ -15,6 +15,7 @@ import ShopifyRedirect from "@/pages/ShopifyRedirect";
 import DirectCheckout from "@/pages/DirectCheckout";
 import EmbeddedCart from "@/pages/EmbeddedCart";
 import AddToCart from "@/pages/AddToCart";
+import CheckoutDebug from "@/pages/CheckoutDebug";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/admin" component={Admin} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/return-policy" component={ReturnPolicy} />
+      <Route path="/checkout-debug" component={CheckoutDebug} />
       <Route component={NotFound} />
     </Switch>
   );
