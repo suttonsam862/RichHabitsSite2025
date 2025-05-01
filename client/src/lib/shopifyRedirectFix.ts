@@ -89,16 +89,20 @@ export function attemptDirectCheckout(variantId: string, quantity: number = 1): 
     console.error('Failed to store URLs in localStorage:', e);
   }
   
-  // Try the direct cart URL first as it's more reliable
-  console.log('Attempting direct checkout with URL:', directCartUrl);
-  window.location.href = directCartUrl;
+  // Open Shopify checkout in a NEW TAB instead of current window
+  console.log('Opening direct checkout in new tab:', directCartUrl);
   
-  // Set up a fallback in case the first method fails
-  setTimeout(() => {
-    if (document.visibilityState === 'visible') {
-      console.log('First checkout attempt may have failed, trying alternative method...');
-      const fallbackUrl = localStorage.getItem('shopify_add_to_cart_url') || addToCartUrl;
-      window.location.href = fallbackUrl;
-    }
-  }, 2500);
+  // Open in new tab and keep reference to the window
+  const checkoutWindow = window.open(directCartUrl, '_blank');
+  
+  // If popup was blocked or failed to open
+  if (!checkoutWindow || checkoutWindow.closed || typeof checkoutWindow.closed === 'undefined') {
+    console.warn('Popup may have been blocked. Trying alternative approach...');
+    // Fallback to a more direct approach if popup was blocked
+    window.open(directCartUrl, '_blank');
+  }
+  
+  // Set up a fallback method if needed
+  // We'll store this URL in case the user needs to retry manually
+  localStorage.setItem('shopify_fallback_url', addToCartUrl);
 }

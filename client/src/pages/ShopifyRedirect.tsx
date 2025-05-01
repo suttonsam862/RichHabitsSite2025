@@ -9,6 +9,8 @@ import { attemptDirectCheckout, createDirectShopifyCartUrl } from '../lib/shopif
 export default function ShopifyRedirect() {
   const [, navigate] = useLocation();
   const [error, setError] = useState<string | null>(null);
+  const [checkoutStarted, setCheckoutStarted] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,17 +45,26 @@ export default function ShopifyRedirect() {
       // Rebuild query parameters for cart attributes
       const cartAttributes: Record<string, string> = {};
       // Copy attributes from original URL
-      for (const [key, value] of queryParams.entries()) {
+      // Use Array.from to avoid TypeScript iteration issues
+      Array.from(queryParams.entries()).forEach(([key, value]) => {
         if (key.startsWith('attributes[')) {
           cartAttributes[key] = value;
         }
-      }
+      });
       
       // Log for debugging
       console.log('Redirecting to Shopify cart with variant ID:', variantId);
       
+      // Create direct cart URL for storage/display
+      const directUrl = createDirectShopifyCartUrl(variantId, 1);
+      setCheckoutUrl(directUrl);
+      
+      // Show success message in current tab
+      setCheckoutStarted(true);
+      
       // Use our new direct checkout utility that handles the redirection issues
       // directly with a special URL format that avoids rich-habits.com redirects
+      // This will open the checkout in a new tab instead of redirecting the current window
       attemptDirectCheckout(variantId, 1);
     } catch (err) {
       // Handle any errors during redirect

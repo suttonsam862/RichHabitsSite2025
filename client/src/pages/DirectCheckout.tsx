@@ -23,6 +23,8 @@ export default function DirectCheckout() {
   const [, navigate] = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [checkoutStarted, setCheckoutStarted] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Track successful redirect back from Shopify (success page handler)
@@ -186,10 +188,18 @@ export default function DirectCheckout() {
               description: "Taking you to the secure payment page...",
             });
             
-            // Use our reliable checkout fix that creates multiple fallback options
-            // This bypasses the rich-habits.com redirect issue
+            // Store checkout URL for retry if needed
+            const cartUrl = createDirectShopifyCartUrl(data.variantId, 1);
+            setCheckoutUrl(cartUrl);
+            
+            // Set checkout started state to show success message
+            setCheckoutStarted(true);
+            setIsLoading(false);
+            
+            // Use our reliable checkout fix that opens checkout in a new tab
             setTimeout(() => {
               // Attempt direct checkout with proper success URL handling
+              // This will open the checkout in a new tab and show a success message in the current tab
               attemptDirectCheckout(data.variantId, 1);
             }, 800);
           })
@@ -456,6 +466,61 @@ export default function DirectCheckout() {
     );
   }
 
+  // If checkout has started, show success message in current tab
+  if (checkoutStarted && checkoutUrl) {
+    return (
+      <>
+        <div className="bg-gray-50 py-4 border-b">
+          <Container>
+            <RegistrationProgress currentStep="checkout" />
+          </Container>
+        </div>
+        <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+            <div className="flex justify-center mb-6">
+              <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Checkout Started</h1>
+            <p className="text-gray-600 text-center mb-6">
+              The secure checkout page has been opened in a new tab. Please complete your payment there.
+            </p>
+            <p className="text-gray-500 text-sm mb-8 text-center">
+              If you don't see the checkout page, your browser may have blocked the popup. Please check for popup notifications at the top of your browser.
+            </p>
+            
+            <div className="space-y-4">
+              <button
+                onClick={() => {
+                  // Open the checkout URL in a new tab again
+                  window.open(checkoutUrl, '_blank');
+                  
+                  toast({
+                    title: "Opening Checkout Again",
+                    description: "Opening the secure payment page in a new tab...",
+                  });
+                }}
+                className="w-full px-4 py-2 bg-primary text-white rounded-md text-center hover:bg-primary/90 transition-colors"
+              >
+                Open Checkout Again
+              </button>
+              
+              <a 
+                href="/events" 
+                className="block px-4 py-2 bg-gray-700 text-white rounded-md text-center hover:bg-gray-800 transition-colors"
+              >
+                Return to Events
+              </a>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+  
   // Loading state
   return (
     <>
@@ -500,12 +565,20 @@ export default function DirectCheckout() {
                   formattedId = formattedId.replace(/\D/g, '');
                   console.log('Manual checkout using clean variant ID:', formattedId);
                   
+                  // Create direct cart URL for storage/display
+                  const directUrl = createDirectShopifyCartUrl(formattedId, 1);
+                  setCheckoutUrl(directUrl);
+                  
                   toast({
                     title: "Proceeding to Shopify",
-                    description: "Redirecting you directly to the Shopify checkout...",
+                    description: "Opening the secure payment page in a new tab...",
                   });
                   
+                  // Set checkout started state to show success message
+                  setCheckoutStarted(true);
+                  
                   // Use our reliable checkout utility that bypasses the domain redirect issue
+                  // and opens in a new tab
                   attemptDirectCheckout(formattedId, 1);
                 }
               }}
