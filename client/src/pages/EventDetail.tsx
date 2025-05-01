@@ -719,74 +719,8 @@ export default function EventDetail() {
                       <p className="text-gray-600">Learn directly from collegiate champions with recruiting expertise</p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {(event.id === 3 ? [
-                        {
-                          name: "Grant Leeth",
-                          title: "NCAA All-American, University of Missouri",
-                          bio: "Former University of Missouri standout specializing in technical wrestling and recruiting process guidance.",
-                          image: "/assets/VALENCIA_Zahid-headshot.jpg",
-                          school: "University of Missouri",
-                          schoolLogo: pittLogo
-                        },
-                        {
-                          name: "Josh Shields",
-                          title: "NCAA All-American, Arizona State",
-                          bio: "PAC-12 Champion and multiple NCAA qualifier. Expert in recruitment preparation and college transition.",
-                          image: "/assets/Michael_McGee_JouQS.jpg",
-                          school: "Arizona State",
-                          schoolLogo: ouLogo
-                        },
-                        {
-                          name: "Micky Phillippi",
-                          title: "NCAA All-American, University of Pittsburgh",
-                          bio: "3x ACC Champion and NCAA All-American. Specializes in technical wrestling and preparing for college competition.",
-                          image: "/assets/VALENCIA_Zahid-headshot.jpg",
-                          school: "University of Pittsburgh",
-                          schoolLogo: brownLogo
-                        },
-                        {
-                          name: "Mark Hall",
-                          title: "NCAA Champion, Penn State",
-                          bio: "NCAA Champion and multiple-time All-American. Offers elite technical instruction and recruiting advice.",
-                          image: "/assets/Michael_McGee_JouQS.jpg",
-                          school: "Penn State University",
-                          schoolLogo: gmuLogo
-                        },
-                        {
-                          name: "Max Murin",
-                          title: "NCAA All-American, University of Iowa",
-                          bio: "Big Ten standout and NCAA All-American. Specializes in competitive mindset and recruiting process expertise.",
-                          image: "/assets/VALENCIA_Zahid-headshot.jpg",
-                          school: "University of Iowa",
-                          schoolLogo: tarletonLogo
-                        }
-                      ] : event.coaches || []).map((coach: any, index: number) => (
-                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
-                          <div className="aspect-square overflow-hidden relative">
-                            <img 
-                              src={coach.image} 
-                              alt={coach.name} 
-                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
-                            />
-                            {coach.schoolLogo && (
-                              <div className="absolute top-3 right-3 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg school-logo-pulse">
-                                <img 
-                                  src={coach.schoolLogo} 
-                                  alt={coach.school || ""} 
-                                  className="w-full h-full object-contain"
-                                />
-                              </div>
-                            )}
-                          </div>
-                          <div className="p-4">
-                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
-                            <p className="text-[#bf0a30] text-sm mb-2">{coach.title}</p>
-                            <p className="text-gray-700 text-sm">{coach.bio}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    {/* Using the database-backed CoachList component */}
+                    <CoachList eventId={event.id} />
                   </div>
                   
                   {/* Event Schedule */}
