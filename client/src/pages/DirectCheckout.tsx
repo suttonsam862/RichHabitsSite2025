@@ -198,9 +198,17 @@ export default function DirectCheckout() {
             
             // Use our reliable checkout fix that opens checkout in a new tab
             setTimeout(() => {
+              // Create success URL for redirect back after checkout
+              const successParams = new URLSearchParams({
+                success: 'true',
+                eventId: currentEventId,
+                eventName: eventName
+              });
+              const successUrl = `${window.location.origin}/direct-checkout?${successParams.toString()}`;
+              
               // Attempt direct checkout with proper success URL handling
               // This will open the checkout in a new tab and show a success message in the current tab
-              attemptDirectCheckout(data.variantId, 1);
+              attemptDirectCheckout(data.variantId, 1, successUrl);
             }, 800);
           })
           .catch(error => {
@@ -432,7 +440,9 @@ export default function DirectCheckout() {
                       // Use our special checkout fix utility that handles domain redirect issues
                       // This utility will try multiple methods to ensure successful checkout
                       setTimeout(() => {
-                        attemptDirectCheckout(formattedVid, 1);
+                        // Include success URL for return after checkout
+                        const successUrl = `${window.location.origin}/direct-checkout?${successParams.toString()}`;
+                        attemptDirectCheckout(formattedVid, 1, successUrl);
                       }, 500);
                     } else {
                       toast({
@@ -577,9 +587,21 @@ export default function DirectCheckout() {
                   // Set checkout started state to show success message
                   setCheckoutStarted(true);
                   
+                  // Get event details from URL for success redirect
+                  const eventId = params.get('eventId') || '';
+                  const eventName = params.get('eventName') || '';
+                  
+                  // Create success redirect URL
+                  const successParams = new URLSearchParams({
+                    success: 'true',
+                    eventId: eventId,
+                    eventName: eventName
+                  });
+                  const successUrl = `${window.location.origin}/direct-checkout?${successParams.toString()}`;
+                  
                   // Use our reliable checkout utility that bypasses the domain redirect issue
-                  // and opens in a new tab
-                  attemptDirectCheckout(formattedId, 1);
+                  // and opens in a new tab with success URL for return
+                  attemptDirectCheckout(formattedId, 1, successUrl);
                 }
               }}
               className="px-4 py-2 bg-amber-600 text-white rounded-md text-center hover:bg-amber-700 transition-colors w-full"

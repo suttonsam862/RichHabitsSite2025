@@ -8,11 +8,11 @@ export const SHOPIFY_DOMAIN = 'rich-habits-2022.myshopify.com';
 export const CUSTOM_DOMAIN = 'rich-habits.com';
 
 /**
- * Directly creates a working Shopify cart URL that bypasses the domain redirection issue
- * by using a specific format that works consistently.
+ * Directly creates a working Shopify checkout URL that bypasses the domain redirection issue
+ * by going directly to the checkout rather than through the cart.
  * 
- * This approach creates a special direct link to the Shopify cart
- * that doesn't redirect to the custom domain.
+ * This approach creates a direct link to the Shopify checkout
+ * that skips the cart step entirely and avoids redirection issues.
  */
 export function createDirectShopifyCartUrl(variantId: string, quantity: number = 1): string {
   // Clean up variant ID to ensure it's just the numeric portion
@@ -32,11 +32,11 @@ export function createDirectShopifyCartUrl(variantId: string, quantity: number =
   // Remove any non-numeric characters
   cleanVariantId = cleanVariantId.replace(/\D/g, '');
   
-  // Create a cart URL with a special format that works to bypass domain redirection
-  // The key is to use /cart/{variant_id}:{quantity} format WITH the checkout_url parameter
-  const directCartUrl = `https://${SHOPIFY_DOMAIN}/cart/${cleanVariantId}:${quantity}?checkout_url=https://${SHOPIFY_DOMAIN}/checkout`;
+  // Create a DIRECT CHECKOUT URL (not cart) that completely bypasses the redirect issue
+  // This directly creates a checkout with the item already added
+  const directCheckoutUrl = `https://${SHOPIFY_DOMAIN}/checkout/direct?line_items[variant_id]=${cleanVariantId}&line_items[quantity]=${quantity}`;
   
-  return directCartUrl;
+  return directCheckoutUrl;
 }
 
 /**
@@ -76,30 +76,37 @@ export function createAddToCartUrl(variantId: string, quantity: number = 1, retu
  * Attempt direct checkout with a variant ID
  * This function tries multiple methods to ensure successful checkout
  */
-export function attemptDirectCheckout(variantId: string, quantity: number = 1): void {
+export function attemptDirectCheckout(variantId: string, quantity: number = 1, successUrl?: string): void {
   // Create both kinds of URLs
-  const directCartUrl = createDirectShopifyCartUrl(variantId, quantity);
+  const directCheckoutUrl = createDirectShopifyCartUrl(variantId, quantity);
   const addToCartUrl = createAddToCartUrl(variantId, quantity);
   
-  // Store the direct cart URL as a fallback in localStorage
+  // Append success return URL if provided
+  let checkoutUrlWithSuccessReturn = directCheckoutUrl;
+  if (successUrl) {
+    checkoutUrlWithSuccessReturn = `${directCheckoutUrl}&return_to=${encodeURIComponent(successUrl)}`;
+    console.log('Added success return URL:', successUrl);
+  }
+  
+  // Store the direct checkout URL as a fallback in localStorage
   try {
-    localStorage.setItem('shopify_fallback_url', directCartUrl);
+    localStorage.setItem('shopify_fallback_url', checkoutUrlWithSuccessReturn);
     localStorage.setItem('shopify_add_to_cart_url', addToCartUrl);
   } catch (e) {
     console.error('Failed to store URLs in localStorage:', e);
   }
   
   // Open Shopify checkout in a NEW TAB instead of current window
-  console.log('Opening direct checkout in new tab:', directCartUrl);
+  console.log('Opening direct checkout in new tab:', checkoutUrlWithSuccessReturn);
   
   // Open in new tab and keep reference to the window
-  const checkoutWindow = window.open(directCartUrl, '_blank');
+  const checkoutWindow = window.open(checkoutUrlWithSuccessReturn, '_blank');
   
   // If popup was blocked or failed to open
   if (!checkoutWindow || checkoutWindow.closed || typeof checkoutWindow.closed === 'undefined') {
     console.warn('Popup may have been blocked. Trying alternative approach...');
     // Fallback to a more direct approach if popup was blocked
-    window.open(directCartUrl, '_blank');
+    window.open(checkoutUrlWithSuccessReturn, '_blank');
   }
   
   // Set up a fallback method if needed
