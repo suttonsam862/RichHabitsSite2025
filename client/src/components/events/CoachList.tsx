@@ -82,39 +82,31 @@ const CoachList = ({ eventId }: CoachListProps) => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold tracking-tight">Clinicians</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {coaches.map((coach) => (
-          <Card key={coach.id} className="overflow-hidden">
-            <CardHeader className="pb-0">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16 border-2 border-primary">
-                  <AvatarImage src={coach.image} alt={coach.name} />
-                  <AvatarFallback>{coach.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <CardTitle className="text-xl">{coach.name}</CardTitle>
-                  <CardDescription className="text-sm">{coach.title}</CardDescription>
+          <div key={coach.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+            <div className="aspect-square overflow-hidden relative">
+              <img 
+                src={coach.image} 
+                alt={coach.name} 
+                className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+              />
+              {coach.schoolLogo && (
+                <div className="absolute top-3 right-3 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg school-logo-pulse">
+                  <img 
+                    src={coach.schoolLogo} 
+                    alt={coach.school || ""} 
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <p className="text-sm text-muted-foreground">{coach.bio}</p>
-            </CardContent>
-            {coach.school && (
-              <CardFooter className="flex justify-between items-center border-t pt-4">
-                <span className="text-xs font-medium">{coach.school}</span>
-                {coach.schoolLogo && (
-                  <div className="h-8 w-8">
-                    <img 
-                      src={coach.schoolLogo} 
-                      alt={`${coach.school} logo`}
-                      className="h-full w-auto object-contain"
-                    />
-                  </div>
-                )}
-              </CardFooter>
-            )}
-          </Card>
+              )}
+            </div>
+            <div className="p-4">
+              <h4 className="font-bold text-gray-800">{coach.name}</h4>
+              <p className="text-[#bf0a30] text-sm mb-2">{coach.title}</p>
+              <p className="text-gray-700 text-sm">{coach.bio}</p>
+            </div>
+          </div>
         ))}
       </div>
     </div>
