@@ -4,8 +4,12 @@
  * causing 404 errors.
  */
 
+// Domain settings
 export const SHOPIFY_DOMAIN = 'rich-habits-2022.myshopify.com';
 export const CUSTOM_DOMAIN = 'rich-habits.com';
+
+// Development/testing mode - will force direct domain instead of relying on shopify
+export const FORCE_MYSHOPIFY_DOMAIN = true;
 
 /**
  * Directly creates a working Shopify checkout URL that bypasses the domain redirection issue
@@ -77,21 +81,54 @@ export function createAddToCartUrl(variantId: string, quantity: number = 1, retu
  * This function tries multiple methods to ensure successful checkout
  */
 export function attemptDirectCheckout(variantId: string, quantity: number = 1, successUrl?: string): void {
-  // Create both kinds of URLs
-  const directCheckoutUrl = createDirectShopifyCartUrl(variantId, quantity);
-  const addToCartUrl = createAddToCartUrl(variantId, quantity);
+  // Clean up variant ID to ensure it's just the numeric portion
+  let cleanVariantId = variantId;
   
-  // Append success return URL if provided
-  let checkoutUrlWithSuccessReturn = directCheckoutUrl;
-  if (successUrl) {
-    checkoutUrlWithSuccessReturn = `${directCheckoutUrl}&return_to=${encodeURIComponent(successUrl)}`;
-    console.log('Added success return URL:', successUrl);
+  if (cleanVariantId.includes('/')) {
+    // Extract the numeric ID using regex if it's in the ProductVariant/ format
+    const idMatch = cleanVariantId.match(/ProductVariant\/([0-9]+)/);
+    if (idMatch && idMatch[1]) {
+      cleanVariantId = idMatch[1];
+    } else {
+      // Otherwise try to get the last part after the slash
+      cleanVariantId = cleanVariantId.split('/').pop() || cleanVariantId;
+    }
   }
   
-  // Store the direct checkout URL as a fallback in localStorage
+  // Remove any non-numeric characters
+  cleanVariantId = cleanVariantId.replace(/\D/g, '');
+  
+  // Force the use of myshopify domain for the return URL instead of relying on window.location
+  // This prevents the redirect to rich-habits.com which causes 404 errors
+  let checkoutSuccessUrl = successUrl;
+  if (successUrl && FORCE_MYSHOPIFY_DOMAIN) {
+    // Check if the success URL contains the Replit domain or localhost
+    if (successUrl.includes('replit.dev') || successUrl.includes('localhost')) {
+      console.log('Using original success URL (dev environment):', successUrl);
+    } else {
+      // Replace any rich-habits.com URLs with myshopify domain
+      checkoutSuccessUrl = successUrl.replace(CUSTOM_DOMAIN, SHOPIFY_DOMAIN);
+      console.log('Forcing myshopify domain for success URL:', checkoutSuccessUrl);
+    }
+  }
+  
+  // Create special bypass checkout URL that goes directly to checkout with the item
+  // This completely bypasses any cart or domain redirection issues
+  let checkoutUrlWithSuccessReturn = `https://${SHOPIFY_DOMAIN}/checkout/direct?line_items[variant_id]=${cleanVariantId}&line_items[quantity]=${quantity}`;
+  
+  // Add success return URL if provided (with proper domain)
+  if (checkoutSuccessUrl) {
+    checkoutUrlWithSuccessReturn += `&return_to=${encodeURIComponent(checkoutSuccessUrl)}`;
+    console.log('Added success return URL:', checkoutSuccessUrl);
+  }
+  
+  // Create a fallback direct-to-cart URL as a last resort
+  const directCartUrl = `https://${SHOPIFY_DOMAIN}/cart/${cleanVariantId}:${quantity}`;
+  
+  // Store URLs as fallbacks in localStorage
   try {
-    localStorage.setItem('shopify_fallback_url', checkoutUrlWithSuccessReturn);
-    localStorage.setItem('shopify_add_to_cart_url', addToCartUrl);
+    localStorage.setItem('shopify_checkout_url', checkoutUrlWithSuccessReturn);
+    localStorage.setItem('shopify_cart_url', directCartUrl);
   } catch (e) {
     console.error('Failed to store URLs in localStorage:', e);
   }
@@ -106,10 +143,12 @@ export function attemptDirectCheckout(variantId: string, quantity: number = 1, s
   if (!checkoutWindow || checkoutWindow.closed || typeof checkoutWindow.closed === 'undefined') {
     console.warn('Popup may have been blocked. Trying alternative approach...');
     // Fallback to a more direct approach if popup was blocked
-    window.open(checkoutUrlWithSuccessReturn, '_blank');
+    setTimeout(() => {
+      window.open(checkoutUrlWithSuccessReturn, '_blank');
+    }, 500);
   }
   
   // Set up a fallback method if needed
   // We'll store this URL in case the user needs to retry manually
-  localStorage.setItem('shopify_fallback_url', addToCartUrl);
+  localStorage.setItem('shopify_fallback_url', directCartUrl);
 }

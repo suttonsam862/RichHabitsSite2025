@@ -505,8 +505,11 @@ export default function DirectCheckout() {
             <div className="space-y-4">
               <button
                 onClick={() => {
+                  // Get stored checkout URL from localStorage (preferred) or use the one in state
+                  const storedUrl = localStorage.getItem('shopify_checkout_url') || checkoutUrl;
+                  
                   // Open the checkout URL in a new tab again
-                  window.open(checkoutUrl, '_blank');
+                  window.open(storedUrl, '_blank');
                   
                   toast({
                     title: "Opening Checkout Again",
