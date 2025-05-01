@@ -177,10 +177,14 @@ export default function DirectCheckout() {
             const numericId = data.variantId.replace('gid://shopify/ProductVariant/', '');
             
             // Create direct checkout URL with reliable cart/add API
-            const cartUrl = `https://${shopifyDomain}/cart/add?id=${numericId}&quantity=1&return_to=${successRedirectUrl}`;
+            // Extract numeric ID without prefix if in global ID format
+            const cleanNumericId = numericId.replace('gid://shopify/ProductVariant/', '');
+            console.log('Using variant ID for checkout:', cleanNumericId);
             
-            // Create fallback URL
-            const fallbackUrl = `https://${shopifyDomain}/cart/${numericId}:1?return_to=${successRedirectUrl}`;
+            const cartUrl = `https://${shopifyDomain}/cart/add?id=${cleanNumericId}&quantity=1&return_to=${successRedirectUrl}`;
+            
+            // Create fallback URL - also using clean numeric ID
+            const fallbackUrl = `https://${shopifyDomain}/cart/${cleanNumericId}:1?return_to=${successRedirectUrl}`;
             localStorage.setItem('shopify_fallback_url', fallbackUrl);
             
             console.log('Generated checkout URL with event-specific variant:', cartUrl);
@@ -404,15 +408,21 @@ export default function DirectCheckout() {
                       
                       // First, properly format the variant ID by extracting numeric part only
                       let formattedVid = variantId;
+                      // Clean up the variant ID to ensure it's just the numeric portion
                       if (formattedVid.includes('gid://') || formattedVid.includes('ProductVariant/')) {
+                        // Extract the numeric ID using regex if it's in the ProductVariant/ format
                         const idMatch = formattedVid.match(/ProductVariant\/([0-9]+)/);
                         if (idMatch && idMatch[1]) {
                           formattedVid = idMatch[1];
                         } else {
+                          // Otherwise try to get the last part after the slash
                           formattedVid = formattedVid.split('/').pop() || formattedVid;
                         }
                       }
+                      // Remove any non-numeric characters
                       formattedVid = formattedVid.replace(/\D/g, '');
+                      
+                      console.log('Retry using cleaned variant ID:', formattedVid);
                       
                       // Try both checkout methods for better reliability
                       const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedVid}&quantity=1&return_to=${successRedirectUrl}`;
@@ -483,7 +493,21 @@ export default function DirectCheckout() {
                 
                 if (variantId) {
                   const shopifyDomain = 'rich-habits-2022.myshopify.com';
-                  const formattedId = variantId.replace(/\D/g, '');
+                  // Clean up variant ID for proper Shopify format
+                  let formattedId = variantId;
+                  
+                  if (formattedId.includes('gid://') || formattedId.includes('ProductVariant/')) {
+                    const idMatch = formattedId.match(/ProductVariant\/([0-9]+)/);
+                    if (idMatch && idMatch[1]) {
+                      formattedId = idMatch[1];
+                    } else {
+                      formattedId = formattedId.split('/').pop() || formattedId;
+                    }
+                  }
+                  
+                  // Remove any non-numeric characters
+                  formattedId = formattedId.replace(/\D/g, '');
+                  console.log('Manual checkout using clean variant ID:', formattedId);
                   
                   // Use the more reliable cart/add API instead of direct cart URL
                   const directUrl = `https://${shopifyDomain}/cart/add?id=${formattedId}&quantity=1`;
