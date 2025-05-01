@@ -14,6 +14,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
+import { createPaymentIntent, handleSuccessfulPayment, handleStripeWebhook } from "./stripe";
 
 // Shopify configuration - in a real app, store these in environment variables
 const SHOPIFY_ADMIN_API_KEY = process.env.SHOPIFY_ADMIN_API_KEY || "";
