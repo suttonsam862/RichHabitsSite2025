@@ -358,6 +358,7 @@ export default function EventDetail() {
         {/* Event-specific effects */}
         {event.id === 1 && <div className="sun-glow"></div>}
         {event.id === 2 && <div className="snow-glow"></div>}
+        {event.id === 3 && <div className="usa-glow"></div>}
         {event.id === 4 && <div className="purple-glow"></div>}
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
       </div>
