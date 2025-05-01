@@ -788,12 +788,12 @@ export const EVENT_PRODUCTS = {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406236909',
       variantId: 'gid://shopify/ProductVariant/47808556531949', // Actual variant ID from Shopify
-      price: 350.00  // Full clinic price
+      price: 249.00  // Full clinic price - updated to match website display
     },
     singleDay: {
       productId: 'gid://shopify/Product/8949406236909',
       variantId: 'gid://shopify/ProductVariant/47808556531949', // Same variant since this event doesn't have day options
-      price: 350.00  // Same price since this event doesn't have day options
+      price: 249.00  // Same price since this event doesn't have day options
     }
   },
   // Birmingham Slam Camp - ID 1 - Using the Birmingham Slam Camp product
@@ -801,12 +801,12 @@ export const EVENT_PRODUCTS = {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406105837',
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Actual variant ID from Shopify
-      price: 250.00  // Full camp price
+      price: 249.00  // Full camp price - updated to match website display
     },
     singleDay: {
       productId: 'gid://shopify/Product/8949406105837',
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Same variant since this event doesn't have multiple options yet
-      price: 250.00  // Single day price (same until variants are added)
+      price: 149.00  // Single day price - updated to match website display
     }
   },
   // National Champ Camp - ID 2 - Using the National Champ Camp product
@@ -814,12 +814,12 @@ export const EVENT_PRODUCTS = {
     fullCamp: {
       productId: 'gid://shopify/Product/8948577272045',
       variantId: 'gid://shopify/ProductVariant/47800987943149', // Actual variant ID from Shopify
-      price: 350.00  // Full camp price
+      price: 349.00  // Full camp price - updated to match website display
     },
     singleDay: {
       productId: 'gid://shopify/Product/8948577272045',
       variantId: 'gid://shopify/ProductVariant/47800987943149', // Same variant since this event doesn't have multiple options yet
-      price: 350.00  // Single day price (same until variants are added)
+      price: 175.00  // Single day price - updated to match website display
     }
   },
   // Cory Land Tour - ID 4 - Using placeholder product until created in Shopify
