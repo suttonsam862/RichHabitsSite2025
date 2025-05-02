@@ -211,10 +211,6 @@ export const VideoWithErrorHandling = React.forwardRef<HTMLVideoElement, VideoWi
               console.log(`[MediaErrorHandlers] Video metadata loaded. Duration: ${internalRef.current.duration}s`);
             }
           }}
-          // Special mobile handling
-          x-webkit-airplay="allow"
-          webkit-playsinline="true"
-          playsInline={true}
           {...props}
         >
           {/* Special handling for MOV files which may need explicit source with type */}
