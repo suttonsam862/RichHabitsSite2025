@@ -614,7 +614,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 
                 // Add key registration details as attributes
                 fallbackUrl += `?attributes[Registration_ID]=${registration.id}`;
-                fallbackUrl += `&attributes[Event_Name]=${encodeURIComponent(registrationData.eventId.toString())}`;
+                
+                // Get the actual event name based on event ID
+                let eventName = '';
+                switch (registrationData.eventId.toString()) {
+                  case '1':
+                    eventName = 'Birmingham Slam Camp';
+                    break;
+                  case '2':
+                    eventName = 'National Champ Camp';
+                    break;
+                  case '3':
+                    eventName = 'Texas Recruiting Clinic';
+                    break;
+                  case '4':
+                    eventName = 'Cory Land Tour';
+                    break;
+                  default:
+                    eventName = 'Wrestling Event';
+                }
+                
+                fallbackUrl += `&attributes[Event_Name]=${encodeURIComponent(eventName)}`;
+                fallbackUrl += `&attributes[Event_ID]=${registrationData.eventId}`;
                 fallbackUrl += `&attributes[Camper_Name]=${encodeURIComponent(registrationData.firstName + ' ' + registrationData.lastName)}`;
                 
                 console.log('Created fallback URL:', fallbackUrl);

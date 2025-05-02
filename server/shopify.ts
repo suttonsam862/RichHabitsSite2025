@@ -618,26 +618,53 @@ export async function createEventRegistrationCheckout(
   let eventName = '';
   let shopifyKey = '';
   
-  switch (eventId) {
-    case '1':
-      eventName = 'Birmingham Slam Camp';
-      shopifyKey = 'birmingham-slam-camp';
-      break;
-    case '2':
-      eventName = 'National Champ Camp';
-      shopifyKey = 'national-champ-camp';
-      break;
-    case '3':
-      eventName = 'Texas Recruiting Clinic';
-      shopifyKey = 'texas-recruiting-clinic';
-      break;
-    case '4':
-      eventName = 'Cory Land Tour';
-      shopifyKey = 'cory-land-tour';
-      break;
-    default:
-      eventName = 'Wrestling Event';
-      shopifyKey = 'birmingham-slam-camp'; // Default fallback
+  // First get the event details from the database if possible
+  try {
+    const storage = await import('./storage').then(m => m.storage);
+    const event = await storage.getEvent(parseInt(eventId));
+    if (event && event.title) {
+      eventName = event.title;
+      console.log(`Retrieved event name from database: "${eventName}" for event ID ${eventId}`);
+    }
+  } catch (err) {
+    console.warn(`Failed to get event name from database: ${err instanceof Error ? err.message : String(err)}`);
+  }
+  
+  // If we couldn't get the name from database, use our hardcoded mapping
+  if (!eventName) {
+    switch (eventId) {
+      case '1':
+        eventName = 'Birmingham Slam Camp';
+        shopifyKey = 'birmingham-slam-camp';
+        break;
+      case '2':
+        eventName = 'National Champ Camp';
+        shopifyKey = 'national-champ-camp';
+        break;
+      case '3':
+        eventName = 'Texas Recruiting Clinic';
+        shopifyKey = 'texas-recruiting-clinic';
+        break;
+      case '4':
+        eventName = 'Cory Land Tour';
+        shopifyKey = 'cory-land-tour';
+        break;
+      default:
+        eventName = 'Wrestling Event';
+        shopifyKey = 'birmingham-slam-camp'; // Default fallback
+    }
+    console.log(`Using hardcoded event name: "${eventName}" for event ID ${eventId}`);
+  }
+  
+  // Make sure shopifyKey is set properly based on the eventId
+  if (!shopifyKey) {
+    switch (eventId) {
+      case '1': shopifyKey = 'birmingham-slam-camp'; break;
+      case '2': shopifyKey = 'national-champ-camp'; break;
+      case '3': shopifyKey = 'texas-recruiting-clinic'; break;
+      case '4': shopifyKey = 'cory-land-tour'; break;
+      default: shopifyKey = 'birmingham-slam-camp'; // Default fallback
+    }
   }
   
   // Get the registration option (full camp or single day)
