@@ -779,6 +779,77 @@ export interface EventRegistrationData {
   day3?: boolean;
 }
 
+// Interface for creating Shopify draft orders
+export interface ShopifyDraftOrderParams {
+  lineItems: Array<{
+    title: string;
+    quantity: number;
+    price: number;
+  }>;
+  customer: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+  };
+  note?: string;
+}
+
+// Create a draft order in Shopify
+export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
+  try {
+    if (!process.env.SHOPIFY_ACCESS_TOKEN || !process.env.SHOPIFY_STORE_DOMAIN) {
+      console.warn('Shopify API credentials not found, unable to create draft order');
+      return null;
+    }
+    
+    console.log('Creating Shopify draft order with params:', params);
+    
+    // Build the draft order payload for Shopify Admin API
+    const draftOrderPayload = {
+      draft_order: {
+        line_items: params.lineItems.map(item => ({
+          title: item.title,
+          quantity: item.quantity,
+          price: item.price.toString()
+        })),
+        customer: {
+          first_name: params.customer.firstName,
+          last_name: params.customer.lastName,
+          email: params.customer.email,
+          phone: params.customer.phone || ''
+        },
+        note: params.note || '',
+        tags: 'Rich Habits Event, Stripe, Online Registration'
+      }
+    };
+    
+    // Make the API request to Shopify Admin API
+    const response = await fetch(
+      `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2023-07/draft_orders.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN
+        },
+        body: JSON.stringify(draftOrderPayload)
+      }
+    );
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create Shopify draft order: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+    
+    const responseData = await response.json();
+    return responseData.draft_order as any;
+  } catch (error) {
+    console.error('Error creating Shopify draft order:', error);
+    return null;
+  }
+}
+
 // Maps for Shopify product and variant IDs related to events
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 // For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})
