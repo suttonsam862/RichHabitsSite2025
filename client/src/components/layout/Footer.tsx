@@ -37,6 +37,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/custom-apparel" className="text-gray-400 hover:text-white transition-colors">Custom Team Apparel</Link></li>
               <li><Link href="/events" className="text-gray-400 hover:text-white transition-colors">Wrestling Camps & Events</Link></li>
+              <li><Link href="/past-events" className="text-gray-400 hover:text-white transition-colors">Past Events</Link></li>
               <li><Link href="/custom-apparel" className="text-gray-400 hover:text-white transition-colors">Team Outfitting</Link></li>
               <li><Link href="/events" className="text-gray-400 hover:text-white transition-colors">Clinics & Training</Link></li>
             </ul>

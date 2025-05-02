@@ -41,6 +41,7 @@ export function Header() {
           <Link href="/shop" className={`nav-link text-sm font-medium ${isActive("/shop")}`}>Shop</Link>
           <Link href="/custom-apparel" className={`nav-link text-sm font-medium whitespace-nowrap ${isActive("/custom-apparel")}`}>Custom Apparel</Link>
           <Link href="/events" className={`nav-link text-sm font-medium ${isActive("/events")}`}>Events</Link>
+          <Link href="/past-events" className={`nav-link text-sm font-medium ${isActive("/past-events")}`}>Past Events</Link>
           <Link href="/about" className={`nav-link text-sm font-medium ${isActive("/about")}`}>About</Link>
           <Link href="/contact" className={`nav-link text-sm font-medium ${isActive("/contact")}`}>Contact</Link>
           <Link href="#" className="ml-4">
@@ -68,6 +69,7 @@ export function Header() {
             <Link href="/shop" className="text-sm font-medium py-2">Shop</Link>
             <Link href="/custom-apparel" className="text-sm font-medium py-2">Custom Apparel</Link>
             <Link href="/events" className="text-sm font-medium py-2">Events</Link>
+            <Link href="/past-events" className="text-sm font-medium py-2">Past Events</Link>
             <Link href="/about" className="text-sm font-medium py-2">About</Link>
             <Link href="/contact" className="text-sm font-medium py-2">Contact</Link>
             <div className="flex space-x-6 py-2">

@@ -22,6 +22,7 @@ import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import ReturnPolicy from "@/pages/ReturnPolicy";
+import PastEvents from "@/pages/PastEvents";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/return-policy" component={ReturnPolicy} />
       <Route path="/checkout-debug" component={CheckoutDebug} />
+      <Route path="/past-events" component={PastEvents} />
       <Route component={NotFound} />
     </Switch>
   );
