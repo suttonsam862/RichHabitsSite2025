@@ -276,6 +276,7 @@ export default function StripeCheckout() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [stripeProductDetails, setStripeProductDetails] = useState<any>(null);
   const { toast } = useToast();
 
   // Get URL parameters
