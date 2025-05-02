@@ -1,52 +1,19 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { VideoWithErrorHandling } from '../MediaErrorHandlers';
+import { parseVideoError, logMediaError, MediaErrorData } from '../../utils/mediaErrorUtils';
 import { 
-  parseVideoError, 
-  logMediaError, 
-  MediaErrorData,
-  inferMimeTypeFromExtension,
-  canBrowserPlayMedia,
-  checkResourceExists
-} from '../../utils/mediaErrorUtils';
-
-// Detect if viewing on mobile device
-const isMobileDevice = (): boolean => {
-  return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-};
-
-// Helper functions
-const checkVideoExists = async (url: string): Promise<boolean> => {
-  try {
-    const response = await fetch(url, { method: 'HEAD' });
-    return response.ok;
-  } catch (error) {
-    console.error('Error checking video existence:', error);
-    return false;
-  }
-};
-
-// Custom browser capability detection
-const canBrowserPlayFileType = (fileType: string): {canPlay: boolean, supportLevel: string} => {
-  // Use the improved function from utils
-  return canBrowserPlayMedia(fileType);
-};
-
-// Get browser supported video formats 
-const getSupportedVideoFormats = (): string[] => {
-  const video = document.createElement('video');
-  
-  // Test video formats
-  const videoFormats = [
-    { type: 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"', shortName: 'mp4 (H.264)' },
-    { type: 'video/webm; codecs="vp8, vorbis"', shortName: 'webm (VP8)' },
-    { type: 'video/webm; codecs="vp9"', shortName: 'webm (VP9)' },
-    { type: 'video/ogg; codecs="theora"', shortName: 'ogg' }
-  ];
-  
-  return videoFormats
-    .filter(format => video.canPlayType(format.type) !== '')
-    .map(format => format.shortName);
-};
+  isMobileDevice,
+  isIOSDevice,
+  canBrowserPlayFileType,
+  getSupportedVideoFormats,
+  checkVideoExists,
+  getBrowserInfo,
+  getConnectionSpeed
+} from '../../utils/deviceDetection';
+import {
+  getMimeTypeFromExtension,
+  generateVideoSourceElements
+} from '../../utils/mimeTypeHelpers';
 
 interface EventVideoProps {
   src: string;
@@ -92,7 +59,7 @@ const EventVideo: React.FC<EventVideoProps> = ({
   
   // Check file extension for better error messages
   const fileExtension = src.split('.').pop()?.toLowerCase();
-  const isValidExtension = ['mp4', 'webm', 'ogg'].includes(fileExtension || ''); // MOV format is not supported in many browsers
+  const isValidExtension = ['mp4', 'webm', 'ogg', 'mov'].includes(fileExtension || ''); // MOV is less supported but we'll try with proper MIME type
   
   // Log file extension info
   useEffect(() => {
@@ -329,40 +296,67 @@ const EventVideo: React.FC<EventVideoProps> = ({
     </div>
   );
 
-  // Determine if we're on a mobile device
+  // Determine device capabilities
   const mobile = isMobileDevice();
+  const isIOS = isIOSDevice();
+  const browserInfo = getBrowserInfo();
+  const connectionSpeed = getConnectionSpeed();
+  
+  // Log device information for debugging
+  useEffect(() => {
+    console.log(`[EventVideo] Device detection: Mobile=${mobile}, iOS=${isIOS}, Browser=${browserInfo.name} ${browserInfo.version}, Connection=${connectionSpeed}`);
+  }, []);
   
   // Use mobile source if provided and on a mobile device
   const videoSource = (mobile && mobileSrc) ? mobileSrc : src;
   
-  // If we're in a mobile browser and have a YouTube fallback, consider using it directly
-  // for better compatibility on some mobile browsers
-  if (mobile && fallbackYoutubeId && hasError) {
+  // iOS Safari specific optimizations
+  if (isIOS && fallbackYoutubeId && (!isPlaying || hasError)) {
+    // iOS has more issues with video playback, so we're more aggressive with fallbacks
+    console.log('[EventVideo] Using YouTube fallback for iOS device');
+    return YouTubeFallback;
+  }
+  
+  // If we're on a slow connection or mobile device with YouTube fallback, use it on error
+  if ((connectionSpeed === 'slow' || mobile) && fallbackYoutubeId && hasError) {
+    console.log('[EventVideo] Using YouTube fallback due to connection speed or mobile device');
     return YouTubeFallback;
   }
   
   // If the device is mobile and we have a fallback image, show it on error states
   if (mobile && fallbackImage && hasError) {
+    console.log('[EventVideo] Using image fallback for mobile device');
     return ImageFallback;
   }
+  
+  // Configure playback options based on device
+  const optimizedPlaybackOptions = {
+    // iOS requires specific settings for better video playback
+    playsInline: true, // Critical for iOS inline playback
+    autoPlay: isIOS ? false : autoplay, // Disable autoplay on iOS as it often fails
+    muted: true, // Always mute by default for better autoplay support
+    preload: mobile ? 'metadata' : preload, // On mobile, prefer metadata preload by default for faster initial load
+    // For slow connections, reduce initial quality demands
+    poster: poster || fallbackImage // Use fallback image as poster if available
+  };
   
   return (
     <VideoWithErrorHandling
       ref={videoRef}
       src={videoSource}
-      poster={poster || fallbackImage} // Use fallback image as poster if available
+      poster={optimizedPlaybackOptions.poster}
       className={className}
-      autoPlay={autoplay}
-      muted={muted}
+      autoPlay={optimizedPlaybackOptions.autoPlay}
+      muted={muted || optimizedPlaybackOptions.muted}
       controls={controls}
       loop={loop}
-      preload={mobile ? 'metadata' : preload} // On mobile, prefer metadata preload by default for faster initial load
+      preload={optimizedPlaybackOptions.preload}
       onError={handleVideoError}
       fallback={hasError ? fallbackUI : undefined}
       style={style}
-      playsInline={true} // Critical for iOS inline playback
+      playsInline={optimizedPlaybackOptions.playsInline}
     >
-      {/* Add source tags for better format selection */}
+      {/* Add source tags for better format selection and compatibility */}
       {videoSource && videoSource.toLowerCase().endsWith('.mp4') && (
         <source src={videoSource} type="video/mp4" />
       )}
@@ -372,7 +366,20 @@ const EventVideo: React.FC<EventVideoProps> = ({
       {videoSource && videoSource.toLowerCase().endsWith('.mov') && (
         <source src={videoSource} type="video/quicktime" />
       )}
-      Your browser does not support HTML5 video.
+      {/* Display a user-friendly message when video can't be played */}
+      <div className="p-4 text-center bg-gray-100 rounded">
+        <p>Your browser does not support HTML5 video playback.</p>
+        {fallbackYoutubeId && (
+          <a 
+            href={`https://www.youtube.com/watch?v=${fallbackYoutubeId}`} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-500 underline mt-2 inline-block"
+          >
+            Watch on YouTube
+          </a>
+        )}
+      </div>
     </VideoWithErrorHandling>
   );
 };
