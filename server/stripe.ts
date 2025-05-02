@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { Request, Response } from 'express';
 import { EVENT_PRODUCTS } from './shopify';
 import { storage } from './storage';
+import { getStripePriceId, getStripeProductId } from './stripeProducts';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe key: STRIPE_SECRET_KEY');
