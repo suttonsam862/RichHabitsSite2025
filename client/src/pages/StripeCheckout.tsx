@@ -294,10 +294,23 @@ export default function StripeCheckout() {
       return;
     }
 
-    // Create a payment intent on component mount
+    // First fetch the Stripe product details, then create a payment intent
     const fetchPaymentIntent = async () => {
       try {
         setLoading(true);
+        
+        // Step 1: Get the Stripe product details for this event and option
+        const productResponse = await fetch(`/api/events/${eventId}/stripe-product?option=${option}`);
+        
+        if (!productResponse.ok) {
+          throw new Error(`Error fetching Stripe product: ${productResponse.status} ${productResponse.statusText}`);
+        }
+        
+        const productData = await productResponse.json();
+        setStripeProductDetails(productData);
+        console.log('Stripe product details:', productData);
+        
+        // Step 2: Create a payment intent with the product details
         const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
           method: 'POST',
           headers: {
@@ -305,11 +318,12 @@ export default function StripeCheckout() {
           },
           body: JSON.stringify({
             option: option,
+            priceId: productData.priceId  // Use the price ID from the product details
           }),
         });
 
         if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
+          throw new Error(`Error creating payment intent: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -324,7 +338,7 @@ export default function StripeCheckout() {
           throw new Error('No client secret returned');
         }
       } catch (err) {
-        console.error('Failed to create payment intent:', err);
+        console.error('Failed to set up payment:', err);
         setError(err instanceof Error ? err.message : 'Failed to set up payment');
         toast({
           title: 'Payment Setup Failed',
@@ -452,6 +466,16 @@ export default function StripeCheckout() {
               <p className="text-gray-600 mb-6">
                 You're registering for <span className="font-medium">{decodeURIComponent(eventName)}</span> with the {option === 'full' ? 'Full Camp' : 'Single Day'} option.
               </p>
+              {stripeProductDetails && (
+                <div className="bg-gray-50 p-4 rounded-md mb-6">
+                  <div className="font-medium text-gray-800">Registration Details</div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    <div>Event: {stripeProductDetails.eventName}</div>
+                    <div>Option: {stripeProductDetails.option === 'full' ? 'Full Camp' : 'Single Day'}</div>
+                    <div className="font-medium mt-1">Amount: ${(amount / 100).toFixed(2)}</div>
+                  </div>
+                </div>
+              )}
               {clientSecret && (
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
                   <CheckoutForm 
