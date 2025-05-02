@@ -89,6 +89,10 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     let stripeProductId: string | null = null;
     let stripePriceId: string | null = null;
 
+    // Log Stripe mode for debugging
+    const isLiveMode = !process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+    console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${eventId} (${event.title})`);
+
     // Get Stripe price ID for this event and option
     stripePriceId = getStripePriceId(eventId, option as 'full' | 'single');
     
@@ -97,46 +101,66 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       // Fall back to calculated price
       amount = await getEventPrice(eventId, option);
       
-      // Create a PaymentIntent with the calculated amount
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount,
-        currency: 'usd',
-        metadata: {
-          eventId: eventId.toString(),
-          eventName: event.title,
-          option,
-        },
-        automatic_payment_methods: {
-          enabled: true,
-        },
-      });
+      try {
+        // Create a PaymentIntent with the calculated amount
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount,
+          currency: 'usd',
+          metadata: {
+            eventId: eventId.toString(),
+            eventName: event.title,
+            option,
+          },
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
 
-      clientSecret = paymentIntent.client_secret;
+        clientSecret = paymentIntent.client_secret;
+      } catch (stripeError) {
+        console.error('Stripe error creating payment intent:', stripeError);
+        return res.status(400).json({
+          error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe',
+        });
+      }
     } else {
       // Get the associated product ID
       stripeProductId = getStripeProductId(eventId);
       console.log(`Using Stripe product ${stripeProductId} with price ${stripePriceId} for event ${eventId}`);
       
-      // Retrieve the price to get the unit amount
-      const price = await stripe.prices.retrieve(stripePriceId);
-      amount = price.unit_amount || 0;
-      
-      // Create a PaymentIntent with the price's amount
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount,
-        currency: 'usd',
-        metadata: {
-          eventId: eventId.toString(),
-          eventName: event.title,
-          option,
-          stripePriceId
-        },
-        automatic_payment_methods: {
-          enabled: true,
-        },
+      try {
+        // Retrieve the price to get the unit amount
+        const price = await stripe.prices.retrieve(stripePriceId);
+        amount = price.unit_amount || 0;
+        
+        // Create a PaymentIntent with the price's amount
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount,
+          currency: 'usd',
+          metadata: {
+            eventId: eventId.toString(),
+            eventName: event.title,
+            option,
+            stripePriceId
+          },
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
+        
+        clientSecret = paymentIntent.client_secret;
+      } catch (stripeError) {
+        console.error('Stripe error creating payment intent with price:', stripeError);
+        return res.status(400).json({
+          error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe price',
+        });
+      }
+    }
+    
+    if (!clientSecret) {
+      return res.status(500).json({
+        error: 'Failed to obtain client secret from Stripe',
       });
-      
-      clientSecret = paymentIntent.client_secret;
     }
     
     // Return response with common structure
