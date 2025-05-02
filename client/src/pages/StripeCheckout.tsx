@@ -134,7 +134,18 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to validate discount code');
+        if (errorData.valid === false) {
+          // This is a normal validation failure, not a server error
+          // Don't throw, just show the invalid code message
+          toast({
+            title: "Invalid Discount",
+            description: errorData.message || 'This discount code is not valid',
+            variant: "destructive"
+          });
+          setIsApplyingDiscount(false);
+          return;
+        }
+        throw new Error(errorData.error || errorData.message || 'Failed to validate discount code');
       }
       
       const data = await response.json();
