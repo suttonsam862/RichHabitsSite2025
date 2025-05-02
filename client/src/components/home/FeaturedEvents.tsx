@@ -173,8 +173,10 @@ export function FeaturedEvents() {
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $249</p>
                   </div>
                   
-                  <div className="relative mb-4 w-full h-24 overflow-hidden">
+                  <div className="relative mb-4 w-full h-20 overflow-hidden rounded-md">
                     <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent z-10 opacity-30"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-10 opacity-30"></div>
                     <img 
                       src="/assets/banners/texas-banner.png" 
                       alt="Texas Recruiting Clinic Banner" 
@@ -240,8 +242,10 @@ export function FeaturedEvents() {
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $249</p>
                   </div>
                   
-                  <div className="relative mb-4 w-full h-24 overflow-hidden">
+                  <div className="relative mb-4 w-full h-20 overflow-hidden rounded-md">
                     <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent z-10 opacity-30"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-10 opacity-30"></div>
                     <img 
                       src="/assets/banners/birmingham-banner.png" 
                       alt="Birmingham Slam Camp Banner" 
@@ -307,8 +311,10 @@ export function FeaturedEvents() {
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $349</p>
                   </div>
                   
-                  <div className="relative mb-4 w-full h-24 overflow-hidden">
+                  <div className="relative mb-4 w-full h-20 overflow-hidden rounded-md">
                     <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent z-10 opacity-30"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-10 opacity-30"></div>
                     <img 
                       src="/assets/banners/vegas-banner.png" 
                       alt="National Champ Camp Banner" 

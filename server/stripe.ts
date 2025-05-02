@@ -9,14 +9,20 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 // Initialize Stripe with the secret key
-// Using the latest API version and enabling live mode (not test mode)
+// Using the latest API version and enabling live mode 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  typescript: true
+  typescript: true,
+  apiVersion: '2023-10-16'
 });
 
-// Log whether we're in test mode or live mode
+// Explicitly log whether we're in live mode
 const isTestMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
 console.log('Stripe live mode:', !isTestMode);
+
+// Ensure we're using live mode in production
+if (process.env.NODE_ENV === 'production' && isTestMode) {
+  console.warn('WARNING: Using Stripe test mode in production environment');
+}
 
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {
