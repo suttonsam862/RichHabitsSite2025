@@ -787,7 +787,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // API endpoint to get the correct variant ID for an event
+  // API endpoint to get the correct variant ID for an event (Shopify)
   app.get("/api/events/:eventId/variant", async (req, res) => {
     try {
       const { eventId } = req.params;
@@ -834,6 +834,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ message: "Error fetching variant details", error: (error as Error).message });
+    }
+  });
+  
+  // API endpoint to get Stripe product details for an event
+  app.get("/api/events/:eventId/stripe-product", async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const option = req.query.option as 'full' | 'single' || 'full';
+      
+      // Import Stripe product helper functions
+      const { getStripePriceId, getStripeProductId } = await import('./stripeProducts');
+      
+      // Get the price ID for this event and option
+      const priceId = getStripePriceId(parseInt(eventId), option);
+      if (!priceId) {
+        return res.status(404).json({ message: "Stripe price not found for event and option" });
+      }
+      
+      // Get the product ID for this event
+      const productId = getStripeProductId(parseInt(eventId));
+      if (!productId) {
+        return res.status(404).json({ message: "Stripe product not found for event" });
+      }
+      
+      // Get the event details from database
+      const event = await storage.getEvent(parseInt(eventId));
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Return the Stripe product and price IDs along with event details
+      res.json({
+        eventId: eventId,
+        eventName: event.title,
+        option: option,
+        priceId: priceId,
+        productId: productId
+      });
+    } catch (error) {
+      console.error('Error fetching Stripe product details:', error);
+      res.status(500).json({ message: "Error fetching Stripe product details", error: (error as Error).message });
     }
   });
 
