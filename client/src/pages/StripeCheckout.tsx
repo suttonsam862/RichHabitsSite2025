@@ -484,7 +484,7 @@ export default function StripeCheckout() {
                   <div className="text-sm text-gray-600 mt-1">
                     <div>Event: {stripeProductDetails.eventName}</div>
                     <div>Option: {stripeProductDetails.option === 'full' ? 'Full Camp' : 'Single Day'}</div>
-                    <div className="font-medium mt-1">Amount: ${(amount / 100).toFixed(2)}</div>
+                    <div className="font-medium mt-1">Amount: ${amount.toFixed(2)}</div>
                   </div>
                 </div>
               )}
