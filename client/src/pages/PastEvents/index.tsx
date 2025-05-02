@@ -30,19 +30,19 @@ const PastEvents = () => {
                 <h2 className="text-3xl font-bold mb-4">Birmingham Pickleball Championship</h2>
                 <div className="flex items-center text-gray-600 mb-2">
                   <Calendar className="h-5 w-5 mr-2" />
-                  <span>August 15-16, 2023</span>
+                  <span>Summer 2023</span>
                 </div>
                 <div className="flex items-center text-gray-600 mb-4">
                   <Users className="h-5 w-5 mr-2" />
-                  <span>150+ Participants</span>
+                  <span>Participants from across the Southeast</span>
                 </div>
                 <p className="text-gray-700 mb-6">
-                  Our inaugural Birmingham Pickleball Championship was a massive success, bringing together over 150 players from across the Southeast. With thousands in cash prizes, professional courts, and a vibrant community atmosphere, this event showcased the best of Birmingham's sports culture.
+                  Our inaugural Birmingham Pickleball Championship was a massive success, bringing together players from various regions. With cash prizes, professional courts, and a vibrant community atmosphere, this event showcased the best of sports culture in the area.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center bg-primary/10 px-4 py-2 rounded-full">
                     <DollarSign className="h-5 w-5 mr-1 text-primary" />
-                    <span className="font-medium">$5,000+ in Prizes</span>
+                    <span className="font-medium">Cash Prizes</span>
                   </div>
                   <div className="flex items-center bg-primary/10 px-4 py-2 rounded-full">
                     <Trophy className="h-5 w-5 mr-1 text-primary" />
@@ -74,8 +74,8 @@ const PastEvents = () => {
                     className="w-full h-64 object-cover"
                   />
                   <div className="p-4">
-                    <h4 className="font-bold text-lg mb-2">State-of-the-Art Venue</h4>
-                    <p className="text-gray-600">Our tournament was held at Birmingham's premier indoor pickleball facility, featuring professional-grade courts and amenities.</p>
+                    <h4 className="font-bold text-lg mb-2">Premier Venue</h4>
+                    <p className="text-gray-600">Our tournament was held at a top-quality indoor pickleball facility, featuring professional-grade courts and amenities for all participants.</p>
                   </div>
                 </div>
 
@@ -87,7 +87,7 @@ const PastEvents = () => {
                   />
                   <div className="p-4">
                     <h4 className="font-bold text-lg mb-2">Substantial Cash Prizes</h4>
-                    <p className="text-gray-600">Winners received generous cash prizes, with the championship team taking home the grand prize of $2,000.</p>
+                    <p className="text-gray-600">Winners received generous cash prizes that recognized their skill and sportsmanship throughout the tournament.</p>
                   </div>
                 </div>
 
@@ -138,13 +138,13 @@ const PastEvents = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div>
                   <p className="text-gray-700 mb-6">
-                    Beyond the competitive aspect, our Birmingham Pickleball Tournament made a significant impact on the local community. A portion of all entry fees and merchandise sales was donated to support youth sports programs in underserved areas of Birmingham.
+                    Beyond the competitive aspect, our Pickleball Tournament made a significant impact on the local community. A portion of all entry fees and merchandise sales was donated to support youth sports programs in underserved areas.
                   </p>
                   <p className="text-gray-700 mb-6">
-                    The event also boosted local businesses, with participants and spectators patronizing nearby restaurants, hotels, and shops throughout the tournament weekend.
+                    The event also boosted local businesses, with participants and spectators supporting nearby restaurants, hotels, and shops throughout the tournament weekend.
                   </p>
                   <p className="text-gray-700">
-                    Rich Habits is committed to building community through sports, and this tournament exemplified our dedication to making a positive difference in Birmingham and beyond.
+                    Rich Habits is committed to building community through sports, and this tournament exemplified our dedication to making a positive difference in the community and beyond.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
