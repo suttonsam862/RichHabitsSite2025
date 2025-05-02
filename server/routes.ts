@@ -15,6 +15,7 @@ import {
 import { z } from "zod";
 import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
 import { createPaymentIntent, handleSuccessfulPayment, handleStripeWebhook } from "./stripe";
+import { getStripePriceId, getStripeProductId } from "./stripeProducts";
 import { validateDiscountCode, updatePaymentIntent } from "./discounts";
 
 // Shopify configuration - in a real app, store these in environment variables
@@ -1314,6 +1315,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/events/:eventId/update-payment-intent', updatePaymentIntent);
   app.post('/api/events/:eventId/stripe-payment-success', handleSuccessfulPayment);
   app.post('/api/stripe/webhook', handleStripeWebhook);
+  
+  // Get Stripe product details for an event
+  app.get('/api/events/:eventId/stripe-product', async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const { option = 'full' } = req.query;
+      
+      // Validate parameters
+      if (!eventId || isNaN(parseInt(eventId))) {
+        return res.status(400).json({ message: "Invalid event ID" });
+      }
+      
+      // Get relevant Stripe product and price IDs
+      const productId = getStripeProductId(parseInt(eventId));
+      const priceId = getStripePriceId(parseInt(eventId), option as 'full' | 'single');
+      
+      if (!productId || !priceId) {
+        console.warn(`No Stripe product or price ID found for event ${eventId} with option ${option}`);
+      }
+      
+      // Fetch the event details
+      const event = await storage.getEvent(parseInt(eventId));
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Return the Stripe product and price IDs along with event details
+      res.json({
+        eventId: eventId,
+        eventName: event.title,
+        option: option,
+        priceId: priceId,
+        productId: productId
+      });
+    } catch (error) {
+      console.error('Error fetching Stripe product details:', error);
+      res.status(500).json({ message: "Error fetching Stripe product details", error: (error as Error).message });
+    }
+  });
   
   // Discount code routes
   app.post('/api/discount/validate', validateDiscountCode);
