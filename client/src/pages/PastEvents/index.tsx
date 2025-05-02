@@ -1,15 +1,6 @@
 import React from 'react';
 import { Container } from '@/components/ui/container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import teamPhoto from '@/assets/pickleball/team-photo.jpg';
-import cashPrize from '@/assets/pickleball/cash-prize.jpg';
-import eventVenue from '@/assets/pickleball/event-venue.jpg';
-import playerTeam1 from '@/assets/pickleball/player-team-1.jpg';
-import playerTeam2 from '@/assets/pickleball/player-team-2.jpg';
-import merchandise from '@/assets/pickleball/merchandise.jpg';
-import courtAction from '@/assets/pickleball/court-action.jpg';
-import winnersGroup from '@/assets/pickleball/winners-group.jpg';
-import mixedTeam from '@/assets/pickleball/mixed-team.jpg';
 import { Button } from '@/components/ui/button';
 import { Calendar, DollarSign, Users, Trophy, Heart } from 'lucide-react';
 
@@ -65,7 +56,7 @@ const PastEvents = () => {
               </div>
               <div className="rounded-xl overflow-hidden shadow-lg">
                 <img 
-                  src={teamPhoto} 
+                  src="/assets/team-photo.jpg" 
                   alt="Birmingham Pickleball Tournament Team" 
                   className="w-full h-auto object-cover"
                 />
@@ -78,7 +69,7 @@ const PastEvents = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                   <img 
-                    src={eventVenue} 
+                    src="/assets/event-venue.jpg" 
                     alt="Tournament Venue" 
                     className="w-full h-64 object-cover"
                   />
@@ -90,7 +81,7 @@ const PastEvents = () => {
 
                 <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                   <img 
-                    src={cashPrize} 
+                    src="/assets/cash-prize.jpg" 
                     alt="Cash Prizes" 
                     className="w-full h-64 object-cover"
                   />
@@ -102,7 +93,7 @@ const PastEvents = () => {
 
                 <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                   <img 
-                    src={merchandise} 
+                    src="/assets/merchandise.jpg" 
                     alt="Rich Habits Merchandise" 
                     className="w-full h-64 object-cover"
                   />
@@ -119,22 +110,22 @@ const PastEvents = () => {
               <h3 className="text-2xl font-bold mb-6 text-center">Tournament Gallery</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <img 
-                  src={playerTeam1} 
+                  src="/assets/player-team-1.jpg" 
                   alt="Player Team" 
                   className="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
                 />
                 <img 
-                  src={playerTeam2} 
+                  src="/assets/player-team-2.jpg" 
                   alt="Player Team" 
                   className="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
                 />
                 <img 
-                  src={courtAction} 
+                  src="/assets/court-action.jpg" 
                   alt="Court Action" 
                   className="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
                 />
                 <img 
-                  src={winnersGroup} 
+                  src="/assets/winners-group.jpg" 
                   alt="Winners Group" 
                   className="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
                 />
@@ -158,12 +149,12 @@ const PastEvents = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <img 
-                    src={mixedTeam} 
+                    src="/assets/mixed-team.jpg" 
                     alt="Community Participants" 
                     className="w-full h-auto object-cover rounded-lg shadow-md"
                   />
                   <img 
-                    src={winnersGroup} 
+                    src="/assets/winners-group.jpg" 
                     alt="Tournament Winners" 
                     className="w-full h-auto object-cover rounded-lg shadow-md"
                   />
