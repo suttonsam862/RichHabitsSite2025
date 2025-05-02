@@ -24,6 +24,12 @@ if (process.env.NODE_ENV === 'production' && isTestMode) {
   console.warn('WARNING: Using Stripe test mode in production environment');
 }
 
+// For development, we need to downgrade to test mode if using a test secret key
+if (process.env.NODE_ENV === 'development' && !isTestMode) {
+  console.warn('WARNING: Using Stripe live mode in development environment');
+  console.log('Consider using test mode for development to avoid real charges');
+}
+
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {
   try {
