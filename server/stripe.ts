@@ -13,6 +13,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true
 });
 
+// Log whether we're in test mode or live mode
+console.log('Stripe live mode:', !stripe.testMode);
+
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {
   try {
