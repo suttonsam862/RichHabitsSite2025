@@ -166,7 +166,7 @@ const PastEvents = () => {
             <div className="bg-primary text-white rounded-xl p-8 text-center">
               <h3 className="text-2xl font-bold mb-4">Join Us For Our Next Event!</h3>
               <p className="max-w-2xl mx-auto mb-6">
-                Stay tuned for upcoming Rich Habits events, including our next Birmingham Pickleball Championship. Don't miss the chance to compete, connect, and contribute to our community initiatives.
+                Stay tuned for upcoming Rich Habits events, including our next Pickleball Championship. Don't miss the chance to compete, connect, and contribute to our community initiatives.
               </p>
               <div className="flex justify-center">
                 <Button variant="secondary" className="mr-4">

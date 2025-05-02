@@ -173,6 +173,14 @@ export function FeaturedEvents() {
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $249</p>
                   </div>
                   
+                  <div className="relative mb-4 w-full h-24 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
+                    <img 
+                      src="/assets/banners/texas-banner.png" 
+                      alt="Texas Recruiting Clinic Banner" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <p className="text-gray-700 mb-4 text-sm flex-grow">
                     A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. 
                     Features skill development with college coaches and recruiting workshops.
@@ -232,6 +240,14 @@ export function FeaturedEvents() {
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $249</p>
                   </div>
                   
+                  <div className="relative mb-4 w-full h-24 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
+                    <img 
+                      src="/assets/banners/birmingham-banner.png" 
+                      alt="Birmingham Slam Camp Banner" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <p className="text-gray-700 mb-4 text-sm flex-grow">
                     Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, 
                     and the energy feels bigger than wrestling. Not just training — it's a statement.
@@ -291,6 +307,14 @@ export function FeaturedEvents() {
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $349</p>
                   </div>
                   
+                  <div className="relative mb-4 w-full h-24 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
+                    <img 
+                      src="/assets/banners/vegas-banner.png" 
+                      alt="National Champ Camp Banner" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <p className="text-gray-700 mb-4 text-sm flex-grow">
                     Train with NCAA champions and Olympic athletes in this intensive four-day camp.
                     Designed for competitive wrestlers looking to elevate their skills to championship level.
