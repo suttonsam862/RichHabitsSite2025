@@ -45,8 +45,16 @@ app.get('/assets/:filename', (req, res, next) => {
   const filePath = path.join(process.cwd(), 'public', 'assets', filename);
   
   if (!fs.existsSync(filePath)) {
+    log(`Media file not found: ${filename}`, 'media');
     return next(); // File not found, pass to next handler
   }
+  
+  // Log for debugging
+  log(`Serving media file: ${filename}`, 'media');
+  
+  // Detect device type for adaptive serving
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = /mobile|iphone|ipad|android/i.test(userAgent);
   
   // Define MIME types based on file extensions
   const extension = path.extname(filename).toLowerCase();
@@ -80,18 +88,63 @@ app.get('/assets/:filename', (req, res, next) => {
       break;
   }
   
-  const fileStream = fs.createReadStream(filePath);
-  res.setHeader('Content-Type', contentType);
+  // Get file stats
+  const stats = fs.statSync(filePath);
+  const fileSize = stats.size;
   
-  // Improved error handling
-  fileStream.on('error', (error) => {
-    log(`Error streaming file ${filename}: ${error.message}`, 'media');
-    if (!res.headersSent) {
-      res.status(500).send('Error streaming file');
-    }
-  });
-  
-  fileStream.pipe(res);
+  // Handle range requests for better streaming (especially on mobile)
+  const range = req.headers.range;
+  if (range) {
+    // Parse Range header value
+    const parts = range.replace(/bytes=/, '').split('-');
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+    
+    // Validate range to prevent large chunk requests
+    const chunkSize = Math.min(end - start + 1, 1024 * 1024 * 2); // 2MB max chunk size
+    const adjustedEnd = start + chunkSize - 1;
+    
+    // Create HTTP response
+    res.writeHead(206, {
+      'Content-Range': `bytes ${start}-${adjustedEnd}/${fileSize}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': chunkSize,
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=86400', // Cacheable for 24 hours
+      'Access-Control-Allow-Origin': '*' // Allow CORS for media files
+    });
+    
+    // Stream the file chunk
+    const stream = fs.createReadStream(filePath, { start, end: adjustedEnd });
+    stream.on('error', (error) => {
+      log(`Error streaming file ${filename}: ${error.message}`, 'media');
+      if (!res.headersSent) {
+        res.status(500).send('Error streaming file');
+      }
+    });
+    
+    stream.pipe(res);
+  } else {
+    // Serve the entire file at once (for smaller files)
+    res.writeHead(200, {
+      'Content-Length': fileSize,
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=86400', // Cacheable for 24 hours
+      'Access-Control-Allow-Origin': '*' // Allow CORS for media files
+    });
+    
+    const fileStream = fs.createReadStream(filePath);
+    
+    // Improved error handling
+    fileStream.on('error', (error) => {
+      log(`Error streaming file ${filename}: ${error.message}`, 'media');
+      if (!res.headersSent) {
+        res.status(500).send('Error streaming file');
+      }
+    });
+    
+    fileStream.pipe(res);
+  }
 });
 
 (async () => {

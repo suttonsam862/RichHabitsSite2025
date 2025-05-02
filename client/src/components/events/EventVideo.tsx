@@ -5,8 +5,14 @@ import {
   logMediaError, 
   MediaErrorData,
   inferMimeTypeFromExtension,
-  canBrowserPlayMedia
+  canBrowserPlayMedia,
+  checkResourceExists
 } from '../../utils/mediaErrorUtils';
+
+// Detect if viewing on mobile device
+const isMobileDevice = (): boolean => {
+  return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+};
 
 // Helper functions
 const checkVideoExists = async (url: string): Promise<boolean> => {
@@ -54,6 +60,9 @@ interface EventVideoProps {
   title?: string;
   onError?: (error: MediaErrorData | any) => void;
   style?: CSSProperties;
+  fallbackImage?: string;
+  fallbackYoutubeId?: string;
+  mobileSrc?: string;
 }
 
 /**
@@ -70,7 +79,10 @@ const EventVideo: React.FC<EventVideoProps> = ({
   preload = 'metadata',
   title,
   onError,
-  style
+  style,
+  fallbackImage,
+  fallbackYoutubeId,
+  mobileSrc
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -224,74 +236,142 @@ const EventVideo: React.FC<EventVideoProps> = ({
     }
   };
 
+  // Create a YouTube fallback if ID is provided
+  const YouTubeFallback = fallbackYoutubeId ? (
+    <div className={`youtube-fallback relative ${className}`} style={{ minHeight: '300px', ...(style || {}) }}>
+      <iframe
+        src={`https://www.youtube.com/embed/${fallbackYoutubeId}?autoplay=1&mute=1&loop=1&playlist=${fallbackYoutubeId}&controls=0&showinfo=0`}
+        className="absolute inset-0 w-full h-full"
+        title={title || "Event video"}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    </div>
+  ) : null;
+  
+  // Create a fallback image element if provided
+  const ImageFallback = fallbackImage ? (
+    <div className={`image-fallback relative ${className}`} style={style}>
+      <img 
+        src={fallbackImage} 
+        alt={title || "Event image"} 
+        className="w-full h-auto object-cover" 
+      />
+      {title && (
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
+          <h3 className="font-medium">{title}</h3>
+        </div>
+      )}
+    </div>
+  ) : null;
+
   // Create a custom fallback UI for video errors
   const fallbackUI = (
-    <div className={`video-error-container bg-gray-100 rounded flex flex-col items-center justify-center p-6 ${className}`} style={{ minHeight: '300px', ...(style || {}) }}>
-      <div className="text-center">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-        {title && <h3 className="text-lg font-medium mb-2">{title}</h3>}
-        
-        {/* Conditional error messages based on the type of error detected */}
-        {fileExists === false ? (
-          <p className="text-gray-600 mb-4">Video file not found: {src.split('/').pop()}</p>
-        ) : !isValidExtension ? (
-          <p className="text-gray-600 mb-4">Unsupported video format: .{fileExtension || 'unknown'}</p>
-        ) : (
-          <p className="text-gray-600 mb-4">The video could not be loaded</p>
-        )}
-        
-        {/* Technical details for debugging - can be removed in production */}
-        <details className="mb-4 text-left text-xs text-gray-500">
-          <summary className="cursor-pointer mb-2">Technical details</summary>
-          <p>Source: {src}</p>
-          <p>Format: .{fileExtension || 'unknown'}</p>
-          <p>File exists: {fileExists === null ? 'checking...' : fileExists ? 'yes' : 'no'}</p>
-          <p>Load attempts: {loadAttempts}</p>
-        </details>
-        
-        {loadAttempts < 3 && (
-          <button 
-            onClick={handleRetry}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            Try Again {loadAttempts > 0 ? `(${loadAttempts}/3)` : ''}
-          </button>
-        )}
-        
-        {loadAttempts >= 3 && (
-          <div className="mt-2">
-            <p className="text-sm text-gray-500 mb-2">
-              Multiple attempts failed.
-            </p>
+    <div>
+      {/* First try YouTube fallback if available */}
+      {fallbackYoutubeId ? (
+        YouTubeFallback
+      ) : fallbackImage ? (
+        ImageFallback
+      ) : (
+        <div className={`video-error-container bg-gray-100 rounded flex flex-col items-center justify-center p-6 ${className}`} style={{ minHeight: '300px', ...(style || {}) }}>
+          <div className="text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            {title && <h3 className="text-lg font-medium mb-2">{title}</h3>}
             
-            {fileExists === false && (
-              <p className="text-xs text-amber-700">
-                Video file might be missing or unavailable.
-              </p>
+            {/* Conditional error messages based on the type of error detected */}
+            {fileExists === false ? (
+              <p className="text-gray-600 mb-4">Video file not found: {src.split('/').pop()}</p>
+            ) : !isValidExtension ? (
+              <p className="text-gray-600 mb-4">Unsupported video format: .{fileExtension || 'unknown'}</p>
+            ) : (
+              <p className="text-gray-600 mb-4">The video could not be loaded</p>
+            )}
+            
+            {/* Technical details for debugging - can be removed in production */}
+            <details className="mb-4 text-left text-xs text-gray-500">
+              <summary className="cursor-pointer mb-2">Technical details</summary>
+              <p>Source: {src}</p>
+              <p>Format: .{fileExtension || 'unknown'}</p>
+              <p>File exists: {fileExists === null ? 'checking...' : fileExists ? 'yes' : 'no'}</p>
+              <p>Load attempts: {loadAttempts}</p>
+              <p>Mobile device: {isMobileDevice() ? 'yes' : 'no'}</p>
+            </details>
+            
+            {loadAttempts < 3 && (
+              <button 
+                onClick={handleRetry}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Try Again {loadAttempts > 0 ? `(${loadAttempts}/3)` : ''}
+              </button>
+            )}
+            
+            {loadAttempts >= 3 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-500 mb-2">
+                  Multiple attempts failed.
+                </p>
+                
+                {fileExists === false && (
+                  <p className="text-xs text-amber-700">
+                    Video file might be missing or unavailable.
+                  </p>
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 
+  // Determine if we're on a mobile device
+  const mobile = isMobileDevice();
+  
+  // Use mobile source if provided and on a mobile device
+  const videoSource = (mobile && mobileSrc) ? mobileSrc : src;
+  
+  // If we're in a mobile browser and have a YouTube fallback, consider using it directly
+  // for better compatibility on some mobile browsers
+  if (mobile && fallbackYoutubeId && hasError) {
+    return YouTubeFallback;
+  }
+  
+  // If the device is mobile and we have a fallback image, show it on error states
+  if (mobile && fallbackImage && hasError) {
+    return ImageFallback;
+  }
+  
   return (
     <VideoWithErrorHandling
       ref={videoRef}
-      src={src}
-      poster={poster}
+      src={videoSource}
+      poster={poster || fallbackImage} // Use fallback image as poster if available
       className={className}
       autoPlay={autoplay}
       muted={muted}
       controls={controls}
       loop={loop}
-      preload={preload}
+      preload={mobile ? 'metadata' : preload} // On mobile, prefer metadata preload by default for faster initial load
       onError={handleVideoError}
       fallback={hasError ? fallbackUI : undefined}
       style={style}
+      playsInline={true} // Critical for iOS inline playback
     >
+      {/* Add source tags for better format selection */}
+      {videoSource && videoSource.toLowerCase().endsWith('.mp4') && (
+        <source src={videoSource} type="video/mp4" />
+      )}
+      {videoSource && videoSource.toLowerCase().endsWith('.webm') && (
+        <source src={videoSource} type="video/webm" />
+      )}
+      {videoSource && videoSource.toLowerCase().endsWith('.mov') && (
+        <source src={videoSource} type="video/quicktime" />
+      )}
       Your browser does not support HTML5 video.
     </VideoWithErrorHandling>
   );

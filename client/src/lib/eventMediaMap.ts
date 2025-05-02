@@ -26,6 +26,10 @@ export interface EventMedia {
   // Mobile-specific media (optional)
   mobileVideo?: string;
   mobileBanner?: string;
+  
+  // Additional meta information
+  isVideoRequired?: boolean;
+  fallbackYoutubeId?: string;
 }
 
 /**
@@ -50,7 +54,9 @@ const eventMediaMap: Record<number, EventMedia> = {
       "/assets/DSC08615.JPG",
       "/assets/DSC08631.JPG"
     ],
-    thumbnailImage: "/assets/SlamCampSiteBanner.png"
+    thumbnailImage: "/assets/SlamCampSiteBanner.png",
+    fallbackYoutubeId: "luouX84juYU", // YouTube fallback for mobile
+    mobileBanner: "/assets/SlamCampSiteBanner.png" // Mobile-optimized banner
   },
   
   // Event ID 2: National Champ Camp
@@ -66,7 +72,9 @@ const eventMediaMap: Record<number, EventMedia> = {
       "/assets/DSC09295--.JPG",
       "/assets/DSC09299.JPG"
     ],
-    thumbnailImage: "/assets/Title Card Slam Camp.png"
+    thumbnailImage: "/assets/Title Card Slam Camp.png",
+    fallbackYoutubeId: "luouX84juYU", // YouTube fallback for mobile
+    mobileBanner: "/assets/LongSitePhotovegas.png" // Mobile-optimized banner
   },
   
   // Event ID 3: Texas Recruiting Clinic
@@ -82,7 +90,9 @@ const eventMediaMap: Record<number, EventMedia> = {
       "/assets/DSC09355.JPG",
       "/assets/DSC09374--.JPG"
     ],
-    thumbnailImage: "/assets/Headerbannersiterecruiting page.png"
+    thumbnailImage: "/assets/Headerbannersiterecruiting page.png",
+    fallbackYoutubeId: "luouX84juYU", // YouTube fallback for mobile
+    mobileBanner: "/assets/RecruitingWebsiteimage4.png" // Mobile-optimized banner
   },
   
   // Event ID 4: Cory Land Tour
@@ -98,7 +108,9 @@ const eventMediaMap: Record<number, EventMedia> = {
       "/assets/DSC09488.JPG",
       "/assets/DSC09491.JPG"
     ],
-    thumbnailImage: "/assets/Zahid Website Image.png"
+    thumbnailImage: "/assets/Zahid Website Image.png",
+    fallbackYoutubeId: "luouX84juYU", // YouTube fallback for mobile
+    mobileBanner: "/assets/Zahid Website Image.png" // Mobile-optimized banner
   }
 };
 
