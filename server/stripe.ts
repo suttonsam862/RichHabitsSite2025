@@ -220,6 +220,12 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       event, 
       paymentIntent.amount / 100 // Convert cents to dollars
     );
+    
+    // If we got a Shopify order, update the registration with the order ID
+    if (shopifyOrder && shopifyOrder.id) {
+      // For future: update the registration in the database with the Shopify order ID
+      console.log(`Registration ${registration.id} linked to Shopify order ${shopifyOrder.id}`);
+    }
 
     // Success response
     res.status(200).json({

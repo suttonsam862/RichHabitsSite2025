@@ -795,23 +795,23 @@ export interface ShopifyDraftOrderParams {
   note?: string;
 }
 
-// Create a draft order in Shopify
+// Create a completed order in Shopify
 export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
   try {
     if (!process.env.SHOPIFY_ACCESS_TOKEN || !process.env.SHOPIFY_STORE_DOMAIN) {
-      console.warn('Shopify API credentials not found, unable to create draft order');
+      console.warn('Shopify API credentials not found, unable to create order');
       return null;
     }
     
-    console.log('Creating Shopify draft order with params:', params);
+    console.log('Creating Shopify order with params:', params);
     
-    // Build the draft order payload for Shopify Admin API
+    // First, create a draft order
     const draftOrderPayload = {
       draft_order: {
         line_items: params.lineItems.map(item => ({
           title: item.title,
           quantity: item.quantity,
-          price: item.price.toString()
+          price: item.price.toString() // This can be 0.00 for a free order
         })),
         customer: {
           first_name: params.customer.firstName,
@@ -820,12 +820,21 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
           phone: params.customer.phone || ''
         },
         note: params.note || '',
-        tags: 'Rich Habits Event, Stripe, Online Registration'
+        tags: 'Rich Habits Event, Stripe, Online Registration', 
+        status: 'completed',
+        financial_status: 'paid', // Mark it as paid since we collected payment via Stripe
+        payment_gateway_names: ["Stripe"],
+        applied_discount: {
+          description: "Paid via Stripe",
+          value_type: "fixed_amount",
+          value: "0.00",
+          amount: "0.00"
+        }
       }
     };
     
-    // Make the API request to Shopify Admin API
-    const response = await fetch(
+    // Create the draft order
+    const draftResponse = await fetch(
       `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2023-07/draft_orders.json`,
       {
         method: 'POST',
@@ -837,15 +846,38 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
       }
     );
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to create Shopify draft order: ${response.status} ${response.statusText} - ${errorText}`);
+    if (!draftResponse.ok) {
+      const errorText = await draftResponse.text();
+      throw new Error(`Failed to create Shopify draft order: ${draftResponse.status} ${draftResponse.statusText} - ${errorText}`);
     }
     
-    const responseData = await response.json();
-    return responseData.draft_order as any;
+    const draftData = await draftResponse.json() as { draft_order: { id: number } };
+    const draftOrderId = draftData.draft_order.id;
+    
+    // Complete the draft order to convert it to a paid order
+    const completeResponse = await fetch(
+      `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2023-07/draft_orders/${draftOrderId}/complete.json`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN
+        }
+      }
+    );
+    
+    if (!completeResponse.ok) {
+      const errorText = await completeResponse.text();
+      throw new Error(`Failed to complete Shopify order: ${completeResponse.status} ${completeResponse.statusText} - ${errorText}`);
+    }
+    
+    const completeData = await completeResponse.json() as { order: any };
+    const finalOrder = completeData.order;
+    
+    console.log('Successfully created and completed Shopify order:', finalOrder.id);
+    return finalOrder;
   } catch (error) {
-    console.error('Error creating Shopify draft order:', error);
+    console.error('Error creating Shopify order:', error);
     return null;
   }
 }
