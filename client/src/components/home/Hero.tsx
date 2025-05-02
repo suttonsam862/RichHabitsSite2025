@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 export function Hero() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // Using direct asset references to avoid Vite parsing issues with jpg files
   const wrestlerImages = [
-    "/images/wrestlers/DSC09491.JPG",
-    "/images/wrestlers/DSC07386.JPG",
-    "/images/wrestlers/DSC00423.JPG",
-    "/images/wrestlers/DSC09374--.JPG"
+    '/assets/DSC09491.JPG',
+    '/assets/DSC07386.JPG',
+    '/assets/DSC00423.JPG',
+    '/assets/DSC09374--.JPG'
   ];
   
   // Rotate through images every 5 seconds
