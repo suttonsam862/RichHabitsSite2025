@@ -1,14 +1,17 @@
 /**
  * Stripe product and price IDs for Rich Habits events
+ * 
+ * NOTE: These are LIVE mode product and price IDs
+ * These must match the products created in your Stripe dashboard
  */
 
 export const STRIPE_PRODUCTS = {
   // Birmingham Slam Camp
   'birmingham-slam-camp': {
-    productId: 'prod_SEqbbDngN3Fixc',
+    productId: 'prod_SEy3l8IzKbJhzR', // LIVE mode product ID
     prices: {
-      full: 'price_1RKMuSPfRB1dByPWAqP7LqNo',  // $249
-      single: 'price_1RKMuSPfRB1dByPWQiI3Qlap'  // $149
+      full: 'price_1RKfGWBIRPjPy7BLO8cA12lB',  // $249
+      single: 'price_1RKfHkBIRPjPy7BLVsV5pVNH'  // $149
     },
     metadata: {
       eventId: '1',
@@ -20,10 +23,10 @@ export const STRIPE_PRODUCTS = {
   
   // National Champ Camp
   'national-champ-camp': {
-    productId: 'prod_SEqb6jBiw4W2ar',
+    productId: 'prod_SEy51LmDPkEh2Q', // LIVE mode product ID
     prices: {
-      full: 'price_1RKMuTPfRB1dByPWc2LK2UQg',  // $349
-      single: 'price_1RKMuTPfRB1dByPW6hfUgSEx'  // $175
+      full: 'price_1RKfIJBIRPjPy7BLFMFfbKpb',  // $349
+      single: 'price_1RKfITBIRPjPy7BLIGST56s9'  // $175
     },
     metadata: {
       eventId: '2',
@@ -35,10 +38,10 @@ export const STRIPE_PRODUCTS = {
   
   // Texas Recruiting Clinic
   'texas-recruiting-clinic': {
-    productId: 'prod_SEqbAMG7YXOTzG',
+    productId: 'prod_SEy5ynD8u3zRpJ', // LIVE mode product ID
     prices: {
-      full: 'price_1RKMuTPfRB1dByPWvx07lTkq',   // $249
-      single: 'price_1RKMuUPfRB1dByPWa28a2r0K'   // $149
+      full: 'price_1RKfJ6BIRPjPy7BLXpYcLSPw',   // $249
+      single: 'price_1RKfJHBIRPjPy7BLWmxQUHtJ'   // $149
     },
     metadata: {
       eventId: '3',
@@ -50,10 +53,10 @@ export const STRIPE_PRODUCTS = {
   
   // Cory Land Tour
   'cory-land-tour': {
-    productId: 'prod_SEqbUeTpfPnvlE',
+    productId: 'prod_SEy6aTWOMa1cHg', // LIVE mode product ID
     prices: {
-      full: 'price_1RKMuUPfRB1dByPWwj2qVxeS',   // $200
-      single: 'price_1RKMuUPfRB1dByPWURiShzGS'   // $99
+      full: 'price_1RKfJpBIRPjPy7BL4k8lrUZe',   // $200
+      single: 'price_1RKfK0BIRPjPy7BLK4LPXt7M'   // $99
     },
     metadata: {
       eventId: '4',

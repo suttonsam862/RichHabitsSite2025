@@ -12,7 +12,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 // Using the latest API version and enabling live mode 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
-  apiVersion: '2023-10-16'
+  apiVersion: '2025-03-31.basil'
 });
 
 // Explicitly log whether we're in live mode
