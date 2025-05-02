@@ -15,7 +15,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 // Log whether we're in test mode or live mode
-console.log('Stripe live mode:', !stripe.testMode);
+const isTestMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+console.log('Stripe live mode:', !isTestMode);
 
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {
@@ -77,26 +78,67 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       return res.status(404).json({ error: `Event with ID ${eventId} not found` });
     }
 
-    // Get the price for the event based on the option
-    const amount = await getEventPrice(eventId, option);
+    let amount: number;
+    let clientSecret: string | null;
+    let stripeProductId: string | null = null;
+    let stripePriceId: string | null = null;
 
-    // Create a PaymentIntent with the calculated amount
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: 'usd',
-      metadata: {
-        eventId: eventId.toString(),
-        eventName: event.title, // use title field instead of name
-        option,
-      },
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
+    // Get Stripe price ID for this event and option
+    stripePriceId = getStripePriceId(eventId, option as 'full' | 'single');
+    
+    if (!stripePriceId) {
+      console.warn(`No Stripe price found for event ${eventId} with option ${option}, falling back to calculated price`);
+      // Fall back to calculated price
+      amount = await getEventPrice(eventId, option);
+      
+      // Create a PaymentIntent with the calculated amount
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'usd',
+        metadata: {
+          eventId: eventId.toString(),
+          eventName: event.title,
+          option,
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
 
+      clientSecret = paymentIntent.client_secret;
+    } else {
+      // Get the associated product ID
+      stripeProductId = getStripeProductId(eventId);
+      console.log(`Using Stripe product ${stripeProductId} with price ${stripePriceId} for event ${eventId}`);
+      
+      // Retrieve the price to get the unit amount
+      const price = await stripe.prices.retrieve(stripePriceId);
+      amount = price.unit_amount || 0;
+      
+      // Create a PaymentIntent with the price's amount
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'usd',
+        metadata: {
+          eventId: eventId.toString(),
+          eventName: event.title,
+          option,
+          stripePriceId
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+      
+      clientSecret = paymentIntent.client_secret;
+    }
+    
+    // Return response with common structure
     res.json({
-      clientSecret: paymentIntent.client_secret,
+      clientSecret,
       amount: amount / 100, // Convert back to dollars for display
+      ...(stripePriceId && { priceId: stripePriceId }),
+      ...(stripeProductId && { productId: stripeProductId })
     });
   } catch (error) {
     console.error('Error creating payment intent:', error);
