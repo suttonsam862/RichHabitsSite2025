@@ -93,68 +93,41 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     const isLiveMode = !process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
     console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${eventId} (${event.title})`);
 
-    // Get Stripe price ID for this event and option
-    stripePriceId = getStripePriceId(eventId, option as 'full' | 'single');
+    // Get calculated price regardless of Stripe price ID (to handle missing products in Stripe)    
+    amount = await getEventPrice(eventId, option);
+    if (!amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({
+        error: 'Could not determine price for the event'
+      });
+    }
     
-    if (!stripePriceId) {
-      console.warn(`No Stripe price found for event ${eventId} with option ${option}, falling back to calculated price`);
-      // Fall back to calculated price
-      amount = await getEventPrice(eventId, option);
-      
-      try {
-        // Create a PaymentIntent with the calculated amount
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount,
-          currency: 'usd',
-          metadata: {
-            eventId: eventId.toString(),
-            eventName: event.title,
-            option,
-          },
-          automatic_payment_methods: {
-            enabled: true,
-          },
-        });
+    console.log(`Using calculated price of $${amount/100} for event ${eventId} (${event.title})`);
+    
+    try {
+      // Create a PaymentIntent with the calculated amount
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'usd',
+        metadata: {
+          eventId: eventId.toString(),
+          eventName: event.title,
+          option,
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
 
-        clientSecret = paymentIntent.client_secret;
-      } catch (stripeError) {
-        console.error('Stripe error creating payment intent:', stripeError);
-        return res.status(400).json({
-          error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe',
-        });
-      }
-    } else {
-      // Get the associated product ID
-      stripeProductId = getStripeProductId(eventId);
-      console.log(`Using Stripe product ${stripeProductId} with price ${stripePriceId} for event ${eventId}`);
+      clientSecret = paymentIntent.client_secret;
       
-      try {
-        // Retrieve the price to get the unit amount
-        const price = await stripe.prices.retrieve(stripePriceId);
-        amount = price.unit_amount || 0;
-        
-        // Create a PaymentIntent with the price's amount
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount,
-          currency: 'usd',
-          metadata: {
-            eventId: eventId.toString(),
-            eventName: event.title,
-            option,
-            stripePriceId
-          },
-          automatic_payment_methods: {
-            enabled: true,
-          },
-        });
-        
-        clientSecret = paymentIntent.client_secret;
-      } catch (stripeError) {
-        console.error('Stripe error creating payment intent with price:', stripeError);
-        return res.status(400).json({
-          error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe price',
-        });
+      if (!clientSecret) {
+        throw new Error('Failed to get client secret from payment intent');
       }
+    } catch (stripeError) {
+      console.error('Stripe error creating payment intent:', stripeError);
+      return res.status(400).json({
+        error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe',
+      });
     }
     
     if (!clientSecret) {
@@ -164,12 +137,16 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     }
     
     // Return response with common structure
-    res.json({
+    const response: Record<string, any> = {
       clientSecret,
       amount: amount / 100, // Convert back to dollars for display
-      ...(stripePriceId && { priceId: stripePriceId }),
-      ...(stripeProductId && { productId: stripeProductId })
-    });
+    };
+    
+    // Add optional fields if they exist
+    if (stripePriceId) response.priceId = stripePriceId;
+    if (stripeProductId) response.productId = stripeProductId;
+    
+    res.json(response);
   } catch (error) {
     console.error('Error creating payment intent:', error);
     res.status(500).json({
