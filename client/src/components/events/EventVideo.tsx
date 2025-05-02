@@ -96,7 +96,7 @@ const EventVideo: React.FC<EventVideoProps> = ({
       }
       
       // Get MIME type and check it
-      const mimeType = inferMimeTypeFromExtension(src);
+      const mimeType = getMimeTypeFromExtension(src);
       console.log(`Inferred MIME type for ${src}: ${mimeType}`);
       
       if (mimeType) {
@@ -356,16 +356,8 @@ const EventVideo: React.FC<EventVideoProps> = ({
       style={style}
       playsInline={optimizedPlaybackOptions.playsInline}
     >
-      {/* Add source tags for better format selection and compatibility */}
-      {videoSource && videoSource.toLowerCase().endsWith('.mp4') && (
-        <source src={videoSource} type="video/mp4" />
-      )}
-      {videoSource && videoSource.toLowerCase().endsWith('.webm') && (
-        <source src={videoSource} type="video/webm" />
-      )}
-      {videoSource && videoSource.toLowerCase().endsWith('.mov') && (
-        <source src={videoSource} type="video/quicktime" />
-      )}
+      {/* Use the helper to generate optimal source elements for this device */}
+      {generateVideoSourceElements(videoSource)}
       {/* Display a user-friendly message when video can't be played */}
       <div className="p-4 text-center bg-gray-100 rounded">
         <p>Your browser does not support HTML5 video playback.</p>

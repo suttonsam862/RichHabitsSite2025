@@ -5,6 +5,7 @@
  * for video and audio playback with improved mobile compatibility.
  */
 
+import React from 'react';
 import { isIOSDevice, isMobileDevice } from './deviceDetection';
 
 /**
@@ -15,7 +16,6 @@ const mimeTypeMap: Record<string, string> = {
   mp4: 'video/mp4',
   m4v: 'video/mp4',
   webm: 'video/webm',
-  ogg: 'video/ogg',
   ogv: 'video/ogg',
   mov: 'video/quicktime',
   qt: 'video/quicktime',
@@ -29,7 +29,6 @@ const mimeTypeMap: Record<string, string> = {
   // Audio formats
   mp3: 'audio/mpeg',
   wav: 'audio/wav',
-  ogg: 'audio/ogg',
   oga: 'audio/ogg',
   aac: 'audio/aac',
   m4a: 'audio/mp4',
@@ -131,12 +130,16 @@ export function getAlternativeMimeTypes(source: string): { type: string, src: st
  * Generate video source elements for multiple formats
  * to improve cross-browser compatibility
  */
-export function generateVideoSourceElements(source: string): JSX.Element[] {
+export function generateVideoSourceElements(source: string): React.ReactElement[] {
   const alternatives = getAlternativeMimeTypes(source);
   
-  return alternatives.map(({ type, src }, index) => (
-    <source key={`source-${index}`} src={src} type={type} />
-  ));
+  return alternatives.map(({ type, src }, index) => {
+    return React.createElement('source', {
+      key: `source-${index}`,
+      src: src,
+      type: type
+    });
+  });
 }
 
 /**
