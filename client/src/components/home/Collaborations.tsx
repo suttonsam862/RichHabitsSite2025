@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import type { Collaboration } from "@shared/schema";
+import { GiPineapple } from "react-icons/gi";
 
 interface CollaborationProps {
   name: string;
@@ -61,9 +62,45 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
-      className="bg-white p-6 shadow-lg rounded-lg border border-gray-100 hover:shadow-xl transition-shadow"
+      className="bg-white p-6 shadow-lg rounded-lg border border-gray-100 hover:shadow-xl transition-shadow relative overflow-visible"
     >
       <div className="flex flex-col items-center mb-6">
+        {/* Glowing neon fruit icon for Fruit Hunters */}
+        {isFruitHunters && (
+          <div className="absolute -top-10 -right-10 rotate-12 neon-fruit-icon z-10">
+            <motion.div
+              initial={{ rotate: -10, scale: 0.9 }}
+              animate={{ rotate: 10, scale: 1.1 }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut" 
+              }}
+              className="relative"
+            >
+              {/* Base icon */}
+              <GiPineapple size={65} className="text-yellow-300 drop-shadow-[0_0_10px_rgba(250,204,21,0.8)]" />
+              
+              {/* Outer glow */}
+              <div className="absolute top-0 left-0 right-0 bottom-0 opacity-60 animate-pulse">
+                <GiPineapple size={65} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,1)]" />
+              </div>
+              
+              {/* Inner glow */}
+              <div className="absolute top-0 left-0 right-0 bottom-0 opacity-80">
+                <GiPineapple size={65} className="text-yellow-200 filter blur-[1px]" />
+              </div>
+              
+              {/* Highlight */}
+              <div className="absolute -top-1 -left-1 opacity-40 animate-pulse" 
+                  style={{ animationDuration: '1.5s' }}>
+                <GiPineapple size={67} className="text-white filter blur-[2px]" />
+              </div>
+            </motion.div>
+          </div>
+        )}
+        
         {logoSrc ? (
           <div className="h-24 flex items-center justify-center mb-4">
             <img 
