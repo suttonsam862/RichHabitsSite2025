@@ -66,7 +66,7 @@ export default function CustomApparel() {
     <>
       <Helmet>
         <title>Custom Team Apparel | Rich Habits</title>
-        <meta name="description" content="AI-enhanced custom athletic apparel design for teams and organizations." />
+        <meta name="description" content="Custom athletic apparel design for teams and organizations." />
       </Helmet>
       
       <div className="bg-white">
@@ -102,7 +102,7 @@ export default function CustomApparel() {
               className="max-w-2xl"
             >
               <h1 className="text-5xl font-serif font-bold mb-4">Custom Team Apparel</h1>
-              <p className="text-xl mb-8">AI-enhanced design process tailored to your team's identity and performance needs.</p>
+              <p className="text-xl mb-8">Professional design process tailored to your team's identity and performance needs.</p>
               <a 
                 href="#contactForm"
                 className="bg-white text-primary py-3 px-8 font-medium tracking-wide hover:bg-opacity-90 transition-colors inline-block"
@@ -244,7 +244,7 @@ export default function CustomApparel() {
                   Our Design Process
                 </AnimatedUnderline>
               </h2>
-              <p className="text-lg max-w-3xl mx-auto">We combine cutting-edge AI technology with expert craftsmanship to create custom apparel that perfectly represents your team's identity.</p>
+              <p className="text-lg max-w-3xl mx-auto">We combine cutting-edge design techniques with expert craftsmanship to create custom apparel that perfectly represents your team's identity.</p>
             </div>
             
             {/* Value Proposition Icons - Added from Shop page */}
@@ -302,8 +302,8 @@ export default function CustomApparel() {
                 <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl font-medium">2</span>
                 </div>
-                <h3 className="text-xl font-medium mb-3">AI-Assisted Design</h3>
-                <p className="text-gray-700">Our AI system generates design options based on your preferences, colors, and performance needs while our designers refine the concepts.</p>
+                <h3 className="text-xl font-medium mb-3">Expert Design Process</h3>
+                <p className="text-gray-700">Our design team creates multiple options based on your preferences, colors, and performance needs while ensuring a perfect fit for your team's identity.</p>
               </motion.div>
               
               <motion.div
@@ -342,7 +342,7 @@ export default function CustomApparel() {
                   className="mb-6"
                 >
                   <h3 className="text-xl font-medium mb-3">Material Recommendations</h3>
-                  <p className="text-gray-700">Our AI analyzes your sport, climate, and usage patterns to suggest optimal fabrics that balance comfort, performance, and durability.</p>
+                  <p className="text-gray-700">Our experts analyze your sport, climate, and usage patterns to suggest optimal fabrics that balance comfort, performance, and durability.</p>
                 </motion.div>
                 
                 <motion.div
