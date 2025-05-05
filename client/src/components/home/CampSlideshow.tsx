@@ -88,15 +88,15 @@ export function CampSlideshow() {
               {/* Background: either video or image */}
               {currentCamp.video ? (
                 <div className="absolute inset-0">
-                  <video 
-                    src={currentCamp.video} 
+                  <iframe 
+                    src="https://www.youtube.com/embed/sBmEPQ5CQs4?autoplay=1&mute=1&loop=1&playlist=sBmEPQ5CQs4&controls=0&showinfo=0" 
                     className="object-cover w-full h-full"
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
+                    title={currentCamp.name}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
                     style={{ filter: 'brightness(0.7)' }}
-                  />
+                  ></iframe>
                 </div>
               ) : (
                 <div 

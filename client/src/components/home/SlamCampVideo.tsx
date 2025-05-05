@@ -83,17 +83,14 @@ export function SlamCampVideo() {
               viewport={{ once: true }}
               className="relative h-[500px] bg-black rounded-lg overflow-hidden"
             >
-              <video 
-                ref={videoRef}
-                src="/videos/0425.mov"
+              <iframe 
+                src="https://www.youtube.com/embed/uyXLYfWJmno?autoplay=1&mute=1&loop=1&playlist=uyXLYfWJmno&controls=0&showinfo=0"
                 className="w-full h-full object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-              >
-                Your browser does not support the video tag.
-              </video>
+                title="Birmingham Slam Camp Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              ></iframe>
               
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <p className="text-white font-medium">

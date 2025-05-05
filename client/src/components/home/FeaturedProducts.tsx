@@ -95,12 +95,22 @@ export function FeaturedProducts() {
               className="product-card bg-white"
             >
               <Link href={`/shop/product/${product.handle}`} className="block group">
-                <div className="relative overflow-hidden mb-4">
-                  <img 
-                    src={product.image || ''} 
-                    alt={product.title} 
-                    className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
-                  />
+                <div className="relative overflow-hidden mb-4 bg-gray-100">
+                  {product.image ? (
+                    <img 
+                      src={product.image} 
+                      alt={product.title} 
+                      className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/product-placeholder.png';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-80 flex items-center justify-center bg-gray-200">
+                      <span className="text-gray-400 text-sm">Image not available</span>
+                    </div>
+                  )}
                 </div>
                 <h3 className="text-base font-medium mb-1">{product.title}</h3>
                 <p className="text-sm text-gray-500 mb-2">{product.color}</p>
