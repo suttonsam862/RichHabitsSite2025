@@ -247,6 +247,36 @@ export default function CustomApparel() {
               <p className="text-lg max-w-3xl mx-auto">We combine cutting-edge AI technology with expert craftsmanship to create custom apparel that perfectly represents your team's identity.</p>
             </div>
             
+            {/* Value Proposition Icons - Added from Shop page */}
+            <div className="flex flex-wrap justify-center space-x-6 md:space-x-12 mb-12 mt-8">
+              <div className="flex flex-col items-center mb-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-primary flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">High Performance</span>
+              </div>
+              
+              <div className="flex flex-col items-center mb-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-primary flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">Premium Quality</span>
+              </div>
+              
+              <div className="flex flex-col items-center mb-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-primary flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">Athlete Focused</span>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -347,30 +377,46 @@ export default function CustomApparel() {
               >
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/designs/athens.png" 
+                    src="/assets/designs/athens.png" 
                     alt="Athens wrestling team custom design" 
                     className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/designs/brooksfinal.png" 
+                    src="/assets/designs/brooksfinal.png" 
                     alt="Brooks High School custom apparel" 
                     className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/designs/elevate.png" 
+                    src="/assets/designs/elevate.png" 
                     alt="Elevate wrestling singlet design" 
                     className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="aspect-square bg-white p-4">
                   <img 
-                    src="/designs/bragg.png" 
+                    src="/assets/designs/bragg.png" 
                     alt="Bragg Middle School apparel design" 
                     className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
               </motion.div>
@@ -397,9 +443,13 @@ export default function CustomApparel() {
               >
                 <div className="w-full h-64 p-4 flex items-center justify-center">
                   <img 
-                    src="/designs/ltds.png" 
+                    src="/assets/designs/ltds.png" 
                     alt="Learning Tree Day School" 
                     className="h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="p-6">
@@ -417,9 +467,13 @@ export default function CustomApparel() {
               >
                 <div className="w-full h-64 p-4 flex items-center justify-center">
                   <img 
-                    src="/designs/canenation.png" 
+                    src="/assets/designs/canenation.png" 
                     alt="Cane Nation Wrestling" 
                     className="h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="p-6">
@@ -437,9 +491,13 @@ export default function CustomApparel() {
               >
                 <div className="w-full h-64 p-4 flex items-center justify-center">
                   <img 
-                    src="/designs/classicrashguard.png" 
+                    src="/assets/designs/classicrashguard.png" 
                     alt="10th Planet Birmingham" 
                     className="h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/design-placeholder.png';
+                    }}
                   />
                 </div>
                 <div className="p-6">
@@ -479,9 +537,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/deathsquad.png" 
+                      src="/assets/designs/deathsquad.png" 
                       alt="Death Squad design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                   
@@ -493,9 +555,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/nickpolo.png" 
+                      src="/assets/designs/nickpolo.png" 
                       alt="Nick Polo design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                   
@@ -507,9 +573,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/brooks.png" 
+                      src="/assets/designs/brooks.png" 
                       alt="Brooks design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                 </>
@@ -525,9 +595,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/northside.png" 
+                      src="/assets/designs/northside.png" 
                       alt="Northside design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                   
@@ -539,9 +613,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/ltdsmockups.png" 
+                      src="/assets/designs/ltdsmockups.png" 
                       alt="LTDS Mockups" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                   
@@ -553,9 +631,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/blackrashguard.png" 
+                      src="/assets/designs/blackrashguard.png" 
                       alt="Black Rashguard design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                 </>
@@ -571,9 +653,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/normalchrome.png" 
+                      src="/assets/designs/normalchrome.png" 
                       alt="Normal Chrome design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                   
@@ -585,9 +671,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/fullmockups.png" 
+                      src="/assets/designs/fullmockups.png" 
                       alt="Full Mockups design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                   
@@ -599,9 +689,13 @@ export default function CustomApparel() {
                     className="relative h-full bg-white rounded-lg shadow-md p-4 overflow-hidden"
                   >
                     <img 
-                      src="/designs/bluerashguard.png" 
+                      src="/assets/designs/bluerashguard.png" 
                       alt="Blue Rashguard design" 
                       className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/design-placeholder.png';
+                      }}
                     />
                   </motion.div>
                 </>
