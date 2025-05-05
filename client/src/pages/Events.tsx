@@ -548,6 +548,10 @@ export default function Events() {
                         src={events[2].image} 
                         alt={events[2].title} 
                         className="w-full h-full object-cover opacity-0 video-fallback"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/images/event-placeholder.png';
+                        }}
                       />
                     </div>
                   </div>
@@ -654,6 +658,10 @@ export default function Events() {
                         src={events[3].image} 
                         alt={events[3].title} 
                         className="w-full h-full object-cover opacity-0 video-fallback"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/images/event-placeholder.png';
+                        }}
                       />
                     </div>
                   </div>
