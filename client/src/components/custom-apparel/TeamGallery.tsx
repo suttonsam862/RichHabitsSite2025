@@ -1,26 +1,20 @@
-import { useState } from 'react';
 import { Dialog, DialogContent, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-// Image paths
-const homewoodSinglet = "/images/DSC09354.JPG";
-const jordanSinglet = "/images/DSC09491.JPG";
-const homewoodWrestler = "/images/DSC09374--.JPG";
-const jordanWrestler = "/images/DSC09488.JPG";
-const homewoodTshirt = "/images/DSC09273.JPG";
-const wrestlerAction1 = "/images/DSC00521--.JPG";
-const wrestlerAction2 = "/images/DSC08657--.JPG";
-const wrestlerAction3 = "/images/DSC08631.JPG";
-const wrestlerAction4 = "/images/DSC08612.JPG";
-const varsityMatch = "/images/DSC08615.JPG";
-const winnerShot = "/images/DSC07337--.jpg";
-const richHabitsCoach = "/images/DSC09299.JPG";
-const richHabitsCoach2 = "/images/DSC09295--.JPG";
-const wrestlerClose = "/images/DSC09353.JPG";
-const femaleWrestler1 = "/images/DSC02187--.jpg";
-const femaleWrestler2 = "/images/DSC02190--.jpg";
-const rhShirt = "/images/DSC00423.JPG";
+// Design image paths - using actual designs instead of wrestler photos
+const design1 = "/designs/athens.png";
+const design2 = "/designs/brooksfinal.png";
+const design3 = "/designs/bragg.png";
+const design4 = "/designs/canenation.png";
+const design5 = "/designs/elevate.png";
+const design6 = "/designs/ltds.png";
+const design7 = "/designs/classicrashguard.png";
+const design8 = "/designs/bluerashguard.png";
+const design9 = "/designs/blackrashguard.png";
+const design10 = "/designs/nopaws.png";
+const design11 = "/designs/deathsquad.png";
+const design12 = "/designs/nickpolo.png";
 
 interface GalleryImage {
   src: string;
@@ -30,93 +24,104 @@ interface GalleryImage {
 }
 
 export function TeamGallery() {
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  // State not needed with Dialog component
 
   const galleryImages: GalleryImage[] = [
     { 
-      src: homewoodSinglet, 
-      alt: "Homewood High School wrestler in Rich Habits singlet", 
-      team: "Homewood High School", 
-      description: "Custom red singlet with RH branding and Homewood logo" 
+      src: design1, 
+      alt: "Athens Wrestling Team Design", 
+      team: "Athens Wrestling", 
+      description: "Custom singlet design with Athens school colors and branding" 
     },
     { 
-      src: jordanSinglet, 
-      alt: "Jordan High School wrestler in Rich Habits singlet", 
-      team: "Jordan High School",
-      description: "Custom black and blue singlet with lightning design and RH branding" 
+      src: design2, 
+      alt: "Brooks High School Wrestling Design", 
+      team: "Brooks High School",
+      description: "Custom singlet with Brooks branding and Rich Habits quality" 
     },
     { 
-      src: femaleWrestler1, 
-      alt: "Female wrestler in competition", 
-      description: "Rich Habits custom quarter-zip worn during competition" 
+      src: design3, 
+      alt: "Bragg Wrestling Club Design", 
+      team: "Bragg Wrestling Club",
+      description: "Elite design for championship performance" 
     },
     { 
-      src: femaleWrestler2, 
-      alt: "Female wrestler in Rich Habits quarter-zip", 
-      description: "Quality athletic wear designed for performance and comfort" 
+      src: design4, 
+      alt: "Cane Nation Wrestling Design", 
+      team: "Cane Nation Wrestling",
+      description: "Bold team branding with premium materials" 
     },
     { 
-      src: wrestlerAction1, 
-      alt: "Wrestler in action with Rich Habits singlet", 
-      team: "Rich Habits team wear",
-      description: "Our singlets in championship competition" 
+      src: design5, 
+      alt: "Elevate Wrestling Design", 
+      team: "Elevate Wrestling Academy",
+      description: "Performance-focused design for competitive athletes" 
     },
     { 
-      src: homewoodWrestler, 
-      alt: "Homewood wrestler in Rich Habits singlet", 
-      team: "Homewood High School" 
+      src: design6, 
+      alt: "LTDS Team Apparel Design", 
+      team: "LTDS Wrestling",
+      description: "Team design with custom branding elements" 
     },
     { 
-      src: homewoodTshirt, 
-      alt: "Homewood Wrestling team shirt with RH logo", 
-      team: "Homewood High School",
-      description: "Custom team shirts with Rich Habits quality" 
+      src: design7, 
+      alt: "Classic Rashguard Design", 
+      team: "10th Planet Birmingham",
+      description: "Classic rashguard design with technical performance features" 
     },
     { 
-      src: winnerShot, 
-      alt: "Winning wrestler in Rich Habits singlet", 
-      team: "Jordan High School",
-      description: "Championship moment in our custom gear" 
+      src: design8, 
+      alt: "Blue Rashguard Design", 
+      team: "Competition Training Gear",
+      description: "High-performance training apparel in team colors" 
     },
     { 
-      src: richHabitsCoach, 
-      alt: "Coach wearing Rich Habits shirt", 
-      description: "Coaches trust our premium quality apparel" 
+      src: design9, 
+      alt: "Black Rashguard Design", 
+      team: "Rich Habits Premium Line",
+      description: "Premium competition-ready apparel with custom detailing" 
     },
     { 
-      src: wrestlerAction2, 
-      alt: "Wrestling match with Rich Habits singlet", 
-      description: "Performance gear for championship athletes" 
+      src: design10, 
+      alt: "No Paws Ranburne Design", 
+      team: "Ranburne Wrestling",
+      description: "Custom team design with mascot branding" 
     },
     { 
-      src: wrestlerAction3, 
-      alt: "Wrestlers in competition", 
-      description: "Our gear stands up to the toughest competition" 
+      src: design11, 
+      alt: "Death Squad Design", 
+      team: "Death Squad Wrestling Club",
+      description: "Bold custom design for elite athletes" 
     },
     { 
-      src: rhShirt, 
-      alt: "Rich Habits t-shirt", 
-      description: "Premium team apparel with Rich Habits quality" 
+      src: design12, 
+      alt: "Nick Polo Design", 
+      team: "Collegiate Style Gear",
+      description: "Clean, professional design for wrestling programs" 
     }
   ];
 
   return (
     <div className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Our Custom Team Gear in Action</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Our Custom Design Portfolio</h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {galleryImages.map((image, index) => (
             <Dialog key={index}>
               <DialogTrigger asChild>
                 <div 
-                  className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer"
+                  className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer bg-white flex items-center justify-center p-4"
                   style={{ aspectRatio: '3/4' }}
                 >
                   <img 
                     src={image.src} 
                     alt={image.alt} 
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    className="h-full object-contain hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/designs/bragg.png';
+                    }}
                   />
                   {image.team && (
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
@@ -134,11 +139,15 @@ export function TeamGallery() {
                   </DialogClose>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative aspect-square md:aspect-auto">
+                    <div className="relative aspect-square md:aspect-auto bg-white flex items-center justify-center p-4 rounded-md">
                       <img 
                         src={image.src} 
                         alt={image.alt} 
-                        className="w-full h-full object-cover rounded-md"
+                        className="h-full object-contain rounded-md"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/designs/bragg.png';
+                        }}
                       />
                     </div>
                     <div className="flex flex-col justify-center">
