@@ -13,7 +13,7 @@ import {
   insertEventCoachSchema
 } from "@shared/schema";
 import { z } from "zod";
-import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts } from "./shopify";
+import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData, listProducts, createShopifyDraftOrder, ShopifyDraftOrderParams } from "./shopify";
 import { createPaymentIntent, handleSuccessfulPayment, handleStripeWebhook } from "./stripe";
 import { getStripePriceId, getStripeProductId } from "./stripeProducts";
 import { validateDiscountCode, updatePaymentIntent } from "./discounts";
@@ -752,6 +752,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create custom apparel inquiry
       const inquiry = await storage.createCustomApparelInquiry(validatedData);
       
+      // Create a Shopify draft order to notify the admin
+      try {
+        // Split the name to get first and last name parts
+        const nameParts = validatedData.name.split(' ');
+        const firstName = nameParts[0] || validatedData.name;
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+        
+        await createShopifyDraftOrder({
+          lineItems: [
+            {
+              title: `Custom Apparel Inquiry: ${validatedData.organizationName}`,
+              quantity: 1,
+              price: 0
+            }
+          ],
+          customer: {
+            firstName,
+            lastName,
+            email: validatedData.email,
+            phone: validatedData.phone || ''
+          },
+          note: `Custom Apparel Inquiry:\n\nOrganization: ${validatedData.organizationName}\n\nSport/Activity: ${validatedData.sport}\n\nDetails: ${validatedData.details}\n\nSubmitted on: ${new Date().toLocaleString()}`
+        });
+        console.log('Created Shopify draft order for custom apparel inquiry');
+      } catch (shopifyError) {
+        console.error('Failed to create Shopify draft order for custom apparel inquiry:', shopifyError);
+        // We still want to return success to the user even if Shopify notification fails
+      }
+      
       res.status(201).json({
         message: "Inquiry submitted successfully",
         inquiry
@@ -772,6 +801,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create contact submission
       const submission = await storage.createContactSubmission(validatedData);
+      
+      // Create a Shopify draft order to notify the admin
+      try {
+        await createShopifyDraftOrder({
+          lineItems: [
+            {
+              title: `Contact Form: ${validatedData.subject}`,
+              quantity: 1,
+              price: 0
+            }
+          ],
+          customer: {
+            firstName: validatedData.name.split(' ')[0] || validatedData.name,
+            lastName: validatedData.name.split(' ').slice(1).join(' ') || '',
+            email: validatedData.email,
+            phone: validatedData.phone || ''
+          },
+          note: `Contact Form Submission:\n\nSubject: ${validatedData.subject}\n\nMessage: ${validatedData.message}\n\nSubmitted on: ${new Date().toLocaleString()}`
+        });
+        console.log('Created Shopify draft order for contact form submission');
+      } catch (shopifyError) {
+        console.error('Failed to create Shopify draft order for contact form:', shopifyError);
+        // We still want to return success to the user even if Shopify notification fails
+      }
       
       res.status(201).json({
         message: "Contact form submitted successfully",
