@@ -25,8 +25,19 @@ const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || "rich-habits.my
 const SHOPIFY_API_VERSION = "2023-07"; // Update to latest version as needed
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve designs files directly
+  // Serve static files directly
   app.use('/designs', express.static(path.join(process.cwd(), 'public/designs')));
+  
+  // Serve video files with proper headers
+  app.use('/videos', express.static(path.join(process.cwd(), 'public/videos'), {
+    setHeaders: (res, path, stat) => {
+      res.set({
+        'Content-Type': 'video/quicktime',
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': 'public, max-age=86400',
+      });
+    }
+  }));
   // API routes for products
   app.get("/api/products", async (req, res) => {
     try {
