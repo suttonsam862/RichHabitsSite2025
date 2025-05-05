@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet";
 import { useState, useEffect, useRef } from "react";
 import { TeamGallery } from "@/components/custom-apparel/TeamGallery";
 import { FeaturedTeams } from "@/components/custom-apparel/FeaturedTeams";
-import { Testimonials } from "@/components/custom-apparel/Testimonials";
+// Testimonials component removed as requested
 
 export default function CustomApparel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -710,8 +710,7 @@ export default function CustomApparel() {
         {/* Team Gallery Section */}
         <TeamGallery />
         
-        {/* Testimonials Section */}
-        <Testimonials />
+        {/* Testimonials Section removed as requested */}
         
         {/* Contact Form Section */}
         <section id="contactForm" className="py-20 bg-[hsl(var(--secondary))]">
