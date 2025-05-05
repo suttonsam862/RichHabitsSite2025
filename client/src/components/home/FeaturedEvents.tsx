@@ -249,7 +249,7 @@ export function FeaturedEvents() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 h-[500px] flex flex-col"
+                  className="relative overflow-hidden bg-white shadow-lg rounded-sm p-4 h-[280px] flex flex-col"
                   style={{ 
                     background: 'linear-gradient(135deg, rgba(0,30,66,0.05) 0%, rgba(30,136,229,0.1) 100%)',
                     border: '2px solid',
@@ -275,7 +275,7 @@ export function FeaturedEvents() {
                     style={{ borderColor: '#1e88e5' }}
                   />
                   
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm bg-blue-800 text-white">
                       Wrestling
                     </span>
@@ -285,27 +285,13 @@ export function FeaturedEvents() {
                     NATIONAL CHAMP CAMP
                   </h3>
                   
-                  <div className="mb-2">
-                    <p className="text-sm text-gray-600"><strong>Date:</strong> June 4-7, 2025</p>
-                    <p className="text-sm text-gray-600"><strong>Location:</strong> Rancho High School, Las Vegas</p>
-                    <p className="text-sm text-gray-600"><strong>Price:</strong> $349</p>
+                  <div className="grid grid-cols-3 gap-1 mb-2 text-xs">
+                    <p className="text-gray-600"><strong>Date:</strong> June 4-7, 2025</p>
+                    <p className="text-gray-600"><strong>Location:</strong> Las Vegas</p>
+                    <p className="text-gray-600"><strong>Price:</strong> $349</p>
                   </div>
                   
-                  <div className="relative mb-4 w-full h-20 overflow-hidden rounded-md">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent z-10 opacity-30"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-10 opacity-30"></div>
-                    <img 
-                      src="/assets/banners/vegas-banner.png" 
-                      alt="National Champ Camp Banner" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/images/event-placeholder.png';
-                      }}
-                    />
-                  </div>
-                  <p className="text-gray-700 mb-4 text-sm flex-grow">
+                  <p className="text-gray-700 mb-3 text-xs flex-grow">
                     Train with NCAA champions and Olympic athletes in this intensive four-day camp.
                     Designed for competitive wrestlers looking to elevate their skills to championship level.
                   </p>
