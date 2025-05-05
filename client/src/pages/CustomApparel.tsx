@@ -719,20 +719,58 @@ export default function CustomApparel() {
               <h2 className="text-3xl font-serif font-semibold mb-6 text-center">Request a Consultation</h2>
               <p className="text-lg mb-8 text-center">Fill out the form below to discuss your team's custom apparel needs.</p>
               
-              <form className="space-y-6 bg-white p-8 shadow-sm">
+              <form 
+                className="space-y-6 bg-white p-8 shadow-sm"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    organization: formData.get('organization'),
+                    sport: formData.get('sport'),
+                    details: formData.get('details'),
+                    type: 'custom-apparel'
+                  };
+                  
+                  try {
+                    const response = await fetch('/api/contact-submission', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(data)
+                    });
+                    
+                    if (response.ok) {
+                      alert('Thank you for your submission! We will be in touch soon.');
+                      e.currentTarget.reset();
+                    } else {
+                      throw new Error('Failed to submit form');
+                    }
+                  } catch (error) {
+                    console.error('Error submitting form:', error);
+                    alert('There was an error submitting your request. Please try again or contact us directly.');
+                  }
+                }}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Your Name</label>
+                    <label className="block text-sm font-medium mb-2" htmlFor="name">Your Name</label>
                     <input 
                       type="text" 
+                      id="name"
+                      name="name"
                       className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Email Address</label>
+                    <label className="block text-sm font-medium mb-2" htmlFor="email">Email Address</label>
                     <input 
                       type="email" 
+                      id="email"
+                      name="email"
                       className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
                       required
                     />
@@ -741,17 +779,21 @@ export default function CustomApparel() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Organization/Team Name</label>
+                    <label className="block text-sm font-medium mb-2" htmlFor="organization">Organization/Team Name</label>
                     <input 
                       type="text" 
+                      id="organization"
+                      name="organization"
                       className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Sport/Activity</label>
+                    <label className="block text-sm font-medium mb-2" htmlFor="sport">Sport/Activity</label>
                     <input 
                       type="text" 
+                      id="sport"
+                      name="sport"
                       className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
                       required
                     />
@@ -759,8 +801,10 @@ export default function CustomApparel() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Project Details</label>
+                  <label className="block text-sm font-medium mb-2" htmlFor="details">Project Details</label>
                   <textarea 
+                    id="details"
+                    name="details"
                     className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none min-h-[150px]"
                     placeholder="Tell us about your team, your design ideas, timeline, and any specific requirements."
                     required
