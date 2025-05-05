@@ -181,6 +181,10 @@ export function FeaturedEvents() {
                       src="/assets/banners/texas-banner.png" 
                       alt="Texas Recruiting Clinic Banner" 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/event-placeholder.png';
+                      }}
                     />
                   </div>
                   <p className="text-gray-700 mb-4 text-sm flex-grow">
@@ -250,6 +254,10 @@ export function FeaturedEvents() {
                       src="/assets/banners/birmingham-banner.png" 
                       alt="Birmingham Slam Camp Banner" 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/event-placeholder.png';
+                      }}
                     />
                   </div>
                   <p className="text-gray-700 mb-4 text-sm flex-grow">
@@ -319,6 +327,10 @@ export function FeaturedEvents() {
                       src="/assets/banners/vegas-banner.png" 
                       alt="National Champ Camp Banner" 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/event-placeholder.png';
+                      }}
                     />
                   </div>
                   <p className="text-gray-700 mb-4 text-sm flex-grow">

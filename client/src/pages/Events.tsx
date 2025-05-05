@@ -290,6 +290,10 @@ export default function Events() {
                       src={events[0].image} 
                       alt={events[0].title} 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/event-placeholder.png';
+                      }}
                     />
                     <video 
                       src={texasRecruitingVideo}
@@ -396,6 +400,10 @@ export default function Events() {
                       src={events[1].image} 
                       alt={events[1].title} 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/event-placeholder.png';
+                      }}
                     />
                     <video 
                       src={coryLandVideo}

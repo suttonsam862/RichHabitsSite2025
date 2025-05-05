@@ -90,6 +90,10 @@ export function CustomApparelShowcase() {
                   src={winnerShot} 
                   alt="Championship moment in Rich Habits gear" 
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/apparel-placeholder.png';
+                  }}
                 />
               </div>
             </div>
