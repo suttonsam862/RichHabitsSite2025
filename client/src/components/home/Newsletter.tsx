@@ -25,8 +25,19 @@ export function Newsletter() {
     setIsSubmitting(true);
     
     try {
-      // This would normally send the data to an API
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network request
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Subscription failed');
+      }
       
       toast({
         title: "Successfully subscribed!",
@@ -35,9 +46,11 @@ export function Newsletter() {
       
       setEmail("");
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Please try again later.';
+      
       toast({
         title: "Subscription failed",
-        description: "Please try again later.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

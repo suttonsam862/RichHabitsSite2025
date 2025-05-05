@@ -37,6 +37,10 @@ const FruitGallery = () => {
         src="/images/fruits/fruit-gallery.png" 
         alt="Exotic fruits from Fruit Hunters" 
         className="w-full rounded-lg shadow-md"
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = '/images/fruit-placeholder.png';
+        }}
       />
     </div>
   );
@@ -62,7 +66,15 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
       <div className="flex flex-col items-center mb-6">
         {logoSrc ? (
           <div className="h-24 flex items-center justify-center mb-4">
-            <img src={logoSrc} alt={name} className="max-h-full max-w-full object-contain" />
+            <img 
+              src={logoSrc} 
+              alt={name} 
+              className="max-h-full max-w-full object-contain" 
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/images/logo-placeholder.png';
+              }}
+            />
           </div>
         ) : (
           <div className="h-24 w-full flex items-center justify-center mb-4 bg-gray-100 rounded-md">

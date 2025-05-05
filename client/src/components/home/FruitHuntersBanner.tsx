@@ -16,6 +16,10 @@ const FruitSection: React.FC<FruitSectionProps> = ({ src, alt, title, descriptio
           src={src} 
           alt={alt}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/images/fruit-placeholder.png';
+          }}
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
           <h3 className="text-white text-xs font-bold">{title}</h3>

@@ -55,6 +55,10 @@ export function CustomApparelShowcase() {
                   src={homewoodSinglet} 
                   alt="Homewood Wrestling singlet" 
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/apparel-placeholder.png';
+                  }}
                 />
               </div>
               <div className="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all h-48 md:h-64">
@@ -62,6 +66,10 @@ export function CustomApparelShowcase() {
                   src={femaleWrestler} 
                   alt="Female wrestler in Rich Habits gear" 
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/apparel-placeholder.png';
+                  }}
                 />
               </div>
             </div>
@@ -71,6 +79,10 @@ export function CustomApparelShowcase() {
                   src={jordanSinglet} 
                   alt="Jordan High School singlet" 
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/apparel-placeholder.png';
+                  }}
                 />
               </div>
               <div className="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all h-48 md:h-64">
