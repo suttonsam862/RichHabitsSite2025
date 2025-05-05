@@ -82,25 +82,34 @@ export function SlamCampVideo() {
               transition={{ duration: 0.5, delay: 0.4 }}
               viewport={{ once: true }}
               className="relative h-[500px] bg-black rounded-lg overflow-hidden"
+              style={{ 
+                background: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("/assets/DSC09374--.JPG")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+               }}
             >
-              <video
-                ref={videoRef}
-                src="/videos/0425.mov"
-                className="w-full h-full object-cover"
-                title="Birmingham Slam Camp Video"
-                muted
-                autoPlay
-                loop
-                playsInline
-                controls={false}
-                onLoadedMetadata={(e) => {
-                  if (videoRef.current) {
-                    videoRef.current.play().catch(err => console.log('Autoplay failed:', err));
-                  }
-                }}
-              ></video>
+              {/* Play a video in background with fallback image */}
+              <div className="absolute inset-0 z-0 bg-black">
+                <video
+                  ref={videoRef}
+                  src="/videos/slamcamp.mp4"
+                  className="w-full h-full object-cover"
+                  poster="/assets/DSC09374--.JPG"
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                  controls={false}
+                  preload="auto"
+                  onLoadedMetadata={(e) => {
+                    if (videoRef.current) {
+                      videoRef.current.play().catch(err => console.log('Autoplay failed:', err));
+                    }
+                  }}
+                ></video>
+              </div>
               
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 z-10">
                 <p className="text-white font-medium">
                   Limited to 200 wrestlers - Secure your spot today!
                 </p>

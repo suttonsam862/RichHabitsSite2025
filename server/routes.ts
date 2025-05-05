@@ -29,15 +29,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/designs', express.static(path.join(process.cwd(), 'public/designs')));
   
   // Serve video files with proper headers
-  app.use('/videos', express.static(path.join(process.cwd(), 'public/videos'), {
-    setHeaders: (res, path, stat) => {
-      res.set({
-        'Content-Type': 'video/quicktime',
+  app.get('/videos/:filename', (req, res) => {
+    const videoPath = path.join(process.cwd(), 'public/videos', req.params.filename);
+    res.sendFile(videoPath, {
+      headers: {
+        'Content-Type': 'video/mp4',
         'Accept-Ranges': 'bytes',
         'Cache-Control': 'public, max-age=86400',
-      });
-    }
-  }));
+      }
+    });
+  });
   // API routes for products
   app.get("/api/products", async (req, res) => {
     try {
