@@ -723,34 +723,37 @@ export default function CustomApparel() {
                 className="space-y-6 bg-white p-8 shadow-sm"
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  const formData = new FormData(e.currentTarget);
+                  
+                  // Get form data
+                  const formEl = e.currentTarget;
+                  const name = formEl.name.value;
+                  const email = formEl.email.value;
+                  const phone = formEl.phone?.value || '';
+                  const organizationName = formEl.organization.value;
+                  const sport = formEl.sport.value;
+                  const details = formEl.details.value;
+                  
+                  // Prepare data object
                   const data = {
-                    name: formData.get('name'),
-                    email: formData.get('email'),
-                    organization: formData.get('organization'),
-                    sport: formData.get('sport'),
-                    details: formData.get('details'),
-                    type: 'custom-apparel'
+                    name,
+                    email,
+                    phone,
+                    organizationName,
+                    sport,
+                    details
                   };
                   
                   try {
-                    const response = await fetch('/api/contact-submission', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify(data)
-                    });
+                    // Import and use the submission function
+                    const { submitCustomApparelInquiry } = await import('@/lib/shopify');
+                    await submitCustomApparelInquiry(data);
                     
-                    if (response.ok) {
-                      alert('Thank you for your submission! We will be in touch soon.');
-                      e.currentTarget.reset();
-                    } else {
-                      throw new Error('Failed to submit form');
-                    }
-                  } catch (error) {
-                    console.error('Error submitting form:', error);
-                    alert('There was an error submitting your request. Please try again or contact us directly.');
+                    // Success message
+                    alert('Thank you for your inquiry! We will be in touch soon.');
+                    formEl.reset();
+                  } catch (err) {
+                    console.error('Error submitting form:', err);
+                    alert('There was an error submitting your inquiry. Please try again or contact us directly.');
                   }
                 }}
               >
@@ -798,6 +801,16 @@ export default function CustomApparel() {
                       required
                     />
                   </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2" htmlFor="phone">Phone Number (Optional)</label>
+                  <input 
+                    type="tel" 
+                    id="phone"
+                    name="phone"
+                    className="w-full p-3 border border-[hsl(var(--shadow))] focus:border-primary focus:outline-none"
+                  />
                 </div>
                 
                 <div>
