@@ -122,7 +122,7 @@ export function FeaturedEvents() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 h-[500px] flex flex-col"
+                  className="relative overflow-hidden bg-white shadow-lg rounded-sm p-4 h-[280px] flex flex-col"
                   style={{ 
                     border: '2px solid',
                     borderImageSlice: 1,
@@ -147,7 +147,7 @@ export function FeaturedEvents() {
                     style={{ borderColor: '#002868' }}
                   />
                   
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" 
                       style={{
                         background: 'linear-gradient(90deg, #bf0a30, #002868)',
@@ -167,27 +167,13 @@ export function FeaturedEvents() {
                     </span>
                   </h3>
                   
-                  <div className="mb-2">
-                    <p className="text-sm text-gray-600"><strong>Date:</strong> June 12-13, 2025</p>
-                    <p className="text-sm text-gray-600"><strong>Location:</strong> Arlington Martin High School</p>
-                    <p className="text-sm text-gray-600"><strong>Price:</strong> $249</p>
+                  <div className="grid grid-cols-3 gap-1 mb-2 text-xs">
+                    <p className="text-gray-600"><strong>Date:</strong> June 12-13, 2025</p>
+                    <p className="text-gray-600"><strong>Location:</strong> Arlington</p>
+                    <p className="text-gray-600"><strong>Price:</strong> $249</p>
                   </div>
                   
-                  <div className="relative mb-4 w-full h-20 overflow-hidden rounded-md">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent z-10 opacity-30"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-10 opacity-30"></div>
-                    <img 
-                      src="/assets/banners/texas-banner.png" 
-                      alt="Texas Recruiting Clinic Banner" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/images/event-placeholder.png';
-                      }}
-                    />
-                  </div>
-                  <p className="text-gray-700 mb-4 text-sm flex-grow">
+                  <p className="text-gray-700 mb-3 text-xs flex-grow">
                     A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. 
                     Features skill development with college coaches and recruiting workshops.
                   </p>
@@ -204,7 +190,7 @@ export function FeaturedEvents() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 h-[500px] flex flex-col"
+                  className="relative overflow-hidden bg-white shadow-lg rounded-sm p-4 h-[280px] flex flex-col"
                   style={{ 
                     background: 'linear-gradient(135deg, rgba(255,125,0,0.05) 0%, rgba(255,77,0,0.1) 100%)',
                     border: '2px solid',
@@ -230,7 +216,7 @@ export function FeaturedEvents() {
                     style={{ borderColor: '#ff4d00' }}
                   />
                   
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm bg-orange-600 text-white">
                       Wrestling
                     </span>
@@ -240,27 +226,13 @@ export function FeaturedEvents() {
                     BIRMINGHAM SLAM CAMP
                   </h3>
                   
-                  <div className="mb-2">
-                    <p className="text-sm text-gray-600"><strong>Date:</strong> June 19-21, 2025</p>
-                    <p className="text-sm text-gray-600"><strong>Location:</strong> Clay Chalkville Middle School</p>
-                    <p className="text-sm text-gray-600"><strong>Price:</strong> $249</p>
+                  <div className="grid grid-cols-3 gap-1 mb-2 text-xs">
+                    <p className="text-gray-600"><strong>Date:</strong> June 19-21, 2025</p>
+                    <p className="text-gray-600"><strong>Location:</strong> Clay-Chalkville</p>
+                    <p className="text-gray-600"><strong>Price:</strong> $249</p>
                   </div>
                   
-                  <div className="relative mb-4 w-full h-20 overflow-hidden rounded-md">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white z-10"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent z-10 opacity-30"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-10 opacity-30"></div>
-                    <img 
-                      src="/assets/banners/birmingham-banner.png" 
-                      alt="Birmingham Slam Camp Banner" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/images/event-placeholder.png';
-                      }}
-                    />
-                  </div>
-                  <p className="text-gray-700 mb-4 text-sm flex-grow">
+                  <p className="text-gray-700 mb-3 text-xs flex-grow">
                     Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, 
                     and the energy feels bigger than wrestling. Not just training — it's a statement.
                   </p>
