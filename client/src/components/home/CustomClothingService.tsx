@@ -4,29 +4,17 @@ import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-// Import images directly as modules
-import brooksMockup from "../../assets/BrooksMockupFinal.png";
-import caneNationMockup from "../../assets/CaneNationMockup.png";
-import normalChromeMockup from "../../assets/NormalChromeMockup1.png";
-import nickPoloMockup from "../../assets/NickPoloMockupFinal.png";
-import elevateMockup from "../../assets/ElevateMockup5.png";
-import braggMockup from "../../assets/BraggMockup.png";
-import blueRashguardMockup from "../../assets/BlueRashguardMockup.png";
-import blackRashguardMockup from "../../assets/BlackRashgaurdMockup.png";
-import classicRashguardMockup from "../../assets/ClassicRashguardMockup.png";
-
-
-// Define the design images array using imported assets
+// Define design images with absolute URLs to attached_assets
 const designImages = [
-  brooksMockup,
-  caneNationMockup,
-  normalChromeMockup,
-  nickPoloMockup,
-  elevateMockup,
-  braggMockup,
-  blueRashguardMockup,
-  blackRashguardMockup,
-  classicRashguardMockup
+  "/attached_assets/BrooksMockupFinal.png",
+  "/attached_assets/CaneNationMockup.png",
+  "/attached_assets/NormalChromeMockup1.png",
+  "/attached_assets/NickPoloMockupFinal.png",
+  "/attached_assets/ElevateMockup5.png",
+  "/attached_assets/BraggMockup.png",
+  "/attached_assets/BlueRashguardMockup.png",
+  "/attached_assets/BlackRashgaurdMockup.png",
+  "/attached_assets/ClassicRashguardMockup.png"
 ];
 
 export function CustomClothingService() {
@@ -40,6 +28,7 @@ export function CustomClothingService() {
     
     return () => clearInterval(interval);
   }, []);
+  
   return (
     <section className="py-20 bg-[hsl(var(--secondary))]">
       <Container>
@@ -50,7 +39,7 @@ export function CustomClothingService() {
                 Custom Team Apparel
               </AnimatedUnderline>
             </h2>
-            <p className="text-lg mb-12">AI-enhanced design process for teams and organizations.</p>
+            <p className="text-lg mb-12">Professional design process for teams and organizations.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -62,7 +51,7 @@ export function CustomClothingService() {
             >
               <div className="mb-6">
                 <h3 className="text-xl font-medium mb-3">Smart Design Process</h3>
-                <p className="text-gray-700">Our AI-powered design system helps create custom apparel that perfectly represents your team's identity while optimizing for performance.</p>
+                <p className="text-gray-700">Our advanced design system helps create custom apparel that perfectly represents your team's identity while optimizing for performance.</p>
               </div>
               
               <div className="mb-6">
@@ -99,6 +88,12 @@ export function CustomClothingService() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
+                    onError={(e) => {
+                      // Handle image loading error
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/product-placeholder.png';
+                      console.log(`Failed to load image: ${designImages[currentImageIndex]}`);
+                    }}
                   />
                 </AnimatePresence>
                 
