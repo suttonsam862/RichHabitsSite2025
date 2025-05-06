@@ -21,57 +21,57 @@ export default function CustomApparel() {
     "/images/wrestlers/DSC09374--.JPG"
   ];
   
-  // All our design images
+  // Design images using attached assets
   const designImages = [
-    "/assets/designs/athens.png",
-    "/assets/designs/deathsquad.png",
-    "/assets/designs/blackrashguard.png",
-    "/assets/designs/bluerashguard.png",
-    "/assets/designs/bragg.png",
-    "/assets/designs/brooks.png",
-    "/assets/designs/brooksfinal.png",
-    "/assets/designs/canenation.png",
-    "/assets/designs/classicgear.png",
-    "/assets/designs/elevatemockup.png", 
-    "/assets/designs/ltds.png",
-    "/assets/designs/nopaws.png",
-    "/assets/designs/northside.png",
-    "/assets/designs/ou.png",
-    "/assets/designs/pittlogo.png",
-    "/assets/designs/polo.png",
+    "/attached_assets/Athens Mockup.png",
+    "/attached_assets/10pDeathSquad Mockup.png",
+    "/attached_assets/BlackRashgaurdMockup.png",
+    "/attached_assets/BlueRashguardMockup.png",
+    "/attached_assets/BraggMockup.png",
+    "/attached_assets/BrooksMockup.png",
+    "/attached_assets/BrooksMockupFinal.png",
+    "/attached_assets/CaneNationMockup.png",
+    "/attached_assets/ClassicRashguardMockup.png",
+    "/attached_assets/ElevateMockup5.png", 
+    "/attached_assets/LTDS Mockup.png",
+    "/attached_assets/NoPawsRanburneMockup.png",
+    "/attached_assets/Northside Takedown Mockups.png",
+    "/attached_assets/OU O.png",
+    "/attached_assets/Pitt logo.png",
+    "/attached_assets/NickPoloMockupFinal.png",
   ];
   
   // Group the designs into sets for display
   const designSets = [
     // 1st design set
     [
-      designImages[0], // athens
-      designImages[1], // deathsquad
-      designImages[7], // canenation
+      designImages[0], // Athens Mockup
+      designImages[1], // 10pDeathSquad Mockup
+      designImages[7], // CaneNationMockup
     ],
     // 2nd design set
     [
-      designImages[2], // blackrashguard
-      designImages[3], // bluerashguard
-      designImages[11], // classicgear
+      designImages[2], // BlackRashgaurdMockup
+      designImages[3], // BlueRashguardMockup
+      designImages[8], // ClassicRashguardMockup
     ],
     // 3rd design set
     [
-      designImages[4], // bragg
-      designImages[5], // brooks
-      designImages[6], // brooksfinal
+      designImages[4], // BraggMockup
+      designImages[5], // BrooksMockup
+      designImages[6], // BrooksMockupFinal
     ],
     // 4th design set
     [
-      designImages[12], // elevatemockup
-      designImages[13], // ltds
-      designImages[14], // nopaws
+      designImages[9], // ElevateMockup5
+      designImages[10], // LTDS Mockup
+      designImages[11], // NoPawsRanburneMockup
     ],
     // 5th design set
     [
-      designImages[15], // northside
-      designImages[16], // ou
-      designImages[17], // pittlogo
+      designImages[12], // Northside Takedown Mockups
+      designImages[13], // OU O
+      designImages[14], // Pitt logo
     ],
   ];
   
@@ -192,11 +192,9 @@ export default function CustomApparel() {
               <p className="text-xl md:text-2xl mb-8 max-w-3xl">
                 Elevate your team's identity with high-quality custom wrestling gear crafted for performance and unique style.
               </p>
-              <Link href="#contactForm">
-                <a className="bg-primary hover:bg-opacity-90 text-white py-3 px-8 text-lg font-semibold inline-block transition-all">
-                  Request a Quote
-                </a>
-              </Link>
+              <a href="#contactForm" className="bg-primary hover:bg-opacity-90 text-white py-3 px-8 text-lg font-semibold inline-block transition-all">
+                Request a Quote
+              </a>
             </motion.div>
           </Container>
         </section>
