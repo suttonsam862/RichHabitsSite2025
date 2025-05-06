@@ -2,11 +2,29 @@ import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Import the actual images to ensure they're properly bundled by Vite
+// Auburn images
+import auburnMens from "@assets/AuburnMen's Final.png";
+import auburnWomens from "@assets/AuburnWomens FInal.png"; 
+import auburnJV from "@assets/AuburnJV.png";
+
+// Berry images
+import berryGearPack from "@assets/Berry Middle Gear Pack.png";
+import berryGearPackV2 from "@assets/BerryGearpAckV2.png";
+
+// Coosa images
+import coosaChristianTech from "@assets/Coosa Christian Tech.png";
+import coosaChristianLogo from "@assets/CoosaChristianPNG.png";
+
+// Dora images
+import doraMensFinal from "@assets/DoraMensFinal.png";
+import doraMensSinglet from "@assets/DoraMen's Singlet.png";
+
 export function SchoolPackages() {
   const [selectedSchool, setSelectedSchool] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // School packages with actual images for each school
+  // School packages with directly imported images
   const schoolPackages = [
     {
       name: "Auburn Wrestling",
@@ -15,9 +33,9 @@ export function SchoolPackages() {
       description: "Complete gear package for Auburn's wrestling program with custom singlets, warmups, and practice gear.",
       colors: "Orange and Navy Blue",
       images: [
-        "/assets/schools/auburn_mens.png",
-        "/assets/schools/auburn_womens.png",
-        "/assets/schools/auburn_jv.png"
+        auburnMens,
+        auburnWomens,
+        auburnJV
       ]
     },
     {
@@ -27,8 +45,8 @@ export function SchoolPackages() {
       description: "Youth-focused wrestling gear designed for Berry Middle School with durable, comfortable materials.",
       colors: "Purple and Silver",
       images: [
-        "/assets/schools/berry_gear_pack.png",
-        "/assets/schools/berry_gear_pack_v2.png"
+        berryGearPack,
+        berryGearPackV2
       ]
     },
     {
@@ -38,8 +56,8 @@ export function SchoolPackages() {
       description: "Faith-based themed gear for Coosa Christian's wrestling program with high-quality materials.",
       colors: "Red and White",
       images: [
-        "/assets/schools/coosa_christian_tech.png",
-        "/assets/schools/coosa_christian_logo.png"
+        coosaChristianTech,
+        coosaChristianLogo
       ]
     },
     {
@@ -49,8 +67,8 @@ export function SchoolPackages() {
       description: "Custom team package for Dora High School featuring their traditional blue and gold colors.",
       colors: "Blue and Gold",
       images: [
-        "/assets/schools/dora_mens_final.png",
-        "/assets/schools/dora_mens_singlet.png"
+        doraMensFinal,
+        doraMensSinglet
       ]
     }
   ];
