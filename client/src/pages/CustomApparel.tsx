@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from "react";
 import { TeamGallery } from "@/components/custom-apparel/TeamGallery";
 import { FeaturedTeams } from "@/components/custom-apparel/FeaturedTeams";
 import { ClothingSetShowcase } from "@/components/custom-apparel/ClothingSetShowcase";
+import { RashguardColorways } from "@/components/custom-apparel/RashguardColorways";
+import { SchoolPackages } from "@/components/custom-apparel/SchoolPackages";
 // Testimonials component removed as requested
 
 export default function CustomApparel() {
@@ -200,6 +202,9 @@ export default function CustomApparel() {
           </Container>
         </section>
         
+        {/* School Packages Showcase */}
+        <SchoolPackages />
+        
         {/* Design Showcase Section */}
         <section className="py-24 bg-[hsl(var(--muted))]">
           <Container>
@@ -299,6 +304,9 @@ export default function CustomApparel() {
         
         {/* Complete Clothing Sets Showcase */}
         <ClothingSetShowcase />
+        
+        {/* Rashguard Colorways Showcase */}
+        <RashguardColorways />
         
         {/* Featured Teams Section */}
         <FeaturedTeams />

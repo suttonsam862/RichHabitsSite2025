@@ -20,7 +20,7 @@ export function ClothingSetShowcase() {
   // Define our clothing sets
   const clothingSets: ClothingSet[] = [
     {
-      name: "10th Planet Birmingham",
+      name: "10th Planet Birmingham - Core Collection",
       description: "Complete custom apparel package for the elite 10th Planet Jiu-Jitsu academy in Birmingham.",
       teamColor: "#000000",
       items: [
@@ -46,7 +46,87 @@ export function ClothingSetShowcase() {
         }
       ]
     },
-    // Additional clothing sets will go here as more images are provided
+    {
+      name: "10th Planet Birmingham - Rashguards",
+      description: "Performance rashguards designed for jiu-jitsu and grappling training.",
+      teamColor: "#5506A6", // Purple color for the Planet rashguards
+      items: [
+        {
+          name: "Classic Rashguard",
+          imgSrc: "/attached_assets/ClassicRashguardMockup.png",
+          description: "White and black rashguard with red accents and 10th Planet Birmingham branding."
+        },
+        {
+          name: "Purple Rashguard",
+          imgSrc: "/attached_assets/Purple Rashguard.png",
+          description: "Black and purple signature rashguard with number 24 on back."
+        },
+        {
+          name: "Brown Rashguard",
+          imgSrc: "/attached_assets/BrownRashguardMockup.png",
+          description: "Black and brown rashguard with 10th Planet Birmingham branding."
+        },
+        {
+          name: "White Rashguard",
+          imgSrc: "/attached_assets/WhiteRashguardMockup.png",
+          description: "Black and white rashguard with 10th Planet Birmingham branding."
+        }
+      ]
+    },
+    {
+      name: "Auburn High School",
+      description: "Complete gear package for Auburn High School wrestling team.",
+      teamColor: "#0039A6", // Auburn blue
+      items: [
+        {
+          name: "Team Singlet",
+          imgSrc: "/attached_assets/AuburnMen's Final.png",
+          description: "Official Auburn team singlet with school logo and custom design."
+        },
+        {
+          name: "Women's Package",
+          imgSrc: "/attached_assets/AuburnWomens FInal.png",
+          description: "Complete women's team package including compression shorts and singlet."
+        },
+        {
+          name: "JV Package",
+          imgSrc: "/attached_assets/AuburnJV.png",
+          description: "Junior varsity gear package with Auburn Wrestling branding."
+        },
+        {
+          name: "Full Team Package",
+          imgSrc: "/attached_assets/Auburn JV Pack Final.png",
+          description: "Comprehensive Auburn team apparel package with multiple gear options."
+        }
+      ]
+    },
+    {
+      name: "Berry Middle School",
+      description: "Custom apparel package for Berry Middle School Jaguars wrestling team.",
+      teamColor: "#4CB4FD", // Berry blue
+      items: [
+        {
+          name: "Team Package",
+          imgSrc: "/attached_assets/Berry Middle Gear Pack.png",
+          description: "Complete Berry Middle School team package with Jaguar branding."
+        },
+        {
+          name: "Jaguar Collection",
+          imgSrc: "/attached_assets/BerryGearpAckV2.png",
+          description: "Berry 'Jaguars' branded training gear collection."
+        },
+        {
+          name: "Training Apparel",
+          imgSrc: "/attached_assets/Coosa Christian Tech.png",
+          description: "Performance training apparel with lightweight, moisture-wicking fabric."
+        },
+        {
+          name: "Signature Jogger",
+          imgSrc: "/attached_assets/SweatsSmallLogo.png",
+          description: "Signature jogger sweatpants with small logo branding."
+        }
+      ]
+    }
   ];
   
   // Auto-rotate through the sets
