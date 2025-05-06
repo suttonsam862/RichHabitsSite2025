@@ -1,10 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-// Image paths
-const homewoodSinglet = "/designs/brooksfinal.png";
-const mortimerJordanSinglet = "/designs/bragg.png";
-const clayChalkvilleSinglet = "/designs/athens.png";
+// Image paths with baseUrl for production reliability
+const baseUrl = window.location.origin;
+const homewoodSinglet = `${baseUrl}/designs/brooksfinal.png`;
+const mortimerJordanSinglet = `${baseUrl}/designs/bragg.png`;
+const clayChalkvilleSinglet = `${baseUrl}/designs/athens.png`;
 
 interface Team {
   name: string;
@@ -53,7 +54,7 @@ export function FeaturedTeams() {
                   className="h-full object-contain transform hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/designs/bragg.png';
+                    e.currentTarget.src = `${baseUrl}/designs/bragg.png`;
                   }}
                 />
               </div>

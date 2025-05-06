@@ -3,18 +3,19 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 // Design image paths - using actual designs instead of wrestler photos
-const design1 = "/designs/athens.png";
-const design2 = "/designs/brooksfinal.png";
-const design3 = "/designs/bragg.png";
-const design4 = "/designs/canenation.png";
-const design5 = "/designs/elevate.png";
-const design6 = "/designs/ltds.png";
-const design7 = "/designs/classicrashguard.png";
-const design8 = "/designs/bluerashguard.png";
-const design9 = "/designs/blackrashguard.png";
-const design10 = "/designs/nopaws.png";
-const design11 = "/designs/deathsquad.png";
-const design12 = "/designs/nickpolo.png";
+const baseUrl = window.location.origin;
+const design1 = `${baseUrl}/designs/athens.png`;
+const design2 = `${baseUrl}/designs/brooksfinal.png`;
+const design3 = `${baseUrl}/designs/bragg.png`;
+const design4 = `${baseUrl}/designs/canenation.png`;
+const design5 = `${baseUrl}/designs/elevate.png`;
+const design6 = `${baseUrl}/designs/ltds.png`;
+const design7 = `${baseUrl}/designs/classicrashguard.png`;
+const design8 = `${baseUrl}/designs/bluerashguard.png`;
+const design9 = `${baseUrl}/designs/blackrashguard.png`;
+const design10 = `${baseUrl}/designs/nopaws.png`;
+const design11 = `${baseUrl}/designs/deathsquad.png`;
+const design12 = `${baseUrl}/designs/nickpolo.png`;
 
 interface GalleryImage {
   src: string;
@@ -120,7 +121,7 @@ export function TeamGallery() {
                     className="h-full object-contain hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/designs/bragg.png';
+                      e.currentTarget.src = `${baseUrl}/designs/bragg.png`;
                     }}
                   />
                   {image.team && (
@@ -146,7 +147,7 @@ export function TeamGallery() {
                         className="h-full object-contain rounded-md"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = '/designs/bragg.png';
+                          e.currentTarget.src = `${baseUrl}/designs/bragg.png`;
                         }}
                       />
                     </div>
