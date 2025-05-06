@@ -26,12 +26,19 @@ export default function CustomApparel() {
   
   // Design images using public assets folder for better reliability
   const designImages = [
+    // Primary images that we've already copied to designs folder
     "/assets/designs/BlackRashgaurdMockup.png",
     "/assets/designs/BlueRashguardMockup.png",
     "/assets/designs/BrooksMockupFinal.png",
     "/assets/designs/NickPoloMockupFinal.png",
     "/assets/designs/BerryGearpAckV2.png",
     "/assets/designs/ElevateMockup5.png",
+    // Additional verified images in the designs folder
+    "/assets/designs/athens.png",
+    "/assets/designs/bragg.png",
+    "/assets/designs/ltds.png",
+    "/assets/designs/nopaws.png",
+    "/assets/designs/northside.png"
   ];
   
   // Group the designs into sets for display
@@ -40,13 +47,25 @@ export default function CustomApparel() {
     [
       designImages[0], // Black Rashguard
       designImages[1], // Blue Rashguard
-      designImages[5] ? designImages[5] : designImages[0], // Elevate Mockup or fallback
+      designImages[5], // Elevate Mockup
     ],
     // 2nd design set - team gear
     [
       designImages[2], // Brooks Final
       designImages[3], // Nick Polo
       designImages[4], // Berry Gear Pack
+    ],
+    // 3rd design set - additional designs
+    [
+      designImages[6], // Athens
+      designImages[7], // Bragg
+      designImages[8], // LTDS
+    ],
+    // 4th design set - more designs
+    [
+      designImages[9], // No Paws
+      designImages[10], // Northside
+      designImages[5], // Reuse Elevate since we have odd number
     ]
   ];
   
@@ -208,7 +227,31 @@ export default function CustomApparel() {
                         className="object-contain h-full w-full"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = '/images/placeholder-design.png';
+                          console.warn(`Failed to load design image: ${target.src}`);
+                          target.onerror = null; // Prevent infinite error loop
+                          
+                          // Try to display a colored div with text instead of an image
+                          const imgContainer = target.parentElement;
+                          if (imgContainer) {
+                            // Create a div with a gradient background
+                            const colorDiv = document.createElement('div');
+                            colorDiv.className = 'w-full h-full rounded flex items-center justify-center p-4';
+                            colorDiv.style.background = 'linear-gradient(135deg, #0039A6, #4CB4FD)';
+                            colorDiv.style.color = 'white';
+                            colorDiv.style.textAlign = 'center';
+                            
+                            // Create a title for the design
+                            const designName = document.createElement('div');
+                            designName.className = 'text-xl font-bold';
+                            designName.textContent = `Rich Habits Custom Design`;
+                            
+                            // Add content to the div
+                            colorDiv.appendChild(designName);
+                            
+                            // Replace the image with the div
+                            target.style.display = 'none';
+                            imgContainer.appendChild(colorDiv);
+                          }
                         }}
                       />
                     </div>

@@ -103,22 +103,34 @@ export function SchoolPackages() {
                     console.warn(`Failed to load image: ${target.src}`);
                     target.onerror = null; // Prevent infinite error loop
                     
-                    // Try without spaces in filename
-                    if (target.src.includes(' ')) {
-                      const fixedPath = target.src.replace(/ /g, '%20');
-                      console.log('Trying URL encoded path:', fixedPath);
-                      target.src = fixedPath;
+                    // Display a colored div instead of an image
+                    const imgContainer = target.parentElement;
+                    if (imgContainer) {
+                      // Create a div with the color of the school as background
+                      const colorDiv = document.createElement('div');
+                      colorDiv.className = 'w-full h-full rounded-lg flex flex-col items-center justify-center gap-4 p-6';
+                      colorDiv.style.backgroundColor = schoolPackages[selectedPackage].color + '15';
+                      colorDiv.style.border = `2px solid ${schoolPackages[selectedPackage].color}`;
                       
-                      // Add another error handler if the space fix fails
-                      target.onerror = () => {
-                        console.warn(`Space-fixed path also failed: ${fixedPath}`);
-                        target.src = "/images/product-placeholder.png";
-                      };
-                      return;
+                      // Create a title for the school
+                      const schoolName = document.createElement('div');
+                      schoolName.className = 'text-2xl font-bold';
+                      schoolName.style.color = schoolPackages[selectedPackage].color;
+                      schoolName.textContent = schoolPackages[selectedPackage].name;
+                      
+                      // Create a subtitle
+                      const subtitle = document.createElement('div');
+                      subtitle.className = 'text-lg text-gray-600 text-center';
+                      subtitle.textContent = 'Complete Team Package';
+                      
+                      // Add content to the div
+                      colorDiv.appendChild(schoolName);
+                      colorDiv.appendChild(subtitle);
+                      
+                      // Replace the image with the div
+                      target.style.display = 'none';
+                      imgContainer.appendChild(colorDiv);
                     }
-                    
-                    // Default fallback
-                    target.src = "/images/product-placeholder.png";
                   }}
                 />
               </div>
