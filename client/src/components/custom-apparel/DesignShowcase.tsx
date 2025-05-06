@@ -2,63 +2,101 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 
+// Import actual design mockups directly for reliable loading
+// Team designs mockups
+import athensMockup from "@assets/Athens Mockup.png";
+import ltdsMockup from "@assets/LTDS Mockup.png"; 
+import ltdsMockups from "@assets/LTDS Mockups.png";
+import brooksMockup from "@assets/BrooksMockup.png";
+import brooksMockupFinal from "@assets/BrooksMockupFinal.png";
+
+// Performance gear mockups
+import braggMockup from "@assets/BraggMockup.png";
+import elevateMockup from "@assets/ElevateMockup5.png";
+import caneNationMockup from "@assets/CaneNationMockup.png";
+import northsideDesign from "@assets/Northside Takedown Mockups.png";
+
+// Apparel mockups
+import deathSquadMockup from "@assets/10pDeathSquad Mockup.png";
+import planetShorts from "@assets/10thPlanet Shorts.png";
+import planetCrewneck from "@assets/10th Planet Crewneck.png";
+import planetSweats from "@assets/10th Planet Sweats.png";
+
 export function DesignShowcase() {
   const [currentDesignSet, setCurrentDesignSet] = useState(0);
   
-  // Design sets with gradient backgrounds instead of images
+  // Design sets with actual mockup images
   const designSets = [
-    // Set 1: Team Singlets
+    // Set 1: Team Design Mockups
     [
       { 
-        name: "Team Singlet Designs", 
-        gradient: "linear-gradient(135deg, #0039A6, #4CB4FD)",
-        description: "Customized singlets for wrestling teams with durable materials"
+        name: "Athens Wrestling", 
+        description: "Team gear for Athens wrestling program",
+        image: athensMockup
       },
       { 
-        name: "School Branding", 
-        gradient: "linear-gradient(135deg, #6B21A8, #9333EA)",
-        description: "School colors and logos designed for maximum impact"
+        name: "Brooks Team Design", 
+        description: "Custom design for Brooks wrestling team",
+        image: brooksMockupFinal
       },
       { 
-        name: "Tournament Gear", 
-        gradient: "linear-gradient(135deg, #991B1B, #F87171)",
-        description: "Special designs for tournament and competitive events"
+        name: "LTDS Apparel", 
+        description: "Custom apparel for LTDS wrestling program",
+        image: ltdsMockup
       }
     ],
-    // Set 2: Training Apparel
+    // Set 2: Performance Gear
     [
       { 
-        name: "Training Shirts", 
-        gradient: "linear-gradient(135deg, #064E3B, #34D399)",
-        description: "Comfortable training shirts with moisture-wicking fabric"
+        name: "Bragg Wrestling", 
+        description: "Custom gear for Bragg wrestling team",
+        image: braggMockup
       },
       { 
-        name: "Practice Shorts", 
-        gradient: "linear-gradient(135deg, #1E3A8A, #93C5FD)",
-        description: "Durable practice shorts designed for movement"
+        name: "Elevate Performance", 
+        description: "Elevate wrestling team apparel design",
+        image: elevateMockup
       },
       { 
-        name: "Team Warmups", 
-        gradient: "linear-gradient(135deg, #3F3F46, #A1A1AA)",
-        description: "Professional warmup sets for pre-competition"
+        name: "Cane Nation", 
+        description: "Cane Nation team competition gear",
+        image: caneNationMockup
       }
     ],
-    // Set 3: Performance Gear
+    // Set 3: Apparel Collections
     [
       { 
-        name: "Compression Gear", 
-        gradient: "linear-gradient(135deg, #831843, #EC4899)",
-        description: "Performance compression wear for training and recovery"
+        name: "10th Planet Shorts", 
+        description: "Training shorts for serious wrestlers",
+        image: planetShorts
       },
       { 
-        name: "Headgear Design", 
-        gradient: "linear-gradient(135deg, #422006, #EAB308)",
-        description: "Custom headgear with team branding and colors"
+        name: "10th Planet Crewneck", 
+        description: "Team crewneck with premium materials",
+        image: planetCrewneck
       },
       { 
-        name: "Accessories", 
-        gradient: "linear-gradient(135deg, #0F172A, #475569)",
-        description: "Branded bags, towels, and other team accessories"
+        name: "10th Planet Sweats", 
+        description: "Team sweatpants with custom branding",
+        image: planetSweats
+      }
+    ],
+    // Set 4: Additional Designs
+    [
+      { 
+        name: "Death Squad Custom", 
+        description: "Death Squad team design package",
+        image: deathSquadMockup
+      },
+      { 
+        name: "Northside Takedown", 
+        description: "Northside Takedown tournament gear",
+        image: northsideDesign
+      },
+      { 
+        name: "Multiple Design Collections", 
+        description: "View multiple mockups for your team",
+        image: ltdsMockups
       }
     ]
   ];
@@ -98,16 +136,54 @@ export function DesignShowcase() {
                   key={index} 
                   className="bg-white p-3 shadow-md flex items-center justify-center overflow-hidden h-[450px]"
                 >
-                  <div 
-                    className="w-full h-full rounded flex flex-col items-center justify-center p-8 text-white"
-                    style={{ background: design.gradient }}
-                  >
-                    <div className="text-center">
-                      <h3 className="text-2xl font-bold mb-4">{design.name}</h3>
-                      <p className="text-lg">{design.description}</p>
-                      <div className="mt-6 p-4 bg-white/20 rounded">
-                        <span className="text-xl">Rich Habits Custom Design</span>
-                      </div>
+                  <div className="w-full h-full flex flex-col items-center justify-center relative">
+                    {/* Image */}
+                    <img
+                      src={design.image}
+                      alt={design.name}
+                      className="object-contain w-full h-full"
+                      onError={(e) => {
+                        // If image fails to load, show a styled div with design info instead
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        
+                        // Find the parent container
+                        const container = target.parentElement;
+                        if (container) {
+                          // Add a styled div with design information
+                          const fallbackDiv = document.createElement('div');
+                          fallbackDiv.className = 'w-full h-full rounded flex flex-col items-center justify-center p-8 text-white';
+                          
+                          // Generate a unique gradient based on the design name for visual variety
+                          const gradients = [
+                            "linear-gradient(135deg, #0039A6, #4CB4FD)",
+                            "linear-gradient(135deg, #6B21A8, #9333EA)",
+                            "linear-gradient(135deg, #991B1B, #F87171)",
+                            "linear-gradient(135deg, #831843, #EC4899)",
+                            "linear-gradient(135deg, #422006, #EAB308)",
+                            "linear-gradient(135deg, #064E3B, #34D399)"
+                          ];
+                          fallbackDiv.style.background = gradients[index % gradients.length];
+                          
+                          fallbackDiv.innerHTML = `
+                            <div class="text-center">
+                              <h3 class="text-2xl font-bold mb-4">${design.name}</h3>
+                              <p class="text-lg">${design.description}</p>
+                              <div class="mt-6 p-4 bg-white/20 rounded">
+                                <span class="text-xl">Rich Habits Custom Design</span>
+                              </div>
+                            </div>
+                          `;
+                          
+                          container.appendChild(fallbackDiv);
+                        }
+                      }}
+                    />
+                    
+                    {/* Caption overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
+                      <h3 className="text-lg font-bold">{design.name}</h3>
+                      <p className="text-sm">{design.description}</p>
                     </div>
                   </div>
                 </div>

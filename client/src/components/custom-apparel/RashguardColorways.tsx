@@ -2,35 +2,54 @@ import { useState } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Import actual rashguard images directly
+import blackRashguard from "@assets/BlackRashgaurdMockup.png";
+import blueRashguard from "@assets/BlueRashguardMockup.png";
+import brownRashguard from "@assets/BrownRashguardMockup.png";
+import whiteRashguard from "@assets/WhiteRashguardMockup.png";
+import purpleRashguard from "@assets/Purple Rashguard.png";
+import classicRashguard from "@assets/ClassicRashguardMockup.png";
+
 export function RashguardColorways() {
   const [selectedColorway, setSelectedColorway] = useState(0);
   
-  // Use color gradients instead of images for reliability
+  // Rashguard colorways with actual images and matching gradients for fallbacks
   const colorways = [
     {
       name: "Black Rashguard",
       gradient: "linear-gradient(135deg, #111111, #333333)",
-      description: "Classic black rashguard with subtle design elements"
+      description: "Classic black rashguard with subtle design elements",
+      image: blackRashguard
     },
     {
       name: "Blue Rashguard",
       gradient: "linear-gradient(135deg, #1E3A8A, #60A5FA)",
-      description: "Vibrant blue rashguard for high visibility on the mat"
+      description: "Vibrant blue rashguard for high visibility on the mat",
+      image: blueRashguard
     },
     {
       name: "Brown Rashguard",
       gradient: "linear-gradient(135deg, #78350F, #B45309)",
-      description: "Earthy brown rashguard with premium feel"
+      description: "Earthy brown rashguard with premium feel",
+      image: brownRashguard
     },
     {
       name: "Purple Rashguard",
       gradient: "linear-gradient(135deg, #581C87, #A855F7)",
-      description: "Rich purple rashguard with dynamic design"
+      description: "Rich purple rashguard with dynamic design",
+      image: purpleRashguard
     },
     {
       name: "White Rashguard",
       gradient: "linear-gradient(135deg, #D1D5DB, #F9FAFB)",
-      description: "Clean white rashguard, perfect for custom graphics"
+      description: "Clean white rashguard, perfect for custom graphics",
+      image: whiteRashguard
+    },
+    {
+      name: "Classic Rashguard",
+      gradient: "linear-gradient(135deg, #065F46, #059669)",
+      description: "Traditional design with premium construction",
+      image: classicRashguard
     }
   ];
 
@@ -121,16 +140,44 @@ export function RashguardColorways() {
                   className="h-full flex flex-col"
                 >
                   <div className="flex-1 flex items-center justify-center">
-                    <div 
-                      className="w-full h-[400px] rounded-lg flex items-center justify-center"
-                      style={{ background: colorways[selectedColorway].gradient }}
-                    >
-                      <div className="text-white text-center p-8">
-                        <h3 className="text-3xl font-bold mb-4">{colorways[selectedColorway].name}</h3>
-                        <p className="text-xl">{colorways[selectedColorway].description}</p>
-                        <div className="mt-10 inline-block bg-white/20 px-6 py-3 rounded">
-                          <span className="text-xl">Rich Habits Wrestling</span>
-                        </div>
+                    <div className="w-full h-[400px] rounded-lg overflow-hidden bg-white relative">
+                      {/* Display the actual rashguard image */}
+                      <img 
+                        src={colorways[selectedColorway].image}
+                        alt={colorways[selectedColorway].name}
+                        className="w-full h-full object-contain p-4"
+                        onError={(e) => {
+                          // If image fails to load, show a styled div with colorway info instead
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          
+                          // Find the parent container
+                          const container = target.parentElement;
+                          if (container) {
+                            // Add a styled div with colorway information
+                            const fallbackDiv = document.createElement('div');
+                            fallbackDiv.className = 'w-full h-full flex items-center justify-center p-8 text-white text-center';
+                            fallbackDiv.style.background = colorways[selectedColorway].gradient;
+                            
+                            fallbackDiv.innerHTML = `
+                              <div>
+                                <h3 class="text-3xl font-bold mb-4">${colorways[selectedColorway].name}</h3>
+                                <p class="text-xl mb-8">${colorways[selectedColorway].description}</p>
+                                <div class="inline-block border-4 border-white/30 rounded-full p-8">
+                                  <span class="text-xl">Rich Habits</span>
+                                </div>
+                              </div>
+                            `;
+                            
+                            container.appendChild(fallbackDiv);
+                          }
+                        }}
+                      />
+                      
+                      {/* Caption overlay at the bottom */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent pt-10 pb-4 px-6 text-white">
+                        <h3 className="text-xl font-bold">{colorways[selectedColorway].name}</h3>
+                        <p>{colorways[selectedColorway].description}</p>
                       </div>
                     </div>
                   </div>
