@@ -24,58 +24,30 @@ export default function CustomApparel() {
     "/images/wrestlers/DSC09374--.JPG"
   ];
   
-  // Design images using attached assets
+  // Design images using public assets folder for better reliability
   const designImages = [
-    "/attached_assets/Athens Mockup.png",
-    "/attached_assets/10pDeathSquad Mockup.png",
-    "/attached_assets/BlackRashgaurdMockup.png",
-    "/attached_assets/BlueRashguardMockup.png",
-    "/attached_assets/BraggMockup.png",
-    "/attached_assets/BrooksMockup.png",
-    "/attached_assets/BrooksMockupFinal.png",
-    "/attached_assets/CaneNationMockup.png",
-    "/attached_assets/ClassicRashguardMockup.png",
-    "/attached_assets/ElevateMockup5.png", 
-    "/attached_assets/LTDS Mockup.png",
-    "/attached_assets/NoPawsRanburneMockup.png",
-    "/attached_assets/Northside Takedown Mockups.png",
-    "/attached_assets/OU O.png",
-    "/attached_assets/Pitt logo.png",
-    "/attached_assets/NickPoloMockupFinal.png",
+    "/assets/designs/BlackRashgaurdMockup.png",
+    "/assets/designs/BlueRashguardMockup.png",
+    "/assets/designs/BrooksMockupFinal.png",
+    "/assets/designs/NickPoloMockupFinal.png",
+    "/assets/designs/BerryGearpAckV2.png",
+    "/assets/designs/ElevateMockup5.png",
   ];
   
   // Group the designs into sets for display
   const designSets = [
-    // 1st design set
+    // 1st design set - rashguards
     [
-      designImages[0], // Athens Mockup
-      designImages[1], // 10pDeathSquad Mockup
-      designImages[7], // CaneNationMockup
+      designImages[0], // Black Rashguard
+      designImages[1], // Blue Rashguard
+      designImages[5] ? designImages[5] : designImages[0], // Elevate Mockup or fallback
     ],
-    // 2nd design set
+    // 2nd design set - team gear
     [
-      designImages[2], // BlackRashgaurdMockup
-      designImages[3], // BlueRashguardMockup
-      designImages[8], // ClassicRashguardMockup
-    ],
-    // 3rd design set
-    [
-      designImages[4], // BraggMockup
-      designImages[5], // BrooksMockup
-      designImages[6], // BrooksMockupFinal
-    ],
-    // 4th design set
-    [
-      designImages[9], // ElevateMockup5
-      designImages[10], // LTDS Mockup
-      designImages[11], // NoPawsRanburneMockup
-    ],
-    // 5th design set
-    [
-      designImages[12], // Northside Takedown Mockups
-      designImages[13], // OU O
-      designImages[14], // Pitt logo
-    ],
+      designImages[2], // Brooks Final
+      designImages[3], // Nick Polo
+      designImages[4], // Berry Gear Pack
+    ]
   ];
   
   useEffect(() => {

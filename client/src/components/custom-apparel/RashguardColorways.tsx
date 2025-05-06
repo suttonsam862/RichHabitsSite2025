@@ -92,21 +92,20 @@ export function RashguardColorways() {
                   console.warn(`Failed to load rashguard image: ${target.src}`);
                   target.onerror = null; // Prevent infinite error loop
                   
-                  // Try without spaces in filename
-                  if (target.src.includes(' ')) {
-                    const fixedPath = target.src.replace(/ /g, '%20');
-                    target.src = fixedPath;
+                  // Display a colored div instead of an image
+                  const imgContainer = target.parentElement;
+                  if (imgContainer) {
+                    // Create a div with the color of the rashguard as background
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'w-64 h-64 rounded-md flex items-center justify-center';
+                    colorDiv.style.backgroundColor = colorways[selectedColorway].color;
+                    colorDiv.style.color = 'white';
+                    colorDiv.innerHTML = `<span class="text-lg font-bold">${colorways[selectedColorway].name}</span>`;
                     
-                    // Add another error handler if the space fix fails
-                    target.onerror = () => {
-                      console.warn(`Space-fixed path also failed: ${fixedPath}`);
-                      target.src = "/images/product-placeholder.png";
-                    };
-                    return;
+                    // Replace the image with the div
+                    target.style.display = 'none';
+                    imgContainer.appendChild(colorDiv);
                   }
-                  
-                  // Default fallback
-                  target.src = "/images/product-placeholder.png";
                 }}
               />
             </div>
