@@ -1,37 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function SchoolPackages() {
   const [selectedSchool, setSelectedSchool] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // School packages with gradients instead of images for reliability
+  // School packages with actual images for each school
   const schoolPackages = [
     {
       name: "Auburn Wrestling",
       gradient: "linear-gradient(135deg, #E35205, #DFBD58)",
       logo: "AU",
-      description: "Complete gear package for Auburn's wrestling program with custom singlets, warmups, and practice gear."
+      description: "Complete gear package for Auburn's wrestling program with custom singlets, warmups, and practice gear.",
+      colors: "Orange and Navy Blue",
+      images: [
+        "/assets/schools/auburn_mens.png",
+        "/assets/schools/auburn_womens.png",
+        "/assets/schools/auburn_jv.png"
+      ]
     },
     {
       name: "Berry Middle School",
       gradient: "linear-gradient(135deg, #3A1B43, #8B5CF6)",
       logo: "BMS",
-      description: "Youth-focused wrestling gear designed for Berry Middle School with durable, comfortable materials."
+      description: "Youth-focused wrestling gear designed for Berry Middle School with durable, comfortable materials.",
+      colors: "Purple and Silver",
+      images: [
+        "/assets/schools/berry_gear_pack.png",
+        "/assets/schools/berry_gear_pack_v2.png"
+      ]
     },
     {
       name: "Coosa Christian",
       gradient: "linear-gradient(135deg, #9F1239, #E11D48)",
       logo: "CC",
-      description: "Faith-based themed gear for Coosa Christian's wrestling program with high-quality materials."
+      description: "Faith-based themed gear for Coosa Christian's wrestling program with high-quality materials.",
+      colors: "Red and White",
+      images: [
+        "/assets/schools/coosa_christian_tech.png",
+        "/assets/schools/coosa_christian_logo.png"
+      ]
     },
     {
       name: "Dora High School",
       gradient: "linear-gradient(135deg, #0E7490, #22D3EE)",
       logo: "DHS",
-      description: "Custom team package for Dora High School featuring their traditional blue and gold colors."
+      description: "Custom team package for Dora High School featuring their traditional blue and gold colors.",
+      colors: "Blue and Gold",
+      images: [
+        "/assets/schools/dora_mens_final.png",
+        "/assets/schools/dora_mens_singlet.png"
+      ]
     }
   ];
+
+  // Auto-rotate through images for the selected school
+  useEffect(() => {
+    // Reset image index when school changes
+    setCurrentImageIndex(0);
+    
+    // Set up image rotation interval
+    const interval = setInterval(() => {
+      const imageCount = schoolPackages[selectedSchool].images.length;
+      setCurrentImageIndex(prevIndex => 
+        prevIndex >= imageCount - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000); // Change image every 3 seconds
+    
+    return () => clearInterval(interval);
+  }, [selectedSchool, schoolPackages]);
 
   return (
     <section className="py-24">
@@ -123,18 +161,63 @@ export function SchoolPackages() {
                 transition={{ duration: 0.5 }}
                 className="bg-[hsl(var(--muted))] p-6 rounded-md h-full"
               >
-                <div className="h-[400px] mb-6 rounded-lg overflow-hidden">
-                  <div 
-                    className="w-full h-full flex items-center justify-center rounded-lg"
-                    style={{ background: schoolPackages[selectedSchool].gradient }}
-                  >
-                    <div className="text-white text-center p-8">
-                      <h3 className="text-3xl font-bold mb-4">{schoolPackages[selectedSchool].name}</h3>
-                      <p className="text-xl mb-8">{schoolPackages[selectedSchool].description}</p>
-                      <div className="inline-block border-4 border-white/30 rounded-full p-8">
-                        <span className="text-4xl font-bold">{schoolPackages[selectedSchool].logo}</span>
-                      </div>
-                    </div>
+                <div className="h-[400px] mb-6 rounded-lg overflow-hidden bg-white">
+                  {/* Image Carousel for School Mockups */}
+                  <AnimatePresence mode="wait">
+                    <motion.div 
+                      key={`${selectedSchool}-${currentImageIndex}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-full h-full flex items-center justify-center"
+                    >
+                      <img 
+                        src={schoolPackages[selectedSchool].images[currentImageIndex]} 
+                        alt={`${schoolPackages[selectedSchool].name} apparel design`}
+                        className="object-contain max-h-full max-w-full p-4"
+                        onError={(e) => {
+                          // If image fails to load, show a styled div with school info instead
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          
+                          // Find the parent container
+                          const container = target.parentElement;
+                          if (container) {
+                            // Add a styled div with school information
+                            const fallbackDiv = document.createElement('div');
+                            fallbackDiv.className = 'w-full h-full flex items-center justify-center p-8 text-white text-center';
+                            fallbackDiv.style.background = schoolPackages[selectedSchool].gradient;
+                            
+                            fallbackDiv.innerHTML = `
+                              <div>
+                                <h3 class="text-3xl font-bold mb-4">${schoolPackages[selectedSchool].name}</h3>
+                                <p class="text-xl mb-8">${schoolPackages[selectedSchool].description}</p>
+                                <div class="inline-block border-4 border-white/30 rounded-full p-8">
+                                  <span class="text-4xl font-bold">${schoolPackages[selectedSchool].logo}</span>
+                                </div>
+                              </div>
+                            `;
+                            
+                            container.appendChild(fallbackDiv);
+                          }
+                        }}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  
+                  {/* Image Navigation Dots */}
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                    {schoolPackages[selectedSchool].images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-2 h-2 rounded-full ${
+                          currentImageIndex === index ? 'bg-primary' : 'bg-gray-300'
+                        }`}
+                        aria-label={`View image ${index + 1}`}
+                      />
+                    ))}
                   </div>
                 </div>
                 
@@ -145,8 +228,8 @@ export function SchoolPackages() {
                   </div>
                   
                   <div className="flex-1 bg-white p-5 rounded-md">
-                    <h4 className="font-semibold mb-3">Team Discounts</h4>
-                    <p>Volume discounts available for complete team packages. Contact us for custom pricing based on your team's specific needs.</p>
+                    <h4 className="font-semibold mb-3">Team Colors</h4>
+                    <p>School colors: {schoolPackages[selectedSchool].colors}. We offer volume discounts for complete team packages.</p>
                   </div>
                 </div>
                 
