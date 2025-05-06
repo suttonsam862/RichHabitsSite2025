@@ -1,167 +1,156 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
-
-interface Colorway {
-  color: string;
-  name: string;
-  imgSrc: string;
-  description: string;
-}
+import { motion, AnimatePresence } from "framer-motion";
 
 export function RashguardColorways() {
   const [selectedColorway, setSelectedColorway] = useState(0);
   
-  const colorways: Colorway[] = [
+  // Use color gradients instead of images for reliability
+  const colorways = [
     {
-      color: "#684A46", // Brown
-      name: "Brown Rashguard",
-      imgSrc: "/assets/custom-apparel/BrownRashguardMockup.png",
-      description: "Premium brown rashguard with Rich Habits logo and reinforced stitching for durability during intense training sessions."
-    },
-    {
-      color: "#000000", // Black
       name: "Black Rashguard",
-      imgSrc: "/assets/custom-apparel/BlackRashgaurdMockup.png",
-      description: "Classic black rashguard featuring contrasting stitching and sleek Rich Habits branding. Perfect for competition and training."
+      gradient: "linear-gradient(135deg, #111111, #333333)",
+      description: "Classic black rashguard with subtle design elements"
     },
     {
-      color: "#1E90FF", // Blue
       name: "Blue Rashguard",
-      imgSrc: "/assets/custom-apparel/BlueRashguardMockup.png",
-      description: "Vibrant blue rashguard with moisture-wicking fabric and comfortable fit for optimal performance during training."
+      gradient: "linear-gradient(135deg, #1E3A8A, #60A5FA)",
+      description: "Vibrant blue rashguard for high visibility on the mat"
     },
     {
-      color: "#4B0082", // Purple
+      name: "Brown Rashguard",
+      gradient: "linear-gradient(135deg, #78350F, #B45309)",
+      description: "Earthy brown rashguard with premium feel"
+    },
+    {
       name: "Purple Rashguard",
-      imgSrc: "/assets/custom-apparel/Purple_Rashguard.png",
-      description: "Rich purple rashguard with bold styling and Rich Habits branding. Engineered for high-performance and comfort during training."
+      gradient: "linear-gradient(135deg, #581C87, #A855F7)",
+      description: "Rich purple rashguard with dynamic design"
     },
     {
-      color: "#EFEFEF", // White/Classic
       name: "White Rashguard",
-      imgSrc: "/assets/custom-apparel/WhiteRashguardMockup.png",
-      description: "Timeless white rashguard design with premium construction and strategic ventilation zones for comfort during intense sessions."
+      gradient: "linear-gradient(135deg, #D1D5DB, #F9FAFB)",
+      description: "Clean white rashguard, perfect for custom graphics"
     }
   ];
-  
+
   return (
-    <section className="py-24 bg-[hsl(var(--background))]">
+    <section className="py-20 bg-[hsl(var(--muted))]">
       <Container>
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Rashguard Colorways</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Rashguard Colorways</h2>
           <p className="text-lg max-w-3xl mx-auto">
-            Our signature rashguards are available in multiple colors to match your team's identity.
-            Each features premium construction with moisture-wicking fabric and reinforced seams.
+            Our premium rashguards are available in multiple colorways to match your team's identity.
           </p>
         </div>
         
-        {/* Color selector */}
-        <div className="flex justify-center mb-12 space-x-4">
-          {colorways.map((colorway, index) => (
-            <button
-              key={index}
-              onClick={() => setSelectedColorway(index)}
-              className={`w-12 h-12 rounded-full border-2 ${index === selectedColorway ? 'ring-2 ring-offset-2 ring-primary' : 'hover:scale-110'} transition-all`}
-              style={{ 
-                backgroundColor: colorway.color,
-                borderColor: colorway.color === "#EFEFEF" ? "#CCCCCC" : colorway.color
-              }}
-              aria-label={`Select ${colorway.name}`}
-            />
-          ))}
-        </div>
-        
-        {/* Display selected colorway */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedColorway}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-          >
-            <div className="bg-white p-8 rounded-lg shadow-md flex items-center justify-center min-h-[400px]">
-              <img 
-                src={colorways[selectedColorway].imgSrc} 
-                alt={colorways[selectedColorway].name}
-                className="max-w-full max-h-[350px] object-contain"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  console.warn(`Failed to load rashguard image: ${target.src}`);
-                  target.onerror = null; // Prevent infinite error loop
+        <div className="flex flex-col lg:flex-row gap-10">
+          {/* Color Selector */}
+          <div className="lg:w-1/3">
+            <div className="bg-white p-6 rounded-md shadow-sm">
+              <h3 className="text-xl font-semibold mb-6">Select Colorway</h3>
+              
+              <div className="space-y-4">
+                {colorways.map((colorway, index) => (
+                  <button
+                    key={index}
+                    className={`flex items-center w-full p-3 rounded-md transition-colors ${
+                      selectedColorway === index 
+                        ? 'bg-[hsl(var(--primary))] text-white' 
+                        : 'bg-[hsl(var(--muted-foreground)/0.1)] hover:bg-[hsl(var(--muted-foreground)/0.2)]'
+                    }`}
+                    onClick={() => setSelectedColorway(index)}
+                  >
+                    <div 
+                      className="w-8 h-8 rounded-full mr-3"
+                      style={{ background: colorway.gradient }}
+                    ></div>
+                    <span>{colorway.name}</span>
+                  </button>
+                ))}
+              </div>
+              
+              <div className="mt-8">
+                <h4 className="font-medium mb-2">Features:</h4>
+                <ul className="space-y-2 text-[hsl(var(--foreground)/0.8)]">
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Moisture-wicking fabric
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Four-way stretch
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Antimicrobial treatment
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Flatlock stitching
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Custom sublimation printing
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          {/* Colorway Display */}
+          <div className="lg:w-2/3">
+            <div className="bg-white p-6 rounded-md shadow-sm h-full">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedColorway}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full flex flex-col"
+                >
+                  <div className="flex-1 flex items-center justify-center">
+                    <div 
+                      className="w-full h-[400px] rounded-lg flex items-center justify-center"
+                      style={{ background: colorways[selectedColorway].gradient }}
+                    >
+                      <div className="text-white text-center p-8">
+                        <h3 className="text-3xl font-bold mb-4">{colorways[selectedColorway].name}</h3>
+                        <p className="text-xl">{colorways[selectedColorway].description}</p>
+                        <div className="mt-10 inline-block bg-white/20 px-6 py-3 rounded">
+                          <span className="text-xl">Rich Habits Wrestling</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
-                  // Display a colored div instead of an image
-                  const imgContainer = target.parentElement;
-                  if (imgContainer) {
-                    // Create a div with the color of the rashguard as background
-                    const colorDiv = document.createElement('div');
-                    colorDiv.className = 'w-64 h-64 rounded-md flex items-center justify-center';
-                    colorDiv.style.backgroundColor = colorways[selectedColorway].color;
-                    colorDiv.style.color = 'white';
-                    colorDiv.innerHTML = `<span class="text-lg font-bold">${colorways[selectedColorway].name}</span>`;
-                    
-                    // Replace the image with the div
-                    target.style.display = 'none';
-                    imgContainer.appendChild(colorDiv);
-                  }
-                }}
-              />
+                  <div className="mt-6 text-center">
+                    <p className="text-lg font-medium">
+                      Custom sizing and design options available for teams
+                    </p>
+                    <a 
+                      href="#contactForm" 
+                      className="inline-block mt-4 bg-primary text-white py-2 px-6 rounded-md hover:bg-opacity-90 transition-colors"
+                    >
+                      Request Team Pricing
+                    </a>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
-            
-            <div>
-              <h3 className="text-2xl font-bold mb-4" style={{ color: colorways[selectedColorway].color }}>
-                {colorways[selectedColorway].name}
-              </h3>
-              
-              <p className="text-gray-700 mb-6">
-                {colorways[selectedColorway].description}
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Moisture-wicking performance fabric</span>
-                </div>
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Anti-microbial treatment</span>
-                </div>
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Reinforced flatlock stitching</span>
-                </div>
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Available in sizes XS to 3XL</span>
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap space-x-4">
-                <a 
-                  href="/custom-apparel#contactForm" 
-                  className="px-6 py-3 bg-primary text-white rounded hover:bg-opacity-90 transition-colors font-medium"
-                >
-                  Request Team Quote
-                </a>
-                <button 
-                  className="px-6 py-3 border border-primary text-primary rounded hover:bg-primary hover:bg-opacity-10 transition-colors font-medium"
-                >
-                  View Size Chart
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </div>
       </Container>
     </section>
   );

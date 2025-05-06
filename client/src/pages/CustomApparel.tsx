@@ -1,72 +1,26 @@
 import { Container } from "@/components/ui/container";
-import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { TeamGallery } from "@/components/custom-apparel/TeamGallery";
 import { FeaturedTeams } from "@/components/custom-apparel/FeaturedTeams";
 import { ClothingSetShowcase } from "@/components/custom-apparel/ClothingSetShowcase";
 import { RashguardColorways } from "@/components/custom-apparel/RashguardColorways";
 import { SchoolPackages } from "@/components/custom-apparel/SchoolPackages";
+import { DesignShowcase } from "@/components/custom-apparel/DesignShowcase";
 // Testimonials component removed as requested
 
 export default function CustomApparel() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [currentDesignSet, setCurrentDesignSet] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionComplete, setSubmissionComplete] = useState(false);
   
   const wrestlerImages = [
-    "/images/wrestlers/DSC09491.JPG",
-    "/images/wrestlers/DSC07386.JPG",
-    "/images/wrestlers/DSC00423.JPG",
-    "/images/wrestlers/DSC09374--.JPG"
-  ];
-  
-  // Design images using public assets folder for better reliability
-  const designImages = [
-    // Primary images that we've already copied to designs folder
-    "/assets/designs/BlackRashgaurdMockup.png",
-    "/assets/designs/BlueRashguardMockup.png",
-    "/assets/designs/BrooksMockupFinal.png",
-    "/assets/designs/NickPoloMockupFinal.png",
-    "/assets/designs/BerryGearpAckV2.png",
-    "/assets/designs/ElevateMockup5.png",
-    // Additional verified images in the designs folder
-    "/assets/designs/athens.png",
-    "/assets/designs/bragg.png",
-    "/assets/designs/ltds.png",
-    "/assets/designs/nopaws.png",
-    "/assets/designs/northside.png"
-  ];
-  
-  // Group the designs into sets for display
-  const designSets = [
-    // 1st design set - rashguards
-    [
-      designImages[0], // Black Rashguard
-      designImages[1], // Blue Rashguard
-      designImages[5], // Elevate Mockup
-    ],
-    // 2nd design set - team gear
-    [
-      designImages[2], // Brooks Final
-      designImages[3], // Nick Polo
-      designImages[4], // Berry Gear Pack
-    ],
-    // 3rd design set - additional designs
-    [
-      designImages[6], // Athens
-      designImages[7], // Bragg
-      designImages[8], // LTDS
-    ],
-    // 4th design set - more designs
-    [
-      designImages[9], // No Paws
-      designImages[10], // Northside
-      designImages[5], // Reuse Elevate since we have odd number
-    ]
+    "/assets/DSC09491.JPG",
+    "/assets/DSC07386.JPG",
+    "/assets/DSC00423.JPG",
+    "/assets/DSC09374--.JPG"
   ];
   
   useEffect(() => {
@@ -78,16 +32,6 @@ export default function CustomApparel() {
     
     return () => clearInterval(interval);
   }, [wrestlerImages.length]);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentDesignSet((prevSet) => 
-        prevSet === designSets.length - 1 ? 0 : prevSet + 1
-      );
-    }, 3000); // Change design set every 3 seconds
-    
-    return () => clearInterval(interval);
-  }, [designSets.length]);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -197,81 +141,7 @@ export default function CustomApparel() {
         <SchoolPackages />
         
         {/* Design Showcase Section */}
-        <section className="py-24 bg-[hsl(var(--muted))]">
-          <Container>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Design Portfolio</h2>
-              <p className="text-lg max-w-3xl mx-auto">
-                Browse through some of our latest custom apparel designs for wrestling teams across the country.
-              </p>
-            </div>
-            
-            <div className="relative h-[500px] overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentDesignSet}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  {designSets[currentDesignSet].map((designImg, index) => (
-                    <div 
-                      key={index} 
-                      className="bg-white p-3 shadow-md flex items-center justify-center overflow-hidden h-[450px]"
-                    >
-                      <img 
-                        src={designImg} 
-                        alt={`Wrestling team design ${index + 1}`} 
-                        className="object-contain h-full w-full"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          console.warn(`Failed to load design image: ${target.src}`);
-                          target.onerror = null; // Prevent infinite error loop
-                          
-                          // Try to display a colored div with text instead of an image
-                          const imgContainer = target.parentElement;
-                          if (imgContainer) {
-                            // Create a div with a gradient background
-                            const colorDiv = document.createElement('div');
-                            colorDiv.className = 'w-full h-full rounded flex items-center justify-center p-4';
-                            colorDiv.style.background = 'linear-gradient(135deg, #0039A6, #4CB4FD)';
-                            colorDiv.style.color = 'white';
-                            colorDiv.style.textAlign = 'center';
-                            
-                            // Create a title for the design
-                            const designName = document.createElement('div');
-                            designName.className = 'text-xl font-bold';
-                            designName.textContent = `Rich Habits Custom Design`;
-                            
-                            // Add content to the div
-                            colorDiv.appendChild(designName);
-                            
-                            // Replace the image with the div
-                            target.style.display = 'none';
-                            imgContainer.appendChild(colorDiv);
-                          }
-                        }}
-                      />
-                    </div>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            
-            <div className="flex justify-center mt-6">
-              {designSets.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentDesignSet(index)}
-                  className={`h-3 w-3 mx-1 rounded-full ${index === currentDesignSet ? 'bg-primary' : 'bg-gray-300'}`}
-                  aria-label={`View design set ${index + 1}`}
-                />
-              ))}
-            </div>
-          </Container>
-        </section>
+        <DesignShowcase />
         
         {/* Services Section */}
         <section className="py-24 bg-white">

@@ -1,173 +1,166 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
-
-interface SchoolPackage {
-  name: string;
-  description: string;
-  color: string;
-  imgSrc: string;
-  features: string[];
-}
+import { motion, AnimatePresence } from "framer-motion";
 
 export function SchoolPackages() {
-  const [selectedPackage, setSelectedPackage] = useState(0);
+  const [selectedSchool, setSelectedSchool] = useState(0);
   
-  const schoolPackages: SchoolPackage[] = [
+  // School packages with gradients instead of images for reliability
+  const schoolPackages = [
     {
-      name: "Auburn High School",
-      description: "Complete wrestling gear package for Auburn High School featuring branded apparel in school colors.",
-      color: "#0039A6", // Auburn blue
-      imgSrc: "/assets/custom-apparel/AuburnMen_s_Final.png",
-      features: [
-        "Custom singlets with school logo and colors",
-        "Branded team hoodies and shorts",
-        "Multiple t-shirt options for practice and casual wear",
-        "Matching gear for men's and women's teams"
-      ]
+      name: "Auburn Wrestling",
+      gradient: "linear-gradient(135deg, #E35205, #DFBD58)",
+      logo: "AU",
+      description: "Complete gear package for Auburn's wrestling program with custom singlets, warmups, and practice gear."
     },
     {
       name: "Berry Middle School",
-      description: "Comprehensive apparel collection for Berry Middle School Jaguars wrestling team.",
-      color: "#4CB4FD", // Berry blue
-      imgSrc: "/assets/custom-apparel/BerryGearpAckV2.png",
-      features: [
-        "Lightweight performance shirts in school colors",
-        "Team gear with Jaguar logo and branding",
-        "Custom designed hoodies and sweatpants",
-        "Multiple options for training and competition"
-      ]
+      gradient: "linear-gradient(135deg, #3A1B43, #8B5CF6)",
+      logo: "BMS",
+      description: "Youth-focused wrestling gear designed for Berry Middle School with durable, comfortable materials."
     },
     {
       name: "Coosa Christian",
-      description: "Training and competition apparel package for Coosa Christian School wrestling program.",
-      color: "#000000", // Black base
-      imgSrc: "/assets/custom-apparel/Coosa_Christian_Tech.png",
-      features: [
-        "Premium sweat-wicking training gear",
-        "School branded hoodies and sweatpants",
-        "Custom designed competition singlets",
-        "Coordinated team appearance for all events"
-      ]
+      gradient: "linear-gradient(135deg, #9F1239, #E11D48)",
+      logo: "CC",
+      description: "Faith-based themed gear for Coosa Christian's wrestling program with high-quality materials."
+    },
+    {
+      name: "Dora High School",
+      gradient: "linear-gradient(135deg, #0E7490, #22D3EE)",
+      logo: "DHS",
+      description: "Custom team package for Dora High School featuring their traditional blue and gold colors."
     }
   ];
-  
+
   return (
-    <section className="py-20 bg-white">
+    <section className="py-24">
       <Container>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">School Team Packages</h2>
-            <p className="text-lg max-w-3xl mx-auto">
-              We specialize in creating complete apparel packages for school wrestling programs. 
-              From singlets to training gear, we've got your team covered.
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
-            {schoolPackages.map((pkg, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedPackage(index)}
-                className={`px-5 py-3 rounded-lg transition-all ${index === selectedPackage 
-                  ? 'bg-primary text-white' 
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-800'}`}
-              >
-                {pkg.name}
-              </button>
-            ))}
-          </div>
-          
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedPackage}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
-            >
-              {/* Left side - Image */}
-              <div 
-                className="bg-gray-50 rounded-lg p-8 flex items-center justify-center min-h-[500px]"
-                style={{ 
-                  background: `linear-gradient(135deg, ${schoolPackages[selectedPackage].color}15, ${schoolPackages[selectedPackage].color}05)` 
-                }}
-              >
-                <img 
-                  src={schoolPackages[selectedPackage].imgSrc} 
-                  alt={schoolPackages[selectedPackage].name}
-                  className="max-h-[450px] object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    console.warn(`Failed to load image: ${target.src}`);
-                    target.onerror = null; // Prevent infinite error loop
-                    
-                    // Display a colored div instead of an image
-                    const imgContainer = target.parentElement;
-                    if (imgContainer) {
-                      // Create a div with the color of the school as background
-                      const colorDiv = document.createElement('div');
-                      colorDiv.className = 'w-full h-full rounded-lg flex flex-col items-center justify-center gap-4 p-6';
-                      colorDiv.style.backgroundColor = schoolPackages[selectedPackage].color + '15';
-                      colorDiv.style.border = `2px solid ${schoolPackages[selectedPackage].color}`;
-                      
-                      // Create a title for the school
-                      const schoolName = document.createElement('div');
-                      schoolName.className = 'text-2xl font-bold';
-                      schoolName.style.color = schoolPackages[selectedPackage].color;
-                      schoolName.textContent = schoolPackages[selectedPackage].name;
-                      
-                      // Create a subtitle
-                      const subtitle = document.createElement('div');
-                      subtitle.className = 'text-lg text-gray-600 text-center';
-                      subtitle.textContent = 'Complete Team Package';
-                      
-                      // Add content to the div
-                      colorDiv.appendChild(schoolName);
-                      colorDiv.appendChild(subtitle);
-                      
-                      // Replace the image with the div
-                      target.style.display = 'none';
-                      imgContainer.appendChild(colorDiv);
-                    }
-                  }}
-                />
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">School Apparel Packages</h2>
+          <p className="text-lg max-w-3xl mx-auto">
+            We've helped numerous schools and teams create cohesive, professional apparel packages. 
+            Here are some examples of our recent work.
+          </p>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row gap-10">
+          {/* School Selection */}
+          <div className="lg:w-1/3">
+            <div className="bg-[hsl(var(--muted))] p-6 rounded-md">
+              <h3 className="text-xl font-semibold mb-6">Featured Schools</h3>
+              
+              <div className="space-y-3">
+                {schoolPackages.map((school, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedSchool(index)}
+                    className={`w-full text-left p-4 rounded-md transition-colors ${
+                      selectedSchool === index
+                        ? 'bg-[hsl(var(--primary))] text-white'
+                        : 'bg-white hover:bg-[hsl(var(--primary)/0.1)]'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <div 
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3"
+                        style={{ background: school.gradient }}
+                      >
+                        {school.logo}
+                      </div>
+                      <span className="font-medium">{school.name}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
               
-              {/* Right side - Package details */}
-              <div>
-                <h3 
-                  className="text-2xl font-bold mb-2"
-                  style={{ color: schoolPackages[selectedPackage].color }}
-                >
-                  {schoolPackages[selectedPackage].name}
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {schoolPackages[selectedPackage].description}
-                </p>
-                
-                <h4 className="text-lg font-medium mb-3">Package Features:</h4>
-                <ul className="space-y-2 mb-8">
-                  {schoolPackages[selectedPackage].features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <svg className="w-5 h-5 text-primary mt-1 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
+              <div className="mt-8 p-5 bg-white rounded-md">
+                <h4 className="font-medium mb-3">Package Features:</h4>
+                <ul className="space-y-2 text-[hsl(var(--foreground)/0.8)]">
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Custom singlets/uniforms
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Team warmup gear
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Practice t-shirts &amp; shorts
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Headgear &amp; accessories
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Fan &amp; parent apparel
+                  </li>
                 </ul>
-                
-                <a 
-                  href="/custom-apparel#contactForm" 
-                  className="inline-flex items-center px-6 py-3 bg-primary text-white rounded hover:bg-opacity-90 transition-colors font-medium"
-                >
-                  Request School Package
-                </a>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </div>
+          
+          {/* School Package Display */}
+          <div className="lg:w-2/3">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedSchool}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-[hsl(var(--muted))] p-6 rounded-md h-full"
+              >
+                <div className="h-[400px] mb-6 rounded-lg overflow-hidden">
+                  <div 
+                    className="w-full h-full flex items-center justify-center rounded-lg"
+                    style={{ background: schoolPackages[selectedSchool].gradient }}
+                  >
+                    <div className="text-white text-center p-8">
+                      <h3 className="text-3xl font-bold mb-4">{schoolPackages[selectedSchool].name}</h3>
+                      <p className="text-xl mb-8">{schoolPackages[selectedSchool].description}</p>
+                      <div className="inline-block border-4 border-white/30 rounded-full p-8">
+                        <span className="text-4xl font-bold">{schoolPackages[selectedSchool].logo}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 bg-white p-5 rounded-md">
+                    <h4 className="font-semibold mb-3">Custom Design Process</h4>
+                    <p>Our team works closely with coaches and athletic directors to develop a unique identity that represents your school's spirit and traditions.</p>
+                  </div>
+                  
+                  <div className="flex-1 bg-white p-5 rounded-md">
+                    <h4 className="font-semibold mb-3">Team Discounts</h4>
+                    <p>Volume discounts available for complete team packages. Contact us for custom pricing based on your team's specific needs.</p>
+                  </div>
+                </div>
+                
+                <div className="mt-6 text-center">
+                  <a 
+                    href="#contactForm" 
+                    className="inline-block bg-primary text-white py-3 px-8 rounded-md hover:bg-opacity-90 transition-colors"
+                  >
+                    Request School Package Info
+                  </a>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </Container>
     </section>
