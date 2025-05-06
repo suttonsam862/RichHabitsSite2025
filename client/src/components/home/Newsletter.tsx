@@ -48,13 +48,7 @@ export function Newsletter() {
   return (
     <section className="py-20 bg-[hsl(var(--secondary))]">
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="max-w-2xl mx-auto text-center"
-        >
+        <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-serif font-semibold mb-4">Join Our Community</h2>
           <p className="text-lg mb-8">Subscribe for exclusive releases, event notifications, and training insights.</p>
           
@@ -98,7 +92,7 @@ export function Newsletter() {
               <p className="text-sm text-gray-600">We respect your privacy. Unsubscribe at any time.</p>
             </>
           )}
-        </motion.div>
+        </div>
       </Container>
     </section>
   );

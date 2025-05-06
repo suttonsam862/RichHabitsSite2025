@@ -47,12 +47,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-white bg-opacity-60"></div>
       </div>
       
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="container mx-auto px-4 z-10 text-primary"
-      >
+      <div className="container mx-auto px-4 z-10 text-primary">
         <div className="max-w-2xl">
           <h1 className="text-5xl md:text-7xl font-bold mb-4 leading-tight font-serif">Performance Elevated</h1>
           <p className="text-xl md:text-2xl mb-8 font-light">Minimal design. Maximum impact. For athletes who demand more.</p>
@@ -66,7 +61,7 @@ export function Hero() {
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
