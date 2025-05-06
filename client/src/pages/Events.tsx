@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue 
 } from "@/components/ui/select";
+import { EventDetails } from "@/components/events/EventDetails";
 
 // Import event images and videos
 // Use public path references for consistent loading
@@ -701,6 +702,9 @@ export default function Events() {
             </motion.div>
           </Container>
         </section>
+        
+        {/* Detailed Event Information Section */}
+        <EventDetails />
         
 
       </div>
