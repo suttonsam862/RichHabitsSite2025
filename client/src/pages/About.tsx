@@ -3,6 +3,10 @@ import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 
+// Import team member images directly
+import samProfileImage from '../assets/team/members/sam.png';
+import carterProfileImage from '../assets/team/members/carter.jpg';
+
 export default function About() {
   return (
     <>
@@ -129,7 +133,7 @@ export default function About() {
                 <div className="text-center mb-6">
                   <div className="w-48 h-48 overflow-hidden mx-auto mb-6 rounded-full">
                     <img 
-                      src="/images/team/sam.png" 
+                      src={samProfileImage}
                       alt="Sam Sutton - Co-Founder" 
                       className="w-full object-cover"
                     />
