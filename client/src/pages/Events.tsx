@@ -18,18 +18,17 @@ import {
 } from "@/components/ui/select";
 import { EventDetails } from "@/components/events/EventDetails";
 
-// Import event images and videos
-// Use public path references for consistent loading
+// Event images - use existing path references that are working
 const event1Image = "/assets/events/SlamCampSiteBanner.png";
 const event2Image = "/assets/events/LongSitePhotovegas.png";
 const event3Image = "/assets/events/RecruitingWebsiteimage4.png";
-const event4Image = "/assets/events/image_1745720198123.png"; // Placeholder until specific graphic is created
+const event4Image = "/assets/events/image_1745720198123.png";
 
-// Fall back to MP4 format for better compatibility
-const birminghamVideo = "/assets/0424.mp4";
-const champCampVideo = "/assets/04243.mp4";
-const texasRecruitingVideo = "/images/events/texas-recruiting.mp4"; // Fallback to a static image if video fails
-const coryLandVideo = "/images/events/panther-train.mp4"; // Fallback to a static image if video fails
+// Import videos directly from the assets/videos directory
+import birminghamVideo from "../assets/videos/birmingham_slam.mov";
+import champCampVideo from "../assets/videos/04243.mov"; 
+import texasRecruitingVideo from "../assets/videos/trcvid.mov";
+import coryLandVideo from "../assets/videos/0331.mov";
 
 // Static events data
 const events = [
