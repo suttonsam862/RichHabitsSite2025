@@ -1280,6 +1280,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create newsletter subscriber
       const subscriber = await storage.createNewsletterSubscriber({ email });
       
+      // Create a Shopify draft order to notify the admin
+      try {
+        await createShopifyDraftOrder({
+          lineItems: [
+            {
+              title: `Newsletter Subscription`,
+              quantity: 1,
+              price: 0
+            }
+          ],
+          customer: {
+            firstName: 'Newsletter',
+            lastName: 'Subscriber',
+            email: email
+          },
+          note: `New Newsletter Subscription\n\nEmail: ${email}\n\nSubmitted on: ${new Date().toLocaleString()}`
+        });
+        console.log('Created Shopify draft order for newsletter subscription');
+      } catch (shopifyError) {
+        console.error('Failed to create Shopify draft order for newsletter subscription:', shopifyError);
+        // We still want to return success to the user even if Shopify notification fails
+      }
+      
       res.status(201).json({
         message: "Subscribed to newsletter successfully",
         subscriber
