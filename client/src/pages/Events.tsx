@@ -24,10 +24,12 @@ const event1Image = "/assets/events/SlamCampSiteBanner.png";
 const event2Image = "/assets/events/LongSitePhotovegas.png";
 const event3Image = "/assets/events/RecruitingWebsiteimage4.png";
 const event4Image = "/assets/events/image_1745720198123.png"; // Placeholder until specific graphic is created
-const birminghamVideo = "/assets/0424.mov";
-const champCampVideo = "/assets/04243.mov";
-const texasRecruitingVideo = "/assets/trcvid.mov";
-const coryLandVideo = "/assets/corylandloopvide.mov"; // Updated Cory Land Tour video
+
+// Fall back to MP4 format for better compatibility
+const birminghamVideo = "/assets/0424.mp4";
+const champCampVideo = "/assets/04243.mp4";
+const texasRecruitingVideo = "/images/events/texas-recruiting.mp4"; // Fallback to a static image if video fails
+const coryLandVideo = "/images/events/panther-train.mp4"; // Fallback to a static image if video fails
 
 // Static events data
 const events = [
@@ -108,15 +110,26 @@ export default function Events() {
     day3: false
   });
   
-  // Add event handler for video errors
+  // Add event handler for video errors - with improved fallback handling
   const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const videoElement = e.currentTarget;
     videoElement.classList.add('error');
-    // Find the parent container and add the error class to it
+    videoElement.style.display = 'none'; // Hide the video completely on error
+    
+    // Find the parent container and ensure the image is visible
     const parentContainer = videoElement.parentElement;
     if (parentContainer) {
       parentContainer.classList.add('video-error');
+      // Find any sibling image and make sure it's visible
+      const fallbackImage = parentContainer.querySelector('img');
+      if (fallbackImage) {
+        fallbackImage.style.opacity = '1';
+        fallbackImage.style.zIndex = '1';
+      }
     }
+    
+    // Log the error for debugging purposes
+    console.warn('Video error:', videoElement.src);
   };
   
   const { toast } = useToast();
