@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet";
 import { useState, useEffect, useRef } from "react";
 import { TeamGallery } from "@/components/custom-apparel/TeamGallery";
 import { FeaturedTeams } from "@/components/custom-apparel/FeaturedTeams";
+import { ClothingSetShowcase } from "@/components/custom-apparel/ClothingSetShowcase";
 // Testimonials component removed as requested
 
 export default function CustomApparel() {
@@ -295,6 +296,9 @@ export default function CustomApparel() {
             </div>
           </Container>
         </section>
+        
+        {/* Complete Clothing Sets Showcase */}
+        <ClothingSetShowcase />
         
         {/* Featured Teams Section */}
         <FeaturedTeams />
