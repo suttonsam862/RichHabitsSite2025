@@ -25,6 +25,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionComplete, setSubmissionComplete] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<ContactFormValues>({
@@ -44,19 +45,14 @@ export default function Contact() {
     try {
       await submitContactForm(data);
       
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you as soon as possible.",
-      });
-      
-      form.reset();
+      // Set submission complete instead of resetting form and showing toast
+      setSubmissionComplete(true);
     } catch (error) {
       toast({
         title: "Error sending message",
         description: "Please try again later or contact us directly by phone.",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   }
@@ -173,91 +169,130 @@ export default function Contact() {
                   Have a question about our products or services? Fill out the form and we'll get back to you as soon as possible.
                 </p>
                 
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {submissionComplete ? (
+                  <div className="bg-white p-8 shadow-sm text-center rounded-lg">
+                    <div className="flex items-center justify-center mb-4">
+                      <svg className="h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-medium mb-2">Message Received!</h3>
+                    <p className="text-gray-700 mb-6">Thank you for reaching out. We'll get back to you as soon as possible.</p>
+                    <button 
+                      onClick={() => window.location.reload()}
+                      className="bg-gray-200 text-gray-800 py-2 px-4 font-medium hover:bg-gray-300 transition-colors rounded-md"
+                    >
+                      Send Another Message
+                    </button>
+                  </div>
+                ) : (
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Your Name</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="John Doe" 
+                                  {...field} 
+                                  disabled={isSubmitting}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email Address</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="john@example.com" 
+                                  {...field} 
+                                  disabled={isSubmitting}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="phone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone Number (Optional)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="(123) 456-7890" 
+                                  {...field} 
+                                  disabled={isSubmitting}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="subject"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Subject</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Product Inquiry" 
+                                  {...field} 
+                                  disabled={isSubmitting}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
                       <FormField
                         control={form.control}
-                        name="name"
+                        name="message"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Your Name</FormLabel>
+                            <FormLabel>Message</FormLabel>
                             <FormControl>
-                              <Input placeholder="John Doe" {...field} />
+                              <Textarea 
+                                placeholder="Please let us know how we can help you."
+                                className="min-h-[150px] resize-none" 
+                                {...field} 
+                                disabled={isSubmitting}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                       
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <FormControl>
-                              <Input placeholder="john@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone Number (Optional)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="(123) 456-7890" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="subject"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Subject</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Product Inquiry" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Message</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="Please let us know how we can help you."
-                              className="min-h-[150px] resize-none" 
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <Button type="submit" disabled={isSubmitting} className="bg-primary text-white hover:bg-opacity-90">
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                    </Button>
-                  </form>
-                </Form>
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmitting} 
+                        className={`${isSubmitting ? 'bg-gray-500' : 'bg-primary'} text-white hover:bg-opacity-90 w-full md:w-auto`}
+                      >
+                        {isSubmitting ? "Sending..." : "Send Message"}
+                      </Button>
+                    </form>
+                  </Form>
+                )}
               </motion.div>
               
               <motion.div
