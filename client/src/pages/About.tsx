@@ -156,7 +156,7 @@ export default function About() {
                 <div className="text-center mb-6">
                   <div className="w-48 h-48 overflow-hidden mx-auto mb-6 rounded-full">
                     <img 
-                      src="/images/team/carter.jpg" 
+                      src={carterProfileImage}
                       alt="Carter Vail - Co-Founder" 
                       className="w-full object-cover"
                     />
