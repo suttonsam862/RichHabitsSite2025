@@ -32,9 +32,15 @@ export function RashguardColorways() {
       description: "Vibrant blue rashguard with moisture-wicking fabric and comfortable fit for optimal performance during training."
     },
     {
+      color: "#4B0082", // Purple
+      name: "Purple Rashguard",
+      imgSrc: "/attached_assets/Purple Rashguard.png",
+      description: "Rich purple rashguard with bold styling and Rich Habits branding. Engineered for high-performance and comfort during training."
+    },
+    {
       color: "#EFEFEF", // White/Classic
-      name: "Classic Rashguard",
-      imgSrc: "/attached_assets/ClassicRashguardMockup.png",
+      name: "White Rashguard",
+      imgSrc: "/attached_assets/WhiteRashguardMockup.png",
       description: "Timeless white rashguard design with premium construction and strategic ventilation zones for comfort during intense sessions."
     }
   ];
@@ -83,7 +89,19 @@ export function RashguardColorways() {
                 className="max-w-full max-h-[350px] object-contain"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = "/images/product-placeholder.png";
+                  console.warn(`Failed to load rashguard image: ${target.src}`);
+                  target.onerror = null; // Prevent infinite error loop
+                  
+                  // Try loading direct from assets folder without /attached_assets prefix
+                  const imageName = target.src.split('/').pop() || '';
+                  const alternativePath = `/assets/${imageName}`;
+                  target.src = alternativePath;
+                  
+                  // Add second error handler for fallback
+                  target.onerror = () => {
+                    console.warn(`Fallback also failed for rashguard: ${alternativePath}`);
+                    target.src = "/images/product-placeholder.png";
+                  };
                 }}
               />
             </div>

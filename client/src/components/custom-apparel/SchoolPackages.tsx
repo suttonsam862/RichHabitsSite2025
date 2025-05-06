@@ -18,7 +18,7 @@ export function SchoolPackages() {
       name: "Auburn High School",
       description: "Complete wrestling gear package for Auburn High School featuring branded apparel in school colors.",
       color: "#0039A6", // Auburn blue
-      imgSrc: "/attached_assets/AuburnMen's Final.png",
+      imgSrc: "/attached_assets/AuburnMen_s Final.png",
       features: [
         "Custom singlets with school logo and colors",
         "Branded team hoodies and shorts",
@@ -30,7 +30,7 @@ export function SchoolPackages() {
       name: "Berry Middle School",
       description: "Comprehensive apparel collection for Berry Middle School Jaguars wrestling team.",
       color: "#4CB4FD", // Berry blue
-      imgSrc: "/attached_assets/Berry Middle Gear Pack.png",
+      imgSrc: "/attached_assets/BerryGearpAckV2.png",
       features: [
         "Lightweight performance shirts in school colors",
         "Team gear with Jaguar logo and branding",
@@ -100,7 +100,17 @@ export function SchoolPackages() {
                   className="max-h-[450px] object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = "/images/product-placeholder.png";
+                    console.warn(`Failed to load image: ${target.src}`);
+                    target.onerror = null; // Prevent infinite error loop
+                    // Try alternate format or default placeholder
+                    const fallbackPath = schoolPackages[selectedPackage].imgSrc.replace('.png', '.jpg');
+                    target.src = fallbackPath;
+                    
+                    // Add second error handler for fallback
+                    target.onerror = () => {
+                      console.warn(`Fallback also failed for: ${fallbackPath}`);
+                      target.src = "/images/product-placeholder.png";
+                    };
                   }}
                 />
               </div>
