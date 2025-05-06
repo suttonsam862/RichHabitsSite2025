@@ -18,7 +18,7 @@ export function SchoolPackages() {
       name: "Auburn High School",
       description: "Complete wrestling gear package for Auburn High School featuring branded apparel in school colors.",
       color: "#0039A6", // Auburn blue
-      imgSrc: "/attached_assets/AuburnMen_s Final.png",
+      imgSrc: "/assets/custom-apparel/AuburnMen_s_Final.png",
       features: [
         "Custom singlets with school logo and colors",
         "Branded team hoodies and shorts",
@@ -30,7 +30,7 @@ export function SchoolPackages() {
       name: "Berry Middle School",
       description: "Comprehensive apparel collection for Berry Middle School Jaguars wrestling team.",
       color: "#4CB4FD", // Berry blue
-      imgSrc: "/attached_assets/BerryGearpAckV2.png",
+      imgSrc: "/assets/custom-apparel/BerryGearpAckV2.png",
       features: [
         "Lightweight performance shirts in school colors",
         "Team gear with Jaguar logo and branding",
@@ -42,7 +42,7 @@ export function SchoolPackages() {
       name: "Coosa Christian",
       description: "Training and competition apparel package for Coosa Christian School wrestling program.",
       color: "#000000", // Black base
-      imgSrc: "/attached_assets/Coosa Christian Tech.png",
+      imgSrc: "/assets/custom-apparel/Coosa_Christian_Tech.png",
       features: [
         "Premium sweat-wicking training gear",
         "School branded hoodies and sweatpants",
@@ -102,15 +102,23 @@ export function SchoolPackages() {
                     const target = e.target as HTMLImageElement;
                     console.warn(`Failed to load image: ${target.src}`);
                     target.onerror = null; // Prevent infinite error loop
-                    // Try alternate format or default placeholder
-                    const fallbackPath = schoolPackages[selectedPackage].imgSrc.replace('.png', '.jpg');
-                    target.src = fallbackPath;
                     
-                    // Add second error handler for fallback
-                    target.onerror = () => {
-                      console.warn(`Fallback also failed for: ${fallbackPath}`);
-                      target.src = "/images/product-placeholder.png";
-                    };
+                    // Try without spaces in filename
+                    if (target.src.includes(' ')) {
+                      const fixedPath = target.src.replace(/ /g, '%20');
+                      console.log('Trying URL encoded path:', fixedPath);
+                      target.src = fixedPath;
+                      
+                      // Add another error handler if the space fix fails
+                      target.onerror = () => {
+                        console.warn(`Space-fixed path also failed: ${fixedPath}`);
+                        target.src = "/images/product-placeholder.png";
+                      };
+                      return;
+                    }
+                    
+                    // Default fallback
+                    target.src = "/images/product-placeholder.png";
                   }}
                 />
               </div>

@@ -16,31 +16,31 @@ export function RashguardColorways() {
     {
       color: "#684A46", // Brown
       name: "Brown Rashguard",
-      imgSrc: "/attached_assets/BrownRashguardMockup.png",
+      imgSrc: "/assets/custom-apparel/BrownRashguardMockup.png",
       description: "Premium brown rashguard with Rich Habits logo and reinforced stitching for durability during intense training sessions."
     },
     {
       color: "#000000", // Black
       name: "Black Rashguard",
-      imgSrc: "/attached_assets/BlackRashgaurdMockup.png",
+      imgSrc: "/assets/custom-apparel/BlackRashgaurdMockup.png",
       description: "Classic black rashguard featuring contrasting stitching and sleek Rich Habits branding. Perfect for competition and training."
     },
     {
       color: "#1E90FF", // Blue
       name: "Blue Rashguard",
-      imgSrc: "/attached_assets/BlueRashguardMockup.png",
+      imgSrc: "/assets/custom-apparel/BlueRashguardMockup.png",
       description: "Vibrant blue rashguard with moisture-wicking fabric and comfortable fit for optimal performance during training."
     },
     {
       color: "#4B0082", // Purple
       name: "Purple Rashguard",
-      imgSrc: "/attached_assets/Purple Rashguard.png",
+      imgSrc: "/assets/custom-apparel/Purple_Rashguard.png",
       description: "Rich purple rashguard with bold styling and Rich Habits branding. Engineered for high-performance and comfort during training."
     },
     {
       color: "#EFEFEF", // White/Classic
       name: "White Rashguard",
-      imgSrc: "/attached_assets/WhiteRashguardMockup.png",
+      imgSrc: "/assets/custom-apparel/WhiteRashguardMockup.png",
       description: "Timeless white rashguard design with premium construction and strategic ventilation zones for comfort during intense sessions."
     }
   ];
@@ -92,16 +92,21 @@ export function RashguardColorways() {
                   console.warn(`Failed to load rashguard image: ${target.src}`);
                   target.onerror = null; // Prevent infinite error loop
                   
-                  // Try loading direct from assets folder without /attached_assets prefix
-                  const imageName = target.src.split('/').pop() || '';
-                  const alternativePath = `/assets/${imageName}`;
-                  target.src = alternativePath;
+                  // Try without spaces in filename
+                  if (target.src.includes(' ')) {
+                    const fixedPath = target.src.replace(/ /g, '%20');
+                    target.src = fixedPath;
+                    
+                    // Add another error handler if the space fix fails
+                    target.onerror = () => {
+                      console.warn(`Space-fixed path also failed: ${fixedPath}`);
+                      target.src = "/images/product-placeholder.png";
+                    };
+                    return;
+                  }
                   
-                  // Add second error handler for fallback
-                  target.onerror = () => {
-                    console.warn(`Fallback also failed for rashguard: ${alternativePath}`);
-                    target.src = "/images/product-placeholder.png";
-                  };
+                  // Default fallback
+                  target.src = "/images/product-placeholder.png";
                 }}
               />
             </div>
