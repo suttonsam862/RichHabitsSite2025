@@ -28,7 +28,7 @@ const event4Image = "/assets/events/image_1745720198123.png";
 import birminghamVideo from "../assets/videos/birmingham_slam.mov";
 import champCampVideo from "../assets/videos/04243.mov"; 
 import texasRecruitingVideo from "../assets/videos/trcvid.mov";
-import coryLandVideo from "../assets/videos/0331.mov";
+import coryLandVideo from "../assets/videos/corylandloopvide.mov";
 
 // Static events data
 const events = [
