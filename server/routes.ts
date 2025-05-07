@@ -2,6 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import path from "path";
+import fs from "fs";
 import { storage } from "./storage";
 import { 
   insertContactSubmissionSchema, 
@@ -39,8 +40,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.use('/designs', express.static(path.join(process.cwd(), 'public/designs'), staticOptions));
   
-  // Serve attached assets files
-  app.use('/assets', express.static(path.join(process.cwd(), 'attached_assets'), staticOptions));
+  // Serve attached assets files with detailed logging
+  app.use('/assets', (req, res, next) => {
+    console.log('[media] Asset request:', req.path);
+    const fullPath = path.join(process.cwd(), 'attached_assets', req.path);
+    console.log('[media] Checking file exists:', fullPath);
+    if (fs.existsSync(fullPath)) {
+      console.log('[media] Found asset file:', req.path);
+    } else {
+      console.log('[media] Asset file not found:', req.path);
+    }
+    next();
+  }, express.static(path.join(process.cwd(), 'attached_assets'), staticOptions));
   
   // Serve video files with proper headers
   app.get('/videos/:filename', (req, res) => {
