@@ -2,34 +2,34 @@ import React from 'react';
 import { Container } from "@/components/ui/container";
 
 const PlanetImageDebug: React.FC = () => {
-  // Define the image paths with encoded URLs for spaces
+  // Testing different image paths - focusing on /assets/ folder paths which work
   const imagePaths = [
     {
       name: "T-Shirt",
       path1: "/assets/10th%20Planet%20Triblend.png",
-      path2: "/10th%20Planet%20Triblend.png",
-      path3: "/attached_assets/10th%20Planet%20Triblend.png",
+      path2: "/assets/10th%20Planet%20Triblend.png?v=1",
+      path3: "/assets/10th%20Planet%20Triblend.png?v=2",
       originalFilename: "10th Planet Triblend.png"
     },
     {
       name: "Crewneck",
       path1: "/assets/10th%20Planet%20Crewneck.png",
-      path2: "/10th%20Planet%20Crewneck.png",
-      path3: "/attached_assets/10th%20Planet%20Crewneck.png",
+      path2: "/assets/10th%20Planet%20Crewneck.png?v=1",
+      path3: "/assets/10th%20Planet%20Crewneck.png?v=2",
       originalFilename: "10th Planet Crewneck.png"
     },
     {
       name: "Sweats",
       path1: "/assets/10th%20Planet%20Sweats.png",
-      path2: "/10th%20Planet%20Sweats.png",
-      path3: "/attached_assets/10th%20Planet%20Sweats.png",
+      path2: "/assets/10th%20Planet%20Sweats.png?v=1",
+      path3: "/assets/10th%20Planet%20Sweats.png?v=2",
       originalFilename: "10th Planet Sweats.png"
     },
     {
       name: "Shorts",
       path1: "/assets/10thPlanet%20Shorts.png",
-      path2: "/10thPlanet%20Shorts.png",
-      path3: "/attached_assets/10thPlanet%20Shorts.png",
+      path2: "/assets/10thPlanet%20Shorts.png?v=1",
+      path3: "/assets/10thPlanet%20Shorts.png?v=2",
       originalFilename: "10thPlanet Shorts.png"
     }
   ];

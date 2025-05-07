@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/container";
 export function ApparelShowcase() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   
-  // Define the apparel items with URL-encoded paths for spaces in filenames
+  // Define the apparel items - using only /assets/ paths with URL-encoded spaces
   const apparelItems = [
     {
       id: 1,

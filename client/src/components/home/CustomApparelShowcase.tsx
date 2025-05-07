@@ -13,11 +13,12 @@ const singletOne = homewoodSinglet;
 const singletTwo = jordanSinglet;
 const championMoment = winnerShot;
 
-// 10th Planet apparel images - using URL encoded paths for spaces in filenames
-const planetTShirt = "/assets/10th%20Planet%20Triblend.png";
-const planetCrewneck = "/assets/10th%20Planet%20Crewneck.png";
-const planetSweats = "/assets/10th%20Planet%20Sweats.png";
-const planetShorts = "/assets/10thPlanet%20Shorts.png";
+// 10th Planet apparel images - using only /assets/ paths with URL-encoded spaces
+// Adding cache-busting query parameters to prevent browser caching issues
+const planetTShirt = "/assets/10th%20Planet%20Triblend.png?v=fix1";
+const planetCrewneck = "/assets/10th%20Planet%20Crewneck.png?v=fix1";
+const planetSweats = "/assets/10th%20Planet%20Sweats.png?v=fix1";
+const planetShorts = "/assets/10thPlanet%20Shorts.png?v=fix1";
 
 export function CustomApparelShowcase() {
   const [showPlanetCollection, setShowPlanetCollection] = useState(false);
