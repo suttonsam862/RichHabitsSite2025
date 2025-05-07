@@ -3,9 +3,9 @@ import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 
-// Import team member images directly
-import samProfileImage from '../assets/team/members/sam.png';
-import carterProfileImage from '../assets/team/members/carter.jpg';
+// Import team member images directly using the @assets alias
+import samProfileImage from "@assets/sam.png";
+import carterProfileImage from "@assets/carter.jpg";
 
 export default function About() {
   return (
