@@ -130,6 +130,7 @@ export const eventRegistrations = pgTable("event_registrations", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
+// Create the base schema first
 export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
   eventId: true,
   firstName: true,
@@ -147,6 +148,25 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   day1: true,
   day2: true,
   day3: true
+})
+// Now extend it with stricter validation
+.extend({
+  // Make all required fields truly required with string validation
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  contactName: z.string().min(1, "Parent/Guardian name is required"),
+  email: z.string().email("Valid email is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  tShirtSize: z.string().min(1, "T-shirt size is required"),
+  grade: z.string().min(1, "Grade is required"),
+  schoolName: z.string().min(1, "School name is required"),
+  // Make medicalReleaseAccepted explicitly true
+  medicalReleaseAccepted: z.boolean().refine(val => val === true, "Medical release must be accepted"),
+  // Ensure registrationType is either "full" or "single"
+  registrationType: z.enum(["full", "single"]),
+  // Make clubName optional but still validate if provided
+  clubName: z.string().optional(),
+  // Keep the rest of the fields as is
 });
 
 // Custom apparel inquiries table

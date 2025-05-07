@@ -1443,8 +1443,13 @@ export default function EventDetail() {
               ];
               
               const missingFields = requiredFields.filter(
-                ({ field }) => !registrationForm[field as keyof typeof registrationForm] || 
-                  registrationForm[field as keyof typeof registrationForm].trim() === ''
+                ({ field }) => {
+                  const value = registrationForm[field as keyof typeof registrationForm];
+                  if (typeof value === 'string') {
+                    return value.trim() === '';
+                  }
+                  return !value;
+                }
               );
               
               if (missingFields.length > 0) {
@@ -1513,6 +1518,7 @@ export default function EventDetail() {
                   throw new Error(data.message || 'Failed to register');
                 }
                 
+                // Handle the various checkout scenarios
                 if (data.checkoutUrl) {
                   // Log the checkout URL for debugging
                   console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
@@ -1535,10 +1541,54 @@ export default function EventDetail() {
                     setShowRegistrationDialog(false);
                     window.location.href = checkoutUrl;
                   }, 1500);
-                } else {
+                } 
+                // If primary checkout failed but fallback is available
+                else if (data.fallbackUrl) {
+                  console.log('Using fallback checkout URL:', data.fallbackUrl);
+                  toast({
+                    title: "Registration Successful",
+                    description: "Taking you to the alternative payment page...",
+                  });
+                  
+                  // Close dialog and redirect after a short delay
+                  setTimeout(() => {
+                    setShowRegistrationDialog(false);
+                    window.location.href = data.fallbackUrl;
+                  }, 1500);
+                }
+                // If a direct variant ID is available, use that
+                else if (data.variantId) {
+                  console.log('Using direct variant ID for checkout:', data.variantId);
+                  const shopifyDomain = 'rich-habits-2022.myshopify.com';
+                  const directUrl = `https://${shopifyDomain}/cart/${data.variantId.replace('gid://shopify/ProductVariant/', '')}:1`;
+                  
+                  toast({
+                    title: "Registration Successful",
+                    description: "Taking you to the payment page...",
+                  });
+                  
+                  setTimeout(() => {
+                    setShowRegistrationDialog(false);
+                    window.location.href = directUrl;
+                  }, 1500);
+                }
+                // If we have a Shopify error, show it
+                else if (data.shopifyError) {
+                  console.error('Shopify error reported:', data.shopifyError);
+                  toast({
+                    title: "Registration Saved",
+                    description: "Your registration information has been saved but we couldn't create the checkout. Please contact support for assistance.",
+                    variant: "destructive",
+                    duration: 7000
+                  });
+                  setShowRegistrationDialog(false);
+                }
+                // Otherwise, generic fallback
+                else {
                   toast({
                     title: "Registration Received",
-                    description: "Your registration has been submitted, but payment processing is currently unavailable.",
+                    description: "Your registration has been submitted, but payment processing is currently unavailable. We'll contact you to complete the process.",
+                    duration: 7000
                   });
                   setShowRegistrationDialog(false);
                 }
@@ -1614,6 +1664,7 @@ export default function EventDetail() {
                   value={registrationForm.lastName}
                   onChange={(e) => setRegistrationForm({...registrationForm, lastName: e.target.value})}
                   placeholder="Last name" 
+                  required
                 />
               </div>
             </div>
@@ -1626,6 +1677,7 @@ export default function EventDetail() {
                   value={registrationForm.contactName}
                   onChange={(e) => setRegistrationForm({...registrationForm, contactName: e.target.value})}
                   placeholder="Parent/Guardian name" 
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -1636,6 +1688,7 @@ export default function EventDetail() {
                   value={registrationForm.email}
                   onChange={(e) => setRegistrationForm({...registrationForm, email: e.target.value})}
                   placeholder="Email address" 
+                  required
                 />
               </div>
             </div>
@@ -1680,6 +1733,7 @@ export default function EventDetail() {
                   value={registrationForm.grade}
                   onChange={(e) => setRegistrationForm({...registrationForm, grade: e.target.value})}
                   placeholder="Current grade" 
+                  required
                 />
               </div>
               <div className="space-y-2">

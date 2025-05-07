@@ -493,18 +493,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
           
-          // Format the registration data for Shopify
+          // Format the registration data for Shopify - all fields now required due to schema validation
           const registrationData: EventRegistrationData = {
             firstName: validatedData.firstName,
             lastName: validatedData.lastName,
             contactName: validatedData.contactName,
             email: validatedData.email,
-            phone: validatedData.phone || '',
-            tShirtSize: validatedData.tShirtSize || '',
-            grade: validatedData.grade || '',
-            schoolName: validatedData.schoolName || '',
-            clubName: validatedData.clubName || '',
-            medicalReleaseAccepted: validatedData.medicalReleaseAccepted || false,
+            phone: validatedData.phone,
+            tShirtSize: validatedData.tShirtSize,
+            grade: validatedData.grade,
+            schoolName: validatedData.schoolName,
+            clubName: validatedData.clubName || '', // Only clubName remains optional
+            medicalReleaseAccepted: validatedData.medicalReleaseAccepted,
             option: validatedData.registrationType === 'full' ? 'full' : 'single'
           };
           
@@ -528,8 +528,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log('Will apply universal discount code to checkout URL');
           }
           
-          // Create checkout with more error handling
+          // Create checkout with robust error handling
           try {
+            console.log('Creating event registration checkout with validated data...');
+            
             const checkout = await createEventRegistrationCheckout(
               eventId.toString(),
               variantId,
@@ -537,17 +539,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
               applyDiscount
             );
             
-            console.log('Checkout created successfully:', checkout);
+            if (!checkout) {
+              throw new Error('No checkout object returned from Shopify');
+            }
+            
+            console.log('Checkout created successfully with ID:', checkout.id || 'unknown');
             
             if (checkout && checkout.webUrl) {
               checkoutUrl = checkout.webUrl;
-              console.log('Checkout URL created:', checkoutUrl);
+              
+              // Ensure URL is properly formatted with https://
+              if (!checkoutUrl.startsWith('http')) {
+                checkoutUrl = 'https://' + checkoutUrl;
+              }
+              
+              console.log('Checkout URL created and formatted:', checkoutUrl);
             } else {
-              console.error('No webUrl in checkout response');
+              console.error('No webUrl in checkout response:', checkout);
               throw new Error('No checkout URL returned from Shopify');
             }
           } catch (error) {
             console.error('Error in Shopify checkout creation:', error);
+            if (error instanceof Error) {
+              console.error('Error details:', {
+                message: error.message,
+                stack: error.stack?.substring(0, 500)
+              });
+            }
             shopifyError = error;
             throw error; // Re-throw to be caught by outer try/catch
           }
