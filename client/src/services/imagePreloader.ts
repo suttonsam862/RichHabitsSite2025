@@ -5,7 +5,7 @@
 
 // List of critical images to preload
 // These should be loaded early to improve UX
-const criticalPaths = [
+const criticalPaths: string[] = [
   // Will be populated by components
 ];
 

@@ -17,6 +17,7 @@ import { createEventRegistrationCheckout, EVENT_PRODUCTS, EventRegistrationData,
 import { createPaymentIntent, handleSuccessfulPayment, handleStripeWebhook } from "./stripe";
 import { getStripePriceId, getStripeProductId } from "./stripeProducts";
 import { validateDiscountCode, updatePaymentIntent } from "./discounts";
+import { registerImageOptimizationRoutes } from "./imageOptimizer";
 
 // Shopify configuration - in a real app, store these in environment variables
 const SHOPIFY_ADMIN_API_KEY = process.env.SHOPIFY_ADMIN_API_KEY || "";
@@ -25,8 +26,18 @@ const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || "rich-habits.my
 const SHOPIFY_API_VERSION = "2023-07"; // Update to latest version as needed
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve static files directly
-  app.use('/designs', express.static(path.join(process.cwd(), 'public/designs')));
+  // Setup image optimization routes
+  const assetsDir = path.join(process.cwd(), 'attached_assets');
+  registerImageOptimizationRoutes(app, assetsDir);
+  
+  // Serve static files directly with various optimizations
+  const staticOptions = {
+    maxAge: 86400000, // 1 day caching for static assets
+    etag: true,       // Use ETags for cache validation
+    lastModified: true // Use Last-Modified for cache validation
+  };
+  
+  app.use('/designs', express.static(path.join(process.cwd(), 'public/designs'), staticOptions));
   
   // Serve video files with proper headers
   app.get('/videos/:filename', (req, res) => {
