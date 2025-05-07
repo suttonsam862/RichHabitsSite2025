@@ -13,11 +13,11 @@ const singletOne = homewoodSinglet;
 const singletTwo = jordanSinglet;
 const championMoment = winnerShot;
 
-// 10th Planet apparel images
-const planetTShirt = "/assets/10th Planet Triblend.png";
-const planetCrewneck = "/assets/10th Planet Crewneck.png";
-const planetSweats = "/assets/10th Planet Sweats.png";
-const planetShorts = "/assets/10thPlanet Shorts.png";
+// 10th Planet apparel images - using URL encoded paths for spaces in filenames
+const planetTShirt = "/assets/10th%20Planet%20Triblend.png";
+const planetCrewneck = "/assets/10th%20Planet%20Crewneck.png";
+const planetSweats = "/assets/10th%20Planet%20Sweats.png";
+const planetShorts = "/assets/10thPlanet%20Shorts.png";
 
 export function CustomApparelShowcase() {
   const [showPlanetCollection, setShowPlanetCollection] = useState(false);

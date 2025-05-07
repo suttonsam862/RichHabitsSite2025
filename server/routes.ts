@@ -40,17 +40,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.use('/designs', express.static(path.join(process.cwd(), 'public/designs'), staticOptions));
   
-  // Serve attached assets files with detailed logging
+  // Serve attached assets files with detailed logging and improved file path handling
   app.use('/assets', (req, res, next) => {
     console.log('[media] Asset request:', req.path);
-    const fullPath = path.join(process.cwd(), 'attached_assets', req.path);
+    
+    // Remove URL encoding
+    const decodedPath = decodeURIComponent(req.path);
+    console.log('[media] Decoded path:', decodedPath);
+    
+    // Build full path
+    const fullPath = path.join(process.cwd(), 'attached_assets', decodedPath);
     console.log('[media] Checking file exists:', fullPath);
+    
     if (fs.existsSync(fullPath)) {
-      console.log('[media] Found asset file:', req.path);
+      console.log('[media] Found asset file:', decodedPath);
+      // Serve the file directly with proper content type
+      const fileExtension = path.extname(fullPath).toLowerCase();
+      let contentType = 'application/octet-stream';
+      
+      // Set content type based on file extension
+      if (fileExtension === '.png') contentType = 'image/png';
+      else if (fileExtension === '.jpg' || fileExtension === '.jpeg') contentType = 'image/jpeg';
+      else if (fileExtension === '.gif') contentType = 'image/gif';
+      else if (fileExtension === '.svg') contentType = 'image/svg+xml';
+      
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      fs.createReadStream(fullPath).pipe(res);
     } else {
-      console.log('[media] Asset file not found:', req.path);
+      console.log('[media] Asset file not found:', decodedPath);
+      next();
     }
-    next();
   }, express.static(path.join(process.cwd(), 'attached_assets'), staticOptions));
   
   // Serve video files with proper headers

@@ -5,33 +5,33 @@ import { Container } from "@/components/ui/container";
 export function ApparelShowcase() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   
-  // Define the apparel items
+  // Define the apparel items with URL-encoded paths for spaces in filenames
   const apparelItems = [
     {
       id: 1,
       name: "10th Planet Crewneck",
-      imgSrc: "/attached_assets/10th Planet Crewneck.png",
+      imgSrc: "/assets/10th%20Planet%20Crewneck.png",
       category: "tops",
       description: "Premium crewneck sweatshirt with 10th Planet Birmingham logo"
     },
     {
       id: 2,
       name: "10th Planet Sweats",
-      imgSrc: "/attached_assets/10th Planet Sweats.png",
+      imgSrc: "/assets/10th%20Planet%20Sweats.png",
       category: "bottoms",
       description: "Comfortable jogger sweatpants with custom 10th Planet branding"
     },
     {
       id: 3,
       name: "10th Planet T-Shirt",
-      imgSrc: "/attached_assets/10th Planet Triblend.png",
+      imgSrc: "/assets/10th%20Planet%20Triblend.png",
       category: "tops",
       description: "Soft tri-blend t-shirt featuring the 10th Planet Birmingham logo"
     },
     {
       id: 4,
       name: "10th Planet Shorts",
-      imgSrc: "/attached_assets/10thPlanet Shorts.png",
+      imgSrc: "/assets/10thPlanet%20Shorts.png",
       category: "bottoms",
       description: "Training shorts with 10th Planet branding for maximum performance"
     }
