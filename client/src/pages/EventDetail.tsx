@@ -94,13 +94,13 @@ export default function EventDetail() {
             {
               name: "Josh Shields",
               title: "NCAA All-American",
-              image: "/assets/DSC08657--.JPG",
+              image: "/assets/coaches/shields.jpg",
               bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit."
             },
             {
               name: "Brandon Courtney",
               title: "NCAA Finalist",
-              image: "/assets/DSC08631.JPG",
+              image: "/assets/coaches/courtney.jpg",
               bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat."
             },
             {
@@ -190,7 +190,7 @@ export default function EventDetail() {
             {
               name: "Josh Shields",
               title: "RTC Coach and Recruiter, Brown University",
-              image: "/src/assets/coaches/recruiting/shields.webp",
+              image: "/assets/coaches/shields.jpg",
               school: "Brown University",
               schoolLogo: brownLogo,
               bio: "Josh Shields serves as an RTC coach and recruiter at Brown University. A former All-American from Arizona State University, Shields brings a wealth of knowledge about Ivy League recruitment and what it takes to succeed at elite academic institutions."
