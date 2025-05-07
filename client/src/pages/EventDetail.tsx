@@ -1711,6 +1711,7 @@ export default function EventDetail() {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={registrationForm.tShirtSize}
                   onChange={(e) => setRegistrationForm({...registrationForm, tShirtSize: e.target.value})}
+                  required
                 >
                   <option value="">Select a size</option>
                   <option value="YS">Youth Small</option>
@@ -1743,6 +1744,7 @@ export default function EventDetail() {
                   value={registrationForm.schoolName}
                   onChange={(e) => setRegistrationForm({...registrationForm, schoolName: e.target.value})}
                   placeholder="School name" 
+                  required
                 />
               </div>
             </div>
@@ -1764,6 +1766,7 @@ export default function EventDetail() {
                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" 
                 checked={registrationForm.medicalReleaseAccepted}
                 onChange={(e) => setRegistrationForm({...registrationForm, medicalReleaseAccepted: e.target.checked})}
+                required
               />
               <Label htmlFor="medicalRelease" className="text-sm">
                 I accept the medical release waiver and understand that Rich Habits is not responsible for any injuries that may occur.
@@ -1782,6 +1785,7 @@ export default function EventDetail() {
                     className="h-4 w-4 border-gray-300 text-primary focus:ring-primary" 
                     checked={registrationForm.registrationType === 'full'}
                     onChange={() => setRegistrationForm({...registrationForm, registrationType: 'full'})}
+                    required
                   />
                   <Label htmlFor="fullCamp" className="text-sm">
                     {event.id === 2 ? 'Full Camp ($349)' : 
