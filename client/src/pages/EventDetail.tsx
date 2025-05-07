@@ -776,6 +776,29 @@ export default function EventDetail() {
                         </p>
                       </div>
                       
+                      {/* Texas Recruiting Showcase */}
+                      <div className="mt-12 p-6 bg-white border-2 border-[#002868] rounded-lg shadow-lg">
+                        <div className="flex items-center mb-4">
+                          <div className="mr-3 text-[#002868] text-3xl">🟦</div>
+                          <h3 className="text-xl font-bold text-[#002868]">Texas Recruiting Showcase</h3>
+                        </div>
+                        
+                        <div className="flex items-center mb-4 text-gray-700">
+                          <div className="mr-2 text-[#bf0a30]">📍</div>
+                          <p className="font-medium">Arlington Martin High School — Arlington, TX</p>
+                        </div>
+                        
+                        <div className="prose text-gray-700">
+                          <p>Everything's bigger in Texas—including your shot to get noticed. The Texas Recruiting Showcase is a one-day, lights-on, spotlight-matches event engineered to put your name on the radar of college coaches.</p>
+                          
+                          <p>Wrestlers get the opportunity to compete under high production lighting, walk out in custom gear, and stand out in front of the cameras—and more importantly, the decision-makers.</p>
+                          
+                          <p>The night before, the experience kicks off with a private athlete dinner at Quince in Fort Worth to set the tone for elite performance and real connection.</p>
+                          
+                          <p>This camp isn't just about reps—it's about reputation. And Rich Habits is handing you the platform to elevate both.</p>
+                        </div>
+                      </div>
+                      
                       <div className="mt-10">
                         <div className="mb-6 border-b border-red-100 pb-2">
                           <div className="flex items-center justify-between mb-3 w-full px-4 max-w-xl mx-auto">
