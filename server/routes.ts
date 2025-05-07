@@ -39,6 +39,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.use('/designs', express.static(path.join(process.cwd(), 'public/designs'), staticOptions));
   
+  // Serve attached assets files
+  app.use('/assets', express.static(path.join(process.cwd(), 'attached_assets'), staticOptions));
+  
   // Serve video files with proper headers
   app.get('/videos/:filename', (req, res) => {
     const videoPath = path.join(process.cwd(), 'public/videos', req.params.filename);

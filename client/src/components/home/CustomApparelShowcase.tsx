@@ -14,10 +14,10 @@ const singletTwo = jordanSinglet;
 const championMoment = winnerShot;
 
 // 10th Planet apparel images
-const planetTShirt = "/attached_assets/10th Planet Triblend.png";
-const planetCrewneck = "/attached_assets/10th Planet Crewneck.png";
-const planetSweats = "/attached_assets/10th Planet Sweats.png";
-const planetShorts = "/attached_assets/10thPlanet Shorts.png";
+const planetTShirt = "/assets/10th Planet Triblend.png";
+const planetCrewneck = "/assets/10th Planet Crewneck.png";
+const planetSweats = "/assets/10th Planet Sweats.png";
+const planetShorts = "/assets/10thPlanet Shorts.png";
 
 export function CustomApparelShowcase() {
   const [showPlanetCollection, setShowPlanetCollection] = useState(false);
