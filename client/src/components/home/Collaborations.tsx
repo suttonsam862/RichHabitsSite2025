@@ -101,7 +101,20 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
           </div>
         )}
         
-        {logoSrc ? (
+        {/* Special case for Fruit Hunters logo */}
+        {isFruitHunters ? (
+          <div className="h-24 flex items-center justify-center mb-4">
+            <img 
+              src="/images/fruit-hunters-logo-black.svg"
+              alt="Fruit Hunters Logo" 
+              className="max-h-full max-w-full object-contain" 
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/images/logo-placeholder.png';
+              }}
+            />
+          </div>
+        ) : logoSrc ? (
           <div className="h-24 flex items-center justify-center mb-4">
             <img 
               src={logoSrc} 
