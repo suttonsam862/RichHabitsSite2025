@@ -1436,13 +1436,15 @@ export default function EventDetail() {
                 { field: 'lastName', label: 'Last Name' },
                 { field: 'contactName', label: 'Parent/Guardian Name' },
                 { field: 'email', label: 'Email' },
+                { field: 'phone', label: 'Phone Number' },
                 { field: 'tShirtSize', label: 'T-Shirt Size' },
                 { field: 'grade', label: 'Grade' },
                 { field: 'schoolName', label: 'School Name' }
               ];
               
               const missingFields = requiredFields.filter(
-                ({ field }) => !registrationForm[field as keyof typeof registrationForm]
+                ({ field }) => !registrationForm[field as keyof typeof registrationForm] || 
+                  registrationForm[field as keyof typeof registrationForm].trim() === ''
               );
               
               if (missingFields.length > 0) {
@@ -1640,12 +1642,13 @@ export default function EventDetail() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number (Optional)</Label>
+                <Label htmlFor="phone">Phone Number</Label>
                 <Input 
                   id="phone" 
                   value={registrationForm.phone}
                   onChange={(e) => setRegistrationForm({...registrationForm, phone: e.target.value})}
                   placeholder="Phone number" 
+                  required
                 />
               </div>
               <div className="space-y-2">
