@@ -23,6 +23,7 @@ import Admin from "@/pages/Admin";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import ReturnPolicy from "@/pages/ReturnPolicy";
 import PastEvents from "@/pages/PastEvents";
+import PlanetImageDebug from "@/components/home/PlanetImageDebug";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/return-policy" component={ReturnPolicy} />
       <Route path="/checkout-debug" component={CheckoutDebug} />
       <Route path="/past-events" component={PastEvents} />
+      <Route path="/image-debug" component={PlanetImageDebug} />
       <Route component={NotFound} />
     </Switch>
   );
