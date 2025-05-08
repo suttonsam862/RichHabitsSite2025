@@ -21,12 +21,21 @@ const NEW_ADMIN_DISCOUNT_CODE = '100OFFADMINCODE';
 // Hard-coded admin email that can use the 100% off code
 const ADMIN_EMAIL = 'samsutton@rich-habits.com';
 
+// Oak Mountain High School discount code (100% off Birmingham Slam Camp only)
+const OAK_MOUNTAIN_DISCOUNT_CODE = '1XsWQ23OakMountain12!';
+
+// List of valid school names for Oak Mountain discount (case-insensitive)
+const OAK_MOUNTAIN_SCHOOLS = [
+  'oak mountain high school',
+  'oak mountain middle school'
+];
+
 // Validate a discount code
 export const validateDiscountCode = async (req: Request, res: Response) => {
   try {
-    const { code, eventId, email, amount } = req.body;
+    const { code, eventId, email, amount, schoolName } = req.body;
     
-    console.log('Validating discount code:', { code, eventId, email, amount });
+    console.log('Validating discount code:', { code, eventId, email, amount, schoolName });
     console.log('Admin codes:', ADMIN_DISCOUNT_CODE, NEW_ADMIN_DISCOUNT_CODE, 'Admin email:', ADMIN_EMAIL);
     
     if (!code) {
@@ -55,6 +64,51 @@ export const validateDiscountCode = async (req: Request, res: Response) => {
         return res.status(400).json({
           valid: false,
           message: 'This discount code is not valid for your email'
+        });
+      }
+    }
+    
+    // Check for Oak Mountain discount code
+    if (code === OAK_MOUNTAIN_DISCOUNT_CODE) {
+      // Log the discount code attempt
+      console.log(`Oak Mountain discount code attempt: ${code}, Event ID: ${eventId}, School: ${schoolName}`);
+      
+      // 1. Verify it's for Birmingham Slam Camp (event ID 1)
+      if (parseInt(eventId) !== 1) {
+        console.log(`Oak Mountain discount rejected: Not valid for event ID ${eventId}`);
+        return res.status(400).json({
+          valid: false,
+          message: 'This discount code is only valid for Birmingham Slam Camp'
+        });
+      }
+      
+      // 2. Verify school name matches Oak Mountain (case-insensitive)
+      if (!schoolName) {
+        console.log('Oak Mountain discount rejected: No school name provided');
+        return res.status(400).json({
+          valid: false,
+          message: 'Please enter your school name to use this discount code'
+        });
+      }
+      
+      const normalizedSchoolName = schoolName.toLowerCase().trim();
+      const isOakMountainSchool = OAK_MOUNTAIN_SCHOOLS.some(
+        school => normalizedSchoolName.includes(school)
+      );
+      
+      if (isOakMountainSchool) {
+        // Oak Mountain discount applies 100% off
+        console.log(`100% discount applied for Oak Mountain student: ${schoolName}`);
+        return res.json({
+          valid: true,
+          discountAmount: amount,
+          message: '100% Oak Mountain discount applied'
+        });
+      } else {
+        console.log(`Oak Mountain discount rejected: Invalid school name "${schoolName}"`);
+        return res.status(400).json({
+          valid: false,
+          message: 'This discount code is only valid for Oak Mountain High School and Middle School students'
         });
       }
     }

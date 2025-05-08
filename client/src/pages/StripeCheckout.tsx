@@ -129,7 +129,8 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode,
           eventId: eventId,
           email: sessionStorage.getItem('registration_email') || '',
-          amount: amount
+          amount: amount,
+          schoolName: sessionStorage.getItem('registration_schoolName') || ''
         }),
       });
       
