@@ -236,25 +236,33 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       return res.status(404).json({ error: `Event with ID ${eventId} not found` });
     }
 
-    // Get the registration data from the payment intent metadata
-    // For now, we'll create a simple registration record
+    // Get the registration data from the request body if this is a free registration,
+    // otherwise from the payment intent metadata
     const registrationData = {
       eventId,
-      firstName: paymentIntent.metadata.firstName || 'Not provided',
-      lastName: paymentIntent.metadata.lastName || 'Not provided',
-      contactName: paymentIntent.metadata.contactName || 'Not provided',
-      email: paymentIntent.metadata.email || 'Not provided',
-      phone: paymentIntent.metadata.phone || '',
-      tShirtSize: paymentIntent.metadata.tShirtSize || 'Not provided',
-      grade: paymentIntent.metadata.grade || 'Not provided',
-      schoolName: paymentIntent.metadata.schoolName || 'Not provided',
-      clubName: paymentIntent.metadata.clubName || '',
+      firstName: freeRegistration ? req.body.firstName : paymentIntent.metadata.firstName || 'Not provided',
+      lastName: freeRegistration ? req.body.lastName : paymentIntent.metadata.lastName || 'Not provided',
+      contactName: freeRegistration ? req.body.contactName : paymentIntent.metadata.contactName || 'Not provided',
+      email: freeRegistration ? req.body.email : paymentIntent.metadata.email || 'Not provided',
+      phone: freeRegistration ? req.body.phone : paymentIntent.metadata.phone || '',
+      tShirtSize: freeRegistration ? req.body.tShirtSize : paymentIntent.metadata.tShirtSize || 'Not provided',
+      grade: freeRegistration ? req.body.grade : paymentIntent.metadata.grade || 'Not provided',
+      schoolName: freeRegistration ? req.body.schoolName : paymentIntent.metadata.schoolName || 'Not provided',
+      clubName: freeRegistration ? req.body.clubName : paymentIntent.metadata.clubName || '',
       medicalReleaseAccepted: true,
-      registrationType: paymentIntent.metadata.option || 'full',
+      registrationType: freeRegistration 
+        ? req.body.registrationType || req.body.option || 'full' 
+        : paymentIntent.metadata.option || 'full',
       shopifyOrderId: paymentIntent.id, // Use the payment intent ID as the order ID
-      day1: paymentIntent.metadata.day1 === 'true',
-      day2: paymentIntent.metadata.day2 === 'true',
-      day3: paymentIntent.metadata.day3 === 'true',
+      day1: freeRegistration 
+        ? req.body.day1 === 'true' || req.body.day1 === true
+        : paymentIntent.metadata.day1 === 'true',
+      day2: freeRegistration
+        ? req.body.day2 === 'true' || req.body.day2 === true
+        : paymentIntent.metadata.day2 === 'true',
+      day3: freeRegistration
+        ? req.body.day3 === 'true' || req.body.day3 === true
+        : paymentIntent.metadata.day3 === 'true',
     };
 
     // Create the registration in your database

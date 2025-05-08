@@ -181,6 +181,11 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           onDiscountApplied(updateData.amount);
         }
         
+        // Make sure all registration data is also in sessionStorage
+        // We need this to ensure full information is saved in discount code case
+        const params = new URLSearchParams(window.location.search);
+        sessionStorage.setItem('registration_option', params.get('option') || 'full');
+        
         // If this is a 100% discount, automatically complete the registration process
         if (data.discountAmount === amount) {
           toast({
@@ -390,6 +395,11 @@ export default function StripeCheckout() {
       setLoading(false);
       return;
     }
+    
+    // Store current path parameters in session storage to ensure 
+    // we always have the option field available for free registrations
+    sessionStorage.setItem('registration_option', option);
+    sessionStorage.setItem('registration_eventId', eventId);
 
     // First fetch the Stripe product details, then create a payment intent
     const fetchPaymentIntent = async () => {
