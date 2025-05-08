@@ -181,10 +181,82 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           onDiscountApplied(updateData.amount);
         }
         
-        toast({
-          title: "Discount Applied",
-          description: `${data.discountAmount === amount ? "100% discount applied. Your registration is free!" : `Discount of $${data.discountAmount.toFixed(2)} applied!`}`,
-        });
+        // If this is a 100% discount, automatically complete the registration process
+        if (data.discountAmount === amount) {
+          toast({
+            title: "100% Discount Applied",
+            description: "Your registration is free! Processing your registration...",
+          });
+          
+          // Automatically process the free registration
+          try {
+            // Get registration data from sessionStorage
+            const registrationData: Record<string, string> = {};
+            
+            // Common registration fields that might be in session storage
+            const fields = [
+              'firstName', 'lastName', 'contactName', 'email', 
+              'phone', 'tShirtSize', 'grade', 'schoolName', 
+              'clubName', 'registrationType', 'option',
+              'day1', 'day2', 'day3'
+            ];
+            
+            // Gather all available registration data from session storage
+            fields.forEach(field => {
+              const value = sessionStorage.getItem(`registration_${field}`);
+              if (value) {
+                registrationData[field] = value;
+              }
+            });
+            
+            // Ensure we at least have an email
+            if (!registrationData.email) {
+              registrationData.email = sessionStorage.getItem('registration_email') || '';
+            }
+            
+            // Call our API to record the registration without payment
+            const registrationResponse = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                freeRegistration: true,
+                discountCode: discountCode,
+                eventId: eventId,
+                amount: 0,
+                ...registrationData
+              }),
+            });
+        
+            if (registrationResponse.ok) {
+              toast({
+                title: "Registration Complete",
+                description: `Your registration has been processed successfully! You're now registered for ${eventName}.`,
+              });
+              onSuccess();
+            } else {
+              toast({
+                title: "Registration Error",
+                description: "We encountered an issue completing your registration. Please contact support.",
+                variant: "destructive",
+              });
+            }
+          } catch (err) {
+            console.error('Free registration error:', err);
+            toast({
+              title: "Registration Error",
+              description: "An unexpected error occurred. Please try contacting support directly.",
+              variant: "destructive",
+            });
+          }
+        } else {
+          // Regular partial discount
+          toast({
+            title: "Discount Applied",
+            description: `Discount of $${data.discountAmount.toFixed(2)} applied!`,
+          });
+        }
       } else {
         toast({
           title: "Invalid Discount",
@@ -261,22 +333,31 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         </div>
       )}
       
-      <button
-        type="submit"
-        disabled={!stripe || !elements || isProcessing || (finalAmount <= 0)}
-        className="w-full px-4 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isProcessing ? (
+      {/* No button needed for 100% discount cases as registration is processed automatically */}
+      {finalAmount > 0 && (
+        <button
+          type="submit"
+          disabled={!stripe || !elements || isProcessing}
+          className="w-full px-4 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isProcessing ? (
+            <span className="flex items-center justify-center">
+              <span className="mr-2">Processing</span>
+              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+            </span>
+          ) : (
+            `Pay $${finalAmount.toFixed(2)}`
+          )}
+        </button>
+      )}
+      {finalAmount <= 0 && (
+        <div className="w-full px-4 py-3 bg-green-600 text-white rounded-md text-center">
           <span className="flex items-center justify-center">
-            <span className="mr-2">Processing</span>
-            <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+            <CheckCircle className="h-5 w-5 mr-2" />
+            Processing Free Registration...
           </span>
-        ) : finalAmount <= 0 ? (
-          "Registration Complete (100% Discount)"
-        ) : (
-          `Pay $${finalAmount.toFixed(2)}`
-        )}
-      </button>
+        </div>
+      )}
     </form>
   );
 };

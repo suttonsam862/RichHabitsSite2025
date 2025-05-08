@@ -164,24 +164,66 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
 // Handle successful payments and create registration
 export const handleSuccessfulPayment = async (req: Request, res: Response) => {
   try {
-    const { paymentIntentId, eventId: eventIdParam, amount } = req.body;
+    const { paymentIntentId, eventId: eventIdParam, amount, freeRegistration, discountCode } = req.body;
     const eventId = Number(req.params.eventId || eventIdParam);
-
-    if (!paymentIntentId) {
-      return res.status(400).json({ error: 'Payment intent ID is required' });
-    }
-
+    
+    // Check for valid event ID
     if (!eventId || isNaN(eventId)) {
       return res.status(400).json({ error: 'Invalid event ID' });
     }
 
-    // Retrieve the payment intent to verify it's successful
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-    if (paymentIntent.status !== 'succeeded') {
-      return res.status(400).json({
-        error: `Payment is not successful. Status: ${paymentIntent.status}`,
-      });
+    // Handle free registration case (100% discount)
+    let paymentIntent: any;
+    
+    if (freeRegistration) {
+      // For free registrations, we won't verify a payment intent
+      // Instead, we'll use the session storage data
+      
+      // Retrieve registration data from session storage (stored in client)
+      const registrationEmail = req.body.email || '';
+      
+      if (!registrationEmail) {
+        return res.status(400).json({ error: 'Missing email for free registration' });
+      }
+      
+      // Create a mock payment intent for free registrations
+      paymentIntent = {
+        id: `free_reg_${Date.now()}`,
+        amount: 0,
+        status: 'succeeded',
+        metadata: {
+          firstName: req.body.firstName || '',
+          lastName: req.body.lastName || '',
+          contactName: req.body.contactName || '',
+          email: registrationEmail,
+          phone: req.body.phone || '',
+          tShirtSize: req.body.tShirtSize || '',
+          grade: req.body.grade || '',
+          schoolName: req.body.schoolName || '',
+          clubName: req.body.clubName || '',
+          option: req.body.registrationType || req.body.option || 'full',
+          day1: req.body.day1 || 'false',
+          day2: req.body.day2 || 'false',
+          day3: req.body.day3 || 'false',
+          discountCode: discountCode || ''
+        }
+      };
+      
+      // For free registrations, we'll continue with the flow using our mock payment intent
+    } else {
+      // For paid registrations, we need a payment intent ID
+      if (!paymentIntentId) {
+        return res.status(400).json({ error: 'Payment intent ID is required' });
+      }
+      
+      // Retrieve the payment intent to verify it's successful
+      paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  
+      if (paymentIntent.status !== 'succeeded') {
+        return res.status(400).json({
+          error: `Payment is not successful. Status: ${paymentIntent.status}`,
+        });
+      }
     }
 
     // Get the event details from database
