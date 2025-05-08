@@ -32,8 +32,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(200).json({ status: "ok" });
   });
   
-  // Root path endpoint for health checks
-  app.get("/", (req, res) => {
+  // API information endpoint (not at root to avoid interfering with the SPA)
+  app.get("/api/info", (req, res) => {
     res.status(200).json({ 
       name: "Rich Habits API",
       status: "online",
@@ -1573,31 +1573,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Discount code routes
   app.post('/api/discount/validate', validateDiscountCode);
 
-  // Add a fallback route handler for SPA client-side routing
-  // This should be the last route added
-  app.use('*', (req, res, next) => {
-    // Skip if the request already has a response (like API responses)
-    if (res.headersSent) {
-      return next();
-    }
-    
-    // Skip API routes and asset routes
-    if (req.originalUrl.startsWith('/api/') || 
-        req.originalUrl.startsWith('/assets/') || 
-        req.originalUrl.startsWith('/videos/')) {
-      return next();
-    }
-    
-    // For all other routes, serve the SPA index.html
-    const indexPath = path.join(process.cwd(), 'public', 'index.html');
-    
-    if (fs.existsSync(indexPath)) {
-      console.log(`[SPA] Serving index.html for client-side route: ${req.originalUrl}`);
-      res.sendFile(indexPath);
-    } else {
-      console.error(`[SPA] index.html not found at ${indexPath}`);
-      res.status(404).send('Not found');
-    }
+  // We only need the root health check endpoint here
+  // We should NOT interfere with Vite's handling of the SPA
+  // The rest of the file handling is done by setupVite (in development) or serveStatic (in production)
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: "ok" });
   });
 
   const httpServer = createServer(app);
