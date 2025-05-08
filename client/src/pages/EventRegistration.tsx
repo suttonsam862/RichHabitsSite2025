@@ -142,79 +142,105 @@ export default function EventRegistration() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Implement comprehensive form validation
-    const validationErrors: {field: string, message: string}[] = [];
-    
-    // Check required fields
-    const requiredFields = [
-      { field: 'firstName', label: 'First Name' },
-      { field: 'lastName', label: 'Last Name' },
-      { field: 'contactName', label: 'Parent/Guardian Name' },
-      { field: 'email', label: 'Email' },
-      { field: 'tShirtSize', label: 'T-Shirt Size' },
-      { field: 'grade', label: 'Grade' },
-      { field: 'schoolName', label: 'School Name' }
-    ];
-    
-    const missingFields = requiredFields.filter(
-      ({ field }) => !registrationForm[field as keyof typeof registrationForm]
-    );
-    
-    if (missingFields.length > 0) {
-      missingFields.forEach(({ field, label }) => {
-        validationErrors.push({
-          field,
-          message: `${label} is required`
+    try {
+      console.log('Starting form validation');
+      
+      // Implement comprehensive form validation
+      const validationErrors: {field: string, message: string}[] = [];
+      
+      // Check required fields
+      const requiredFields = [
+        { field: 'firstName', label: 'First Name' },
+        { field: 'lastName', label: 'Last Name' },
+        { field: 'contactName', label: 'Parent/Guardian Name' },
+        { field: 'email', label: 'Email' },
+        { field: 'phone', label: 'Phone Number' }, // Making phone required
+        { field: 'tShirtSize', label: 'T-Shirt Size' },
+        { field: 'grade', label: 'Grade' },
+        { field: 'schoolName', label: 'School Name' }
+      ];
+      
+      console.log('Checking required fields', registrationForm);
+      
+      const missingFields = requiredFields.filter(
+        ({ field }) => {
+          const value = registrationForm[field as keyof typeof registrationForm];
+          return !value || (typeof value === 'string' && value.trim() === '');
+        }
+      );
+      
+      if (missingFields.length > 0) {
+        missingFields.forEach(({ field, label }) => {
+          validationErrors.push({
+            field,
+            message: `${label} is required`
+          });
         });
-      });
-    }
-    
-    // Email validation
-    if (registrationForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registrationForm.email)) {
-      validationErrors.push({
-        field: 'email',
-        message: 'Please enter a valid email address'
-      });
-    }
-    
-    // Phone validation (if provided)
-    if (registrationForm.phone && !/^[0-9\-\+\(\)\s\.]{7,}$/.test(registrationForm.phone)) {
-      validationErrors.push({
-        field: 'phone',
-        message: 'Please enter a valid phone number'
-      });
-    }
-    
-    // Day selection validation for Cory Land Tour (event ID 4)
-    if (event.id === 4) {
-      if (registrationForm.option === 'single' && 
-          !registrationForm.day1 && !registrationForm.day2 && !registrationForm.day3) {
+        console.log('Missing required fields:', missingFields);
+      }
+      
+      // Email validation
+      if (registrationForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registrationForm.email)) {
         validationErrors.push({
-          field: 'daySelection',
-          message: 'Please select at least one day for the Cory Land Tour'
+          field: 'email',
+          message: 'Please enter a valid email address'
         });
       }
-    } 
-    // Single day selection validation for non-Cory Land Tour events
-    else if (registrationForm.option === 'single') {
-      // Future enhancement - if specific day selection is needed for other events
-      // This space is reserved for additional validation
-    }
-    
-    // If validation errors exist, display them and prevent form submission
-    if (validationErrors.length > 0) {
-      // Group errors by field for more organized display
-      const errorMessages = validationErrors.map(err => err.message);
       
-      // Show toast with error summary
+      // Phone validation (now required)
+      if (!registrationForm.phone) {
+        validationErrors.push({
+          field: 'phone',
+          message: 'Phone number is required'
+        });
+      } else if (!/^[0-9\-\+\(\)\s\.]{7,}$/.test(registrationForm.phone)) {
+        validationErrors.push({
+          field: 'phone',
+          message: 'Please enter a valid phone number'
+        });
+      }
+      
+      // Day selection validation for Cory Land Tour (event ID 4)
+      if (event.id === 4) {
+        if (registrationForm.option === 'single' && 
+            !registrationForm.day1 && !registrationForm.day2 && !registrationForm.day3) {
+          validationErrors.push({
+            field: 'daySelection',
+            message: 'Please select at least one day for the Cory Land Tour'
+          });
+        }
+      } 
+      // Single day selection validation for non-Cory Land Tour events
+      else if (registrationForm.option === 'single') {
+        // Future enhancement - if specific day selection is needed for other events
+        // This space is reserved for additional validation
+      }
+      
+      console.log('Validation completed with', validationErrors.length, 'errors');
+      
+      // If validation errors exist, display them and prevent form submission
+      if (validationErrors.length > 0) {
+        // Group errors by field for more organized display
+        const errorMessages = validationErrors.map(err => err.message);
+        
+        // Show toast with error summary
+        toast({
+          title: "Form Validation Error",
+          description: errorMessages.join('. '),
+          variant: "destructive"
+        });
+        
+        // Log validation errors
+        console.log('Validation errors:', validationErrors);
+        return;
+      }
+    } catch (validationError) {
+      console.error('Error during form validation:', validationError);
       toast({
-        title: "Form Validation Error",
-        description: errorMessages.join('. '),
+        title: "Validation Error",
+        description: "There was a problem validating your form. Please check all fields and try again.",
         variant: "destructive"
       });
-      
-      // Highlight fields with errors
-      console.log('Validation errors:', validationErrors);
       return;
     }
     
@@ -263,7 +289,8 @@ export default function EventRegistration() {
       const formData = {
         ...registrationForm,
         eventId: eventId,
-        // No mapping needed since we now use consistent naming (option) in both the form and API
+        // Explicitly map 'option' to 'registrationType' to ensure consistency with the API schema
+        registrationType: registrationForm.option,
       };
       
       console.log('Submitting registration data:', formData);
@@ -522,12 +549,13 @@ export default function EventRegistration() {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number (Optional)</Label>
+                      <Label htmlFor="phone">Phone Number</Label>
                       <Input 
                         id="phone" 
                         type="tel"
                         value={registrationForm.phone}
                         onChange={(e) => setRegistrationForm({...registrationForm, phone: e.target.value})}
+                        required
                       />
                     </div>
                     

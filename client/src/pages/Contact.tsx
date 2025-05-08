@@ -352,7 +352,7 @@ export default function Contact() {
                   className="bg-white p-6 shadow-sm"
                 >
                   <h3 className="text-xl font-medium mb-3">How long does shipping take?</h3>
-                  <p className="text-gray-700">Standard shipping takes 3-5 business days within the continental US. Expedited shipping options are available at checkout. Custom team orders typically take 3-4 weeks for production and delivery.</p>
+                  <p className="text-gray-700">Standard shipping takes 3-5 business days within the continental US. Expedited shipping options are available at checkout. Custom team orders take anywhere from 20-60 days to complete when fully customized, depending on size and variability. Once completed, they take about a week to ship.</p>
                 </motion.div>
                 
                 <motion.div
