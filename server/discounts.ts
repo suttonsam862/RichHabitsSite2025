@@ -15,6 +15,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 // This would typically be stored in a database, but for simplicity we'll use an env variable
 const ADMIN_DISCOUNT_CODE = process.env.UNIVERSAL_DISCOUNT_CODE || 'ADMIN-100-OFF';
 
+// Add a new admin discount code
+const NEW_ADMIN_DISCOUNT_CODE = '100OFFADMINCODE';
+
 // Hard-coded admin email that can use the 100% off code
 const ADMIN_EMAIL = 'samsutton@rich-habits.com';
 
@@ -24,7 +27,7 @@ export const validateDiscountCode = async (req: Request, res: Response) => {
     const { code, eventId, email, amount } = req.body;
     
     console.log('Validating discount code:', { code, eventId, email, amount });
-    console.log('Admin code:', ADMIN_DISCOUNT_CODE, 'Admin email:', ADMIN_EMAIL);
+    console.log('Admin codes:', ADMIN_DISCOUNT_CODE, NEW_ADMIN_DISCOUNT_CODE, 'Admin email:', ADMIN_EMAIL);
     
     if (!code) {
       return res.status(400).json({
@@ -33,17 +36,22 @@ export const validateDiscountCode = async (req: Request, res: Response) => {
       });
     }
     
-    // Check if it's the admin discount code
-    if (code === ADMIN_DISCOUNT_CODE) {
+    // Check if it's one of the admin discount codes
+    if (code === ADMIN_DISCOUNT_CODE || code === NEW_ADMIN_DISCOUNT_CODE) {
+      // Log the discount code attempt
+      console.log(`Admin discount code attempt: ${code} from email: ${email}`);
+      
       // Verify the email matches the admin email
       if (email && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
         // Admin discount applies 100% off
+        console.log(`100% discount applied for admin: ${email}`);
         return res.json({
           valid: true,
           discountAmount: amount,
           message: '100% discount applied'
         });
       } else {
+        console.log(`Admin discount code attempt rejected for unauthorized email: ${email}`);
         return res.status(400).json({
           valid: false,
           message: 'This discount code is not valid for your email'
