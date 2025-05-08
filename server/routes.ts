@@ -27,6 +27,20 @@ const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || "rich-habits.my
 const SHOPIFY_API_VERSION = "2023-07"; // Update to latest version as needed
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for deployment
+  app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+  
+  // Root path endpoint for health checks
+  app.get("/", (req, res) => {
+    res.status(200).json({ 
+      name: "Rich Habits API",
+      status: "online",
+      version: "1.0.0"
+    });
+  });
+  
   // Setup image optimization routes
   const assetsDir = path.join(process.cwd(), 'attached_assets');
   registerImageOptimizationRoutes(app, assetsDir);
