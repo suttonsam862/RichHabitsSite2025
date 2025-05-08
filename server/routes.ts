@@ -47,11 +47,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Serve static files directly with various optimizations
   const staticOptions = {
-    maxAge: 86400000, // 1 day caching for static assets
-    etag: true,       // Use ETags for cache validation
-    lastModified: true // Use Last-Modified for cache validation
+    maxAge: 86400000,   // 1 day caching for static assets
+    etag: true,         // Use ETags for cache validation
+    lastModified: true, // Use Last-Modified for cache validation
+    index: false        // Disable automatic directory index serving
   };
   
+  // Serve files from public directory (built frontend assets)
+  app.use(express.static(path.join(process.cwd(), 'public'), {
+    ...staticOptions,
+    fallthrough: true  // Allow falling through to next middleware
+  }));
+  
+  // Serve design files specifically
   app.use('/designs', express.static(path.join(process.cwd(), 'public/designs'), staticOptions));
   
   // Serve attached assets files with detailed logging and improved file path handling
@@ -62,14 +70,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const decodedPath = decodeURIComponent(req.path);
     console.log('[media] Decoded path:', decodedPath);
     
-    // Build full path
-    const fullPath = path.join(process.cwd(), 'attached_assets', decodedPath);
-    console.log('[media] Checking file exists:', fullPath);
+    // Try both possible locations: attached_assets and public/assets
+    const attachedAssetsPath = path.join(process.cwd(), 'attached_assets', decodedPath);
+    const publicAssetsPath = path.join(process.cwd(), 'public/assets', decodedPath);
     
-    if (fs.existsSync(fullPath)) {
-      console.log('[media] Found asset file:', decodedPath);
+    let filePath = null;
+    
+    // Check if file exists in either location
+    if (fs.existsSync(attachedAssetsPath)) {
+      filePath = attachedAssetsPath;
+      console.log('[media] Found asset file in attached_assets:', decodedPath);
+    } else if (fs.existsSync(publicAssetsPath)) {
+      filePath = publicAssetsPath;
+      console.log('[media] Found asset file in public/assets:', decodedPath);
+    }
+    
+    if (filePath) {
       // Serve the file directly with proper content type
-      const fileExtension = path.extname(fullPath).toLowerCase();
+      const fileExtension = path.extname(filePath).toLowerCase();
       let contentType = 'application/octet-stream';
       
       // Set content type based on file extension
@@ -80,23 +98,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.setHeader('Content-Type', contentType);
       res.setHeader('Cache-Control', 'public, max-age=86400');
-      fs.createReadStream(fullPath).pipe(res);
+      fs.createReadStream(filePath).pipe(res);
     } else {
-      console.log('[media] Asset file not found:', decodedPath);
+      console.log('[media] Asset file not found in any location:', decodedPath);
       next();
     }
-  }, express.static(path.join(process.cwd(), 'attached_assets'), staticOptions));
+  });
+  
+  // Fallback for attached_assets if the custom handler misses any files
+  app.use('/assets', express.static(path.join(process.cwd(), 'attached_assets'), staticOptions));
+  app.use('/assets', express.static(path.join(process.cwd(), 'public/assets'), staticOptions));
   
   // Serve video files with proper headers
   app.get('/videos/:filename', (req, res) => {
     const videoPath = path.join(process.cwd(), 'public/videos', req.params.filename);
-    res.sendFile(videoPath, {
-      headers: {
-        'Content-Type': 'video/mp4',
-        'Accept-Ranges': 'bytes',
-        'Cache-Control': 'public, max-age=86400',
-      }
-    });
+    
+    // Check if file exists
+    if (fs.existsSync(videoPath)) {
+      res.sendFile(videoPath, {
+        headers: {
+          'Content-Type': 'video/mp4',
+          'Accept-Ranges': 'bytes',
+          'Cache-Control': 'public, max-age=86400',
+        }
+      });
+    } else {
+      console.log(`[media] Video file not found: ${req.params.filename}`);
+      res.status(404).json({ error: 'Video not found' });
+    }
   });
   // API routes for products
   app.get("/api/products", async (req, res) => {
@@ -1543,6 +1572,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Discount code routes
   app.post('/api/discount/validate', validateDiscountCode);
+
+  // Add a fallback route handler for SPA client-side routing
+  // This should be the last route added
+  app.use('*', (req, res, next) => {
+    // Skip if the request already has a response (like API responses)
+    if (res.headersSent) {
+      return next();
+    }
+    
+    // Skip API routes and asset routes
+    if (req.originalUrl.startsWith('/api/') || 
+        req.originalUrl.startsWith('/assets/') || 
+        req.originalUrl.startsWith('/videos/')) {
+      return next();
+    }
+    
+    // For all other routes, serve the SPA index.html
+    const indexPath = path.join(process.cwd(), 'public', 'index.html');
+    
+    if (fs.existsSync(indexPath)) {
+      console.log(`[SPA] Serving index.html for client-side route: ${req.originalUrl}`);
+      res.sendFile(indexPath);
+    } else {
+      console.error(`[SPA] index.html not found at ${indexPath}`);
+      res.status(404).send('Not found');
+    }
+  });
 
   const httpServer = createServer(app);
 
