@@ -176,10 +176,13 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
     let paymentIntent: any;
     
     if (freeRegistration) {
-      // For free registrations, we won't verify a payment intent
-      // Instead, we'll use the session storage data
+      console.log('Processing free registration with discount code:', discountCode);
+      console.log('Registration data received:', req.body);
       
-      // Retrieve registration data from session storage (stored in client)
+      // For free registrations, we won't verify a payment intent
+      // Instead, we'll use the registration data sent from the client
+      
+      // Retrieve registration data from registration form (stored in client sessionStorage)
       const registrationEmail = req.body.email || '';
       
       if (!registrationEmail) {
@@ -209,6 +212,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
         }
       };
       
+      console.log('Created mock payment intent for free registration:', paymentIntent);
       // For free registrations, we'll continue with the flow using our mock payment intent
     } else {
       // For paid registrations, we need a payment intent ID

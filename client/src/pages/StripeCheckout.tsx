@@ -214,6 +214,10 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
               registrationData.email = sessionStorage.getItem('registration_email') || '';
             }
             
+            // For debugging
+            console.log('Registration data gathered from sessionStorage:', registrationData);
+            console.log('Using admin email for registration:', registrationData.email);
+            
             // Call our API to record the registration without payment
             const registrationResponse = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
               method: 'POST',
