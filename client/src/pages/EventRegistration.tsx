@@ -2,14 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
 import { Container } from '@/components/Container';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Separator } from '@/components/ui/separator';
 import { RegistrationProgress, type RegistrationStep } from '@/components/RegistrationProgress';
 import { 
   updateRegistrationStatus, 
@@ -17,25 +10,13 @@ import {
   handleRegistrationError,
   getCompletedRegistrations 
 } from '@/lib/registrationUtils';
+import { 
+  EventRegistrationForm, 
+  type RegistrationFormData 
+} from '@/components/events/EventRegistrationForm';
 
 export default function EventRegistration() {
   const [location, navigate] = useLocation();
-  const [registrationForm, setRegistrationForm] = useState({
-    firstName: '',
-    lastName: '',
-    contactName: '',
-    email: '',
-    phone: '',
-    tShirtSize: '',
-    grade: '',
-    schoolName: '',
-    clubName: '',
-    medicalReleaseAccepted: false,
-    option: 'full', // 'full' or 'single' - consistent with backend API
-    day1: false, // for Cory Land Tour
-    day2: false, // for Cory Land Tour
-    day3: false, // for Cory Land Tour
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -46,68 +27,9 @@ export default function EventRegistration() {
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showCheckoutFrame, setShowCheckoutFrame] = useState(false);
-  const [checkoutUrl, setCheckoutUrl] = useState<string>('');
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('form');
   
-  // Attempt to recover from previously interrupted registration
-  useEffect(() => {
-    try {
-      const savedData = localStorage.getItem('registration_form_data');
-      if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        
-        // Check if the saved data is for the current event and not too old (within last 24 hours)
-        const savedTimestamp = new Date(parsedData.timestamp).getTime();
-        const now = new Date().getTime();
-        const isRecent = (now - savedTimestamp) < (24 * 60 * 60 * 1000); // 24 hours
-        
-        if (parsedData.eventId === eventId && isRecent) {
-          // Show recovery option
-          toast({
-            title: "Registration Data Found",
-            description: "We found your previous registration information. Would you like to restore it?",
-            action: (
-              <div className="flex space-x-2">
-                <button 
-                  onClick={() => {
-                    // Remove eventId and timestamp from the saved data
-                    const { eventId, timestamp, ...formData } = parsedData;
-                    setRegistrationForm(prevState => ({ ...prevState, ...formData }));
-                    toast({
-                      title: "Data Restored",
-                      description: "Your previous registration information has been restored."
-                    });
-                  }}
-                  className="px-3 py-1 text-xs rounded-md bg-primary text-white hover:bg-primary/90"
-                >
-                  Restore
-                </button>
-                <button 
-                  onClick={() => {
-                    localStorage.removeItem('registration_form_data');
-                    toast({
-                      title: "Data Cleared",
-                      description: "Previous registration information has been cleared."
-                    });
-                  }}
-                  className="px-3 py-1 text-xs rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
-                >
-                  Ignore
-                </button>
-              </div>
-            ),
-          });
-        } else {
-          // Clear outdated data
-          localStorage.removeItem('registration_form_data');
-        }
-      }
-    } catch (error) {
-      console.warn('Could not recover registration data:', error);
-      localStorage.removeItem('registration_form_data');
-    }
-  }, [eventId, toast]);
+  // This is handled by our EventRegistrationForm component now
 
   // Fetch event data from API
   useEffect(() => {
