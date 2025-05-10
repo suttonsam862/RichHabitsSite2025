@@ -263,13 +263,13 @@ export default function EventDetail() {
             {
               name: "Trever Andersen",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/cory-land-tour/trever-anderson.webp", 
+              image: "/assets/coaches/panther-train-tour/trever-anderson.webp", 
               bio: "Trever Andersen brings his unique wrestling style from Northern Iowa to this special tour. Specializing in strategic positioning and counter techniques, Trever offers valuable insights to wrestlers of all levels."
             },
             {
               name: "Garrett Funk",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/cory-land-tour/garrett-funk.webp",
+              image: "/assets/coaches/panther-train-tour/garrett-funk.webp",
               bio: "Garrett Funk rounds out the Northern Iowa contingent with his explosive style and technical expertise. His approach to wrestling combines traditional fundamentals with modern innovations."
             }
           ];
@@ -369,7 +369,7 @@ export default function EventDetail() {
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
       </div>
       
-      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : event.id === 3 ? 'recruiting-bg' : event.id === 4 ? 'cory-land-bg' : ''}`}>
+      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : event.id === 3 ? 'recruiting-bg' : event.id === 4 ? 'panther-train-bg' : ''}`}>
         {event.id === 1 && (
           <>
             {/* Heat waves */}
@@ -442,21 +442,21 @@ export default function EventDetail() {
         
         {event.id === 4 && (
           <>
-            {/* Cory Land Tour purple and gold waves */}
-            <div className="cory-land-purple-wave"></div>
-            <div className="cory-land-gold-wave"></div>
-            <div className="cory-land-white-wave"></div>
+            {/* Panther Train Tour purple and gold waves */}
+            <div className="panther-train-purple-wave"></div>
+            <div className="panther-train-gold-wave"></div>
+            <div className="panther-train-white-wave"></div>
             
             {/* Add another set of waves with different timing */}
-            <div className="cory-land-purple-wave" style={{ top: '40%', animationDelay: '5s' }}></div>
-            <div className="cory-land-gold-wave" style={{ top: '70%', animationDelay: '9s' }}></div>
-            <div className="cory-land-white-wave" style={{ top: '90%', animationDelay: '13s' }}></div>
+            <div className="panther-train-purple-wave" style={{ top: '40%', animationDelay: '5s' }}></div>
+            <div className="panther-train-gold-wave" style={{ top: '70%', animationDelay: '9s' }}></div>
+            <div className="panther-train-white-wave" style={{ top: '90%', animationDelay: '13s' }}></div>
             
-            {/* Cory Land Tour pattern */}
-            <div className="cory-land-pattern"></div>
+            {/* Panther Train Tour pattern */}
+            <div className="panther-train-pattern"></div>
             
             {/* Animated glossy stripe */}
-            <div className="cory-land-stripe"></div>
+            <div className="panther-train-stripe"></div>
           </>
         )}
         

@@ -760,13 +760,13 @@ video:invalid ~ .video-fallback {
   animation-delay: 8s;
 }
 
-/* Cory Land Tour Styling */
-.cory-land-bg {
+/* Panther Train Tour Styling */
+.panther-train-bg {
   position: relative;
   overflow: hidden;
 }
 
-.cory-land-purple-wave {
+.panther-train-purple-wave {
   position: absolute;
   top: 10%;
   left: 0;
@@ -777,7 +777,7 @@ video:invalid ~ .video-fallback {
   animation: redWhiteBlueWave 20s infinite ease-in-out;
 }
 
-.cory-land-gold-wave {
+.panther-train-gold-wave {
   position: absolute;
   top: 40%;
   left: 0;
@@ -789,7 +789,7 @@ video:invalid ~ .video-fallback {
   animation-delay: 4s;
 }
 
-.cory-land-white-wave {
+.panther-train-white-wave {
   position: absolute;
   top: 70%;
   left: 0;
@@ -801,7 +801,7 @@ video:invalid ~ .video-fallback {
   animation-delay: 8s;
 }
 
-.cory-land-pattern {
+.panther-train-pattern {
   position: absolute;
   top: 0;
   left: 0;
@@ -812,7 +812,7 @@ video:invalid ~ .video-fallback {
   z-index: 0;
 }
 
-.cory-land-stripe {
+.panther-train-stripe {
   position: absolute;
   top: 50%;
   left: -100%;
@@ -829,7 +829,7 @@ video:invalid ~ .video-fallback {
   z-index: 0;
 }
 
-.cory-land-gradient-btn {
+.panther-train-gradient-btn {
   background: linear-gradient(to right, #663399, #d4af37);
   box-shadow: 0 4px 14px rgba(102, 51, 153, 0.25);
   transition: all 0.3s ease;
@@ -838,13 +838,13 @@ video:invalid ~ .video-fallback {
   z-index: 1;
 }
 
-.cory-land-gradient-btn:hover {
+.panther-train-gradient-btn:hover {
   background: linear-gradient(to right, #552288, #c3a026);
   box-shadow: 0 6px 20px rgba(102, 51, 153, 0.35);
   transform: translateY(-1px);
 }
 
-.cory-land-gradient-btn::before {
+.panther-train-gradient-btn::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -1148,7 +1148,7 @@ video:invalid ~ .video-fallback {
   50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(100, 38, 103, 0.9)); }
 }
 
-/* Cory Land Tour styles */
+/* Panther Train Tour styles */
 .cory-border {
   border: 2px solid #4B0082;
   box-shadow: 0 8px 25px -5px rgba(75, 0, 130, 0.3);
@@ -1241,7 +1241,7 @@ video:invalid ~ .video-fallback {
   100% { transform: translateX(-30%) scaleY(1); }
 }
 
-/* Animated glossy stripe for Cory Land Tour */
+/* Animated glossy stripe for Panther Train Tour */
 .cory-stripe {
   position: absolute;
   top: 0;
