@@ -1059,7 +1059,7 @@ export default function EventDetail() {
                           </div>
                           <div>
                             <span className="font-medium text-white">Day 1: July 23, 2025</span>
-                            <p className="text-purple-200 text-sm mt-1">Athens High School - Focus on neutral position techniques and setups</p>
+                            <p className="text-purple-200 text-sm mt-1">East Hamilton High School - Focus on neutral position techniques and setups</p>
                           </div>
                         </li>
                         <li className="flex items-start">
@@ -1083,7 +1083,7 @@ export default function EventDetail() {
                           </div>
                           <div>
                             <span className="font-medium text-white">Day 3: July 25, 2025</span>
-                            <p className="text-purple-200 text-sm mt-1">South AL Location (TBD) - Focus on bottom position escapes and advanced techniques</p>
+                            <p className="text-purple-200 text-sm mt-1">Fairhope High School - Focus on bottom position escapes and advanced techniques</p>
                           </div>
                         </li>
                       </ul>
@@ -1856,7 +1856,7 @@ export default function EventDetail() {
                       })}
                     />
                     <Label htmlFor="day1" className="cursor-pointer">
-                      Day 1 - Birmingham
+                      Day 1 - East Hamilton High School
                     </Label>
                   </div>
                   
@@ -1872,7 +1872,7 @@ export default function EventDetail() {
                       })}
                     />
                     <Label htmlFor="day2" className="cursor-pointer">
-                      Day 2 - Huntsville
+                      Day 2 - Ironclad Wrestling Club
                     </Label>
                   </div>
                   
@@ -1888,7 +1888,7 @@ export default function EventDetail() {
                       })}
                     />
                     <Label htmlFor="day3" className="cursor-pointer">
-                      Day 3 - Montgomery
+                      Day 3 - Fairhope High School
                     </Label>
                   </div>
                 </div>
