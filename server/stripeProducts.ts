@@ -51,8 +51,8 @@ export const STRIPE_PRODUCTS = {
     }
   },
   
-  // Cory Land Tour
-  'cory-land-tour': {
+  // Panther Train Tour
+  'panther-train-tour': {
     productId: 'prod_SEy6aTWOMa1cHg', // LIVE mode product ID
     prices: {
       full: 'price_1RKfJpBIRPjPy7BL4k8lrUZe',   // $200
@@ -60,8 +60,8 @@ export const STRIPE_PRODUCTS = {
     },
     metadata: {
       eventId: '4',
-      name: 'Cory Land Tour',
-      location: 'Multiple Locations Across Alabama',
+      name: 'Panther Train Tour',
+      location: 'Multiple Locations in Tennessee and Alabama',
       dates: 'July 23-25, 2025'
     }
   }

@@ -646,8 +646,8 @@ export async function createEventRegistrationCheckout(
         shopifyKey = 'texas-recruiting-clinic';
         break;
       case '4':
-        eventName = 'Cory Land Tour';
-        shopifyKey = 'cory-land-tour';
+        eventName = 'Panther Train Tour';
+        shopifyKey = 'panther-train-tour';
         break;
       default:
         eventName = 'Wrestling Event';
