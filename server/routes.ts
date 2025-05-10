@@ -545,7 +545,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             1: 'birmingham-slam-camp',
             2: 'national-champ-camp',
             3: 'texas-recruiting-clinic',
-            4: 'cory-land-tour'
+            4: 'panther-train-tour'
           };
           
           const eventKey = eventKeyMap[eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
@@ -571,12 +571,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             throw new Error('No Shopify variant ID configured for this event registration type');
           }
           
-          // For Cory Land Tour, validate day selection for single-day registrations
+          // For Panther Train Tour, validate day selection for single-day registrations
           if (eventId === 4 && validatedData.registrationType === 'single') {
             const anyDaySelected = validatedData.day1 || validatedData.day2 || validatedData.day3;
             if (!anyDaySelected) {
               return res.status(400).json({ 
-                message: "Please select at least one day for the Cory Land Tour single day registration" 
+                message: "Please select at least one day for the Panther Train Tour single day registration" 
               });
             }
           }
@@ -596,7 +596,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             option: validatedData.registrationType === 'full' ? 'full' : 'single'
           };
           
-          // For Cory Land Tour, add day selection data
+          // For Panther Train Tour, add day selection data
           if (eventId === 4) {
             registrationData.day1 = validatedData.day1 || false;
             registrationData.day2 = validatedData.day2 || false;
@@ -713,7 +713,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               shopifyKey = 'texas-recruiting-clinic';
               break;
             case '4':
-              shopifyKey = 'cory-land-tour';
+              shopifyKey = 'panther-train-tour';
               break;
           }
           
@@ -746,7 +746,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     eventName = 'Texas Recruiting Clinic';
                     break;
                   case '4':
-                    eventName = 'Cory Land Tour';
+                    eventName = 'Panther Train Tour';
                     break;
                   default:
                     eventName = 'Wrestling Event';
@@ -785,7 +785,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           1: 'birmingham-slam-camp',
           2: 'national-champ-camp',
           3: 'texas-recruiting-clinic',
-          4: 'cory-land-tour'
+          4: 'panther-train-tour'
         };
         
         const eventKey = eventKeyMap[registrationData.eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
@@ -1000,7 +1000,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           shopifyKey = 'texas-recruiting-clinic';
           break;
         case 4:
-          shopifyKey = 'cory-land-tour';
+          shopifyKey = 'panther-train-tour';
           break;
         default:
           return res.status(404).json({ message: "Event not found" });
@@ -1234,7 +1234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         1: 'birmingham-slam-camp',
         2: 'national-champ-camp',
         3: 'texas-recruiting-clinic',
-        4: 'cory-land-tour'
+        4: 'panther-train-tour'
       };
       
       const eventKey = eventKeyMap[eventId as keyof typeof eventKeyMap] || 'birmingham-slam-camp';
