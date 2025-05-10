@@ -407,7 +407,7 @@ export async function createCustomCheckout(
           shopifyKey = 'texas-recruiting-clinic';
           break;
         case '4':
-          shopifyKey = 'cory-land-tour';
+          shopifyKey = 'panther-train-tour';
           break;
       }
       

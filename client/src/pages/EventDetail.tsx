@@ -251,13 +251,13 @@ export default function EventDetail() {
             {
               name: "Cory Land",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/cory-land-tour/cory-land.webp",
+              image: "/assets/coaches/panther-train-tour/cory-land.webp",
               bio: "Cory Land is a standout wrestler at the University of Northern Iowa. Known for his technical skill and competitive drive, Cory brings his expertise to this multi-day tour across Alabama."
             },
             {
               name: "Wyatt Voelker",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/cory-land-tour/wyatt-voelker.webp",
+              image: "/assets/coaches/panther-train-tour/wyatt-voelker.webp",
               bio: "Wyatt Voelker is a powerful wrestler from the University of Northern Iowa. His strength-based approach and innovative techniques make him a favorite instructor among young wrestlers."
             },
             {
