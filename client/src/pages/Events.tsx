@@ -47,13 +47,13 @@ const events = [
   },
   {
     id: 4,
-    title: "CORY LAND TOUR",
+    title: "PANTHER TRAIN TOUR",
     category: "Wrestling",
     categoryClass: "bg-[#4B0082]/10 text-[#4B0082]",
     date: "May 15th-17th, 2025",
     time: "9:00 AM - 3:00 PM",
     location: "Multiple locations in Alabama",
-    description: "Join Northern Iowa standout Cory Land and his teammates Wyatt Voelker, Trever Anderson, and Garrett Funk for this unique 3-day clinic tour across Alabama. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes.",
+    description: "Join Northern Iowa standout wrestlers and their elite teammates for this unique 3-day clinic tour across Alabama. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes.",
     price: "$99/day",
     originalPrice: "$299",
     image: event4Image,
@@ -419,7 +419,7 @@ export default function Events() {
                       }}
                     />
                     <video 
-                      src={coryLandVideo}
+                      src={pantherTrainVideo}
                       autoPlay 
                       loop 
                       muted 

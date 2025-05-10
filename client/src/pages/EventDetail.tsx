@@ -49,9 +49,9 @@ export default function EventDetail() {
     clubName: '',
     medicalReleaseAccepted: false,
     registrationType: 'full', // 'full' or 'single'
-    day1: false, // for Cory Land Tour
-    day2: false, // for Cory Land Tour
-    day3: false, // for Cory Land Tour
+    day1: false, // for Panther Train Tour
+    day2: false, // for Panther Train Tour
+    day3: false, // for Panther Train Tour
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -249,10 +249,10 @@ export default function EventDetail() {
         } else if (data.id === 4) {
           data.coaches = [
             {
-              name: "Cory Land",
-              title: "Northern Iowa Wrestling Team",
+              name: "Northern Iowa Elite",
+              title: "Panther Train Tour Staff",
               image: "/assets/coaches/panther-train-tour/cory-land.webp",
-              bio: "Cory Land is a standout wrestler at the University of Northern Iowa. Known for his technical skill and competitive drive, Cory brings his expertise to this multi-day tour across Alabama."
+              bio: "The Northern Iowa Elite wrestling program features some of the top collegiate wrestlers in the country. Known for their technical skill and competitive drive, these athletes bring their expertise to this multi-day tour across Alabama."
             },
             {
               name: "Wyatt Voelker",
