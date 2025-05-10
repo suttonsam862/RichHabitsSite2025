@@ -887,7 +887,7 @@ export default function EventDetail() {
                       </div>
                       
                       <div className="mt-12 p-6 bg-gradient-to-r from-[#4F2D7F] to-[#9b7ede] rounded-lg text-white shadow-lg">
-                        <h3 className="text-xl font-bold mb-4">Why Join the Cory Land Tour?</h3>
+                        <h3 className="text-xl font-bold mb-4">Why Join the Panther Train Tour?</h3>
                         <p className="mb-4">
                           This unique tour brings elite Northern Iowa wrestling talent across multiple locations in Alabama, making high-level instruction accessible to wrestlers throughout the state. Each day focuses on different techniques and positions.
                         </p>
