@@ -1149,14 +1149,14 @@ video:invalid ~ .video-fallback {
 }
 
 /* Panther Train Tour styles */
-.cory-border {
+.panther-train-border {
   border: 2px solid #4B0082;
   box-shadow: 0 8px 25px -5px rgba(75, 0, 130, 0.3);
   position: relative;
   overflow: hidden;
 }
 
-.cory-diamond-pattern {
+.panther-train-diamond-pattern {
   position: absolute;
   top: 0;
   left: 0;
@@ -1171,7 +1171,7 @@ video:invalid ~ .video-fallback {
   z-index: 0;
 }
 
-.cory-gradient-btn {
+.panther-train-gradient-btn {
   background: linear-gradient(to right, #4B0082, #8A2BE2);
   box-shadow: 0 4px 14px rgba(75, 0, 130, 0.25);
   transition: all 0.3s ease;
@@ -1180,29 +1180,29 @@ video:invalid ~ .video-fallback {
   z-index: 1;
 }
 
-.cory-gradient-btn:hover {
+.panther-train-gradient-btn:hover {
   background: linear-gradient(to right, #3A0065, #7000C4);
   box-shadow: 0 6px 20px rgba(75, 0, 130, 0.35);
   transform: translateY(-1px);
 }
 
-.cory-outline-btn {
+.panther-train-outline-btn {
   border: 2px solid #4B0082;
   color: #4B0082;
   background: transparent;
   transition: all 0.3s ease;
 }
 
-.cory-outline-btn:hover {
+.panther-train-outline-btn:hover {
   background: rgba(75, 0, 130, 0.1);
 }
 
-.cory-title {
+.panther-train-title {
   position: relative;
   display: inline-block;
 }
 
-.cory-title::before {
+.panther-train-title::before {
   content: '';
   position: absolute;
   bottom: -5px;
@@ -1212,7 +1212,7 @@ video:invalid ~ .video-fallback {
   background: linear-gradient(to right, #4B0082, #D4AF37);
 }
 
-.cory-purple-wave {
+.panther-train-purple-wave {
   position: absolute;
   top: 10%;
   left: 0;
@@ -1220,10 +1220,10 @@ video:invalid ~ .video-fallback {
   height: 150px;
   background: linear-gradient(90deg, transparent, rgba(75, 0, 130, 0.15), transparent);
   z-index: 0;
-  animation: coryWave 20s infinite ease-in-out;
+  animation: pantherTrainWave 20s infinite ease-in-out;
 }
 
-.cory-gold-wave {
+.panther-train-gold-wave {
   position: absolute;
   top: 70%;
   left: 0;
@@ -1231,18 +1231,18 @@ video:invalid ~ .video-fallback {
   height: 150px;
   background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
   z-index: 0;
-  animation: coryWave 20s infinite ease-in-out reverse;
+  animation: pantherTrainWave 20s infinite ease-in-out reverse;
   animation-delay: 8s;
 }
 
-@keyframes coryWave {
+@keyframes pantherTrainWave {
   0% { transform: translateX(-30%) scaleY(1); }
   50% { transform: translateX(30%) scaleY(0.85); }
   100% { transform: translateX(-30%) scaleY(1); }
 }
 
 /* Animated glossy stripe for Panther Train Tour */
-.cory-stripe {
+.panther-train-stripe {
   position: absolute;
   top: 0;
   left: -100%;
@@ -1255,12 +1255,12 @@ video:invalid ~ .video-fallback {
     rgba(255, 255, 255, 0) 80%, 
     transparent
   );
-  animation: coryStripeAnimation 5s infinite ease-in-out;
+  animation: pantherTrainStripeAnimation 5s infinite ease-in-out;
   pointer-events: none;
   z-index: 1;
 }
 
-@keyframes coryStripeAnimation {
+@keyframes pantherTrainStripeAnimation {
   0% { left: -100%; }
   100% { left: 200%; }
 }

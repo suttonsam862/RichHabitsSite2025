@@ -28,7 +28,7 @@ const event4Image = "/assets/events/image_1745720198123.png";
 import birminghamVideo from "../assets/videos/birmingham_slam.mov";
 import champCampVideo from "../assets/videos/04243.mov"; 
 import texasRecruitingVideo from "../assets/videos/trcvid.mov";
-import coryLandVideo from "../assets/videos/corylandloopvide.mov";
+import pantherTrainVideo from "../assets/videos/corylandloopvide.mov";
 
 // Static events data
 const events = [
@@ -399,12 +399,12 @@ export default function Events() {
                 }}
               />
               
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 cory-border">
+              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 panther-train-border">
                 {/* Add animated background elements */}
-                <div className="cory-diamond-pattern"></div>
-                <div className="cory-purple-wave"></div>
-                <div className="cory-gold-wave"></div>
-                <div className="cory-stripe"></div>
+                <div className="panther-train-diamond-pattern"></div>
+                <div className="panther-train-purple-wave"></div>
+                <div className="panther-train-gold-wave"></div>
+                <div className="panther-train-stripe"></div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
@@ -434,7 +434,7 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2 relative z-10">
                     <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm cory-gradient-btn text-white">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm panther-train-gradient-btn text-white">
                         {events[1].category}
                       </span>
                     </div>
@@ -467,13 +467,13 @@ export default function Events() {
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[1].id}`}
-                        className="cory-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        className="panther-train-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[1])}
-                        className="cory-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        className="panther-train-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
                       >
                         Register Now
                       </button>
