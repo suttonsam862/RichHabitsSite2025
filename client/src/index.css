@@ -1339,3 +1339,35 @@ video:invalid ~ .video-fallback {
   75% { left: 150%; }
   100% { left: 150%; }
 }
+
+/* Panther Train Tour specific styles */
+.panther-train-pattern {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(79, 45, 127, 0.05),
+    rgba(79, 45, 127, 0.05) 10px,
+    rgba(155, 126, 222, 0.05) 10px,
+    rgba(155, 126, 222, 0.05) 20px
+  );
+}
+
+.panther-train-stripe {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4F2D7F, #9b7ede, #4F2D7F);
+  animation: panther-train-stripe-pulse 3s infinite ease-in-out;
+}
+
+@keyframes panther-train-stripe-pulse {
+  0%, 100% {
+    opacity: 0.8;
+    background-position: 0% 50%;
+  }
+  50% {
+    opacity: 1;
+    background-position: 100% 50%;
+  }
+}
