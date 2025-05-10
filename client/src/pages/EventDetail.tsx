@@ -871,7 +871,7 @@ export default function EventDetail() {
                         <p className="text-gray-600">Elite training program across multiple locations</p>
                       </div>
                       <div className="rounded-md overflow-hidden shadow-lg relative border border-purple-200">
-                        <div className="cory-land-pattern absolute inset-0 opacity-10"></div>
+                        <div className="panther-train-pattern absolute inset-0 opacity-10"></div>
                         {event.schedule.map((item: any, index: number) => (
                           <div 
                             key={index} 
@@ -883,7 +883,7 @@ export default function EventDetail() {
                             <div className="col-span-2 text-gray-800">{item.activity}</div>
                           </div>
                         ))}
-                        <div className="cory-land-stripe"></div>
+                        <div className="panther-train-stripe"></div>
                       </div>
                       
                       <div className="mt-12 p-6 bg-gradient-to-r from-[#4F2D7F] to-[#9b7ede] rounded-lg text-white shadow-lg">
@@ -899,7 +899,7 @@ export default function EventDetail() {
                       <div className="mt-10">
                         <div className="mb-6 border-b border-purple-200 pb-2">
                           <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #4F2D7F, #9b7ede)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                            About Cory Land Tour
+                            About Panther Train Tour
                           </h3>
                           <p className="text-gray-600">A premium wrestling experience across Alabama</p>
                         </div>
@@ -1032,7 +1032,7 @@ export default function EventDetail() {
                           <span>Limited to 75 wrestlers per location</span>
                         </li>
                         <li className="flex">
-                          <span>All participants receive Cory Land Tour t-shirt</span>
+                          <span>All participants receive Panther Train Tour t-shirt</span>
                         </li>
                         <li className="flex">
                           <span>Choose individual days or the full tour experience</span>
@@ -1093,14 +1093,14 @@ export default function EventDetail() {
                   {/* Coach Spotlight */}
                   <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8 border border-purple-400 relative">
                     <div className="px-6 py-4 text-white" style={{ background: 'linear-gradient(135deg, #4F2D7F, #9b7ede)' }}>
-                      <h3 className="text-lg font-bold">Coach Spotlight: Cory Land</h3>
+                      <h3 className="text-lg font-bold">Coach Spotlight: Northern Iowa Elite</h3>
                     </div>
                     <div className="p-6">
                       <div className="flex items-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 border-purple-400">
                           <EventImage 
                             src={getEventMedia(event.id).thumbnailImage} 
-                            alt="Cory Land" 
+                            alt="Northern Iowa Elite" 
                             className="w-full h-full object-cover object-top"
                             fallbackSrc="/assets/coaches/default-avatar.webp"
                             onError={(error) => {
@@ -1109,7 +1109,7 @@ export default function EventDetail() {
                           />
                         </div>
                         <div>
-                          <h4 className="font-bold text-gray-800">Cory Land</h4>
+                          <h4 className="font-bold text-gray-800">Panther Train Staff</h4>
                           <p className="text-purple-600 text-sm">Northern Iowa Wrestling Team</p>
                         </div>
                       </div>
@@ -1117,7 +1117,7 @@ export default function EventDetail() {
                         "Wrestling techniques evolve constantly. On this tour, we're bringing collegiate-level training directly to Alabama wrestlers, focusing on the details that create champions."
                       </blockquote>
                       <p className="text-sm text-gray-700 mb-4">
-                        Cory Land is a standout wrestler at the University of Northern Iowa. His technical approach and competitive mindset have made him one of the rising stars to watch. This Alabama tour brings his expertise back to his home state.
+                        The Northern Iowa wrestlers are known for their technical approach and competitive mindset. This Alabama tour brings their expertise directly to wrestlers throughout the state, with a focus on developing championship-level skills.
                       </p>
                     </div>
                   </div>
@@ -1835,12 +1835,12 @@ export default function EventDetail() {
               </div>
             </div>
             
-            {/* Day selection for Cory Land Tour */}
+            {/* Day selection for Panther Train Tour */}
             {event.id === 4 && registrationForm.registrationType === 'single' && (
               <div className="space-y-3 border rounded-md p-4 bg-gray-50 mt-4">
                 <Label className="font-semibold block">Select Day(s)</Label>
                 <div className="text-sm text-gray-500 mb-2">
-                  Please select at least one day for the Cory Land Tour ($99 per day)
+                  Please select at least one day for the Panther Train Tour ($99 per day)
                 </div>
                 
                 <div className="space-y-2">

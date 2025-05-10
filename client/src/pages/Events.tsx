@@ -872,10 +872,10 @@ export default function Events() {
                 </Select>
               </div>
               
-              {/* Day selection for Cory Land Tour */}
+              {/* Day selection for Panther Train Tour */}
               {selectedEvent?.id === 4 && (
                 <div className="md:col-span-2 space-y-3 mt-2 p-3 bg-purple-50 rounded-md">
-                  <Label>Select Camp Days (Cory Land Tour)</Label>
+                  <Label>Select Camp Days (Panther Train Tour)</Label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
                     {events[1]?.locations?.map((loc, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
