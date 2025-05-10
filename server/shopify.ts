@@ -662,7 +662,7 @@ export async function createEventRegistrationCheckout(
       case '1': shopifyKey = 'birmingham-slam-camp'; break;
       case '2': shopifyKey = 'national-champ-camp'; break;
       case '3': shopifyKey = 'texas-recruiting-clinic'; break;
-      case '4': shopifyKey = 'cory-land-tour'; break;
+      case '4': shopifyKey = 'panther-train-tour'; break;
       default: shopifyKey = 'birmingham-slam-camp'; // Default fallback
     }
   }
@@ -708,12 +708,12 @@ export async function createEventRegistrationCheckout(
     { key: 'Registration_Type', value: registrationData.option },
   ];
   
-  // For Cory Land Tour, add the selected days to custom attributes
+  // For Panther Train Tour, add the selected days to custom attributes
   if (eventId === '4') {
     const selectedDays = [];
-    if (registrationData.day1) selectedDays.push('Day 1 - Athens High School (July 23)');
+    if (registrationData.day1) selectedDays.push('Day 1 - East Hamilton High School (July 23)');
     if (registrationData.day2) selectedDays.push('Day 2 - Ironclad Wrestling Club (July 24)');
-    if (registrationData.day3) selectedDays.push('Day 3 - South AL Location (July 25)');
+    if (registrationData.day3) selectedDays.push('Day 3 - Fairhope High School (July 25)');
     
     // Add selected days as a custom attribute
     if (selectedDays.length > 0) {
@@ -724,9 +724,9 @@ export async function createEventRegistrationCheckout(
     }
     
     // Add individual day selections for clarity
-    customAttributes.push({ key: 'Day_1_Athens', value: registrationData.day1 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_1_EastHamilton', value: registrationData.day1 ? 'Yes' : 'No' });
     customAttributes.push({ key: 'Day_2_Ironclad', value: registrationData.day2 ? 'Yes' : 'No' });
-    customAttributes.push({ key: 'Day_3_SouthAL', value: registrationData.day3 ? 'Yes' : 'No' });
+    customAttributes.push({ key: 'Day_3_Fairhope', value: registrationData.day3 ? 'Yes' : 'No' });
   }
 
   try {
@@ -952,17 +952,17 @@ export const EVENT_PRODUCTS = {
       price: 175.00  // Single day price - updated to match website display
     }
   },
-  // Cory Land Tour - ID 4 - Using placeholder product until created in Shopify
-  'cory-land-tour': {
+  // Panther Train Tour - ID 4 - Using placeholder product until created in Shopify
+  'panther-train-tour': {
     fullCamp: {
       productId: 'gid://shopify/Product/8949406105837', // Temporarily using Slam Camp product
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Using actual variant ID from Shopify
-      price: 249.00  // All 3 days price - updated to match website display
+      price: 200.00  // All 3 days price - $200 for full tour
     },
     singleDay: {
       productId: 'gid://shopify/Product/8949406105837', // Temporarily using Slam Camp product
       variantId: 'gid://shopify/ProductVariant/47808555679981', // Using actual variant ID from Shopify
-      price: 99.00  // Single day price - updated to match website display
+      price: 99.00  // Single day price - $99 per day
     }
   }
 };

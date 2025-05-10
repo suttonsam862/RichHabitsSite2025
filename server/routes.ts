@@ -309,28 +309,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         events.push(texasRecruitingClinicEvent);
       }
       
-      // Check if Cory Land Tour is already in the list
-      const coryLandTourExists = events.some(event => event.id === 4);
+      // Check if Panther Train Tour is already in the list
+      const pantherTrainTourExists = events.some(event => event.id === 4);
       
-      if (!coryLandTourExists) {
-        // Add Cory Land Tour to the list if it doesn't exist
-        const coryLandTourEvent = {
+      if (!pantherTrainTourExists) {
+        // Add Panther Train Tour to the list if it doesn't exist
+        const pantherTrainTourEvent = {
           id: 4,
-          title: "Cory Land Tour",
+          title: "Panther Train Tour",
           category: "Wrestling",
-          date: "July 10-12, 2025",
+          date: "July 23-25, 2025",
           time: "9:00 AM - 4:00 PM",
-          location: "Multiple Locations Across Alabama",
-          description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
+          location: "Tennessee and Alabama",
+          description: "A three-day wrestling tour featuring elite instruction from top-tier coaches and athletes. Each day focuses on different techniques with stops at East Hamilton High School (July 23), Ironclad Wrestling Club (July 24), and Fairhope High School (July 25).",
           price: "$99 per day or $200 for all three days",
-          shopifyProductId: "cory-land-tour",
+          shopifyProductId: "panther-train-tour",
           image: "/assets/DSC09354.JPG",
           maxParticipants: 75,
           createdAt: new Date(),
           updatedAt: new Date()
         };
         
-        events.push(coryLandTourEvent);
+        events.push(pantherTrainTourEvent);
       }
       
       res.json(events);
@@ -410,26 +410,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(texasRecruitingClinicEvent);
       }
       
-      // Special case for Cory Land Tour which might not be in the database yet
+      // Special case for Panther Train Tour which might not be in the database yet
       if (eventId === 4) {
-        // Return mock data for Cory Land Tour
-        const coryLandTourEvent = {
+        // Return mock data for Panther Train Tour
+        const pantherTrainTourEvent = {
           id: 4,
-          title: "Cory Land Tour",
+          title: "Panther Train Tour",
           category: "Wrestling",
           date: "July 23-25, 2025",
           time: "9:00 AM - 4:00 PM",
-          location: "Multiple Locations Across Alabama",
-          description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
+          location: "Tennessee and Alabama",
+          description: "A three-day wrestling tour featuring elite instruction from top-tier coaches and athletes. Each day focuses on different techniques with stops at East Hamilton High School (July 23), Ironclad Wrestling Club (July 24), and Fairhope High School (July 25).",
           price: "$99 per day or $200 for all three days",
-          shopifyProductId: "cory-land-tour",
+          shopifyProductId: "panther-train-tour",
           image: "/assets/DSC09354.JPG",
           maxParticipants: 75,
           createdAt: new Date(),
           updatedAt: new Date()
         };
         
-        return res.json(coryLandTourEvent);
+        return res.json(pantherTrainTourEvent);
       }
       
       // Regular case for other events
@@ -492,17 +492,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           createdAt: new Date(),
           updatedAt: new Date()
         };
-      } else if (eventId === 4) { // Cory Land Tour
+      } else if (eventId === 4) { // Panther Train Tour
         event = {
           id: 4,
-          title: "Cory Land Tour",
+          title: "Panther Train Tour",
           category: "Wrestling",
           date: "July 23-25, 2025",
           time: "9:00 AM - 4:00 PM",
-          location: "Multiple Locations Across Alabama",
-          description: "A three-day wrestling tour featuring elite instruction from Northern Iowa wrestlers Cory Land, Wyatt Voelker, Trever Andersen, and Garrett Funk. Each day focuses on different techniques and is held at a different location in Alabama.",
+          location: "Tennessee and Alabama",
+          description: "A three-day wrestling tour featuring elite instruction from top-tier coaches and athletes. Each day focuses on different techniques with stops at East Hamilton High School (July 23), Ironclad Wrestling Club (July 24), and Fairhope High School (July 25).",
           price: "$99 per day or $200 for all three days",
-          shopifyProductId: "cory-land-tour",
+          shopifyProductId: "panther-train-tour",
           image: "/assets/DSC09354.JPG",
           maxParticipants: 75,
           createdAt: new Date(),
