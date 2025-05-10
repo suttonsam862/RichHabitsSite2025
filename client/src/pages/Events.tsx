@@ -50,17 +50,17 @@ const events = [
     title: "PANTHER TRAIN TOUR",
     category: "Wrestling",
     categoryClass: "bg-[#4B0082]/10 text-[#4B0082]",
-    date: "May 15th-17th, 2025",
+    date: "July 23rd-25th, 2025",
     time: "9:00 AM - 3:00 PM",
-    location: "Multiple locations in Alabama",
-    description: "Join Northern Iowa standout wrestlers and their elite teammates for this unique 3-day clinic tour across Alabama. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes.",
+    location: "East Hamilton, Ironclad, Fairhope",
+    description: "Join Northern Iowa standout wrestlers and their elite teammates for this unique 3-day clinic tour. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes. Focus on neutral, mat wrestling, and bottom position techniques.",
     price: "$99/day",
     originalPrice: "$299",
     image: event4Image,
     locations: [
-      { day: "Day 1 - May 15", location: "Birmingham, AL" },
-      { day: "Day 2 - May 16", location: "Huntsville, AL" },
-      { day: "Day 3 - May 17", location: "Montgomery, AL" }
+      { day: "Day 1 - July 23", location: "East Hamilton High School" },
+      { day: "Day 2 - July 24", location: "Ironclad Wrestling Club" },
+      { day: "Day 3 - July 25", location: "Fairhope High School" }
     ]
   },
   {
