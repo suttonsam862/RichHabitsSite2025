@@ -286,13 +286,13 @@ export function FeaturedEvents() {
                   </h3>
                   
                   <div className="mb-2">
-                    <p className="text-sm text-gray-600"><strong>Date:</strong> June 4-7, 2025</p>
-                    <p className="text-sm text-gray-600"><strong>Location:</strong> Rancho High School, Las Vegas</p>
+                    <p className="text-sm text-gray-600"><strong>Date:</strong> June 5-7, 2025</p>
+                    <p className="text-sm text-gray-600"><strong>Location:</strong> Roy Martin Middle School</p>
                     <p className="text-sm text-gray-600"><strong>Price:</strong> $349</p>
                   </div>
                   
                   <p className="text-gray-700 mb-4 text-sm flex-grow">
-                    Train with NCAA champions and Olympic athletes in this intensive four-day camp.
+                    Train with NCAA champions and Olympic athletes in this intensive three-day camp.
                     Designed for competitive wrestlers looking to elevate their skills to championship level.
                   </p>
                   
