@@ -64,12 +64,12 @@ export function EventDetails() {
       id: "national-champ",
       title: "National Champ Camp",
       shortDescription: "Three days of elite instruction from NCAA champions",
-      location: "Rancho High School, Las Vegas",
-      date: "June 4-7, 2025",
+      location: "Roy Martin Middle School",
+      date: "June 5-7, 2025",
       primaryColor: "#041e42", // Penn State navy
       secondaryColor: "#1e88e5", // Ice blue
       longDescription: 
-        "The National Champ Camp in Las Vegas at Rancho High School delivers three days of instruction from NCAA champions in a high-level environment with media coverage, mental coaching, and signature Rich Habits style. This premier event brings together the nation's top wrestlers and coaches for an immersive experience that goes beyond technique. Participants train in state-of-the-art facilities, receive personalized coaching, and build connections that last long after the camp ends. The camp's championship mindset philosophy helps athletes break through mental barriers and reach new levels.",
+        "The National Champ Camp at Roy Martin Middle School delivers three days of instruction from NCAA champions in a high-level environment with media coverage, mental coaching, and signature Rich Habits style. This premier event brings together the nation's top wrestlers and coaches for an immersive experience that goes beyond technique. Participants train in state-of-the-art facilities, receive personalized coaching, and build connections that last long after the camp ends. The camp's championship mindset philosophy helps athletes break through mental barriers and reach new levels.",
       image: "/images/events/national-champ.jpg",
       details: [
         "Training sessions led by NCAA champions",

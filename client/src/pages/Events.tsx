@@ -80,9 +80,9 @@ const events = [
     title: "NATIONAL CHAMP CAMP",
     category: "Wrestling",
     categoryClass: "bg-[hsl(var(--accent2)_/_0.1)] text-[hsl(var(--accent2))]",
-    date: "July 8th-10th, 2025",
+    date: "June 5th-7th, 2025",
     time: "9:00 AM - 4:00 PM",
-    location: "Las Vegas, NV",
+    location: "Roy Martin Middle School",
     description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
     price: "$349",
     image: event2Image

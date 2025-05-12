@@ -678,7 +678,7 @@ export default function EventDetail() {
                       <div className="mt-10">
                         <div className="mb-6 border-b border-blue-100 pb-2">
                           <h3 className="text-xl font-bold psu-title">About National Champ Camp</h3>
-                          <p className="text-gray-600">A premium wrestling experience in Las Vegas</p>
+                          <p className="text-gray-600">A premium wrestling experience at Roy Martin Middle School</p>
                         </div>
                         
                         <div className="prose max-w-none text-gray-700">
