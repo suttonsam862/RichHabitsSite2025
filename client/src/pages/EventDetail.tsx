@@ -115,7 +115,7 @@ export default function EventDetail() {
             {
               name: "Jason Nolf",
               title: "3x NCAA Champion at 157 lbs (2017-19)",
-              image: "/assets/DSC09491.JPG",
+              image: "/assets/coaches/jason-nolf.webp",
               bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
             },
             {
