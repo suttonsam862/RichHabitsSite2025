@@ -4,62 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rich Habits</title>
-  <!-- This file is a fallback for health checks during deployment -->
-  <style>
-    body {
-      font-family: 'Oswald', sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      padding: 2rem;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #0c6759;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    p {
-      color: #555;
-      font-size: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-    .loading {
-      display: inline-block;
-      width: 50px;
-      height: 50px;
-      border: 3px solid rgba(12, 103, 89, 0.3);
-      border-radius: 50%;
-      border-top-color: #0c6759;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  </style>
+  <script>
+    // Immediately redirect to the actual site
+    window.location.href = '/';
+  </script>
 </head>
 <body>
-  <div class="container">
-    <h1>Rich Habits</h1>
-    <p>The application is starting up...</p>
-    <div class="loading"></div>
-  </div>
-  <script>
-    // Redirect to the home page once it's loaded
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 5000);
-  </script>
+  <noscript>
+    <a href="/">Click here to continue to Rich Habits website</a>
+  </noscript>
 </body>
 </html>
