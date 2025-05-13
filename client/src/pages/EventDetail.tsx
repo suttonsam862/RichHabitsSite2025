@@ -115,19 +115,19 @@ export default function EventDetail() {
             {
               name: "Jason Nolf",
               title: "3x NCAA Champion at 157 lbs (2017-19)",
-              image: "/assets/DSC09273.JPG",
+              image: "/assets/DSC09491.JPG",
               bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
             },
             {
               name: "Mark Hall",
               title: "NCAA Champion at 174 lbs (2017)",
-              image: "/src/assets/coaches/hall.webp",
+              image: "/assets/DSC09488.JPG",
               bio: "Mark Hall is a 2017 NCAA Champion at 174 lbs and three-time finalist from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
             },
             {
               name: "Vincenzo Joseph",
               title: "2x NCAA Champion at 165 lbs (2017, 2018)",
-              image: "/assets/DSC09283--.JPG",
+              image: "/assets/DSC09374--.JPG",
               bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
             }
           ];
