@@ -158,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // Get event from database
-      const event = await storage.getEvent(eventId);
+      let event = await storage.getEvent(eventId);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
