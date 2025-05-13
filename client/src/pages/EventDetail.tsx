@@ -121,7 +121,7 @@ export default function EventDetail() {
             {
               name: "Mark Hall",
               title: "NCAA Champion at 174 lbs (2017)",
-              image: "/assets/DSC09488.JPG",
+              image: "/assets/coaches/mark-hall.webp",
               bio: "Mark Hall is a 2017 NCAA Champion at 174 lbs and three-time finalist from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
             },
             {
