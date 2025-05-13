@@ -1,0 +1,133 @@
+  app.post("/api/events/:id/register", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const eventId = parseInt(id);
+      
+      // Validate request body
+      const validatedData = insertEventRegistrationSchema.parse({
+        ...req.body,
+        eventId
+      });
+      
+      // Get event from database
+      const event = await storage.getEvent(eventId);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Create registration in database
+      const registration = await storage.createEventRegistration(validatedData);
+      
+      // Get registration data for checkout
+      const registrationData: EventRegistrationData = {
+        eventId: event.id,
+        eventTitle: event.title,
+        participantName: `${validatedData.firstName} ${validatedData.lastName}`,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        registrationType: validatedData.registrationType,
+        emergencyContactName: validatedData.emergencyContactName,
+        emergencyContactPhone: validatedData.emergencyContactPhone,
+        selectedDays: validatedData.selectedDays,
+        registrationNotes: validatedData.registrationNotes,
+        registrationId: registration.id,
+        schoolName: validatedData.schoolName,
+        ageGroup: validatedData.ageGroup,
+        wrestlingExperience: validatedData.wrestlingExperience
+      };
+      
+      // Get product info for the event (used for payment processing)
+      const productInfo = EVENT_PRODUCTS[eventId] || {
+        name: event.title,
+        price: 0  // Default to free if no price is found
+      };
+      
+      // Determine if registration is free or paid
+      const isFree = validatedData.discountTotal === 100;  // 100% discount means free
+      
+      if (isFree) {
+        // If registration is free, mark it as paid and complete immediately
+        await storage.updateEventRegistration(registration.id, {
+          paymentStatus: 'paid',
+          paymentId: 'free-registration',
+          paymentAmount: 0,
+          paymentDate: new Date()
+        });
+        
+        return res.json({
+          registrationId: registration.id,
+          registrationStatus: 'complete',
+          message: 'Registration completed successfully',
+          redirectUrl: `/events/${eventId}/register/success?registrationId=${registration.id}`
+        });
+      } else {
+        // Create checkout for paid registrations
+        const checkoutUrl = await createEventRegistrationCheckout(registrationData, productInfo);
+        
+        if (!checkoutUrl) {
+          return res.status(500).json({ message: "Failed to create checkout" });
+        }
+        
+        res.json({ 
+          registrationId: registration.id,
+          checkoutUrl 
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ 
+        message: "Error creating registration", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+
+  app.post("/api/events/:eventId/coaches", async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const eventIdNum = parseInt(eventId);
+      
+      // Validate request body
+      const validatedCoachData = insertCoachSchema.parse(req.body);
+      
+      // Insert coach
+      const coach = await storage.createCoach(validatedCoachData);
+      
+      // Create event coach association
+      const eventCoachAssociation = await storage.createEventCoach({
+        eventId: eventIdNum,
+        coachId: coach.id
+      });
+      
+      res.json({
+        coach,
+        eventCoachAssociation,
+        message: "Coach added to event successfully"
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        message: "Error adding coach to event", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+
+  app.delete("/api/events/:eventId/coaches/:coachId", async (req, res) => {
+    try {
+      const { eventId, coachId } = req.params;
+      const eventIdNum = parseInt(eventId);
+      const coachIdNum = parseInt(coachId);
+      
+      // Delete event coach association
+      await storage.deleteEventCoach(eventIdNum, coachIdNum);
+      
+      res.json({
+        message: "Coach removed from event successfully"
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        message: "Error removing coach from event", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
