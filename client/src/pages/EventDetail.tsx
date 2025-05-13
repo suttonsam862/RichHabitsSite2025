@@ -127,7 +127,7 @@ export default function EventDetail() {
             {
               name: "Vincenzo Joseph",
               title: "2x NCAA Champion at 165 lbs (2017, 2018)",
-              image: "/assets/DSC09374--.JPG",
+              image: "/assets/coaches/vincenzo-joseph.webp",
               bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
             }
           ];
