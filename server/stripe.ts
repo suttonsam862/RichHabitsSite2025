@@ -323,12 +323,23 @@ async function sendRegistrationConfirmationEmail(data: {
   paymentId: string;
 }) {
   try {
+    // Log the email information to verify it's correct
     console.log('Sending registration confirmation email to:', data.email);
+    console.log('Confirmation details:', {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      eventName: data.eventName,
+      amountPaid: data.amount,
+      registrationType: data.registrationType
+    });
     
-    // This is a placeholder for actual email sending logic
-    // You'd typically use an email service like SendGrid here
+    // Validate email
+    if (!data.email || !data.email.includes('@')) {
+      console.error('Invalid email address, cannot send confirmation:', data.email);
+      return false;
+    }
     
-    // For now, we'll just log the email content we would send
+    // Format email content
     const emailContent = `
       Subject: Registration Confirmation - ${data.eventName}
 
@@ -352,10 +363,26 @@ async function sendRegistrationConfirmationEmail(data: {
       Rich Habits Team
     `;
     
-    console.log('Email content that would be sent:', emailContent);
+    console.log('Email content prepared for sending');
     
-    // In the future, add your email sending logic here
-    // using SendGrid, Nodemailer, or another email service
+    // This would be replaced with actual email sending code
+    // Example using SendGrid:
+    // 
+    // if (process.env.SENDGRID_API_KEY) {
+    //   const sgMail = require('@sendgrid/mail');
+    //   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    //   const msg = {
+    //     to: data.email,
+    //     from: 'noreply@rich-habits.com',
+    //     subject: `Registration Confirmation - ${data.eventName}`,
+    //     text: emailContent,
+    //     html: emailContent.replace(/\n/g, '<br>')
+    //   };
+    //   await sgMail.send(msg);
+    //   console.log('Confirmation email sent successfully via SendGrid');
+    // } else {
+    //   console.log('SENDGRID_API_KEY not configured, email would be sent with content:', emailContent);
+    // }
     
     return true;
   } catch (error) {
@@ -376,6 +403,15 @@ async function createShopifyOrderFromRegistration(
     
     console.log('Creating Shopify order for registration:', registration);
     
+    // Verify email presence and format
+    if (!registration.email) {
+      console.error('Registration missing email address, cannot create Shopify order');
+      return null;
+    }
+    
+    // Log email for debugging
+    console.log(`Creating Shopify order with customer email: ${registration.email}`);
+    
     // Define line items for the Shopify order
     const lineItems = [
       {
@@ -389,9 +425,22 @@ async function createShopifyOrderFromRegistration(
     const customer = {
       firstName: registration.firstName,
       lastName: registration.lastName,
-      email: registration.email,
+      email: registration.email.trim(), // Ensure no whitespace
       phone: registration.phone || ''
     };
+    
+    // Create additional attributes for the order
+    const attributes = [
+      { key: "Event_Name", value: event.title },
+      { key: "Event_ID", value: registration.eventId.toString() },
+      { key: "Registration_Type", value: registration.registrationType === 'full' ? 'Full Camp' : 'Single Day' },
+      { key: "Student_Name", value: `${registration.firstName} ${registration.lastName}` },
+      { key: "Parent_Guardian", value: registration.contactName },
+      { key: "T_Shirt_Size", value: registration.tShirtSize },
+      { key: "Grade", value: registration.grade },
+      { key: "School", value: registration.schoolName },
+      { key: "Club", value: registration.clubName || 'N/A' }
+    ];
     
     // Additional registration notes
     const note = `
@@ -414,13 +463,14 @@ async function createShopifyOrderFromRegistration(
         lineItems,
         customer,
         note,
+        attributes
       });
       
       console.log('Shopify order created:', shopifyOrder);
       return shopifyOrder;
     } else {
       // This is just a placeholder for when the Shopify integration is not fully implemented
-      console.log('Would create Shopify order with:', { lineItems, customer, note });
+      console.log('Would create Shopify order with:', { lineItems, customer, note, attributes });
       return { id: `placeholder-${Date.now()}` };
     }
   } catch (error) {

@@ -820,6 +820,10 @@ export interface ShopifyDraftOrderParams {
     phone?: string;
   };
   note?: string;
+  attributes?: Array<{
+    key: string;
+    value: string;
+  }>;
 }
 
 // Create a completed order in Shopify
@@ -833,7 +837,7 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
     console.log('Creating Shopify order with params:', params);
     
     // First, create a draft order
-    const draftOrderPayload = {
+    const draftOrderPayload: any = {
       draft_order: {
         line_items: params.lineItems.map(item => ({
           title: item.title,
@@ -860,6 +864,14 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
       }
     };
     
+    // Add note attributes if provided
+    if (params.attributes && params.attributes.length > 0) {
+      draftOrderPayload.draft_order.note_attributes = params.attributes.map(attr => ({
+        name: attr.key,
+        value: attr.value
+      }));
+    }
+    
     // Create the draft order
     const draftResponse = await fetch(
       `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2023-07/draft_orders.json`,
@@ -881,6 +893,9 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
     const draftData = await draftResponse.json() as { draft_order: { id: number } };
     const draftOrderId = draftData.draft_order.id;
     
+    // Log the email that will be associated with the order
+    console.log(`Customer email for Shopify order: ${params.customer.email}`);
+    
     // Complete the draft order to convert it to a paid order
     const completeResponse = await fetch(
       `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2023-07/draft_orders/${draftOrderId}/complete.json`,
@@ -889,17 +904,43 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
         headers: {
           'Content-Type': 'application/json',
           'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN
-        }
+        },
+        body: JSON.stringify({
+          payment_pending: false,
+          send_receipt: true, // Enable sending receipt to customer email
+          send_fulfillment_receipt: true // Also send fulfillment notification
+        })
       }
     );
     
     if (!completeResponse.ok) {
       const errorText = await completeResponse.text();
-      throw new Error(`Failed to complete Shopify order: ${completeResponse.status} ${completeResponse.statusText} - ${errorText}`);
+      console.error('Error completing Shopify order:', errorText);
+      
+      try {
+        // Try to parse the error for more details
+        const errorJson = JSON.parse(errorText);
+        console.error('Parsed error details:', JSON.stringify(errorJson, null, 2));
+      } catch (parseError) {
+        // Ignore parse errors
+      }
+      
+      throw new Error(`Failed to complete Shopify order: ${completeResponse.status} ${completeResponse.statusText}`);
     }
     
     const completeData = await completeResponse.json() as { order: any };
     const finalOrder = completeData.order;
+    
+    // Log the customer information in the final order
+    if (finalOrder && finalOrder.customer) {
+      console.log('Customer in completed order:', {
+        email: finalOrder.customer.email,
+        firstName: finalOrder.customer.first_name,
+        lastName: finalOrder.customer.last_name
+      });
+    } else {
+      console.warn('No customer information found in completed order');
+    }
     
     console.log('Successfully created and completed Shopify order:', finalOrder.id);
     return finalOrder;
