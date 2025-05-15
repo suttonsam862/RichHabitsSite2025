@@ -690,7 +690,7 @@ export default function Events() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
                     <video
-                      src={champCampVideo}
+                      src={pantherTrainVideo}
                       autoPlay
                       loop
                       muted
