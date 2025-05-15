@@ -33,6 +33,19 @@ import pantherTrainVideo from "../assets/videos/corylandloopvide.mov";
 // Static events data
 const events = [
   {
+    id: 2,
+    title: "NATIONAL CHAMP CAMP",
+    category: "Wrestling",
+    categoryClass: "bg-[hsl(var(--accent2)_/_0.1)] text-[hsl(var(--accent2))]",
+    date: "June 5th-7th, 2025",
+    time: "9:00 AM - 4:00 PM",
+    location: "Roy Martin Middle School",
+    city: "Las Vegas, NV",
+    description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
+    price: "$349",
+    image: event2Image
+  },
+  {
     id: 3,
     title: "TEXAS RECRUITING CLINIC",
     category: "Wrestling",
@@ -45,6 +58,19 @@ const events = [
     price: "$249",
     originalPrice: "$300",
     image: event3Image
+  },
+  {
+    id: 1,
+    title: "BIRMINGHAM SLAM CAMP",
+    category: "Wrestling",
+    categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
+    date: "June 19th-21st, 2025",
+    time: "9:00 AM - 3:00 PM",
+    location: "Clay Chalkville Middle School",
+    city: "Birmingham, AL",
+    description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
+    price: "$249",
+    image: event1Image
   },
   {
     id: 4,
@@ -64,32 +90,6 @@ const events = [
       { day: "Day 2 - July 24", location: "Ironclad Wrestling Club", city: "Atlanta, GA" },
       { day: "Day 3 - July 25", location: "Fairhope High School", city: "Fairhope, AL" }
     ]
-  },
-  {
-    id: 1,
-    title: "BIRMINGHAM SLAM CAMP",
-    category: "Wrestling",
-    categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "June 19th-21st, 2025",
-    time: "9:00 AM - 3:00 PM",
-    location: "Clay Chalkville Middle School",
-    city: "Birmingham, AL",
-    description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
-    price: "$249",
-    image: event1Image
-  },
-  {
-    id: 2,
-    title: "NATIONAL CHAMP CAMP",
-    category: "Wrestling",
-    categoryClass: "bg-[hsl(var(--accent2)_/_0.1)] text-[hsl(var(--accent2))]",
-    date: "June 5th-7th, 2025",
-    time: "9:00 AM - 4:00 PM",
-    location: "Roy Martin Middle School",
-    city: "Las Vegas, NV",
-    description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
-    price: "$349",
-    image: event2Image
   }
 ];
 
