@@ -40,6 +40,7 @@ const events = [
     date: "June 12th-13th, 2025",
     time: "9:00 AM - 4:00 PM",
     location: "Arlington Martin High School",
+    city: "Arlington, TX",
     description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.",
     price: "$249",
     originalPrice: "$300",
@@ -53,14 +54,15 @@ const events = [
     date: "July 23rd-25th, 2025",
     time: "9:00 AM - 3:00 PM",
     location: "East Hamilton, Ironclad, Fairhope",
+    city: "Multiple Locations, TN & AL",
     description: "Join Northern Iowa standout wrestlers and their elite teammates for this unique 3-day clinic tour. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes. Focus on neutral, mat wrestling, and bottom position techniques.",
     price: "$99/day",
     originalPrice: "$299",
     image: event4Image,
     locations: [
-      { day: "Day 1 - July 23", location: "East Hamilton High School" },
-      { day: "Day 2 - July 24", location: "Ironclad Wrestling Club" },
-      { day: "Day 3 - July 25", location: "Fairhope High School" }
+      { day: "Day 1 - July 23", location: "East Hamilton High School", city: "Chattanooga, TN" },
+      { day: "Day 2 - July 24", location: "Ironclad Wrestling Club", city: "Atlanta, GA" },
+      { day: "Day 3 - July 25", location: "Fairhope High School", city: "Fairhope, AL" }
     ]
   },
   {
@@ -71,6 +73,7 @@ const events = [
     date: "June 19th-21st, 2025",
     time: "9:00 AM - 3:00 PM",
     location: "Clay Chalkville Middle School",
+    city: "Birmingham, AL",
     description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
     price: "$249",
     image: event1Image
@@ -83,6 +86,7 @@ const events = [
     date: "June 5th-7th, 2025",
     time: "9:00 AM - 4:00 PM",
     location: "Roy Martin Middle School",
+    city: "Las Vegas, NV",
     description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
     price: "$349",
     image: event2Image
@@ -331,7 +335,7 @@ export default function Events() {
                         {events[0].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3">
+                    <h3 className="text-3xl font-bold mb-1">
                       <span style={{ 
                         color: '#002868',
                         textShadow: '1px 1px 0 #bf0a30'
@@ -339,6 +343,16 @@ export default function Events() {
                         {events[0].title}
                       </span>
                     </h3>
+                    <div className="mb-3">
+                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
+                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
+                        color: 'white',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        {events[0].city}
+                      </span>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
@@ -438,7 +452,7 @@ export default function Events() {
                         {events[1].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3 relative">
+                    <h3 className="text-3xl font-bold mb-1 relative">
                       <span style={{ 
                         background: 'linear-gradient(to right, #4B0082, #8A2BE2)',
                         WebkitBackgroundClip: 'text',
@@ -450,6 +464,16 @@ export default function Events() {
                         {events[1].title}
                       </span>
                     </h3>
+                    <div className="mb-3">
+                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
+                        background: 'linear-gradient(135deg, #4B0082, #8A2BE2)',
+                        color: 'white',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        {events[1].city}
+                      </span>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
