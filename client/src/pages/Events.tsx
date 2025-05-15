@@ -598,7 +598,7 @@ export default function Events() {
                         {events[2].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3 fire-title">
+                    <h3 className="text-3xl font-bold mb-1 fire-title">
                       <span style={{ 
                         color: 'white', 
                         fontWeight: 800, 
@@ -606,6 +606,16 @@ export default function Events() {
                         textShadow: '0 0 5px rgba(255, 160, 100, 0.5)'
                       }}>BIRMINGHAM</span> SLAM CAMP
                     </h3>
+                    <div className="mb-3">
+                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
+                        background: 'linear-gradient(135deg, #ff8c00, #ff4500)',
+                        color: 'white',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        {events[2].city}
+                      </span>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
@@ -708,9 +718,19 @@ export default function Events() {
                         {events[3].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <h3 className="text-3xl font-bold mb-1" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                       {events[3].title}
                     </h3>
+                    <div className="mb-3">
+                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
+                        background: 'linear-gradient(135deg, #041e42, #1e88e5)',
+                        color: 'white',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        {events[3].city}
+                      </span>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
                       <p className="text-sm text-gray-600"><strong>Date:</strong> {events[3].date}</p>
                       <p className="text-sm text-gray-600"><strong>Time:</strong> {events[3].time}</p>
