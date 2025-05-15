@@ -433,7 +433,7 @@ export default function Events() {
                       }}
                     />
                     <video 
-                      src={pantherTrainVideo}
+                      src={texasRecruitingVideo}
                       autoPlay 
                       loop 
                       muted 
@@ -507,7 +507,7 @@ export default function Events() {
               </div>
             </motion.div>
             
-            {/* Event Row 2 */}
+            {/* Event Row 2: Birmingham Slam Camp */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -540,7 +540,7 @@ export default function Events() {
               />
             </motion.div>
             
-            {/* Event Row 2 */}
+            {/* Event Row 2: Birmingham Slam Camp (continued) */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -642,7 +642,7 @@ export default function Events() {
               </div>
             </motion.div>
             
-            {/* Event Row 3 */}
+            {/* Event Row 3: Panther Train Tour */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
