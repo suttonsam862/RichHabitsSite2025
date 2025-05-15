@@ -263,7 +263,7 @@ export default function Events() {
               <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
             </div>
 
-            {/* Event Row 0: Texas Recruiting Clinic */}
+            {/* Event Row 0: National Champ Camp */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -313,7 +313,7 @@ export default function Events() {
                       }}
                     />
                     <video 
-                      src={texasRecruitingVideo}
+                      src={champCampVideo}
                       autoPlay 
                       loop 
                       muted 
@@ -381,7 +381,7 @@ export default function Events() {
               </div>
             </motion.div>
             
-            {/* Event Row 1: Cory Land Tour */}
+            {/* Event Row 1: Texas Recruiting Clinic */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
