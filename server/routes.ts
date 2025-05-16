@@ -910,7 +910,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create a Shopify draft order to notify the admin
       try {
-        await createShopifyDraftOrder({
+        console.log(`Creating contact form draft order with email: ${validatedData.email}`);
+        
+        // Add explicit validation for the email
+        if (!validatedData.email || !validatedData.email.includes('@')) {
+          console.error('Invalid email for contact form submission:', validatedData.email);
+          throw new Error('Invalid email format for contact form submission');
+        }
+        
+        const draftOrder = await createShopifyDraftOrder({
           lineItems: [
             {
               title: `Contact Form: ${validatedData.subject}`,
@@ -921,12 +929,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           customer: {
             firstName: validatedData.name.split(' ')[0] || validatedData.name,
             lastName: validatedData.name.split(' ').slice(1).join(' ') || '',
-            email: validatedData.email,
+            email: validatedData.email.trim(), // Ensure no whitespace
             phone: validatedData.phone || ''
           },
-          note: `Contact Form Submission:\n\nSubject: ${validatedData.subject}\n\nMessage: ${validatedData.message}\n\nSubmitted on: ${new Date().toLocaleString()}`
+          note: `Contact Form Submission:\n\nSubject: ${validatedData.subject}\n\nMessage: ${validatedData.message}\n\nEmail: ${validatedData.email}\n\nPhone: ${validatedData.phone || 'Not provided'}\n\nSubmitted on: ${new Date().toLocaleString()}`,
+          // Adding explicit request for email notification
+          sendEmailNotification: true
         });
-        console.log('Created Shopify draft order for contact form submission');
+        
+        console.log('Created Shopify draft order for contact form submission:', draftOrder?.id || 'unknown');
       } catch (shopifyError) {
         console.error('Failed to create Shopify draft order for contact form:', shopifyError);
         // We still want to return success to the user even if Shopify notification fails
