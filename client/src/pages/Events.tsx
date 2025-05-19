@@ -328,24 +328,27 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm" style={{
-                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
-                        color: 'white'
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
+                        background: 'var(--psu-gradient)'
                       }}>
                         {events[0].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-1">
                       <span style={{ 
-                        color: '#002868',
-                        textShadow: '1px 1px 0 #bf0a30'
+                        background: 'var(--psu-gradient)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textShadow: 'var(--psu-text-shadow)'
                       }}>
                         {events[0].title}
                       </span>
                     </h3>
                     <div className="mb-3">
                       <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'linear-gradient(90deg, #bf0a30, #002868)',
+                        background: 'var(--psu-gradient)',
                         color: 'white',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
@@ -364,14 +367,14 @@ export default function Events() {
                       <a 
                         href={`/events/${events[0].id}`}
                         className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
-                        style={{ background: '#002868' }}
+                        style={{ background: 'var(--psu-gradient)' }}
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[0])}
-                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm hover:bg-red-50 transition-colors"
-                        style={{ borderColor: '#bf0a30', color: '#bf0a30' }}
+                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm transition-colors"
+                        style={{ borderColor: '#00205B', color: '#00205B' }}
                       >
                         Register Now
                       </button>
