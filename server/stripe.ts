@@ -440,18 +440,29 @@ async function createShopifyOrderFromRegistration(
     // Import the Shopify API functions
     const { createShopifyDraftOrder } = await import('./shopify');
     
-    console.log('Creating Shopify order for registration:', registration);
+    console.log('Creating Shopify order for registration with complete data:', JSON.stringify(registration, null, 2));
     
-    // Verify email presence and format
-    if (!registration.email) {
-      console.error('Registration missing email address, cannot create Shopify order');
+    // Enhanced validation for all required fields
+    if (!registration.email || registration.email === 'Not provided') {
+      console.error('Registration missing valid email address, cannot create Shopify order');
       return null;
     }
     
-    // Log email for debugging
-    console.log(`Creating Shopify order with customer email: ${registration.email}`);
+    if (!registration.firstName || registration.firstName === 'Not provided' ||
+        !registration.lastName || registration.lastName === 'Not provided') {
+      console.error('Registration missing name information, cannot create Shopify order');
+      return null;
+    }
     
-    // Define line items for the Shopify order
+    // Log details for debugging
+    console.log(`Creating Shopify order with customer email: ${registration.email}`);
+    console.log(`Customer Name: ${registration.firstName} ${registration.lastName}`);
+    console.log(`Contact Name: ${registration.contactName}`);
+    console.log(`T-Shirt Size: ${registration.tShirtSize}`);
+    console.log(`Grade: ${registration.grade}`);
+    console.log(`School: ${registration.schoolName}`);
+    
+    // Define line items for the Shopify order with more detailed description
     const lineItems = [
       {
         title: `${event.title} - ${registration.registrationType === 'full' ? 'Full Camp' : 'Single Day'} Registration`,
@@ -460,15 +471,21 @@ async function createShopifyOrderFromRegistration(
       }
     ];
     
-    // Create customer data
+    // Create customer data with email validation
+    const email = registration.email.trim();
+    if (!email.includes('@')) {
+      console.error('Invalid email format:', email);
+      return null;
+    }
+    
     const customer = {
       firstName: registration.firstName,
       lastName: registration.lastName,
-      email: registration.email.trim(), // Ensure no whitespace
+      email: email,
       phone: registration.phone || ''
     };
     
-    // Create additional attributes for the order
+    // Create additional attributes for the order - ensure all registration data is included
     const attributes = [
       { key: "Event_Name", value: event.title },
       { key: "Event_ID", value: registration.eventId.toString() },
