@@ -663,41 +663,45 @@ export default function Events() {
             >
               {/* Animated Edge Top Left */}
               <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 border-[#041e42] z-10"
+                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
                 viewport={{ once: true }}
+                style={{ borderColor: '#D4AF37' }}
               />
               
               {/* Animated Edge Top Right */}
               <motion.div 
-                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[#041e42] z-10"
+                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
                 viewport={{ once: true }}
+                style={{ borderColor: '#D4AF37' }}
               />
               
               {/* Animated Edge Bottom Left */}
               <motion.div 
-                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[#1e88e5] z-10"
+                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
                 viewport={{ once: true }}
+                style={{ borderColor: '#D4AF37' }}
               />
               
               {/* Animated Edge Bottom Right */}
               <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 border-[#1e88e5] z-10"
+                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
                 viewport={{ once: true }}
+                style={{ borderColor: '#D4AF37' }}
               />
               
-              <div className="relative overflow-hidden bg-white border-2 border-[#041e42] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(30, 136, 229, 0.15)' }}>
+              <div className="relative overflow-hidden bg-white border-2 border-[#4B0082] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(212, 175, 55, 0.25)' }}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="h-64 overflow-hidden rounded-sm relative">
                     <video
@@ -725,16 +729,27 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className="inline-block bg-[#041e42]/10 text-[#041e42] text-xs font-medium px-3 py-1 rounded-sm">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
+                        background: 'var(--panther-gradient)'
+                      }}>
                         {events[3].category}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-1" style={{ background: 'linear-gradient(to right, #041e42, #1e88e5)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                      {events[3].title}
+                    <h3 className="text-3xl font-bold mb-1">
+                      <span style={{ 
+                        background: 'var(--panther-gradient)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textShadow: 'var(--panther-text-shadow)'
+                      }}>
+                        {events[3].title}
+                      </span>
                     </h3>
                     <div className="mb-3">
                       <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'linear-gradient(135deg, #041e42, #1e88e5)',
+                        background: 'var(--panther-gradient)',
                         color: 'white',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
@@ -752,13 +767,15 @@ export default function Events() {
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[3].id}`}
-                        className="bg-[#041e42] text-white py-2 px-6 font-medium tracking-wide hover:bg-[#0c2a5c] transition-colors inline-block rounded-sm"
+                        className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
+                        style={{ background: 'var(--panther-gradient)' }}
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[3])}
-                        className="border border-[#041e42] text-[#041e42] py-2 px-6 font-medium tracking-wide hover:bg-[#e6f2ff] transition-colors inline-block rounded-sm"
+                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        style={{ borderColor: '#4B0082', color: '#4B0082' }}
                       >
                         Register Now
                       </button>
