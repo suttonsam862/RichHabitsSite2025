@@ -356,9 +356,10 @@ export default function EventDetail() {
           alt={event.title} 
           className="w-full h-auto object-cover" 
           style={{ 
-            maxHeight: event.id === 3 ? "250px" : "auto", 
-            objectPosition: event.id === 3 ? "center center" : "center top",
-            aspectRatio: event.id === 3 ? "10/2" : "auto"
+            maxHeight: event.id === 3 ? "250px" : event.id === 4 ? "400px" : "auto", 
+            objectPosition: event.id === 3 ? "center center" : event.id === 4 ? "center center" : "center top",
+            aspectRatio: event.id === 3 ? "10/2" : event.id === 4 ? "3/2" : "auto",
+            border: event.id === 4 ? "2px solid #D4AF37" : "none"
           }}
         />
         {/* Event-specific effects */}

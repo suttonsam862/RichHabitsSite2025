@@ -95,9 +95,9 @@ const eventMediaMap: Record<number, EventMedia> = {
     mobileBanner: "/assets/RecruitingWebsiteimage4.png" // Mobile-optimized banner
   },
   
-  // Event ID 4: Cory Land Tour
+  // Event ID 4: Panther Train Tour
   4: {
-    banner: "/assets/Zahid Website Image.png",
+    banner: "/assets/Cory_Site_Image.png",
     mainVideo: "/assets/corylandloopvide.mp4",
     highlightVideo: "/assets/0424.mp4",
     featureVideo: "/assets/0331.mp4",
@@ -108,9 +108,9 @@ const eventMediaMap: Record<number, EventMedia> = {
       "/assets/DSC09488.JPG",
       "/assets/DSC09491.JPG"
     ],
-    thumbnailImage: "/assets/Zahid Website Image.png",
+    thumbnailImage: "/assets/Cory_Site_Image.png",
     fallbackYoutubeId: "luouX84juYU", // YouTube fallback for mobile
-    mobileBanner: "/assets/Zahid Website Image.png" // Mobile-optimized banner
+    mobileBanner: "/assets/Cory_Site_Image.png" // Mobile-optimized banner
   }
 };
 
