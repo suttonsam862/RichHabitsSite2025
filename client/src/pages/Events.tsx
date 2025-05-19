@@ -448,25 +448,27 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2 relative z-10">
                     <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm panther-train-gradient-btn text-white">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
+                        background: 'var(--panther-gradient)'
+                      }}>
                         {events[1].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-1 relative">
                       <span style={{ 
-                        background: 'linear-gradient(to right, #4B0082, #8A2BE2)',
+                        background: 'var(--panther-gradient)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                         fontWeight: 800,
                         letterSpacing: '0.08em',
-                        textShadow: '0 0 1px rgba(212, 175, 55, 0.2)'
+                        textShadow: 'var(--panther-text-shadow)'
                       }}>
                         {events[1].title}
                       </span>
                     </h3>
                     <div className="mb-3">
                       <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'linear-gradient(135deg, #4B0082, #8A2BE2)',
+                        background: 'var(--panther-gradient)',
                         color: 'white',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
@@ -491,13 +493,15 @@ export default function Events() {
                     <div className="flex space-x-4">
                       <a 
                         href={`/events/${events[1].id}`}
-                        className="panther-train-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        className="text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        style={{ background: 'var(--panther-gradient)' }}
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[1])}
-                        className="panther-train-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
+                        className="py-2 px-6 font-medium tracking-wide inline-block rounded-sm border border-purple-800"
+                        style={{ color: '#4B0082' }}
                       >
                         Register Now
                       </button>
@@ -594,21 +598,25 @@ export default function Events() {
                   </div>
                   <div className="md:col-span-2">
                     <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm fire-gradient-btn text-white">
+                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
+                        background: 'var(--fire-gradient)'
+                      }}>
                         {events[2].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-1 fire-title">
                       <span style={{ 
-                        color: 'white', 
+                        background: 'var(--fire-gradient)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
                         fontWeight: 800, 
                         letterSpacing: '0.08em',
-                        textShadow: '0 0 5px rgba(255, 160, 100, 0.5)'
-                      }}>BIRMINGHAM</span> SLAM CAMP
+                        textShadow: 'var(--fire-text-shadow)'
+                      }}>BIRMINGHAM SLAM CAMP</span>
                     </h3>
                     <div className="mb-3">
                       <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'linear-gradient(135deg, #ff8c00, #ff4500)',
+                        background: 'var(--fire-gradient)',
                         color: 'white',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'

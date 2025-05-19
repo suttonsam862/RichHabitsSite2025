@@ -75,11 +75,29 @@
   --ring: 20 14.3% 4.1%;
   --radius: 0rem;
   
-  /* Fiery gradients for Birmingham Slam Camp cards */
+  /* Fiery gradients for Birmingham Slam Camp cards - Orange and Yellow */
   --fire-gradient: linear-gradient(135deg, #ff4500, #ff8c00, #ffd700);
   --fire-gradient-hover: linear-gradient(135deg, #dd3400, #e67300, #ddb700);
   --fire-border-gradient: linear-gradient(45deg, #ff4500, #ffd700, #ff4500);
   --fire-text-shadow: 0 0 10px rgba(255, 69, 0, 0.3), 0 0 20px rgba(255, 140, 0, 0.2);
+  
+  /* Penn State themed gradients for National Champ Camp - Blue/Navy */
+  --psu-gradient: linear-gradient(135deg, #041e42, #1e88e5);
+  --psu-gradient-hover: linear-gradient(135deg, #031835, #1a78cc);
+  --psu-border-gradient: linear-gradient(45deg, #041e42, #1e88e5, #041e42);
+  --psu-text-shadow: 0 0 10px rgba(4, 30, 66, 0.3), 0 0 20px rgba(30, 136, 229, 0.2);
+  
+  /* USA themed gradients for Texas Recruiting Clinic - Red, White, and Blue */
+  --usa-gradient: linear-gradient(135deg, #bf0a30, #ffffff, #002868);
+  --usa-gradient-hover: linear-gradient(135deg, #a00020, #f0f0f0, #001a4d);
+  --usa-border-gradient: linear-gradient(45deg, #bf0a30, #ffffff, #002868);
+  --usa-text-shadow: 0 0 10px rgba(191, 10, 48, 0.3), 0 0 20px rgba(0, 40, 104, 0.2);
+  
+  /* Panther Train Tour gradients - Purple and Gold */
+  --panther-gradient: linear-gradient(135deg, #4B0082, #D4AF37);
+  --panther-gradient-hover: linear-gradient(135deg, #3A0066, #C09B2A);
+  --panther-border-gradient: linear-gradient(45deg, #4B0082, #D4AF37, #4B0082);
+  --panther-text-shadow: 0 0 10px rgba(75, 0, 130, 0.3), 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
 .dark {
