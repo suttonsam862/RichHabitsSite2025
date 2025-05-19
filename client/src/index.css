@@ -81,11 +81,11 @@
   --fire-border-gradient: linear-gradient(45deg, #ff4500, #ffd700, #ff4500);
   --fire-text-shadow: 0 0 10px rgba(255, 69, 0, 0.3), 0 0 20px rgba(255, 140, 0, 0.2);
   
-  /* Penn State themed gradients for National Champ Camp - Blue/Navy */
-  --psu-gradient: linear-gradient(135deg, #041e42, #1e88e5);
-  --psu-gradient-hover: linear-gradient(135deg, #031835, #1a78cc);
-  --psu-border-gradient: linear-gradient(45deg, #041e42, #1e88e5, #041e42);
-  --psu-text-shadow: 0 0 10px rgba(4, 30, 66, 0.3), 0 0 20px rgba(30, 136, 229, 0.2);
+  /* Penn State themed gradients for National Champ Camp - Royal Blue and Navy */
+  --psu-gradient: linear-gradient(135deg, #00205B, #4169E1);
+  --psu-gradient-hover: linear-gradient(135deg, #001A4D, #3A5FCA);
+  --psu-border-gradient: linear-gradient(45deg, #00205B, #4169E1, #00205B);
+  --psu-text-shadow: 0 0 10px rgba(0, 32, 91, 0.3), 0 0 20px rgba(65, 105, 225, 0.2);
   
   /* USA themed gradients for Texas Recruiting Clinic - Red, White, and Blue */
   --usa-gradient: linear-gradient(135deg, #bf0a30, #ffffff, #002868);
