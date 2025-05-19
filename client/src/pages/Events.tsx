@@ -452,26 +452,26 @@ export default function Events() {
                   <div className="md:col-span-2 relative z-10">
                     <div className="mb-4">
                       <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
-                        background: 'var(--panther-gradient)'
+                        background: 'var(--usa-gradient)'
                       }}>
                         {events[1].category}
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-1 relative">
                       <span style={{ 
-                        background: 'var(--panther-gradient)',
+                        background: 'var(--usa-gradient)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                         fontWeight: 800,
                         letterSpacing: '0.08em',
-                        textShadow: 'var(--panther-text-shadow)'
+                        textShadow: 'var(--usa-text-shadow)'
                       }}>
                         {events[1].title}
                       </span>
                     </h3>
                     <div className="mb-3">
                       <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'var(--panther-gradient)',
+                        background: 'var(--usa-gradient)',
                         color: 'white',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
@@ -497,14 +497,14 @@ export default function Events() {
                       <a 
                         href={`/events/${events[1].id}`}
                         className="text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
-                        style={{ background: 'var(--panther-gradient)' }}
+                        style={{ background: 'var(--usa-gradient)' }}
                       >
                         View Details
                       </a>
                       <button 
                         onClick={() => handleRegister(events[1])}
-                        className="py-2 px-6 font-medium tracking-wide inline-block rounded-sm border border-purple-800"
-                        style={{ color: '#4B0082' }}
+                        className="py-2 px-6 font-medium tracking-wide inline-block rounded-sm border"
+                        style={{ borderColor: '#bf0a30', color: '#002868' }}
                       >
                         Register Now
                       </button>
