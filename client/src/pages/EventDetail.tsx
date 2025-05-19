@@ -249,27 +249,27 @@ export default function EventDetail() {
         } else if (data.id === 4) {
           data.coaches = [
             {
-              name: "Northern Iowa Elite",
+              name: "Cory Land",
               title: "Panther Train Tour Staff",
-              image: "/assets/coaches/panther-train-tour/cory-land.webp",
+              image: "/assets/cory-land.webp",
               bio: "The Northern Iowa Elite wrestling program features some of the top collegiate wrestlers in the country. Known for their technical skill and competitive drive, these athletes bring their expertise to this multi-day tour across Alabama."
             },
             {
               name: "Wyatt Voelker",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/panther-train-tour/wyatt-voelker.webp",
+              image: "/assets/wyatt-voelker.webp",
               bio: "Wyatt Voelker is a powerful wrestler from the University of Northern Iowa. His strength-based approach and innovative techniques make him a favorite instructor among young wrestlers."
             },
             {
               name: "Trever Andersen",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/panther-train-tour/trever-anderson.webp", 
+              image: "/assets/trever-anderson.webp", 
               bio: "Trever Andersen brings his unique wrestling style from Northern Iowa to this special tour. Specializing in strategic positioning and counter techniques, Trever offers valuable insights to wrestlers of all levels."
             },
             {
               name: "Garrett Funk",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/coaches/panther-train-tour/garrett-funk.webp",
+              image: "/assets/garrett-funk.webp",
               bio: "Garrett Funk rounds out the Northern Iowa contingent with his explosive style and technical expertise. His approach to wrestling combines traditional fundamentals with modern innovations."
             }
           ];
