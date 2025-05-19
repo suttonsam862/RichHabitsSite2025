@@ -110,15 +110,37 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     console.log(`Using calculated price of $${amount/100} for event ${eventId} (${event.title})`);
     
     try {
-      // Create a PaymentIntent with the calculated amount
+      // Include all customer registration details in the metadata
+      const customerInfo = req.body;
+      
+      // Create metadata with all registration fields
+      const metadata: Record<string, string> = {
+        eventId: eventId.toString(),
+        eventName: event.title,
+        option,
+        // Add all customer registration data from the request body
+        firstName: customerInfo.firstName || '',
+        lastName: customerInfo.lastName || '',
+        contactName: customerInfo.contactName || '',
+        email: customerInfo.email || '',
+        phone: customerInfo.phone || '',
+        tShirtSize: customerInfo.tShirtSize || '',
+        grade: customerInfo.grade || '',
+        schoolName: customerInfo.schoolName || '',
+        clubName: customerInfo.clubName || '',
+        // Convert boolean values to strings for metadata
+        day1: (customerInfo.day1 === true || customerInfo.day1 === 'true') ? 'true' : 'false',
+        day2: (customerInfo.day2 === true || customerInfo.day2 === 'true') ? 'true' : 'false',
+        day3: (customerInfo.day3 === true || customerInfo.day3 === 'true') ? 'true' : 'false',
+      };
+      
+      console.log('Creating PaymentIntent with customer metadata:', metadata);
+      
+      // Create a PaymentIntent with the calculated amount and all customer data
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
-        metadata: {
-          eventId: eventId.toString(),
-          eventName: event.title,
-          option,
-        },
+        metadata,
         automatic_payment_methods: {
           enabled: true,
         },
@@ -238,6 +260,10 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
 
     // Get the registration data from the request body if this is a free registration,
     // otherwise from the payment intent metadata
+    
+    // Log the metadata for debugging
+    console.log('Payment intent metadata:', paymentIntent.metadata);
+    
     const registrationData = {
       eventId,
       firstName: freeRegistration ? req.body.firstName : paymentIntent.metadata.firstName || 'Not provided',
@@ -264,6 +290,19 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
         ? req.body.day3 === 'true' || req.body.day3 === true
         : paymentIntent.metadata.day3 === 'true',
     };
+    
+    // Verify the registration data is complete
+    console.log('Constructed registration data:', registrationData);
+    
+    // Validate critical fields and provide meaningful error messages
+    if (!registrationData.email || registrationData.email === 'Not provided') {
+      console.error('Missing email in registration data. This will cause issues with Shopify orders.');
+    }
+    
+    if (!registrationData.firstName || registrationData.firstName === 'Not provided' ||
+        !registrationData.lastName || registrationData.lastName === 'Not provided') {
+      console.error('Missing name information in registration data. This will cause issues with Shopify orders.');
+    }
 
     // Create the registration in your database
     const registration = await storage.createEventRegistration(registrationData);
