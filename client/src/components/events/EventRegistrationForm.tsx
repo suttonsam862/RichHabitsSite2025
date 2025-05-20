@@ -414,7 +414,7 @@ export function EventRegistrationForm({
                     day1: checked === true
                   })}
                 />
-                <Label htmlFor="day1" className="cursor-pointer">Day 1 - Athens High School (July 23)</Label>
+                <Label htmlFor="day1" className="cursor-pointer">Day 1 - East Hamilton High School (July 23)</Label>
               </div>
               
               <div className="flex items-center space-x-2">
