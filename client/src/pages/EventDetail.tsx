@@ -269,7 +269,7 @@ export default function EventDetail() {
             {
               name: "Garrett Funk",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/garrett-funk.webp",
+              image: "/assets/garrett-funk-updated.webp",
               bio: "Garrett Funk rounds out the Northern Iowa contingent with his explosive style and technical expertise. His approach to wrestling combines traditional fundamentals with modern innovations."
             }
           ];
