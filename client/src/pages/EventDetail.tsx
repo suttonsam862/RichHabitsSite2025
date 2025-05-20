@@ -251,7 +251,7 @@ export default function EventDetail() {
             {
               name: "Cory Land",
               title: "Panther Train Tour Staff",
-              image: "/assets/new-cory-land.webp",
+              image: "/assets/final-cory-land.webp",
               bio: "The Northern Iowa Elite wrestling program features some of the top collegiate wrestlers in the country. Known for their technical skill and competitive drive, these athletes bring their expertise to this multi-day tour across Alabama."
             },
             {
