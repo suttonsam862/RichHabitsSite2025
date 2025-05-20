@@ -257,7 +257,7 @@ export default function EventDetail() {
             {
               name: "Wyatt Voelker",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/wyatt-voelker.webp",
+              image: "/assets/new-wyatt-voelker.webp",
               bio: "Wyatt Voelker is a powerful wrestler from the University of Northern Iowa. His strength-based approach and innovative techniques make him a favorite instructor among young wrestlers."
             },
             {
