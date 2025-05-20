@@ -261,10 +261,10 @@ export default function EventDetail() {
               bio: "Wyatt Voelker is a powerful wrestler from the University of Northern Iowa. His strength-based approach and innovative techniques make him a favorite instructor among young wrestlers."
             },
             {
-              name: "Trever Andersen",
+              name: "Trever Anderson",
               title: "Northern Iowa Wrestling Team",
-              image: "/assets/trever-anderson.webp", 
-              bio: "Trever Andersen brings his unique wrestling style from Northern Iowa to this special tour. Specializing in strategic positioning and counter techniques, Trever offers valuable insights to wrestlers of all levels."
+              image: "/assets/trever-anderson-updated.webp", 
+              bio: "Trever Anderson brings his unique wrestling style from Northern Iowa to this special tour. Specializing in strategic positioning and counter techniques, Trever offers valuable insights to wrestlers of all levels."
             },
             {
               name: "Garrett Funk",
