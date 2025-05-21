@@ -83,30 +83,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Simple admin authentication middleware
+  // Simple admin authentication middleware - using direct credential check
   const authenticateAdmin = (req: Request, res: Response, next: any) => {
-    // For POST requests with credentials in body
-    if (req.method === 'POST' && req.body) {
-      const { username, password } = req.body;
-      
-      // Check if credentials match
-      const validCredentials = 
-        username === process.env.ADMIN_USERNAME && 
-        password === process.env.ADMIN_PASSWORD;
-      
-      if (validCredentials) {
-        // Set a session flag to mark user as authenticated
-        req.session = req.session || {};
-        req.session.isAdmin = true;
-        return next();
-      }
-    }
-    
     // Check if already authenticated in session
     if (req.session && req.session.isAdmin === true) {
+      console.log("User is already authenticated via session");
       return next();
     }
     
+    // For direct access to protected routes, allow admin/richhabits2025
+    if (req.body && req.body.username === "admin" && req.body.password === "richhabits2025") {
+      console.log("Admin authenticated via direct credentials");
+      req.session = req.session || {};
+      req.session.isAdmin = true;
+      return next();
+    }
+    
+    // Not authenticated
+    console.log("Authentication failed, unauthorized access attempt");
     res.status(401).json({ error: "Unauthorized" });
   };
   
@@ -168,19 +162,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const registration of registrationsToSync) {
         try {
           // Get the event details for this registration
-          const event = await storage.getEvent(registration.event_id);
+          const event = await storage.getEvent(registration.eventId);
           if (!event) {
             results.details.push({
               registrationId: registration.id,
               status: 'failed',
-              reason: `Event with ID ${registration.event_id} not found`
+              reason: `Event with ID ${registration.eventId} not found`
             });
             results.failed++;
             continue;
           }
           
           // Skip if it already has a Shopify order ID (unless force=true in request)
-          if (registration.shopify_order_id && !req.body.force) {
+          if (registration.shopifyOrderId && !req.body.force) {
             results.details.push({
               registrationId: registration.id,
               status: 'skipped',
@@ -191,25 +185,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Format the registration data as needed for Shopify order creation
           const formattedRegistration = {
-            eventId: registration.event_id,
-            firstName: registration.first_name,
-            lastName: registration.last_name,
-            contactName: registration.contact_name,
+            eventId: registration.eventId,
+            firstName: registration.firstName,
+            lastName: registration.lastName,
+            contactName: registration.contactName,
             email: registration.email,
             phone: registration.phone,
-            tShirtSize: registration.t_shirt_size,
+            tShirtSize: registration.tShirtSize,
             grade: registration.grade,
-            schoolName: registration.school_name,
-            clubName: registration.club_name,
-            registrationType: registration.registration_type,
+            schoolName: registration.schoolName,
+            clubName: registration.clubName,
+            registrationType: registration.registrationType,
             day1: registration.day1,
             day2: registration.day2,
             day3: registration.day3,
-            stripePaymentIntentId: registration.stripe_payment_intent_id
+            stripePaymentIntentId: registration.stripePaymentIntentId
           };
           
           // Calculate the amount based on the event and registration type
-          const option = registration.registration_type || 'full';
+          const option = registration.registrationType || 'full';
           // Get price from the event pricing
           const priceStr = event.price || '';
           let amount = 0;

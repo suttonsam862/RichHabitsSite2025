@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 
 export default function AdminLogin() {
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
   const [loginData, setLoginData] = useState({
     username: '',
@@ -48,7 +48,7 @@ export default function AdminLogin() {
           variant: "default"
         });
         // Redirect to admin page after successful login
-        navigate('/admin');
+        setLocation('/admin');
       } else {
         toast({
           title: "Error",
