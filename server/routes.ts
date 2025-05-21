@@ -108,8 +108,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get optional event ID filter from query parameters
       const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
       
-      // Fetch completed registrations from storage
-      const completedRegistrations = await storage.getCompletedEventRegistrations(eventId);
+      // Get optional payment verification filter
+      const paymentVerified = req.query.paymentVerified as string | undefined;
+      
+      // Fetch completed registrations from storage with filters
+      const completedRegistrations = await storage.getCompletedEventRegistrations(eventId, paymentVerified);
       
       // Return the completed registrations
       res.status(200).json(completedRegistrations);
