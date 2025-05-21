@@ -562,10 +562,29 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         const paymentIntent = event.data.object;
         console.log('Payment succeeded:', paymentIntent.id);
         
-        // Process the successful payment - create registration, etc.
+        // Process the successful payment
         const eventId = Number(paymentIntent.metadata?.eventId);
-        if (eventId && !isNaN(eventId)) {
-          // TOOD: Add code to process registration when webhook is received
+        const registrationId = Number(paymentIntent.metadata?.registrationId);
+        
+        // If we have both eventId and registrationId, we can create a completed registration
+        if (eventId && !isNaN(eventId) && registrationId && !isNaN(registrationId)) {
+          try {
+            // Copy the registration to the completed table
+            const completedRegistration = await storage.createCompletedEventRegistration(
+              registrationId, 
+              paymentIntent.id
+            );
+            
+            if (completedRegistration) {
+              console.log(`Created completed registration record #${completedRegistration.id} for registration #${registrationId}`);
+            } else {
+              console.error(`Failed to create completed registration for registration #${registrationId}`);
+            }
+          } catch (error) {
+            console.error('Error creating completed registration:', error);
+          }
+        } else {
+          console.warn('Missing metadata for completed registration:', { eventId, registrationId });
         }
         break;
       case 'payment_intent.payment_failed':
