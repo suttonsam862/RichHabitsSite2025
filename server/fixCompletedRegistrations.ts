@@ -1,11 +1,10 @@
 import { pool } from "./db";
 
 /**
- * Fixes completed registrations by matching payment IDs with registration data
- * @param dryRun If true, will only show what would be updated without making changes
- * @returns Summary of updates performed or that would be performed
+ * Updates completed registrations that have payments but are missing customer information
+ * by finding and merging with corresponding customer data
  */
-export async function fixCompletedRegistrationsWithMissingInfo(dryRun: boolean = false): Promise<{ 
+export async function fixCompletedRegistrationsWithMissingInfo(): Promise<{
   totalProcessed: number;
   updatedRecords: number;
   skippedRecords: number;
@@ -24,7 +23,7 @@ export async function fixCompletedRegistrationsWithMissingInfo(dryRun: boolean =
     
     // Get all completed registrations with payment IDs but missing information
     const incompleteRegistrations = await client.query(`
-      SELECT id, original_registration_id, first_name, last_name, email, event_id, shopify_order_id, stripe_payment_intent_id
+      SELECT id, original_registration_id, first_name, last_name, email, event_id, shopify_order_id
       FROM completed_event_registrations
       WHERE (first_name = 'Not provided' OR last_name = 'Not provided' OR email = 'Not provided')
       AND (shopify_order_id LIKE 'pi_%' OR stripe_payment_intent_id IS NOT NULL)
@@ -47,13 +46,6 @@ export async function fixCompletedRegistrationsWithMissingInfo(dryRun: boolean =
         if (matchingRegistrations.rows.length > 0) {
           // Use the first match found
           const match = matchingRegistrations.rows[0];
-          
-          // Only log what would happen in dry run mode
-          if (dryRun) {
-            console.log(`Would update registration ID ${reg.id} with data from ${match.id}`);
-            results.updatedRecords++;
-            continue;
-          }
           
           // Update the completed registration with customer details
           await client.query(`

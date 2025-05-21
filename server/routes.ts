@@ -9,6 +9,7 @@ import { pool } from "./db";
 import Stripe from "stripe";
 import { approveRegistrations } from "./registrationApproval";
 import { storage } from "./storage";
+import { fixCompletedRegistrationsWithMissingInfo } from './completedRegistrationFix';
 import { 
   insertContactSubmissionSchema, 
   insertCustomApparelInquirySchema, 
@@ -65,6 +66,8 @@ async function verifyPaymentIntent(paymentIntentId: string): Promise<boolean> {
     return false;
   }
 }
+
+// The fix function is already imported at the top of the file
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for deployment
