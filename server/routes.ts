@@ -137,13 +137,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ isAuthenticated: req.session.isAdmin === true });
   });
   
+  // Helper function to map snake_case database fields to camelCase
+  const mapRegistrationFields = (registration: any) => {
+    return {
+      id: registration.id,
+      eventId: registration.event_id,
+      firstName: registration.first_name,
+      lastName: registration.last_name,
+      contactName: registration.contact_name,
+      email: registration.email,
+      phone: registration.phone,
+      tShirtSize: registration.t_shirt_size,
+      grade: registration.grade,
+      schoolName: registration.school_name,
+      clubName: registration.club_name,
+      registrationType: registration.registration_type,
+      day1: registration.day1,
+      day2: registration.day2,
+      day3: registration.day3,
+      stripePaymentIntentId: registration.stripe_payment_intent_id,
+      shopifyOrderId: registration.shopify_order_id,
+      originalRegistrationId: registration.original_registration_id,
+      completedDate: registration.completed_date
+    };
+  };
+
   // API endpoint to sync registrations with Shopify - protected by authentication
   app.post("/api/admin/sync-shopify-orders", authenticateAdmin, async (req, res) => {
     try {
-      // Validate access (could add more robust admin authentication here)
-      
       // Get all completed registrations that have a payment ID but might be missing Shopify data
-      const registrationsToSync = await storage.getCompletedRegistrationsForSync();
+      const rawRegistrationsToSync = await storage.getCompletedRegistrationsForSync();
+      
+      // Map the DB fields to our camelCase format
+      const registrationsToSync = rawRegistrationsToSync.map(mapRegistrationFields);
       
       console.log(`Found ${registrationsToSync.length} registrations to sync with Shopify`);
       
