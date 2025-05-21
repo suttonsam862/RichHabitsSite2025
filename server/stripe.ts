@@ -566,25 +566,137 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         const eventId = Number(paymentIntent.metadata?.eventId);
         const registrationId = Number(paymentIntent.metadata?.registrationId);
         
-        // If we have both eventId and registrationId, we can create a completed registration
-        if (eventId && !isNaN(eventId) && registrationId && !isNaN(registrationId)) {
+        if (eventId && !isNaN(eventId)) {
           try {
-            // Copy the registration to the completed table
-            const completedRegistration = await storage.createCompletedEventRegistration(
-              registrationId, 
-              paymentIntent.id
-            );
+            // Get the event details
+            const event = await storage.getEvent(eventId);
+            if (!event) {
+              console.error(`Event with ID ${eventId} not found`);
+              break;
+            }
             
-            if (completedRegistration) {
-              console.log(`Created completed registration record #${completedRegistration.id} for registration #${registrationId}`);
+            // Get registration data - either from metadata or from database
+            let registrationData: any;
+            
+            if (registrationId && !isNaN(registrationId)) {
+              // Get the original registration from database
+              const originalRegistration = await storage.getRegistration(registrationId);
+              if (originalRegistration) {
+                registrationData = originalRegistration;
+                console.log(`Using registration data from database for ID ${registrationId}`);
+              } else {
+                console.warn(`Registration with ID ${registrationId} not found in database, using metadata instead`);
+                registrationData = paymentIntent.metadata;
+              }
             } else {
-              console.error(`Failed to create completed registration for registration #${registrationId}`);
+              // Use metadata from the payment intent
+              console.log('Using registration data from payment intent metadata');
+              registrationData = paymentIntent.metadata;
+            }
+            
+            // Calculate the amount for the Shopify order
+            const option = registrationData.option || registrationData.registrationType || 'full';
+            const amount = await getEventPrice(eventId, option);
+            
+            // Extract full registration information
+            const registration = {
+              eventId: eventId,
+              firstName: registrationData.firstName || 'Not provided',
+              lastName: registrationData.lastName || 'Not provided',
+              contactName: registrationData.contactName || 'Not provided',
+              email: registrationData.email || 'Not provided',
+              phone: registrationData.phone || 'Not provided',
+              tShirtSize: registrationData.tShirtSize || 'Not provided',
+              grade: registrationData.grade || 'Not provided',
+              schoolName: registrationData.schoolName || 'Not provided',
+              clubName: registrationData.clubName || 'Not provided',
+              registrationType: registrationData.registrationType || option,
+              day1: registrationData.day1 === 'true' || registrationData.day1 === true,
+              day2: registrationData.day2 === 'true' || registrationData.day2 === true,
+              day3: registrationData.day3 === 'true' || registrationData.day3 === true,
+              shopifyOrderId: '',
+              stripePaymentIntentId: paymentIntent.id
+            };
+            
+            // Create Shopify order from the registration data
+            console.log('Creating Shopify order with registration data:', registration);
+            const shopifyOrder = await createShopifyOrderFromRegistration(registration, event, amount / 100);
+            
+            if (shopifyOrder) {
+              console.log('Successfully created Shopify order:', shopifyOrder.id);
+              
+              // Update registration with Shopify order ID if we have a database record
+              if (registrationId && !isNaN(registrationId)) {
+                try {
+                  await storage.updateRegistration(registrationId, {
+                    shopifyOrderId: shopifyOrder.id
+                  });
+                  console.log(`Updated registration #${registrationId} with Shopify order ID ${shopifyOrder.id}`);
+                } catch (error) {
+                  console.error('Error updating registration with Shopify order ID:', error);
+                }
+              }
+              
+              // Add Shopify order ID to the registration data
+              registration.shopifyOrderId = shopifyOrder.id;
+            } else {
+              console.error('Failed to create Shopify order from registration data');
+            }
+            
+            // Copy to completed registrations table if we have a registration ID
+            if (registrationId && !isNaN(registrationId)) {
+              try {
+                // Copy the registration to the completed table
+                const completedRegistration = await storage.createCompletedEventRegistration(
+                  registrationId, 
+                  paymentIntent.id
+                );
+                
+                if (completedRegistration) {
+                  console.log(`Created completed registration record #${completedRegistration.id} for registration #${registrationId}`);
+                  
+                  // If we have a Shopify order ID, update the completed registration
+                  if (shopifyOrder && shopifyOrder.id) {
+                    try {
+                      await storage.updateCompletedRegistration(completedRegistration.id, {
+                        shopify_order_id: shopifyOrder.id
+                      });
+                      console.log(`Updated completed registration #${completedRegistration.id} with Shopify order ID ${shopifyOrder.id}`);
+                    } catch (error) {
+                      console.error('Error updating completed registration with Shopify order ID:', error);
+                    }
+                  }
+                } else {
+                  console.error(`Failed to create completed registration for registration #${registrationId}`);
+                }
+              } catch (error) {
+                console.error('Error creating completed registration:', error);
+              }
+            } else {
+              console.warn('No registration ID in metadata, skipping completed registration creation');
+            }
+            
+            // Send confirmation email
+            try {
+              await sendRegistrationConfirmationEmail({
+                firstName: registration.firstName,
+                lastName: registration.lastName,
+                email: registration.email,
+                eventName: event.title,
+                eventDates: event.dates || "",
+                eventLocation: event.location || "",
+                registrationType: registration.registrationType,
+                amount: (amount / 100).toString(),
+                paymentId: paymentIntent.id
+              });
+            } catch (error) {
+              console.error('Error sending confirmation email:', error);
             }
           } catch (error) {
-            console.error('Error creating completed registration:', error);
+            console.error('Error processing payment success:', error);
           }
         } else {
-          console.warn('Missing metadata for completed registration:', { eventId, registrationId });
+          console.warn('Missing event ID in payment intent metadata:', paymentIntent.metadata);
         }
         break;
       case 'payment_intent.payment_failed':

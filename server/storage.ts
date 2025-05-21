@@ -33,9 +33,12 @@ export interface IStorage {
   getEvents(): Promise<Event[]>;
   getEvent(id: number): Promise<Event | undefined>;
   createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
+  getRegistration(id: number): Promise<EventRegistration | undefined>;
+  updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined>;
   getEventRegistrations(eventId?: number): Promise<EventRegistration[]>;
   getCompletedEventRegistrations(eventId?: number): Promise<CompletedEventRegistration[]>;
   createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined>;
+  updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
   
   // Coach methods
   getCoaches(): Promise<Coach[]>;
@@ -123,6 +126,23 @@ export class DatabaseStorage implements IStorage {
       .values(data)
       .returning();
     return registration;
+  }
+  
+  async getRegistration(id: number): Promise<EventRegistration | undefined> {
+    const [registration] = await db
+      .select()
+      .from(eventRegistrations)
+      .where(eq(eventRegistrations.id, id));
+    return registration;
+  }
+  
+  async updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined> {
+    const [updated] = await db
+      .update(eventRegistrations)
+      .set(data)
+      .where(eq(eventRegistrations.id, id))
+      .returning();
+    return updated;
   }
   
   async getEventRegistrations(eventId?: number): Promise<EventRegistration[]> {
@@ -247,6 +267,43 @@ export class DatabaseStorage implements IStorage {
       }
     } catch (error) {
       console.error("Error creating completed registration:", error);
+      return undefined;
+    }
+  }
+  
+  async updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined> {
+    try {
+      // Get a client from the pool
+      const client = await pool.connect();
+      
+      try {
+        // Build the SET part of the query dynamically based on the data object
+        const setClause = Object.entries(data)
+          .map(([key, _], index) => `${key} = $${index + 2}`)
+          .join(', ');
+        
+        const values = [id, ...Object.values(data)];
+        
+        // Construct and execute the update query
+        const query = `
+          UPDATE completed_event_registrations
+          SET ${setClause}
+          WHERE id = $1
+          RETURNING *
+        `;
+        
+        const result = await client.query(query, values);
+        
+        if (result.rows.length > 0) {
+          return result.rows[0] as CompletedEventRegistration;
+        }
+        
+        return undefined;
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error("Error updating completed registration:", error);
       return undefined;
     }
   }
