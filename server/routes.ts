@@ -1,8 +1,16 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import path from "path";
 import fs from "fs";
+import "express-session";
+
+// Extend SessionData to include our custom properties
+declare module 'express-session' {
+  interface SessionData {
+    isAdmin?: boolean;
+  }
+}
 import { storage } from "./storage";
 import { 
   insertContactSubmissionSchema, 
@@ -109,7 +117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Check against environment variables
     if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
       // Set a session flag to mark user as authenticated
-      (req.session as any).isAdmin = true;
+      req.session.isAdmin = true;
       res.json({ success: true });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
@@ -118,13 +126,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Admin logout endpoint
   app.post("/api/admin/logout", (req, res) => {
-    (req.session as any).isAdmin = false;
+    req.session.isAdmin = false;
     res.json({ success: true });
   });
   
   // Check admin auth status
   app.get("/api/admin/auth-status", (req, res) => {
-    res.json({ isAuthenticated: (req.session as any).isAdmin === true });
+    res.json({ isAuthenticated: req.session.isAdmin === true });
   });
   
   // API endpoint to sync registrations with Shopify - protected by authentication
