@@ -52,6 +52,11 @@ export default function AdminPage() {
   const [completedRegistrationsError, setCompletedRegistrationsError] = useState<string | null>(null);
   const [filterCompletedEventId, setFilterCompletedEventId] = useState<string>('all');
   
+  // Filter for payment status
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState<string>('all');
+  const [selectedRegistrations, setSelectedRegistrations] = useState<number[]>([]);
+  const [approvingRegistrations, setApprovingRegistrations] = useState(false);
+  
   const [registrationData, setRegistrationData] = useState({
     firstName: '',
     lastName: '',
@@ -274,14 +279,25 @@ export default function AdminPage() {
   };
   
   // Function to fetch all registrations
-  const fetchRegistrations = async (selectedEventId?: string) => {
+  const fetchRegistrations = async (selectedEventId?: string, paymentStatus?: string) => {
     setRegistrationsLoading(true);
     setRegistrationsError(null);
+    setSelectedRegistrations([]); // Reset selections on new fetch
     
     try {
       let url = '/api/registrations';
+      const params = new URLSearchParams();
+      
       if (selectedEventId && selectedEventId !== 'all') {
-        url += `?eventId=${selectedEventId}`;
+        params.append('eventId', selectedEventId);
+      }
+      
+      if (paymentStatus && paymentStatus !== 'all') {
+        params.append('paymentStatus', paymentStatus);
+      }
+      
+      if (params.toString()) {
+        url += `?${params.toString()}`;
       }
       
       const response = await fetch(url);
@@ -340,9 +356,62 @@ export default function AdminPage() {
   // Fetch registrations when component mounts or filter changes
   useEffect(() => {
     if (isAuthenticated) {
-      fetchRegistrations(filterEventId);
+      fetchRegistrations(filterEventId, filterPaymentStatus);
     }
-  }, [filterEventId, isAuthenticated]);
+  }, [filterEventId, filterPaymentStatus, isAuthenticated]);
+  
+  // Function to approve selected registrations
+  const approveSelectedRegistrations = async () => {
+    if (selectedRegistrations.length === 0) {
+      toast({
+        title: "No registrations selected",
+        description: "Please select at least one registration to approve.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setApprovingRegistrations(true);
+    
+    try {
+      const response = await fetch('/api/approve-registrations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          registrationIds: selectedRegistrations,
+          verifyPayment: true
+        }),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      toast({
+        title: "Success",
+        description: `Successfully approved ${data.approvedCount} registrations.`,
+      });
+      
+      // Refresh both registration lists
+      fetchRegistrations(filterEventId, filterPaymentStatus);
+      fetchCompletedRegistrations(filterCompletedEventId);
+      setSelectedRegistrations([]);
+    } catch (error) {
+      console.error('Error approving registrations:', error);
+      toast({
+        title: "Error",
+        description: "Failed to approve registrations. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setApprovingRegistrations(false);
+    }
+  };
   
   // Fetch completed registrations when component mounts or filter changes
   useEffect(() => {
@@ -728,31 +797,90 @@ export default function AdminPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <Label htmlFor="filterEvent" className="min-w-32">Filter by Event:</Label>
-                        <Select 
-                          value={filterEventId} 
-                          onValueChange={setFilterEventId}
-                        >
-                          <SelectTrigger id="filterEvent">
-                            <SelectValue placeholder="Select event" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Events</SelectItem>
-                            <SelectItem value="1">Birmingham Slam Camp</SelectItem>
-                            <SelectItem value="2">National Champ Camp</SelectItem>
-                            <SelectItem value="3">Texas Recruiting Clinic</SelectItem>
-                            <SelectItem value="4">Panther Train Tour</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <div className="space-y-4">
+                        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:gap-4">
+                          <div>
+                            <Label htmlFor="filterEvent" className="md:min-w-32">Filter by Event:</Label>
+                            <Select 
+                              value={filterEventId} 
+                              onValueChange={setFilterEventId}
+                            >
+                              <SelectTrigger id="filterEvent">
+                                <SelectValue placeholder="Select event" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Events</SelectItem>
+                                <SelectItem value="1">Birmingham Slam Camp</SelectItem>
+                                <SelectItem value="2">National Champ Camp</SelectItem>
+                                <SelectItem value="3">Texas Recruiting Clinic</SelectItem>
+                                <SelectItem value="4">Panther Train Tour</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="filterPaymentStatus" className="md:min-w-32">Payment Status:</Label>
+                            <Select 
+                              value={filterPaymentStatus || "all"} 
+                              onValueChange={(value) => setFilterPaymentStatus(value)}
+                            >
+                              <SelectTrigger id="filterPaymentStatus">
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Statuses</SelectItem>
+                                <SelectItem value="paid">Paid</SelectItem>
+                                <SelectItem value="pending">Pending/Unpaid</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <Button 
+                            variant="outline" 
+                            onClick={() => fetchRegistrations(filterEventId, filterPaymentStatus)}
+                            className="md:ml-auto"
+                          >
+                            Refresh
+                          </Button>
+                        </div>
                         
-                        <Button 
-                          variant="outline" 
-                          onClick={() => fetchRegistrations(filterEventId)}
-                          className="ml-auto"
-                        >
-                          Refresh
-                        </Button>
+                        {/* Batch action bar */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Checkbox 
+                              id="selectAll"
+                              checked={registrations.length > 0 && selectedRegistrations.length === registrations.length}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setSelectedRegistrations(registrations.map(reg => reg.id));
+                                } else {
+                                  setSelectedRegistrations([]);
+                                }
+                              }}
+                            />
+                            <Label htmlFor="selectAll">Select All</Label>
+                            <span className="ml-2 text-muted-foreground">
+                              {selectedRegistrations.length} selected
+                            </span>
+                          </div>
+                          
+                          {selectedRegistrations.length > 0 && (
+                            <Button
+                              onClick={approveSelectedRegistrations}
+                              disabled={approvingRegistrations}
+                              className="ml-auto"
+                            >
+                              {approvingRegistrations ? (
+                                <>
+                                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"></div>
+                                  Processing...
+                                </>
+                              ) : (
+                                'Approve Selected'
+                              )}
+                            </Button>
+                          )}
+                        </div>
                       </div>
                       
                       {registrationsLoading ? (
@@ -771,6 +899,7 @@ export default function AdminPage() {
                           <Table>
                             <TableHeader>
                               <TableRow>
+                                <TableHead width="40">Select</TableHead>
                                 <TableHead>ID</TableHead>
                                 <TableHead>Event</TableHead>
                                 <TableHead>Name</TableHead>
@@ -779,11 +908,24 @@ export default function AdminPage() {
                                 <TableHead>Payment</TableHead>
                                 <TableHead>Shopify</TableHead>
                                 <TableHead>Created</TableHead>
+                                <TableHead width="100">Actions</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {registrations.map(reg => (
-                                <TableRow key={reg.id}>
+                                <TableRow key={reg.id} className={selectedRegistrations.includes(reg.id) ? "bg-muted/40" : ""}>
+                                  <TableCell>
+                                    <Checkbox
+                                      checked={selectedRegistrations.includes(reg.id)}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          setSelectedRegistrations(prev => [...prev, reg.id]);
+                                        } else {
+                                          setSelectedRegistrations(prev => prev.filter(id => id !== reg.id));
+                                        }
+                                      }}
+                                    />
+                                  </TableCell>
                                   <TableCell>{reg.id}</TableCell>
                                   <TableCell>{eventNames[reg.eventId] || `Event ${reg.eventId}`}</TableCell>
                                   <TableCell>{reg.firstName} {reg.lastName}</TableCell>
@@ -791,7 +933,7 @@ export default function AdminPage() {
                                   <TableCell>{reg.registrationType || 'N/A'}</TableCell>
                                   <TableCell>
                                     {reg.stripePaymentIntentId ? (
-                                      <span className="text-green-600">Paid</span>
+                                      <span className="text-green-600 font-medium">Paid</span>
                                     ) : (
                                       <span className="text-yellow-600">Pending</span>
                                     )}
@@ -811,6 +953,19 @@ export default function AdminPage() {
                                     )}
                                   </TableCell>
                                   <TableCell>{formatDate(reg.createdAt)}</TableCell>
+                                  <TableCell>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        setSelectedRegistrations([reg.id]);
+                                        approveSelectedRegistrations();
+                                      }}
+                                      disabled={approvingRegistrations}
+                                    >
+                                      Approve
+                                    </Button>
+                                  </TableCell>
                                 </TableRow>
                               ))}
                             </TableBody>
