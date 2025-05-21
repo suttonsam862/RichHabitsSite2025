@@ -690,7 +690,7 @@ export default function AdminPage() {
                                   <TableCell>
                                     {reg.shopifyOrderId ? (
                                       <a 
-                                        href={`https://rich-habits.myshopify.com/admin/orders/${reg.shopifyOrderId}`}
+                                        href={`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/orders/${reg.shopifyOrderId}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-blue-600 hover:underline"
@@ -794,7 +794,7 @@ export default function AdminPage() {
                                   <TableCell>
                                     {reg.shopifyOrderId ? (
                                       <a 
-                                        href={`https://rich-habits.myshopify.com/admin/orders/${reg.shopifyOrderId}`}
+                                        href={`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/orders/${reg.shopifyOrderId}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-blue-600 hover:underline"
