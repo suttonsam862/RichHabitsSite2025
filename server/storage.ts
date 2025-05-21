@@ -34,10 +34,11 @@ export interface IStorage {
   getEvent(id: number): Promise<Event | undefined>;
   createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
   getRegistration(id: number): Promise<EventRegistration | undefined>;
+  getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined>;
   updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined>;
   getEventRegistrations(eventId?: number): Promise<EventRegistration[]>;
   getCompletedEventRegistrations(eventId?: number): Promise<CompletedEventRegistration[]>;
-  createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined>;
+  createCompletedEventRegistration(data: InsertCompletedEventRegistration): Promise<CompletedEventRegistration>;
   updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
   
   // Coach methods

@@ -348,7 +348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const fileContent = fileBuffer.toString();
       
       // Simple CSV parser (could use a library for more robust parsing)
-      const rows = fileContent.split('\\n').filter(row => row.trim());
+      const rows = fileContent.split('\n').filter(row => row.trim());
       const headers = rows[0].split(',').map(header => header.trim().toLowerCase());
       
       // Results tracking
@@ -404,55 +404,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
             throw new Error(`Event ID ${eventId} not found`);
           }
           
-          // Create a regular registration
-          await storage.createEventRegistration({
-            eventId,
-            firstName,
-            lastName,
-            contactName,
-            email,
-            phone,
-            tShirtSize,
-            grade,
-            schoolName,
-            clubName,
-            registrationType,
-            day1: true,
-            day2: true,
-            day3: false,
-            shopifyOrderId,
-            medicalReleaseAccepted: true
-          });
+          // Create the standard registration
+          const client = await pool.connect();
           
-          // If marked as paid, also track as a completed registration
-          if (markAsPaid) {
-            const newRegistration = await storage.getEventRegistrationByEmail(email, eventId);
+          try {
+            // Insert into event_registrations table 
+            const regInsertQuery = `
+              INSERT INTO event_registrations (
+                event_id, first_name, last_name, contact_name, email, phone,
+                t_shirt_size, grade, school_name, club_name, registration_type,
+                medical_release_accepted, day1, day2, day3, shopify_order_id
+              ) VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+              )
+              RETURNING id
+            `;
             
-            if (newRegistration) {
-              await storage.createCompletedEventRegistration({
-                eventId,
-                firstName,
-                lastName,
-                contactName,
-                email,
-                phone,
-                tShirtSize,
-                grade,
-                schoolName,
-                clubName,
-                registrationType,
-                day1: true,
-                day2: true,
-                day3: false,
-                shopifyOrderId,
-                stripePaymentIntentId: null,
-                originalRegistrationId: newRegistration.id,
-                completedDate: new Date()
-              });
+            const regValues = [
+              eventId, firstName, lastName, contactName, email, phone,
+              tShirtSize, grade, schoolName, clubName, registrationType,
+              true, true, true, false, shopifyOrderId
+            ];
+            
+            const regResult = await client.query(regInsertQuery, regValues);
+            const registrationId = regResult.rows[0].id;
+            
+            // If marked as paid, also create a completed registration entry
+            if (markAsPaid && registrationId) {
+              const completedInsertQuery = `
+                INSERT INTO completed_event_registrations (
+                  original_registration_id, event_id, first_name, last_name, contact_name,
+                  email, phone, t_shirt_size, grade, school_name, club_name,
+                  registration_type, day1, day2, day3, shopify_order_id, completed_date
+                ) VALUES (
+                  $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+                )
+              `;
+              
+              const completedValues = [
+                registrationId, eventId, firstName, lastName, contactName,
+                email, phone, tShirtSize, grade, schoolName, clubName,
+                registrationType, true, true, false, shopifyOrderId, new Date()
+              ];
+              
+              await client.query(completedInsertQuery, completedValues);
             }
+            
+            results.successful++;
+          } catch (err) {
+            throw err;
+          } finally {
+            client.release();
           }
-          
-          results.successful++;
         } catch (error) {
           console.error(`Error importing row ${i}:`, error);
           results.failed++;
