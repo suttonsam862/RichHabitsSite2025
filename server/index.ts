@@ -5,9 +5,13 @@ import path from "path";
 import fs from "fs";
 import session from "express-session";
 
-// Set admin credentials as environment variables if not already set
-process.env.ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
-process.env.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "richhabits2025";
+// Hard-coded admin credentials for reliability
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "richhabits2025";
+
+// Set admin credentials for use throughout the application
+process.env.ADMIN_USERNAME = ADMIN_USERNAME;
+process.env.ADMIN_PASSWORD = ADMIN_PASSWORD;
 
 const app = express();
 app.use(express.json());

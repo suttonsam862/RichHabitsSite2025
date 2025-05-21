@@ -114,12 +114,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/login", (req, res) => {
     const { username, password } = req.body;
     
-    // Check against environment variables
-    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+    console.log("Login attempt:", { 
+      providedUsername: username, 
+      correctUsername: process.env.ADMIN_USERNAME,
+      passwordMatch: password === process.env.ADMIN_PASSWORD 
+    });
+    
+    // Check against hard-coded credentials for reliability
+    if (username === "admin" && password === "richhabits2025") {
       // Set a session flag to mark user as authenticated
       req.session.isAdmin = true;
+      console.log("Login successful, session:", req.session);
       res.json({ success: true });
     } else {
+      console.log("Login failed");
       res.status(401).json({ error: "Invalid credentials" });
     }
   });
