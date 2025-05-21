@@ -118,10 +118,13 @@ export default function RegistrationApproval({
   // Filter registrations by payment status and event
   const filteredRegistrations = registrations.filter(reg => {
     // First filter by payment status
-    if (paymentFilter === 'paid' && !reg.stripePaymentIntentId) {
+    const hasPiPaymentId = reg.shopifyOrderId && reg.shopifyOrderId.startsWith('pi_');
+    const isPaid = reg.stripePaymentIntentId || hasPiPaymentId;
+    
+    if (paymentFilter === 'paid' && !isPaid) {
       return false;
     }
-    if (paymentFilter === 'pending' && reg.stripePaymentIntentId) {
+    if (paymentFilter === 'pending' && isPaid) {
       return false;
     }
     
