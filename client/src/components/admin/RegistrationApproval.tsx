@@ -24,6 +24,7 @@ type Registration = {
   email: string;
   phone?: string;
   stripePaymentIntentId?: string;
+  shopifyOrderId?: string; 
   createdAt: string;
 };
 
