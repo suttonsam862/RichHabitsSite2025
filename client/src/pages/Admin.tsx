@@ -26,6 +26,11 @@ export default function AdminPage() {
   const [fixLoading, setFixLoading] = useState<boolean>(false);
   const [fixResponse, setFixResponse] = useState<any>(null);
   
+  // Fix completed registrations state
+  const [fixCompletedLoading, setFixCompletedLoading] = useState<boolean>(false);
+  const [fixCompletedResponse, setFixCompletedResponse] = useState<any>(null);
+  const [fixDryRun, setFixDryRun] = useState<boolean>(false);
+  
   // CSV import state
   const [selectedCsvFile, setSelectedCsvFile] = useState<File | null>(null);
   const [csvImportLoading, setCsvImportLoading] = useState<boolean>(false);
@@ -1340,6 +1345,77 @@ export default function AdminPage() {
                               <p className="font-medium">Errors:</p>
                               <ul className="list-disc pl-5 text-sm">
                                 {fixResponse.results.errors.map((error: string, idx: number) => (
+                                  <li key={idx} className="text-red-600">{error}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="fix-completed">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Fix Completed Registrations</CardTitle>
+                    <CardDescription>
+                      Repair completed registrations that have payment information but missing customer details
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <Alert>
+                        <AlertTitle>What This Tool Does</AlertTitle>
+                        <AlertDescription>
+                          <p className="mb-2">This tool fixes completed registrations with payment records but missing customer information:</p>
+                          <ol className="list-decimal pl-5 mb-2 space-y-1">
+                            <li>Identifies registrations with payment IDs that show "Not provided" for customer details</li>
+                            <li>Finds matching registration records with complete customer information</li>
+                            <li>Updates the completed registration with the correct customer details</li>
+                            <li>Automatically marks the fixed registrations as payment verified</li>
+                          </ol>
+                          <p>After running this tool, your completed registrations should have all customer information properly filled in.</p>
+                        </AlertDescription>
+                      </Alert>
+                      
+                      <div className="flex items-center space-x-2 mb-4">
+                        <Checkbox 
+                          id="dryRun" 
+                          checked={fixDryRun} 
+                          onCheckedChange={(checked) => setFixDryRun(checked as boolean)} 
+                        />
+                        <Label htmlFor="dryRun">Dry Run (show what would change without making updates)</Label>
+                      </div>
+                      
+                      <Button 
+                        onClick={handleFixCompletedRegistrations}
+                        disabled={fixCompletedLoading}
+                        className="mt-4"
+                      >
+                        {fixCompletedLoading ? (
+                          <>
+                            <span className="animate-spin mr-2">⟳</span>
+                            Fixing Completed Registrations...
+                          </>
+                        ) : (
+                          "Fix Completed Registrations"
+                        )}
+                      </Button>
+                      
+                      {fixCompletedResponse && (
+                        <div className="mt-4 p-4 border rounded bg-gray-50">
+                          <h4 className="font-medium mb-2">Fix Results:</h4>
+                          <p>Total registrations processed: {fixCompletedResponse.results.totalProcessed}</p>
+                          <p>Updated registrations: {fixCompletedResponse.results.updatedRecords}</p>
+                          <p>Skipped registrations: {fixCompletedResponse.results.skippedRecords}</p>
+                          {fixCompletedResponse.results.errors && fixCompletedResponse.results.errors.length > 0 && (
+                            <div className="mt-2">
+                              <p className="font-medium">Errors:</p>
+                              <ul className="list-disc pl-5 text-sm">
+                                {fixCompletedResponse.results.errors.map((error: string, idx: number) => (
                                   <li key={idx} className="text-red-600">{error}</li>
                                 ))}
                               </ul>
