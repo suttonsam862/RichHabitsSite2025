@@ -462,8 +462,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Also check payment status in Stripe if available
             if (reg.stripe_payment_intent_id) {
-              // Implement Stripe payment verification here if needed
-              // For now, assume Stripe payments in our database were validated at insertion time
+              // Import the Stripe verification function
+              const { verifyPaymentIntent } = require('./stripe');
+              
+              // Verify the payment intent is valid and successful
+              const isPaymentValid = await verifyPaymentIntent(reg.stripe_payment_intent_id);
+              
+              if (!isPaymentValid) {
+                console.log(`Skipping registration ${reg.id} - payment verification failed for Stripe payment ${reg.stripe_payment_intent_id}`);
+                continue; // Skip this registration if payment verification fails
+              }
             }
             
             // Payment status verified, now create the completed record

@@ -577,7 +577,14 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         const paymentIntent = event.data.object;
         console.log('Payment succeeded:', paymentIntent.id);
         
-        // Process the successful payment
+        // CRITICAL: Double-verify the payment status to prevent processing incorrectly submitted payments
+        const paymentStatus = await verifyPaymentIntent(paymentIntent.id);
+        if (!paymentStatus) {
+          console.error(`Payment verification failed for payment intent ${paymentIntent.id} - not processing this registration`);
+          break;
+        }
+        
+        // Payment verified, now process the successful payment
         const eventId = Number(paymentIntent.metadata?.eventId);
         const registrationId = Number(paymentIntent.metadata?.registrationId);
         
