@@ -12,7 +12,7 @@ import {
   eventCoaches, type EventCoach, type InsertEventCoach,
   completedEventRegistrations, type CompletedEventRegistration, type InsertCompletedEventRegistration
 } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
