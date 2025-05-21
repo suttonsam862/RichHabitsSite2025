@@ -240,6 +240,38 @@ export class DatabaseStorage implements IStorage {
         return undefined;
       }
       
+      // CRITICAL: Verify payment status before creating completed record
+      let paymentVerified = false;
+      const paymentId = stripePaymentIntentId || registration.stripePaymentIntentId;
+      
+      // If we have a Stripe payment intent, verify it directly with Stripe
+      if (paymentId) {
+        try {
+          // Import the Stripe verification function
+          const { verifyPaymentIntent } = require('./stripe');
+          
+          // Verify the payment intent is valid and successful
+          const isPaymentValid = await verifyPaymentIntent(paymentId);
+          
+          if (!isPaymentValid) {
+            console.error(`Payment verification failed for Stripe payment ${paymentId} - aborting completion`);
+            return undefined; // Don't create completed registration if payment is invalid
+          }
+          
+          paymentVerified = true;
+        } catch (error) {
+          console.error(`Error verifying payment ${paymentId}:`, error);
+          return undefined; // Don't create completed registration if verification fails
+        }
+      } else if (registration.shopifyOrderId) {
+        // If we have a Shopify order ID, consider it verified (was created directly in Shopify)
+        paymentVerified = true;
+      } else {
+        // No payment verification method found
+        console.error(`No payment verification method available for registration ${registrationId}`);
+        return undefined;
+      }
+      
       // Get a client from the pool
       const client = await pool.connect();
       
@@ -250,10 +282,11 @@ export class DatabaseStorage implements IStorage {
             original_registration_id, event_id, first_name, last_name, contact_name, 
             email, phone, t_shirt_size, grade, school_name, club_name, 
             medical_release_accepted, registration_type, shopify_order_id, 
-            stripe_payment_intent_id, day1, day2, day3, age, experience, registration_date
+            stripe_payment_intent_id, day1, day2, day3, age, experience, registration_date,
+            payment_verified
           ) VALUES (
             $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 
-            $16, $17, $18, $19, $20, $21
+            $16, $17, $18, $19, $20, $21, $22
           ) 
           RETURNING *
         `;
@@ -273,13 +306,14 @@ export class DatabaseStorage implements IStorage {
           registration.medicalReleaseAccepted,
           registration.registrationType,
           registration.shopifyOrderId,
-          stripePaymentIntentId,
+          paymentId,
           registration.day1,
           registration.day2,
           registration.day3,
           registration.age,
           registration.experience,
-          registration.createdAt
+          registration.createdAt,
+          paymentVerified
         ];
         
         const result = await client.query(query, values);
