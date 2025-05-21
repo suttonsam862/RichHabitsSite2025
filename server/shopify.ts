@@ -864,12 +864,49 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
       }
     };
     
-    // Add note attributes if provided
+    // Add note attributes if provided, with ENHANCED handling to ensure ALL form fields are included
     if (params.attributes && params.attributes.length > 0) {
-      draftOrderPayload.draft_order.note_attributes = params.attributes.map(attr => ({
+      // First, map the standard attributes
+      const noteAttributes = params.attributes.map(attr => ({
         name: attr.key,
         value: attr.value
       }));
+      
+      // Ensure email is always included in note attributes for better discoverability
+      if (!noteAttributes.some(attr => attr.name === 'Email')) {
+        noteAttributes.push({
+          name: 'Email',
+          value: params.customer.email
+        });
+      }
+      
+      // Make sure all required form fields are included as note attributes
+      const requiredFields = [
+        { key: 'First_Name', value: params.customer.firstName },
+        { key: 'Last_Name', value: params.customer.lastName },
+        { key: 'Phone', value: params.customer.phone || 'Not provided' },
+        { key: 'Contact_Name', value: params.attributes.find(a => a.key === 'Contact_Name')?.value || params.customer.firstName + ' ' + params.customer.lastName },
+        { key: 'T_Shirt_Size', value: params.attributes.find(a => a.key === 'T_Shirt_Size')?.value || 'Not provided' },
+        { key: 'Grade', value: params.attributes.find(a => a.key === 'Grade')?.value || 'Not provided' },
+        { key: 'School', value: params.attributes.find(a => a.key === 'School')?.value || 'Not provided' },
+        { key: 'Club', value: params.attributes.find(a => a.key === 'Club')?.value || 'Not provided' }
+      ];
+      
+      // Add any missing required fields
+      requiredFields.forEach(field => {
+        if (!noteAttributes.some(attr => attr.name === field.key)) {
+          noteAttributes.push({
+            name: field.key,
+            value: field.value
+          });
+        }
+      });
+      
+      // Now set the enhanced note attributes with ALL form fields
+      draftOrderPayload.draft_order.note_attributes = noteAttributes;
+      
+      // Also ensure email is set at the top level for proper notifications
+      draftOrderPayload.draft_order.email = params.customer.email;
     }
     
     // Create the draft order
