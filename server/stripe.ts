@@ -74,6 +74,21 @@ const getEventPrice = async (eventId: number, option: string): Promise<number> =
   }
 };
 
+// Verify a payment intent status
+export const verifyPaymentIntent = async (paymentIntentId: string): Promise<boolean> => {
+  try {
+    // Get the payment intent to verify its status
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    // Only consider payments that have been successfully processed
+    // Status must be 'succeeded' for a payment to be valid
+    return paymentIntent.status === 'succeeded';
+  } catch (error) {
+    console.error(`Error verifying payment intent ${paymentIntentId}:`, error);
+    return false;
+  }
+};
+
 // Create a payment intent
 export const createPaymentIntent = async (req: Request, res: Response) => {
   try {
