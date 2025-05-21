@@ -24,6 +24,12 @@ export default function AdminPage() {
   const [discountUrl, setDiscountUrl] = useState<string>('');
   const [forceUpdateAll, setForceUpdateAll] = useState<boolean>(false);
   
+  // CSV import state
+  const [selectedCsvFile, setSelectedCsvFile] = useState<File | null>(null);
+  const [csvImportLoading, setCsvImportLoading] = useState<boolean>(false);
+  const [markAllAsPaid, setMarkAllAsPaid] = useState<boolean>(true);
+  const [csvImportResult, setCsvImportResult] = useState<any>(null);
+  
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
@@ -902,6 +908,97 @@ export default function AdminPage() {
                           "Sync Registrations with Shopify"
                         )}
                       </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="import-csv">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Import Historical Registrations</CardTitle>
+                    <CardDescription>
+                      Upload a CSV file with past registrations from Shopify to import them into the system
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <Alert>
+                        <AlertTitle>CSV Format Requirements</AlertTitle>
+                        <AlertDescription>
+                          Your CSV file should include these columns: 
+                          <code className="block mt-2 p-2 bg-gray-100 rounded text-xs">
+                            email, first_name, last_name, phone, event_id, registration_type, t_shirt_size, 
+                            grade, school_name, club_name, shopify_order_id, payment_status
+                          </code>
+                          <ul className="mt-2 text-sm list-disc pl-4">
+                            <li><strong>event_id</strong>: 1 (Birmingham), 2 (National Champ), 3 (Texas), 4 (Panther)</li>
+                            <li><strong>registration_type</strong>: "full" or "single"</li>
+                            <li><strong>payment_status</strong>: "paid" or "pending"</li>
+                          </ul>
+                        </AlertDescription>
+                      </Alert>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="csvFile">Select CSV File</Label>
+                        <Input 
+                          id="csvFile" 
+                          type="file" 
+                          accept=".csv" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              // Store the selected file for later upload
+                              setSelectedCsvFile(file);
+                            }
+                          }}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 mt-4">
+                        <Switch
+                          id="markAsPaid"
+                          checked={markAllAsPaid}
+                          onCheckedChange={setMarkAllAsPaid}
+                        />
+                        <Label htmlFor="markAsPaid">
+                          Mark all imported registrations as paid
+                        </Label>
+                      </div>
+                      
+                      <Button 
+                        onClick={handleCsvImport}
+                        disabled={!selectedCsvFile || csvImportLoading}
+                        className="mt-4"
+                      >
+                        {csvImportLoading ? (
+                          <>
+                            <span className="animate-spin mr-2">⟳</span>
+                            Importing...
+                          </>
+                        ) : (
+                          "Import Registrations"
+                        )}
+                      </Button>
+                      
+                      {csvImportResult && (
+                        <div className="mt-4 p-4 border rounded bg-gray-50">
+                          <h4 className="font-medium mb-2">Import Results:</h4>
+                          <p>Total records: {csvImportResult.total}</p>
+                          <p>Successfully imported: {csvImportResult.successful}</p>
+                          <p>Failed: {csvImportResult.failed}</p>
+                          {csvImportResult.errors && csvImportResult.errors.length > 0 && (
+                            <div className="mt-2">
+                              <p className="font-medium">Errors:</p>
+                              <ul className="list-disc pl-5 text-sm">
+                                {csvImportResult.errors.map((error, idx) => (
+                                  <li key={idx} className="text-red-600">{error}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
