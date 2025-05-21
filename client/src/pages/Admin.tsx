@@ -201,6 +201,47 @@ export default function AdminPage() {
     }
   };
   
+  // Handle fixing completed registrations with missing customer information
+  const handleFixCompletedRegistrations = async () => {
+    try {
+      setFixCompletedLoading(true);
+      setFixCompletedResponse(null);
+      
+      const response = await fetch('/api/admin/fix-completed-registrations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ dryRun: fixDryRun })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setFixCompletedResponse(data);
+      
+      // Refresh completed registrations list to show the fixed entries
+      await fetchCompletedRegistrations(filterCompletedEventId);
+      
+      toast({
+        title: fixDryRun ? "Dry Run Complete" : "Fix Complete",
+        description: data.message,
+        variant: "default"
+      });
+    } catch (error) {
+      console.error('Error fixing completed registrations:', error);
+      toast({
+        title: "Fix Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
+    } finally {
+      setFixCompletedLoading(false);
+    }
+  };
+  
   // Handle login form submission - simplified for reliability
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
