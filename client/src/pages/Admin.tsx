@@ -21,10 +21,19 @@ export default function AdminPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [registrationType, setRegistrationType] = useState<'full' | 'single'>('full');
   const [discountUrl, setDiscountUrl] = useState<string>('');
+  
+  // All registrations state
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [registrationsLoading, setRegistrationsLoading] = useState(false);
   const [registrationsError, setRegistrationsError] = useState<string | null>(null);
   const [filterEventId, setFilterEventId] = useState<string>('all');
+  
+  // Completed registrations state
+  const [completedRegistrations, setCompletedRegistrations] = useState<any[]>([]);
+  const [completedRegistrationsLoading, setCompletedRegistrationsLoading] = useState(false);
+  const [completedRegistrationsError, setCompletedRegistrationsError] = useState<string | null>(null);
+  const [filterCompletedEventId, setFilterCompletedEventId] = useState<string>('all');
+  
   const [registrationData, setRegistrationData] = useState({
     firstName: '',
     lastName: '',
@@ -53,7 +62,7 @@ export default function AdminPage() {
     }));
   };
   
-  // Function to fetch registrations
+  // Function to fetch all registrations
   const fetchRegistrations = async (selectedEventId?: string) => {
     setRegistrationsLoading(true);
     setRegistrationsError(null);
@@ -85,10 +94,47 @@ export default function AdminPage() {
     }
   };
   
+  // Function to fetch completed registrations
+  const fetchCompletedRegistrations = async (selectedEventId?: string) => {
+    setCompletedRegistrationsLoading(true);
+    setCompletedRegistrationsError(null);
+    
+    try {
+      let url = '/api/completed-registrations';
+      if (selectedEventId && selectedEventId !== 'all') {
+        url += `?eventId=${selectedEventId}`;
+      }
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setCompletedRegistrations(data);
+    } catch (error) {
+      console.error('Error fetching completed registrations:', error);
+      setCompletedRegistrationsError(error instanceof Error ? error.message : 'Failed to fetch completed registrations');
+      toast({
+        title: "Error",
+        description: "Failed to load completed registrations. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setCompletedRegistrationsLoading(false);
+    }
+  };
+  
   // Fetch registrations when component mounts or filter changes
   useEffect(() => {
     fetchRegistrations(filterEventId);
   }, [filterEventId]);
+  
+  // Fetch completed registrations when component mounts or filter changes
+  useEffect(() => {
+    fetchCompletedRegistrations(filterCompletedEventId);
+  }, [filterCompletedEventId]);
 
   const createDiscountCheckout = async () => {
     setLoading(true);
@@ -166,7 +212,8 @@ export default function AdminPage() {
           <Tabs defaultValue="discount">
             <TabsList className="mb-8">
               <TabsTrigger value="discount">Discount Management</TabsTrigger>
-              <TabsTrigger value="registrations">Registrations</TabsTrigger>
+              <TabsTrigger value="registrations">All Registrations</TabsTrigger>
+              <TabsTrigger value="completed-registrations">Completed Registrations</TabsTrigger>
             </TabsList>
             
             <TabsContent value="discount">
@@ -384,9 +431,9 @@ export default function AdminPage() {
             <TabsContent value="registrations">
               <Card>
                 <CardHeader>
-                  <CardTitle>Event Registrations</CardTitle>
+                  <CardTitle>All Event Registrations</CardTitle>
                   <CardDescription>
-                    View and manage event registrations
+                    View all registration attempts (both pending and completed)
                   </CardDescription>
                 </CardHeader>
                 
@@ -466,6 +513,107 @@ export default function AdminPage() {
                   ) : (
                     <div className="text-center py-8 text-gray-500">
                       No registrations found.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="completed-registrations">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Completed Registrations</CardTitle>
+                  <CardDescription>
+                    View only successfully paid and completed registrations
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-4 mb-4">
+                    <Label htmlFor="filterCompletedEvent">Filter by Event:</Label>
+                    <Select 
+                      value={filterCompletedEventId} 
+                      onValueChange={setFilterCompletedEventId}
+                    >
+                      <SelectTrigger id="filterCompletedEvent" className="w-[250px]">
+                        <SelectValue placeholder="Select an event" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Events</SelectItem>
+                        <SelectItem value="1">Birmingham Slam Camp</SelectItem>
+                        <SelectItem value="2">National Champ Camp</SelectItem>
+                        <SelectItem value="3">Texas Recruiting Clinic</SelectItem>
+                        <SelectItem value="4">Panther Train Tour</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Button variant="outline" onClick={() => fetchCompletedRegistrations(filterCompletedEventId)} className="ml-auto">
+                      Refresh Data
+                    </Button>
+                  </div>
+                  
+                  {completedRegistrationsError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription>{completedRegistrationsError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {completedRegistrationsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                    </div>
+                  ) : completedRegistrations.length > 0 ? (
+                    <div className="border rounded-md overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Original Reg. ID</TableHead>
+                            <TableHead>Event</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Payment ID</TableHead>
+                            <TableHead>Completed Date</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {completedRegistrations.map(reg => (
+                            <TableRow key={reg.id}>
+                              <TableCell>{reg.id}</TableCell>
+                              <TableCell>{reg.original_registration_id}</TableCell>
+                              <TableCell>
+                                {reg.event_id === 1 && "Birmingham Slam Camp"}
+                                {reg.event_id === 2 && "National Champ Camp"}
+                                {reg.event_id === 3 && "Texas Recruiting Clinic"}
+                                {reg.event_id === 4 && "Panther Train Tour"}
+                              </TableCell>
+                              <TableCell>{reg.first_name} {reg.last_name}</TableCell>
+                              <TableCell>{reg.email}</TableCell>
+                              <TableCell>
+                                {reg.registration_type === "full" 
+                                  ? "Full Camp/Clinic" 
+                                  : "Single Day"}
+                              </TableCell>
+                              <TableCell>
+                                <span className="text-xs font-mono">
+                                  {reg.stripe_payment_intent_id 
+                                    ? `${reg.stripe_payment_intent_id.slice(0, 8)}...` 
+                                    : 'N/A'}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                {reg.completed_date ? format(new Date(reg.completed_date), 'MMM d, yyyy') : 'N/A'}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No completed registrations found.
                     </div>
                   )}
                 </CardContent>

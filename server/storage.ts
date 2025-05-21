@@ -144,21 +144,29 @@ export class DatabaseStorage implements IStorage {
   async getCompletedEventRegistrations(eventId?: number): Promise<CompletedEventRegistration[]> {
     // Use direct SQL query for the completed registrations
     try {
-      let query = `
-        SELECT * FROM completed_event_registrations
-      `;
+      // Use the pool to execute raw SQL queries
+      const client = await pool.connect();
       
-      if (eventId) {
-        query += ` WHERE event_id = $1`;
-        query += ` ORDER BY completed_date DESC`;
+      try {
+        let query = `
+          SELECT * FROM completed_event_registrations
+        `;
         
-        const result = await db.execute(query, [eventId]);
-        return result.rows as CompletedEventRegistration[];
-      } else {
-        query += ` ORDER BY completed_date DESC`;
+        let result;
+        if (eventId) {
+          query += ` WHERE event_id = $1`;
+          query += ` ORDER BY completed_date DESC NULLS LAST`;
+          
+          result = await client.query(query, [eventId]);
+        } else {
+          query += ` ORDER BY completed_date DESC NULLS LAST`;
+          
+          result = await client.query(query);
+        }
         
-        const result = await db.execute(query);
         return result.rows as CompletedEventRegistration[];
+      } finally {
+        client.release();
       }
     } catch (error) {
       console.error('Error fetching completed registrations:', error);
@@ -185,73 +193,58 @@ export class DatabaseStorage implements IStorage {
         return undefined;
       }
       
-      // Create the completed registration data object
-      const completedRegistrationData = {
-        original_registration_id: registration.id,
-        event_id: registration.eventId,
-        first_name: registration.firstName,
-        last_name: registration.lastName,
-        contact_name: registration.contactName,
-        email: registration.email,
-        phone: registration.phone,
-        t_shirt_size: registration.tShirtSize,
-        grade: registration.grade,
-        school_name: registration.schoolName,
-        club_name: registration.clubName,
-        medical_release_accepted: registration.medicalReleaseAccepted,
-        registration_type: registration.registrationType,
-        shopify_order_id: registration.shopifyOrderId,
-        stripe_payment_intent_id: stripePaymentIntentId,
-        day1: registration.day1,
-        day2: registration.day2,
-        day3: registration.day3,
-        age: registration.age,
-        experience: registration.experience,
-        registration_date: registration.createdAt
-      };
+      // Get a client from the pool
+      const client = await pool.connect();
       
-      // Execute the SQL query directly to handle the proper column names
-      const result = await db.execute(
-        `INSERT INTO completed_event_registrations (
-          original_registration_id, event_id, first_name, last_name, contact_name, 
-          email, phone, t_shirt_size, grade, school_name, club_name, 
-          medical_release_accepted, registration_type, shopify_order_id, 
-          stripe_payment_intent_id, day1, day2, day3, age, experience, registration_date
-        ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 
-          $16, $17, $18, $19, $20, $21
-        ) RETURNING *`,
-        [
-          completedRegistrationData.original_registration_id,
-          completedRegistrationData.event_id, 
-          completedRegistrationData.first_name,
-          completedRegistrationData.last_name,
-          completedRegistrationData.contact_name,
-          completedRegistrationData.email,
-          completedRegistrationData.phone,
-          completedRegistrationData.t_shirt_size,
-          completedRegistrationData.grade,
-          completedRegistrationData.school_name,
-          completedRegistrationData.club_name,
-          completedRegistrationData.medical_release_accepted,
-          completedRegistrationData.registration_type,
-          completedRegistrationData.shopify_order_id,
-          completedRegistrationData.stripe_payment_intent_id,
-          completedRegistrationData.day1,
-          completedRegistrationData.day2,
-          completedRegistrationData.day3,
-          completedRegistrationData.age,
-          completedRegistrationData.experience,
-          completedRegistrationData.registration_date
-        ]
-      );
-      
-      const rows = result.rows;
-      if (rows.length > 0) {
-        return rows[0] as CompletedEventRegistration;
+      try {
+        // Use a direct SQL approach with simple parameter binding for maximum compatibility
+        const query = `
+          INSERT INTO completed_event_registrations (
+            original_registration_id, event_id, first_name, last_name, contact_name, 
+            email, phone, t_shirt_size, grade, school_name, club_name, 
+            medical_release_accepted, registration_type, shopify_order_id, 
+            stripe_payment_intent_id, day1, day2, day3, age, experience, registration_date
+          ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 
+            $16, $17, $18, $19, $20, $21
+          ) 
+          RETURNING *
+        `;
+        
+        const values = [
+          registration.id,
+          registration.eventId,
+          registration.firstName,
+          registration.lastName,
+          registration.contactName,
+          registration.email,
+          registration.phone,
+          registration.tShirtSize,
+          registration.grade,
+          registration.schoolName,
+          registration.clubName,
+          registration.medicalReleaseAccepted,
+          registration.registrationType,
+          registration.shopifyOrderId,
+          stripePaymentIntentId,
+          registration.day1,
+          registration.day2,
+          registration.day3,
+          registration.age,
+          registration.experience,
+          registration.createdAt
+        ];
+        
+        const result = await client.query(query, values);
+        
+        if (result.rows.length > 0) {
+          return result.rows[0] as CompletedEventRegistration;
+        }
+        
+        return undefined;
+      } finally {
+        client.release();
       }
-      
-      return undefined;
     } catch (error) {
       console.error("Error creating completed registration:", error);
       return undefined;

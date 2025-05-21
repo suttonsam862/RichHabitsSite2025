@@ -58,6 +58,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // API endpoint to fetch completed event registrations
+  app.get("/api/completed-registrations", async (req, res) => {
+    try {
+      // Get optional event ID filter from query parameters
+      const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
+      
+      // Fetch completed registrations from storage
+      const completedRegistrations = await storage.getCompletedEventRegistrations(eventId);
+      
+      // Return the completed registrations
+      res.status(200).json(completedRegistrations);
+    } catch (error) {
+      console.error("Error fetching completed registrations:", error);
+      res.status(500).json({ error: "Failed to fetch completed registrations" });
+    }
+  });
+  
   // Setup image optimization routes
   const assetsDir = path.join(process.cwd(), 'attached_assets');
   registerImageOptimizationRoutes(app, assetsDir);
