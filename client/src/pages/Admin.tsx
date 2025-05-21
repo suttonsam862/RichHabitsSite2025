@@ -899,7 +899,7 @@ export default function AdminPage() {
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead width="40">Select</TableHead>
+                                <TableHead className="w-10">Select</TableHead>
                                 <TableHead>ID</TableHead>
                                 <TableHead>Event</TableHead>
                                 <TableHead>Name</TableHead>
@@ -908,7 +908,7 @@ export default function AdminPage() {
                                 <TableHead>Payment</TableHead>
                                 <TableHead>Shopify</TableHead>
                                 <TableHead>Created</TableHead>
-                                <TableHead width="100">Actions</TableHead>
+                                <TableHead className="w-24">Actions</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>

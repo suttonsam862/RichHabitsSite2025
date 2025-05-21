@@ -146,19 +146,70 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
   
-  async getEventRegistrations(eventId?: number): Promise<EventRegistration[]> {
-    // If eventId is provided, filter by that event, otherwise get all registrations
-    if (eventId) {
-      return await db
-        .select()
-        .from(eventRegistrations)
-        .where(eq(eventRegistrations.eventId, eventId))
-        .orderBy(desc(eventRegistrations.createdAt));
-    } else {
-      return await db
-        .select()
-        .from(eventRegistrations)
-        .orderBy(desc(eventRegistrations.createdAt));
+  async getEventRegistrations(eventId?: number, paymentStatus?: string): Promise<EventRegistration[]> {
+    // Use direct SQL query for more flexibility with filtering
+    try {
+      const client = await pool.connect();
+      
+      try {
+        let query = `
+          SELECT * FROM event_registrations
+          WHERE 1=1
+        `;
+        
+        const params: any[] = [];
+        
+        // Apply event filter if provided
+        if (eventId) {
+          params.push(eventId);
+          query += ` AND event_id = $${params.length}`;
+        }
+        
+        // Apply payment status filter if provided
+        if (paymentStatus) {
+          if (paymentStatus === 'paid') {
+            query += ` AND stripe_payment_intent_id IS NOT NULL`;
+          } else if (paymentStatus === 'pending') {
+            query += ` AND (stripe_payment_intent_id IS NULL OR stripe_payment_intent_id = '')`;
+          }
+        }
+        
+        // Add sorting
+        query += ` ORDER BY created_at DESC NULLS LAST`;
+        
+        // Execute the query
+        const result = await client.query(query, params);
+        
+        // Map the results to our TypeScript types
+        return result.rows.map(row => ({
+          id: row.id,
+          eventId: row.event_id,
+          firstName: row.first_name,
+          lastName: row.last_name,
+          contactName: row.contact_name,
+          email: row.email,
+          phone: row.phone,
+          tShirtSize: row.t_shirt_size,
+          grade: row.grade,
+          schoolName: row.school_name,
+          clubName: row.club_name,
+          medicalReleaseAccepted: row.medical_release_accepted,
+          registrationType: row.registration_type,
+          shopifyOrderId: row.shopify_order_id,
+          stripePaymentIntentId: row.stripe_payment_intent_id,
+          day1: row.day1,
+          day2: row.day2,
+          day3: row.day3,
+          age: row.age,
+          experience: row.experience,
+          createdAt: row.created_at
+        }));
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('Error fetching registrations:', error);
+      return [];
     }
   }
   
