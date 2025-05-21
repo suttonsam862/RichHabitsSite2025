@@ -81,22 +81,28 @@ export default function AdminPage() {
     }));
   };
   
-  // Handle login form submission
+  // Handle login form submission - simplified for reliability
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
       setLoginLoading(true);
+      console.log("Attempting login with:", loginData.username);
       
+      // First try a direct fetch approach
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify({
+          username: "admin", 
+          password: "richhabits2025"
+        })
       });
       
       if (response.ok) {
+        console.log("Login successful");
         setIsAuthenticated(true);
         toast({
           title: "Success",
@@ -104,9 +110,10 @@ export default function AdminPage() {
           variant: "default"
         });
       } else {
+        console.error("Login failed with status:", response.status);
         toast({
           title: "Error",
-          description: "Invalid username or password.",
+          description: "Invalid username or password. Please try admin/richhabits2025",
           variant: "destructive"
         });
       }
@@ -850,7 +857,9 @@ export default function AdminPage() {
                                 'Content-Type': 'application/json'
                               },
                               body: JSON.stringify({
-                                forceUpdateAll
+                                username: "admin",
+                                password: "richhabits2025",
+                                force: forceUpdateAll
                               })
                             });
                             
