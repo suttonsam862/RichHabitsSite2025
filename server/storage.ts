@@ -32,6 +32,7 @@ export interface IStorage {
   getEvents(): Promise<Event[]>;
   getEvent(id: number): Promise<Event | undefined>;
   createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
+  getEventRegistrations(eventId?: number): Promise<EventRegistration[]>;
   
   // Coach methods
   getCoaches(): Promise<Coach[]>;
@@ -119,6 +120,22 @@ export class DatabaseStorage implements IStorage {
       .values(data)
       .returning();
     return registration;
+  }
+  
+  async getEventRegistrations(eventId?: number): Promise<EventRegistration[]> {
+    // If eventId is provided, filter by that event, otherwise get all registrations
+    if (eventId) {
+      return await db
+        .select()
+        .from(eventRegistrations)
+        .where(eq(eventRegistrations.eventId, eventId))
+        .orderBy(desc(eventRegistrations.createdAt));
+    } else {
+      return await db
+        .select()
+        .from(eventRegistrations)
+        .orderBy(desc(eventRegistrations.createdAt));
+    }
   }
 
   async createCustomApparelInquiry(data: InsertCustomApparelInquiry): Promise<CustomApparelInquiry> {

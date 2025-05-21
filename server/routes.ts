@@ -41,6 +41,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
+  // API endpoint to fetch event registrations
+  app.get("/api/registrations", async (req, res) => {
+    try {
+      // Get optional event ID filter from query parameters
+      const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
+      
+      // Fetch registrations from storage
+      const registrations = await storage.getEventRegistrations(eventId);
+      
+      // Return the registrations
+      res.status(200).json(registrations);
+    } catch (error) {
+      console.error("Error fetching registrations:", error);
+      res.status(500).json({ error: "Failed to fetch registrations" });
+    }
+  });
+  
   // Setup image optimization routes
   const assetsDir = path.join(process.cwd(), 'attached_assets');
   registerImageOptimizationRoutes(app, assetsDir);

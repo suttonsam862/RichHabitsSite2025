@@ -21,6 +21,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [registrationType, setRegistrationType] = useState<'full' | 'single'>('full');
   const [discountUrl, setDiscountUrl] = useState<string>('');
+  const [registrations, setRegistrations] = useState<any[]>([]);
+  const [registrationsLoading, setRegistrationsLoading] = useState(false);
+  const [registrationsError, setRegistrationsError] = useState<string | null>(null);
+  const [filterEventId, setFilterEventId] = useState<string>('all');
   const [registrationData, setRegistrationData] = useState({
     firstName: '',
     lastName: '',
