@@ -168,7 +168,7 @@ export class DatabaseStorage implements IStorage {
         // Apply payment status filter if provided
         if (paymentStatus) {
           if (paymentStatus === 'paid') {
-            query += ` AND stripe_payment_intent_id IS NOT NULL`;
+            query += ` AND (stripe_payment_intent_id IS NOT NULL AND stripe_payment_intent_id != '')`;
           } else if (paymentStatus === 'pending') {
             query += ` AND (stripe_payment_intent_id IS NULL OR stripe_payment_intent_id = '')`;
           }
