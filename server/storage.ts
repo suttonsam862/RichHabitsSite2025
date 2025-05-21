@@ -37,7 +37,7 @@ export interface IStorage {
   getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined>;
   updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined>;
   getEventRegistrations(eventId?: number): Promise<EventRegistration[]>;
-  getCompletedEventRegistrations(eventId?: number): Promise<CompletedEventRegistration[]>;
+  getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]>;
   createCompletedEventRegistration(data: InsertCompletedEventRegistration): Promise<CompletedEventRegistration>;
   updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
   
@@ -213,7 +213,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  async getCompletedEventRegistrations(eventId?: number): Promise<CompletedEventRegistration[]> {
+  async getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]> {
     // Use direct SQL query for the completed registrations
     try {
       // Use the pool to execute raw SQL queries
@@ -224,17 +224,32 @@ export class DatabaseStorage implements IStorage {
           SELECT * FROM completed_event_registrations
         `;
         
-        let result;
+        const params: any[] = [];
+        let whereClauseAdded = false;
+        
+        // Add WHERE clause for event_id if provided
         if (eventId) {
-          query += ` WHERE event_id = $1`;
-          query += ` ORDER BY completed_date DESC NULLS LAST`;
-          
-          result = await client.query(query, [eventId]);
-        } else {
-          query += ` ORDER BY completed_date DESC NULLS LAST`;
-          
-          result = await client.query(query);
+          params.push(eventId);
+          query += ` WHERE event_id = $${params.length}`;
+          whereClauseAdded = true;
         }
+        
+        // Add filter for payment_verified status if provided
+        if (paymentVerified) {
+          const clause = whereClauseAdded ? ' AND' : ' WHERE';
+          
+          if (paymentVerified === 'true') {
+            query += `${clause} payment_verified = TRUE`;
+          } else if (paymentVerified === 'false') {
+            query += `${clause} (payment_verified = FALSE OR payment_verified IS NULL)`;
+          }
+        }
+        
+        // Add sorting
+        query += ` ORDER BY completed_date DESC NULLS LAST`;
+        
+        // Execute query with parameters
+        const result = await client.query(query, params);
         
         return result.rows as CompletedEventRegistration[];
       } finally {
