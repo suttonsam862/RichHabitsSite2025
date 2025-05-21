@@ -281,12 +281,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               shopify_order_id: shopifyOrder.id
             });
             
-            // If there's an original registration, update that too
-            if (registration.original_registration_id) {
+            // If there's an original registration, update that too (handling both snake_case and camelCase field names)
+            const originalId = registration.originalRegistrationId || registration.original_registration_id;
+            if (originalId) {
               try {
-                await storage.updateRegistration(registration.original_registration_id, {
+                // Update with the Shopify order ID - make sure we use the right field name format
+                await storage.updateRegistration(originalId, {
                   shopifyOrderId: shopifyOrder.id
                 });
+                console.log(`Updated original registration ${originalId} with Shopify order ID ${shopifyOrder.id}`);
               } catch (err) {
                 console.error(`Error updating original registration: ${err}`);
               }
