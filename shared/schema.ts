@@ -127,6 +127,8 @@ export const eventRegistrations = pgTable("event_registrations", {
   day1: boolean("day1").default(false), // For multi-day events to track day selection
   day2: boolean("day2").default(false), // For multi-day events to track day selection
   day3: boolean("day3").default(false), // For multi-day events to track day selection
+  age: text("age"), // Adding this to match existing database column
+  experience: text("experience"), // Adding this to match existing database column
   createdAt: timestamp("created_at").defaultNow()
 });
 
@@ -318,3 +320,38 @@ export type Coach = typeof coaches.$inferSelect;
 
 export type InsertEventCoach = z.infer<typeof insertEventCoachSchema>;
 export type EventCoach = typeof eventCoaches.$inferSelect;
+
+// Completed Event registrations table - for storing finalized/paid registrations
+export const completedEventRegistrations = pgTable("completed_event_registrations", {
+  id: serial("id").primaryKey(),
+  originalRegistrationId: integer("original_registration_id").notNull(),
+  eventId: integer("event_id").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  contactName: text("contact_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  tShirtSize: text("t_shirt_size"),
+  grade: text("grade"),
+  schoolName: text("school_name"),
+  clubName: text("club_name"),
+  medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
+  registrationType: text("registration_type"),
+  shopifyOrderId: text("shopify_order_id"),
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  day1: boolean("day1").default(false),
+  day2: boolean("day2").default(false), 
+  day3: boolean("day3").default(false),
+  age: text("age"),
+  experience: text("experience"),
+  registrationDate: timestamp("registration_date").notNull(),
+  completedDate: timestamp("completed_date").defaultNow()
+});
+
+export const insertCompletedEventRegistrationSchema = createInsertSchema(completedEventRegistrations).omit({
+  id: true,
+  completedDate: true
+});
+
+export type InsertCompletedEventRegistration = z.infer<typeof insertCompletedEventRegistrationSchema>;
+export type CompletedEventRegistration = typeof completedEventRegistrations.$inferSelect;
