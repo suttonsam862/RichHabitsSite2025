@@ -339,7 +339,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Fixing registration data...");
       
       // Connect to the database directly for this complex operation
-      const client = await db.pool.connect();
+      const client = await pool.connect();
       
       try {
         // First, find registrations with Shopify order IDs but missing fields (incomplete data)

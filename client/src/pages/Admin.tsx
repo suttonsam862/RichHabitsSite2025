@@ -23,6 +23,8 @@ export default function AdminPage() {
   const [registrationType, setRegistrationType] = useState<'full' | 'single'>('full');
   const [discountUrl, setDiscountUrl] = useState<string>('');
   const [forceUpdateAll, setForceUpdateAll] = useState<boolean>(false);
+  const [fixLoading, setFixLoading] = useState<boolean>(false);
+  const [fixResponse, setFixResponse] = useState<any>(null);
   
   // CSV import state
   const [selectedCsvFile, setSelectedCsvFile] = useState<File | null>(null);
@@ -140,6 +142,51 @@ export default function AdminPage() {
       });
     } finally {
       setCsvImportLoading(false);
+    }
+  };
+  
+  // Handler for fixing registration data
+  const handleFixRegistrations = async () => {
+    try {
+      setFixLoading(true);
+      setFixResponse(null);
+      
+      const response = await fetch('/api/admin/fix-registrations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: "admin",
+          password: "richhabits2025"
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setFixResponse(data);
+      
+      // Refresh registration data after fixing
+      await fetchRegistrations(filterEventId);
+      await fetchCompletedRegistrations(filterCompletedEventId);
+      
+      toast({
+        title: "Registration Fix Complete",
+        description: `Fixed ${data.results.incompleteFixed} records, created ${data.results.completedCreated} completed registrations`,
+        variant: "default"
+      });
+    } catch (error) {
+      console.error('Error fixing registrations:', error);
+      toast({
+        title: "Fix Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
+    } finally {
+      setFixLoading(false);
     }
   };
   
@@ -1048,6 +1095,66 @@ export default function AdminPage() {
                               <p className="font-medium">Errors:</p>
                               <ul className="list-disc pl-5 text-sm">
                                 {csvImportResult.errors.map((error: string, idx: number) => (
+                                  <li key={idx} className="text-red-600">{error}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="fix-data">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Fix Registration Data</CardTitle>
+                    <CardDescription>
+                      This tool fixes incomplete registrations by merging Shopify order IDs with registration form data
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <Alert>
+                        <AlertTitle>What This Does</AlertTitle>
+                        <AlertDescription>
+                          <p className="mb-2">This tool helps fix two issues with your registration data:</p>
+                          <ol className="list-decimal pl-5 mb-2 space-y-1">
+                            <li>Creates completed registration records for entries with Shopify IDs</li>
+                            <li>Makes sure all form data is properly linked to the Shopify orders</li>
+                          </ol>
+                          <p>After running this tool, your "Completed" tab should show all the registrations with Shopify order IDs.</p>
+                        </AlertDescription>
+                      </Alert>
+                      
+                      <Button 
+                        onClick={handleFixRegistrations}
+                        disabled={fixLoading}
+                        className="mt-4"
+                      >
+                        {fixLoading ? (
+                          <>
+                            <span className="animate-spin mr-2">⟳</span>
+                            Fixing Registration Data...
+                          </>
+                        ) : (
+                          "Fix Registration Data"
+                        )}
+                      </Button>
+                      
+                      {fixResponse && (
+                        <div className="mt-4 p-4 border rounded bg-gray-50">
+                          <h4 className="font-medium mb-2">Fix Results:</h4>
+                          <p>Total registrations processed: {fixResponse.results.totalProcessed}</p>
+                          <p>Incomplete registrations fixed: {fixResponse.results.incompleteFixed}</p>
+                          <p>Completed registration records created: {fixResponse.results.completedCreated}</p>
+                          {fixResponse.results.errors && fixResponse.results.errors.length > 0 && (
+                            <div className="mt-2">
+                              <p className="font-medium">Errors:</p>
+                              <ul className="list-disc pl-5 text-sm">
+                                {fixResponse.results.errors.map((error: string, idx: number) => (
                                   <li key={idx} className="text-red-600">{error}</li>
                                 ))}
                               </ul>
