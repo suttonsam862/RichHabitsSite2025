@@ -52,6 +52,43 @@ export default function AdminPage() {
       [name]: value
     }));
   };
+  
+  // Function to fetch registrations
+  const fetchRegistrations = async (selectedEventId?: string) => {
+    setRegistrationsLoading(true);
+    setRegistrationsError(null);
+    
+    try {
+      let url = '/api/registrations';
+      if (selectedEventId && selectedEventId !== 'all') {
+        url += `?eventId=${selectedEventId}`;
+      }
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setRegistrations(data);
+    } catch (error) {
+      console.error('Error fetching registrations:', error);
+      setRegistrationsError(error instanceof Error ? error.message : 'Failed to fetch registrations');
+      toast({
+        title: "Error",
+        description: "Failed to load registrations. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setRegistrationsLoading(false);
+    }
+  };
+  
+  // Fetch registrations when component mounts or filter changes
+  useEffect(() => {
+    fetchRegistrations(filterEventId);
+  }, [filterEventId]);
 
   const createDiscountCheckout = async () => {
     setLoading(true);
@@ -349,14 +386,88 @@ export default function AdminPage() {
                 <CardHeader>
                   <CardTitle>Event Registrations</CardTitle>
                   <CardDescription>
-                    View and manage Birmingham Slam Camp registrations
+                    View and manage event registrations
                   </CardDescription>
                 </CardHeader>
                 
-                <CardContent>
-                  <p className="text-gray-500 italic">
-                    Registration management functionality coming soon.
-                  </p>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-4 mb-4">
+                    <Label htmlFor="filterEvent">Filter by Event:</Label>
+                    <Select 
+                      value={filterEventId} 
+                      onValueChange={setFilterEventId}
+                    >
+                      <SelectTrigger id="filterEvent" className="w-[250px]">
+                        <SelectValue placeholder="Select an event" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Events</SelectItem>
+                        <SelectItem value="1">Birmingham Slam Camp</SelectItem>
+                        <SelectItem value="2">National Champ Camp</SelectItem>
+                        <SelectItem value="3">Texas Recruiting Clinic</SelectItem>
+                        <SelectItem value="4">Panther Train Tour</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Button variant="outline" onClick={() => fetchRegistrations(filterEventId)} className="ml-auto">
+                      Refresh Data
+                    </Button>
+                  </div>
+                  
+                  {registrationsError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription>{registrationsError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {registrationsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                    </div>
+                  ) : registrations.length > 0 ? (
+                    <div className="border rounded-md overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Event</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Registration Type</TableHead>
+                            <TableHead>Date</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {registrations.map(reg => (
+                            <TableRow key={reg.id}>
+                              <TableCell>{reg.id}</TableCell>
+                              <TableCell>
+                                {reg.eventId === 1 && "Birmingham Slam Camp"}
+                                {reg.eventId === 2 && "National Champ Camp"}
+                                {reg.eventId === 3 && "Texas Recruiting Clinic"}
+                                {reg.eventId === 4 && "Panther Train Tour"}
+                              </TableCell>
+                              <TableCell>{reg.firstName} {reg.lastName}</TableCell>
+                              <TableCell>{reg.email}</TableCell>
+                              <TableCell>
+                                {reg.registrationType === "full" 
+                                  ? "Full Camp/Clinic" 
+                                  : "Single Day"}
+                              </TableCell>
+                              <TableCell>
+                                {reg.createdAt ? format(new Date(reg.createdAt), 'MMM d, yyyy') : 'N/A'}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No registrations found.
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
