@@ -104,24 +104,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(401).json({ error: "Unauthorized" });
   };
   
-  // Admin login endpoint
+  // Admin login endpoint with simplified approach
   app.post("/api/admin/login", (req, res) => {
     const { username, password } = req.body;
     
-    console.log("Login attempt:", { 
-      providedUsername: username, 
-      correctUsername: process.env.ADMIN_USERNAME,
-      passwordMatch: password === process.env.ADMIN_PASSWORD 
-    });
+    console.log("Login attempt for:", username);
     
-    // Check against hard-coded credentials for reliability
-    if (username === "admin" && password === "richhabits2025") {
+    // Direct credential check for maximum reliability
+    const validCredentials = username === "admin" && password === "richhabits2025";
+    
+    if (validCredentials) {
       // Set a session flag to mark user as authenticated
       req.session.isAdmin = true;
-      console.log("Login successful, session:", req.session);
-      res.json({ success: true });
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+        }
+        console.log("Login successful, session:", req.session);
+        res.json({ success: true });
+      });
     } else {
-      console.log("Login failed");
+      console.log("Login failed - invalid credentials");
       res.status(401).json({ error: "Invalid credentials" });
     }
   });
@@ -139,31 +142,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Helper function to map snake_case database fields to camelCase
   const mapRegistrationFields = (registration: any) => {
+    // Create debug log to diagnose any field mapping issues
+    console.log("Raw registration data from database:", JSON.stringify(registration, null, 2));
+    
+    // Handle both formats - some fields might already be in camelCase
     return {
       id: registration.id,
-      eventId: registration.event_id,
-      firstName: registration.first_name,
-      lastName: registration.last_name,
-      contactName: registration.contact_name,
+      eventId: registration.event_id || registration.eventId,
+      firstName: registration.first_name || registration.firstName,
+      lastName: registration.last_name || registration.lastName,
+      contactName: registration.contact_name || registration.contactName,
       email: registration.email,
       phone: registration.phone,
-      tShirtSize: registration.t_shirt_size,
+      tShirtSize: registration.t_shirt_size || registration.tShirtSize,
       grade: registration.grade,
-      schoolName: registration.school_name,
-      clubName: registration.club_name,
-      registrationType: registration.registration_type,
-      day1: registration.day1,
-      day2: registration.day2,
-      day3: registration.day3,
-      stripePaymentIntentId: registration.stripe_payment_intent_id,
-      shopifyOrderId: registration.shopify_order_id,
-      originalRegistrationId: registration.original_registration_id,
-      completedDate: registration.completed_date
+      schoolName: registration.school_name || registration.schoolName,
+      clubName: registration.club_name || registration.clubName,
+      registrationType: registration.registration_type || registration.registrationType,
+      day1: typeof registration.day1 === 'string' ? registration.day1 === 'true' : !!registration.day1,
+      day2: typeof registration.day2 === 'string' ? registration.day2 === 'true' : !!registration.day2,
+      day3: typeof registration.day3 === 'string' ? registration.day3 === 'true' : !!registration.day3,
+      stripePaymentIntentId: registration.stripe_payment_intent_id || registration.stripePaymentIntentId,
+      shopifyOrderId: registration.shopify_order_id || registration.shopifyOrderId,
+      originalRegistrationId: registration.original_registration_id || registration.originalRegistrationId,
+      completedDate: registration.completed_date || registration.completedDate
     };
   };
 
-  // API endpoint to sync registrations with Shopify - protected by authentication
-  app.post("/api/admin/sync-shopify-orders", authenticateAdmin, async (req, res) => {
+  // Special admin API endpoint that ensures Shopify orders have complete form data
+  app.post("/api/admin/sync-shopify-orders", async (req, res) => {
+    // Allow admin credentials to be passed directly in the request body for reliability
+    const { username, password } = req.body;
+    if (username === "admin" && password === "richhabits2025") {
+      console.log("Authentication successful via direct credentials");
+      req.session.isAdmin = true;
+    } else if (!(req.session && req.session.isAdmin === true)) {
+      console.log("Authentication failed - unauthorized access attempt");
+      return res.status(401).json({ error: "Unauthorized - please log in as admin" });
+    }
     try {
       // Get all completed registrations that have a payment ID but might be missing Shopify data
       const rawRegistrationsToSync = await storage.getCompletedRegistrationsForSync();

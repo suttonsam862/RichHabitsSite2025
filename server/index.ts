@@ -5,25 +5,27 @@ import path from "path";
 import fs from "fs";
 import session from "express-session";
 
-// Hard-coded admin credentials for reliability
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "richhabits2025";
+// Set admin credentials for the application - using direct values for reliability
+process.env.ADMIN_USERNAME = "admin";
+process.env.ADMIN_PASSWORD = "richhabits2025";
 
-// Set admin credentials for use throughout the application
-process.env.ADMIN_USERNAME = ADMIN_USERNAME;
-process.env.ADMIN_PASSWORD = ADMIN_PASSWORD;
+console.log("Admin credentials set:", {
+  username: process.env.ADMIN_USERNAME,
+  passwordSet: !!process.env.ADMIN_PASSWORD
+});
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Configure session middleware
+// Configure session middleware with settings optimized for both development and production
 app.use(session({
   secret: process.env.SESSION_SECRET || 'rich-habits-secret-key',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   cookie: { 
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Set to false for both environments to ensure cookies work consistently
+    httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
