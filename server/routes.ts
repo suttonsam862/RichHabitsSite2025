@@ -75,8 +75,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // API endpoint to sync registrations with Shopify
-  app.post("/api/admin/sync-shopify-orders", async (req, res) => {
+  // Simple admin authentication middleware
+  const authenticateAdmin = (req: Request, res: Response, next: any) => {
+    // For POST requests with credentials in body
+    if (req.method === 'POST' && req.body) {
+      const { username, password } = req.body;
+      
+      // Check if credentials match
+      const validCredentials = 
+        username === process.env.ADMIN_USERNAME && 
+        password === process.env.ADMIN_PASSWORD;
+      
+      if (validCredentials) {
+        // Set a session flag to mark user as authenticated
+        req.session = req.session || {};
+        req.session.isAdmin = true;
+        return next();
+      }
+    }
+    
+    // Check if already authenticated in session
+    if (req.session && req.session.isAdmin === true) {
+      return next();
+    }
+    
+    res.status(401).json({ error: "Unauthorized" });
+  };
+  
+  // Admin login endpoint
+  app.post("/api/admin/login", (req, res) => {
+    const { username, password } = req.body;
+    
+    // Check against environment variables
+    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+      // Set a session flag to mark user as authenticated
+      (req.session as any).isAdmin = true;
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ error: "Invalid credentials" });
+    }
+  });
+  
+  // Admin logout endpoint
+  app.post("/api/admin/logout", (req, res) => {
+    (req.session as any).isAdmin = false;
+    res.json({ success: true });
+  });
+  
+  // Check admin auth status
+  app.get("/api/admin/auth-status", (req, res) => {
+    res.json({ isAuthenticated: (req.session as any).isAdmin === true });
+  });
+  
+  // API endpoint to sync registrations with Shopify - protected by authentication
+  app.post("/api/admin/sync-shopify-orders", authenticateAdmin, async (req, res) => {
     try {
       // Validate access (could add more robust admin authentication here)
       
