@@ -54,6 +54,7 @@ export default function AdminPage() {
   
   // Filter for payment status
   const [filterPaymentStatus, setFilterPaymentStatus] = useState<string>('all');
+  const [filterPaymentVerified, setFilterPaymentVerified] = useState<string>('all');
   const [selectedRegistrations, setSelectedRegistrations] = useState<number[]>([]);
   const [approvingRegistrations, setApprovingRegistrations] = useState(false);
   
@@ -322,14 +323,24 @@ export default function AdminPage() {
   };
   
   // Function to fetch completed registrations
-  const fetchCompletedRegistrations = async (selectedEventId?: string) => {
+  const fetchCompletedRegistrations = async (selectedEventId?: string, paymentVerified?: string) => {
     setCompletedRegistrationsLoading(true);
     setCompletedRegistrationsError(null);
     
     try {
       let url = '/api/completed-registrations';
+      const params = new URLSearchParams();
+      
       if (selectedEventId && selectedEventId !== 'all') {
-        url += `?eventId=${selectedEventId}`;
+        params.append('eventId', selectedEventId);
+      }
+      
+      if (paymentVerified && paymentVerified !== 'all') {
+        params.append('paymentVerified', paymentVerified);
+      }
+      
+      if (params.toString()) {
+        url += `?${params.toString()}`;
       }
       
       const response = await fetch(url);
@@ -987,28 +998,47 @@ export default function AdminPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <Label htmlFor="filterCompletedEvent" className="min-w-32">Filter by Event:</Label>
-                        <Select 
-                          value={filterCompletedEventId} 
-                          onValueChange={setFilterCompletedEventId}
-                        >
-                          <SelectTrigger id="filterCompletedEvent">
-                            <SelectValue placeholder="Select event" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Events</SelectItem>
-                            <SelectItem value="1">Birmingham Slam Camp</SelectItem>
-                            <SelectItem value="2">National Champ Camp</SelectItem>
-                            <SelectItem value="3">Texas Recruiting Clinic</SelectItem>
-                            <SelectItem value="4">Panther Train Tour</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:gap-4">
+                        <div>
+                          <Label htmlFor="filterCompletedEvent" className="md:min-w-32">Filter by Event:</Label>
+                          <Select 
+                            value={filterCompletedEventId} 
+                            onValueChange={setFilterCompletedEventId}
+                          >
+                            <SelectTrigger id="filterCompletedEvent">
+                              <SelectValue placeholder="Select event" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Events</SelectItem>
+                              <SelectItem value="1">Birmingham Slam Camp</SelectItem>
+                              <SelectItem value="2">National Champ Camp</SelectItem>
+                              <SelectItem value="3">Texas Recruiting Clinic</SelectItem>
+                              <SelectItem value="4">Panther Train Tour</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="filterPaymentVerified" className="md:min-w-32">Payment Status:</Label>
+                          <Select 
+                            value={filterPaymentVerified} 
+                            onValueChange={setFilterPaymentVerified}
+                          >
+                            <SelectTrigger id="filterPaymentVerified">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Statuses</SelectItem>
+                              <SelectItem value="true">Verified Payments</SelectItem>
+                              <SelectItem value="false">Unverified/Missing Payments</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                         
                         <Button 
                           variant="outline" 
-                          onClick={() => fetchCompletedRegistrations(filterCompletedEventId)}
-                          className="ml-auto"
+                          onClick={() => fetchCompletedRegistrations(filterCompletedEventId, filterPaymentVerified)}
+                          className="md:ml-auto"
                         >
                           Refresh
                         </Button>
