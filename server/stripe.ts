@@ -431,7 +431,7 @@ async function sendRegistrationConfirmationEmail(data: {
 }
 
 // Helper function to create a Shopify order from registration
-async function createShopifyOrderFromRegistration(
+export async function createShopifyOrderFromRegistration(
   registration: any,
   event: any,
   amount: number
@@ -683,7 +683,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
                 lastName: registration.lastName,
                 email: registration.email,
                 eventName: event.title,
-                eventDates: event.dates || "",
+                eventDates: event.date || "",
                 eventLocation: event.location || "",
                 registrationType: registration.registrationType,
                 amount: (amount / 100).toString(),

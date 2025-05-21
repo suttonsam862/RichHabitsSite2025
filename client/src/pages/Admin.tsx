@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { apiRequest } from '@/lib/queryClient';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
@@ -214,6 +215,7 @@ export default function AdminPage() {
               <TabsTrigger value="discount">Discount Management</TabsTrigger>
               <TabsTrigger value="registrations">All Registrations</TabsTrigger>
               <TabsTrigger value="completed-registrations">Completed Registrations</TabsTrigger>
+              <TabsTrigger value="shopify-sync">Shopify Sync</TabsTrigger>
             </TabsList>
             
             <TabsContent value="discount">
@@ -616,6 +618,93 @@ export default function AdminPage() {
                       No completed registrations found.
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="shopify-sync">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Shopify Order Synchronization</CardTitle>
+                  <CardDescription>
+                    Fix missing data in Shopify by re-creating orders for completed registrations
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                    <p className="text-yellow-700">
+                      This tool will re-create Shopify orders for all completed registrations. Use this if you have orders in Shopify that are missing form field data.
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                    <Switch
+                      id="force-update"
+                      checked={testMode}
+                      onCheckedChange={setTestMode}
+                    />
+                    <Label htmlFor="force-update">Force update of all orders (including existing ones)</Label>
+                  </div>
+                  
+                  <Button 
+                    onClick={async () => {
+                      try {
+                        setLoading(true);
+                        toast({
+                          title: "Syncing registrations with Shopify",
+                          description: "This may take a moment...",
+                        });
+                        
+                        const response = await fetch('/api/admin/sync-shopify-orders', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                            force: testMode
+                          })
+                        });
+                        
+                        if (!response.ok) {
+                          throw new Error(`Error ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const result = await response.json();
+                        
+                        toast({
+                          title: "Sync Completed",
+                          description: `Processed ${result.total} registrations. 
+                                        Success: ${result.successful}, 
+                                        Failed: ${result.failed}`,
+                          variant: "default"
+                        });
+                        
+                        // Refresh registration data
+                        await fetchCompletedRegistrations(filterCompletedEventId);
+                      } catch (error) {
+                        console.error('Error syncing with Shopify:', error);
+                        toast({
+                          title: "Error",
+                          description: "Failed to sync registrations with Shopify. See console for details.",
+                          variant: "destructive"
+                        });
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    disabled={loading}
+                    className="mt-4"
+                  >
+                    {loading ? (
+                      <>
+                        <span className="animate-spin mr-2">⟳</span>
+                        Syncing...
+                      </>
+                    ) : (
+                      "Sync Registrations with Shopify"
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
             </TabsContent>

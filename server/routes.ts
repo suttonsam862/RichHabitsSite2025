@@ -75,6 +75,151 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // API endpoint to sync registrations with Shopify
+  app.post("/api/admin/sync-shopify-orders", async (req, res) => {
+    try {
+      // Validate access (could add more robust admin authentication here)
+      
+      // Get all completed registrations that have a payment ID but might be missing Shopify data
+      const registrationsToSync = await storage.getCompletedRegistrationsForSync();
+      
+      console.log(`Found ${registrationsToSync.length} registrations to sync with Shopify`);
+      
+      // Process each registration
+      const results = {
+        total: registrationsToSync.length,
+        successful: 0,
+        failed: 0,
+        details: [] as any[]
+      };
+      
+      // Import required functions from stripe.ts
+      const { createShopifyOrderFromRegistration } = await import('./stripe');
+      
+      // Process each registration
+      for (const registration of registrationsToSync) {
+        try {
+          // Get the event details for this registration
+          const event = await storage.getEvent(registration.event_id);
+          if (!event) {
+            results.details.push({
+              registrationId: registration.id,
+              status: 'failed',
+              reason: `Event with ID ${registration.event_id} not found`
+            });
+            results.failed++;
+            continue;
+          }
+          
+          // Skip if it already has a Shopify order ID (unless force=true in request)
+          if (registration.shopify_order_id && !req.body.force) {
+            results.details.push({
+              registrationId: registration.id,
+              status: 'skipped',
+              reason: 'Already has Shopify order ID'
+            });
+            continue;
+          }
+          
+          // Format the registration data as needed for Shopify order creation
+          const formattedRegistration = {
+            eventId: registration.event_id,
+            firstName: registration.first_name,
+            lastName: registration.last_name,
+            contactName: registration.contact_name,
+            email: registration.email,
+            phone: registration.phone,
+            tShirtSize: registration.t_shirt_size,
+            grade: registration.grade,
+            schoolName: registration.school_name,
+            clubName: registration.club_name,
+            registrationType: registration.registration_type,
+            day1: registration.day1,
+            day2: registration.day2,
+            day3: registration.day3,
+            stripePaymentIntentId: registration.stripe_payment_intent_id
+          };
+          
+          // Calculate the amount based on the event and registration type
+          const option = registration.registration_type || 'full';
+          // Get price from the event pricing
+          const priceStr = event.price || '';
+          let amount = 0;
+          
+          if (option === 'full') {
+            const fullPriceMatch = priceStr.match(/\$([0-9]+)\s+full\s+camp/i);
+            if (fullPriceMatch && fullPriceMatch[1]) {
+              amount = parseInt(fullPriceMatch[1], 10);
+            } else {
+              amount = 249; // Default price if not found
+            }
+          } else {
+            const singleDayMatch = priceStr.match(/\$([0-9]+)\s+(?:per|single)\s+day/i);
+            if (singleDayMatch && singleDayMatch[1]) {
+              amount = parseInt(singleDayMatch[1], 10);
+            } else {
+              amount = 149; // Default price if not found
+            }
+          }
+          
+          console.log(`Creating Shopify order for registration ${registration.id} with amount $${amount}`);
+          
+          // Create or update the Shopify order
+          const shopifyOrder = await createShopifyOrderFromRegistration(
+            formattedRegistration, 
+            event, 
+            amount
+          );
+          
+          if (shopifyOrder && shopifyOrder.id) {
+            // Update the completed registration with the Shopify order ID
+            await storage.updateCompletedRegistration(registration.id, {
+              shopify_order_id: shopifyOrder.id
+            });
+            
+            // If there's an original registration, update that too
+            if (registration.original_registration_id) {
+              try {
+                await storage.updateRegistration(registration.original_registration_id, {
+                  shopifyOrderId: shopifyOrder.id
+                });
+              } catch (err) {
+                console.error(`Error updating original registration: ${err}`);
+              }
+            }
+            
+            results.details.push({
+              registrationId: registration.id,
+              status: 'success',
+              shopifyOrderId: shopifyOrder.id
+            });
+            results.successful++;
+          } else {
+            results.details.push({
+              registrationId: registration.id,
+              status: 'failed',
+              reason: 'Failed to create Shopify order'
+            });
+            results.failed++;
+          }
+        } catch (error) {
+          console.error(`Error processing registration ${registration.id}:`, error);
+          results.details.push({
+            registrationId: registration.id,
+            status: 'failed',
+            reason: String(error)
+          });
+          results.failed++;
+        }
+      }
+      
+      res.status(200).json(results);
+    } catch (error) {
+      console.error("Error syncing with Shopify:", error);
+      res.status(500).json({ error: "Failed to sync registrations with Shopify" });
+    }
+  });
+  
   // Setup image optimization routes
   const assetsDir = path.join(process.cwd(), 'attached_assets');
   registerImageOptimizationRoutes(app, assetsDir);

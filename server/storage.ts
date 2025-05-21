@@ -194,6 +194,32 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  async getCompletedRegistrationsForSync(): Promise<CompletedEventRegistration[]> {
+    // Get all completed registrations that need to be synced with Shopify
+    try {
+      // Use the pool to execute raw SQL queries
+      const client = await pool.connect();
+      
+      try {
+        // Get registrations that have a stripe payment intent ID (meaning payment completed)
+        // We're not filtering by shopify_order_id being null here so we can force-update if needed
+        const query = `
+          SELECT * FROM completed_event_registrations
+          WHERE stripe_payment_intent_id IS NOT NULL
+          ORDER BY id ASC
+        `;
+        
+        const result = await client.query(query);
+        return result.rows as CompletedEventRegistration[];
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('Error fetching completed registrations for sync:', error);
+      return [];
+    }
+  }
+  
   /**
    * Creates a completed event registration record by copying data from the original registration
    * @param registrationId The ID of the original registration to mark as completed
