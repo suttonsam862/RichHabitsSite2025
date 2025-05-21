@@ -333,6 +333,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint for importing historical registration data from CSV
+  // API endpoint for fixing registration data - combines Shopify IDs with registration form data
+  app.post('/api/admin/fix-registrations', authenticateAdmin, async (req, res) => {
+    try {
+      console.log("Fixing registration data...");
+      
+      // Connect to the database directly for this complex operation
+      const client = await db.pool.connect();
+      
+      try {
+        // First, find registrations with Shopify order IDs but missing fields (incomplete data)
+        const incompleteRegistrationsQuery = `
+          SELECT * FROM event_registrations 
+          WHERE shopify_order_id IS NOT NULL 
+          AND (first_name = 'Not provided' OR 
+               first_name IS NULL OR 
+               contact_name IS NULL OR 
+               t_shirt_size IS NULL OR 
+               grade IS NULL OR 
+               school_name IS NULL)
+        `;
+        
+        const incompleteResult = await client.query(incompleteRegistrationsQuery);
+        const incompleteRegistrations = incompleteResult.rows;
+        
+        console.log(`Found ${incompleteRegistrations.length} incomplete registrations with Shopify IDs`);
+        
+        // Next, let's find fully completed registrations to create in the completed_event_registrations table
+        const registrationsWithoutCompletedRow = `
+          SELECT er.*
+          FROM event_registrations er
+          LEFT JOIN completed_event_registrations cer ON er.id = cer.original_registration_id
+          WHERE er.shopify_order_id IS NOT NULL
+          AND cer.id IS NULL
+        `;
+        
+        const missingCompletedResult = await client.query(registrationsWithoutCompletedRow);
+        const registrationsNeedingCompleted = missingCompletedResult.rows;
+        
+        console.log(`Found ${registrationsNeedingCompleted.length} registrations needing completed records`);
+        
+        // Results tracking
+        const results = {
+          totalProcessed: incompleteRegistrations.length + registrationsNeedingCompleted.length,
+          incompleteFixed: 0,
+          completedCreated: 0,
+          errors: [] as string[]
+        };
+        
+        // Insert completed event registrations for those missing them
+        for (const reg of registrationsNeedingCompleted) {
+          try {
+            const insertCompletedQuery = `
+              INSERT INTO completed_event_registrations (
+                original_registration_id, event_id, first_name, last_name, contact_name,
+                email, phone, t_shirt_size, grade, school_name, club_name,
+                registration_type, day1, day2, day3, shopify_order_id, completed_date
+              ) VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+              )
+            `;
+            
+            const values = [
+              reg.id, reg.event_id, reg.first_name, reg.last_name, reg.contact_name || `${reg.first_name} ${reg.last_name}`,
+              reg.email, reg.phone || '', reg.t_shirt_size || 'Not provided', reg.grade || 'Not provided', 
+              reg.school_name || 'Not provided', reg.club_name || '', reg.registration_type || 'full',
+              reg.day1 || true, reg.day2 || true, reg.day3 || false, reg.shopify_order_id, new Date()
+            ];
+            
+            await client.query(insertCompletedQuery, values);
+            results.completedCreated++;
+          } catch (error) {
+            console.error(`Error creating completed registration for ID ${reg.id}:`, error);
+            results.errors.push(`Error creating completed registration for ID ${reg.id}: ${error instanceof Error ? error.message : String(error)}`);
+          }
+        }
+        
+        res.json({
+          message: "Registration fix completed",
+          results
+        });
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('Error fixing registrations:', error);
+      res.status(500).json({ 
+        error: "Failed to fix registrations", 
+        message: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
   app.post('/api/admin/import-csv', authenticateAdmin, upload.single('csvFile'), async (req, res) => {
     try {
       // Validate that we have a file
