@@ -159,6 +159,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Fix completed registrations with missing information
+  app.post("/api/admin/fix-completed-registrations", authenticateAdmin, async (req, res) => {
+    try {
+      const dryRun = req.body.dryRun === true;
+      const results = await fixCompletedRegistrationsWithMissingInfo(dryRun);
+      
+      res.status(200).json({
+        success: true,
+        results,
+        message: `${dryRun ? '[DRY RUN] Would update' : 'Successfully updated'} ${results.updatedRecords} records (${results.skippedRecords} skipped out of ${results.totalProcessed} total)`
+      });
+    } catch (error: any) {
+      console.error("Error fixing completed registrations:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to fix completed registrations",
+        details: error.message || "Unknown error"
+      });
+    }
+  });
 
   // Create Express HTTP server
   const httpServer = createServer(app);
