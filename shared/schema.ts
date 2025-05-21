@@ -345,7 +345,8 @@ export const completedEventRegistrations = pgTable("completed_event_registration
   age: text("age"),
   experience: text("experience"),
   registrationDate: timestamp("registration_date").notNull(),
-  completedDate: timestamp("completed_date").defaultNow()
+  completedDate: timestamp("completed_date").defaultNow(),
+  paymentVerified: boolean("payment_verified").default(false) // Track if payment has been verified
 });
 
 export const insertCompletedEventRegistrationSchema = createInsertSchema(completedEventRegistrations).omit({
