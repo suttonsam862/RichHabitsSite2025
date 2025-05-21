@@ -5,6 +5,7 @@ import path from "path";
 import fs from "fs";
 import "express-session";
 import multer from "multer";
+import { pool } from "./db";
 
 // Configure multer for file uploads (store in memory)
 const multerStorage = multer.memoryStorage();
@@ -381,16 +382,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors: [] as string[]
         };
         
-        // Insert completed event registrations for those missing them
+        // First, combine data from incomplete registrations
+        // Look for registrations with form fields that match the Shopify order ID ones
+        for (const reg of incompleteRegistrations) {
+          try {
+            // Find a matching registration with the same email and event ID that has complete form data
+            const matchQuery = `
+              SELECT * FROM event_registrations 
+              WHERE event_id = $1 
+              AND email = $2
+              AND shopify_order_id IS NULL
+              AND first_name IS NOT NULL
+              AND first_name != 'Not provided'
+            `;
+            
+            const matchResult = await client.query(matchQuery, [reg.event_id, reg.email]);
+            
+            if (matchResult.rows.length > 0) {
+              // We found a matching registration with form data - combine them
+              const matchingReg = matchResult.rows[0];
+              
+              // Update the incomplete registration with data from the matching one
+              const updateQuery = `
+                UPDATE event_registrations
+                SET first_name = $1, last_name = $2, contact_name = $3,
+                    t_shirt_size = $4, grade = $5, school_name = $6, club_name = $7,
+                    registration_type = $8
+                WHERE id = $9
+              `;
+              
+              const updateValues = [
+                matchingReg.first_name,
+                matchingReg.last_name,
+                matchingReg.contact_name || `${matchingReg.first_name} ${matchingReg.last_name}`,
+                matchingReg.t_shirt_size,
+                matchingReg.grade,
+                matchingReg.school_name,
+                matchingReg.club_name || '',
+                matchingReg.registration_type || 'full',
+                reg.id
+              ];
+              
+              await client.query(updateQuery, updateValues);
+              results.incompleteFixed++;
+            }
+          } catch (error) {
+            console.error(`Error fixing registration ${reg.id}:`, error);
+            results.errors.push(`Error fixing registration ${reg.id}: ${error instanceof Error ? error.message : String(error)}`);
+          }
+        }
+        
+        // Now, insert completed event registrations for those missing them
         for (const reg of registrationsNeedingCompleted) {
           try {
+            // Check if the registration data is complete enough to create a completed record
+            if (!reg.first_name || reg.first_name === 'Not provided') {
+              console.log(`Skipping incomplete registration ${reg.id} - missing name data`);
+              continue;
+            }
+            
             const insertCompletedQuery = `
               INSERT INTO completed_event_registrations (
                 original_registration_id, event_id, first_name, last_name, contact_name,
                 email, phone, t_shirt_size, grade, school_name, club_name,
-                registration_type, day1, day2, day3, shopify_order_id, completed_date
+                registration_type, day1, day2, day3, shopify_order_id, completed_date,
+                medical_release_accepted
               ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
               )
             `;
             
@@ -398,7 +456,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               reg.id, reg.event_id, reg.first_name, reg.last_name, reg.contact_name || `${reg.first_name} ${reg.last_name}`,
               reg.email, reg.phone || '', reg.t_shirt_size || 'Not provided', reg.grade || 'Not provided', 
               reg.school_name || 'Not provided', reg.club_name || '', reg.registration_type || 'full',
-              reg.day1 || true, reg.day2 || true, reg.day3 || false, reg.shopify_order_id, new Date()
+              reg.day1 || true, reg.day2 || true, reg.day3 || false, reg.shopify_order_id, new Date(),
+              true
             ];
             
             await client.query(insertCompletedQuery, values);
