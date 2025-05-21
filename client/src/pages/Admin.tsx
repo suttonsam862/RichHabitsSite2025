@@ -87,6 +87,62 @@ export default function AdminPage() {
     }));
   };
   
+  // CSV import handler
+  const handleCsvImport = async () => {
+    if (!selectedCsvFile) {
+      toast({
+        title: "No file selected",
+        description: "Please select a CSV file to import.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setCsvImportLoading(true);
+    setCsvImportResult(null);
+    
+    try {
+      // Create FormData to send the file
+      const formData = new FormData();
+      formData.append('csvFile', selectedCsvFile);
+      formData.append('markAsPaid', markAllAsPaid.toString());
+      formData.append('username', 'admin');
+      formData.append('password', 'richhabits2025');
+      
+      const response = await fetch('/api/admin/import-csv', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      setCsvImportResult(result);
+      
+      toast({
+        title: "Import Complete",
+        description: `Processed ${result.total} records. Success: ${result.successful}, Failed: ${result.failed}`,
+        variant: result.failed > 0 ? "destructive" : "default"
+      });
+      
+      // Refresh registration data after import
+      await fetchRegistrations(filterEventId);
+      await fetchCompletedRegistrations(filterCompletedEventId);
+      
+    } catch (error) {
+      console.error('Error importing CSV:', error);
+      toast({
+        title: "Import Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
+    } finally {
+      setCsvImportLoading(false);
+    }
+  };
+  
   // Handle login form submission - simplified for reliability
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -991,7 +1047,7 @@ export default function AdminPage() {
                             <div className="mt-2">
                               <p className="font-medium">Errors:</p>
                               <ul className="list-disc pl-5 text-sm">
-                                {csvImportResult.errors.map((error, idx) => (
+                                {csvImportResult.errors.map((error: string, idx: number) => (
                                   <li key={idx} className="text-red-600">{error}</li>
                                 ))}
                               </ul>

@@ -4,6 +4,11 @@ import { createServer, type Server } from "http";
 import path from "path";
 import fs from "fs";
 import "express-session";
+import multer from "multer";
+
+// Configure multer for file uploads (store in memory)
+const multerStorage = multer.memoryStorage();
+const upload = multer({ storage: multerStorage });
 
 // Extend SessionData to include our custom properties
 declare module 'express-session' {
@@ -324,6 +329,144 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error syncing with Shopify:", error);
       res.status(500).json({ error: "Failed to sync registrations with Shopify" });
+    }
+  });
+  
+  // API endpoint for importing historical registration data from CSV
+  app.post('/api/admin/import-csv', authenticateAdmin, upload.single('csvFile'), async (req, res) => {
+    try {
+      // Validate that we have a file
+      if (!req.file) {
+        return res.status(400).json({ error: 'No CSV file provided' });
+      }
+      
+      // Parse the mark as paid parameter
+      const markAsPaid = req.body.markAsPaid === 'true';
+      
+      // Read and parse the CSV file
+      const fileBuffer = req.file.buffer;
+      const fileContent = fileBuffer.toString();
+      
+      // Simple CSV parser (could use a library for more robust parsing)
+      const rows = fileContent.split('\\n').filter(row => row.trim());
+      const headers = rows[0].split(',').map(header => header.trim().toLowerCase());
+      
+      // Results tracking
+      const results = {
+        total: rows.length - 1, // Exclude header row
+        successful: 0,
+        failed: 0,
+        errors: [] as string[]
+      };
+      
+      // Process each row (skip the header)
+      for (let i = 1; i < rows.length; i++) {
+        try {
+          const row = rows[i];
+          if (!row.trim()) continue; // Skip empty rows
+          
+          const values = row.split(',').map(value => value.trim());
+          
+          // Create a data object from the CSV values
+          const data: Record<string, string> = {};
+          headers.forEach((header, index) => {
+            if (index < values.length) {
+              data[header] = values[index];
+            }
+          });
+          
+          // Extract and transform fields
+          const eventId = parseInt(data.event_id || '1');
+          const firstName = data.first_name || '';
+          const lastName = data.last_name || '';
+          const email = data.email || '';
+          const phone = data.phone || '';
+          const registrationType = (data.registration_type || 'full').toLowerCase() === 'single' ? 'single' : 'full';
+          const tShirtSize = data.t_shirt_size || data.tshirt_size || 'Not provided';
+          const grade = data.grade || 'Not provided';
+          const schoolName = data.school_name || data.school || 'Not provided';
+          const clubName = data.club_name || data.club || '';
+          const shopifyOrderId = data.shopify_order_id || null;
+          const contactName = data.contact_name || `${firstName} ${lastName}`;
+          
+          // Validate required fields
+          if (!email) {
+            throw new Error('Email is required');
+          }
+          
+          if (!firstName || !lastName) {
+            throw new Error('First name and last name are required');
+          }
+          
+          // Verify the event exists
+          const event = await storage.getEvent(eventId);
+          if (!event) {
+            throw new Error(`Event ID ${eventId} not found`);
+          }
+          
+          // Create a regular registration
+          await storage.createEventRegistration({
+            eventId,
+            firstName,
+            lastName,
+            contactName,
+            email,
+            phone,
+            tShirtSize,
+            grade,
+            schoolName,
+            clubName,
+            registrationType,
+            day1: true,
+            day2: true,
+            day3: false,
+            shopifyOrderId,
+            medicalReleaseAccepted: true
+          });
+          
+          // If marked as paid, also track as a completed registration
+          if (markAsPaid) {
+            const newRegistration = await storage.getEventRegistrationByEmail(email, eventId);
+            
+            if (newRegistration) {
+              await storage.createCompletedEventRegistration({
+                eventId,
+                firstName,
+                lastName,
+                contactName,
+                email,
+                phone,
+                tShirtSize,
+                grade,
+                schoolName,
+                clubName,
+                registrationType,
+                day1: true,
+                day2: true,
+                day3: false,
+                shopifyOrderId,
+                stripePaymentIntentId: null,
+                originalRegistrationId: newRegistration.id,
+                completedDate: new Date()
+              });
+            }
+          }
+          
+          results.successful++;
+        } catch (error) {
+          console.error(`Error importing row ${i}:`, error);
+          results.failed++;
+          results.errors.push(`Row ${i}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+      
+      res.status(200).json(results);
+    } catch (error) {
+      console.error('Error processing CSV file:', error);
+      res.status(500).json({ 
+        error: 'Failed to process CSV file',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
   
