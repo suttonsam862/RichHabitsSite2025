@@ -100,8 +100,9 @@ app.get('*', (req, res) => {
 // Start by checking preferred ports in order of priority
 const preferredPorts = [
   process.env.PORT, // First try Replit's assigned port
-  3000,             // Then standard Node port
-  8080,             // Common alternative
+  4000,             // Use different ports to avoid conflicts
+  4080,             // Another alternative
+  4321,             // Uncommon port less likely to be in use
   0                 // Let OS assign random port as last resort
 ].filter(Boolean);  // Remove any undefined values
 
