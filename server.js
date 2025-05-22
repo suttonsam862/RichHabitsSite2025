@@ -98,8 +98,31 @@ app.get('*', (req, res) => {
 
 // Start server with proper port binding for Replit
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-  console.log(`API info: http://localhost:${PORT}/api/info`);
-});
+
+// Try to start the server, with fallback ports if needed
+const startServer = (port, attempts = 0) => {
+  try {
+    const server = app.listen(port, '0.0.0.0', () => {
+      console.log(`Server successfully running on port ${port}`);
+      console.log(`Health check: http://localhost:${port}/health`);
+      console.log(`API info: http://localhost:${port}/api/info`);
+    });
+    
+    // Handle server errors
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE' && attempts < 3) {
+        console.log(`Port ${port} is in use, trying port ${port + 1}...`);
+        startServer(port + 1, attempts + 1);
+      } else {
+        console.error('Failed to start server:', err.message);
+        process.exit(1);
+      }
+    });
+  } catch (error) {
+    console.error('Server start error:', error);
+    process.exit(1);
+  }
+};
+
+// Start the server
+startServer(PORT);
