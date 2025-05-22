@@ -152,29 +152,29 @@ export default function Shop() {
   const productListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "itemListElement": filteredProducts.map((product, index) => ({
+    "itemListElement": Array.isArray(filteredProducts) ? filteredProducts.map((product, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
         "@type": "Product",
-        "name": product.title,
-        "description": product.description || "Premium athletic apparel from Rich Habits",
-        "image": product.image || "",
-        "url": `/product/${product.handle || product.id}`,
+        "name": product?.title || "Athletic Apparel",
+        "description": product?.description || "Premium athletic apparel from Rich Habits",
+        "image": product?.image || "",
+        "url": `/product/${product?.handle || product?.id || ""}`,
         "brand": {
           "@type": "Brand",
           "name": "Rich Habits"
         },
         "offers": {
           "@type": "Offer",
-          "price": product.price?.replace('$', '') || "0",
+          "price": product?.price ? product.price.replace('$', '') : "0",
           "priceCurrency": "USD",
-          "availability": product.availableForSale ? 
+          "availability": product?.availableForSale ? 
             "https://schema.org/InStock" : 
             "https://schema.org/OutOfStock"
         }
       }
-    }))
+    })) : []
   };
 
   return (

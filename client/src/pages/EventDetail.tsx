@@ -384,7 +384,9 @@ export default function EventDetail() {
               }
             },
             "image": [
-              typeof getEventMedia(event.id).banner === 'string' ? getEventMedia(event.id).banner : "https://rich-habits.com/event-image.jpg"
+              event && event.id && getEventMedia && typeof getEventMedia(event.id).banner === 'string' 
+                ? getEventMedia(event.id).banner 
+                : "https://rich-habits.com/event-image.jpg"
             ],
             "organizer": {
               "@type": "Organization",
@@ -399,11 +401,11 @@ export default function EventDetail() {
               "url": `https://rich-habits.com${location}`,
               "validFrom": "2025-01-01"
             },
-            "performer": event.coaches && Array.isArray(event.coaches) ? 
+            "performer": event && event.coaches && Array.isArray(event.coaches) ? 
               event.coaches.map((coach: any) => ({
                 "@type": "Person",
-                "name": coach.name,
-                "jobTitle": coach.title
+                "name": coach?.name || "",
+                "jobTitle": coach?.title || ""
               })) : []
           })}
         </script>

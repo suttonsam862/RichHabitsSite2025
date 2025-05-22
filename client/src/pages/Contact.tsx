@@ -28,7 +28,7 @@ export default function Contact() {
   const [submissionComplete, setSubmissionComplete] = useState(false);
   const { toast } = useToast();
   
-  // Structured data for contact page
+  // Structured data for contact page - with extra safety for production builds
   const contactPageSchema = {
     "@context": "https://schema.org",
     "@type": "ContactPage",

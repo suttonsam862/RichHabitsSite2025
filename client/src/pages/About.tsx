@@ -47,14 +47,14 @@ export default function About() {
         "@type": "Person",
         "name": "Sam Sutton",
         "jobTitle": "Founder & CEO",
-        "image": samProfileImage,
+        "image": samProfileImage || "",
         "description": "Sam brings years of experience in wrestling and business to Rich Habits, with a vision to create premium athletic experiences."
       },
       {
         "@type": "Person",
         "name": "Carter Fretty",
         "jobTitle": "Operations Manager",
-        "image": carterProfileImage,
+        "image": carterProfileImage || "",
         "description": "Carter manages the day-to-day operations and ensures all Rich Habits events and products maintain the highest quality standards."
       }
     ]
