@@ -1,6 +1,4 @@
-import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "wouter";
 
 // Import custom apparel components
 import { ClothingSetShowcase } from "../components/custom-apparel/ClothingSetShowcase";
@@ -39,24 +37,27 @@ export default function CustomApparel() {
         transition={{ duration: 1.2 }}
       >
         <div className="absolute inset-0 bg-black">
-          <div 
-            className="absolute inset-0 opacity-50"
+          <motion.div 
+            initial={{ scale: 1.1, filter: 'grayscale(100%)' }}
+            animate={{ scale: 1, filter: 'grayscale(80%)' }}
+            transition={{ duration: 20, ease: "easeInOut" }}
+            className="absolute inset-0 opacity-60"
             style={{ 
               backgroundImage: `url(/images/custom-apparel/FullMockups.png)`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'grayscale(80%)'
             }}
-          ></div>
+          ></motion.div>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent"></div>
         
         <div className="container mx-auto px-6 h-full flex items-center relative z-10">
           <div className="max-w-3xl">
             <motion.h1 
-              className="text-5xl md:text-7xl text-white mb-8"
-              style={{ fontFamily: "'Playfair Display FC', serif" }}
+              className="text-5xl md:text-7xl text-white mb-8 title-font"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -65,8 +66,7 @@ export default function CustomApparel() {
             </motion.h1>
             
             <motion.p 
-              className="text-xl text-gray-200 mb-10"
-              style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+              className="text-xl text-gray-200 mb-10 subtitle-font"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -79,8 +79,8 @@ export default function CustomApparel() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <a href="#contact-form" className="inline-block bg-gray-50 px-6 py-3 text-gray-900">
-                <span style={{ fontFamily: "'Sanchez', serif" }}>Request Custom Quote</span>
+              <a href="#contact-form" className="inline-block bg-gray-50 px-8 py-3 text-gray-900 hover:bg-gray-200 transition-colors shadow-md subtitle-font">
+                Request Custom Quote
               </a>
             </motion.div>
           </div>

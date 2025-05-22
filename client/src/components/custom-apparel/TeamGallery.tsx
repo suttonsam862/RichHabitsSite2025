@@ -2,20 +2,19 @@ import { Dialog, DialogContent, DialogClose, DialogTrigger } from "@/components/
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-// Design image paths - using actual designs instead of wrestler photos
-const baseUrl = window.location.origin;
-const design1 = `${baseUrl}/designs/Athens Mockup.png`;
-const design2 = `${baseUrl}/designs/BrooksMockupFinal.png`;
-const design3 = `${baseUrl}/designs/BraggMockup.png`;
-const design4 = `${baseUrl}/designs/CaneNationMockup.png`;
-const design5 = `${baseUrl}/designs/ElevateMockup5.png`;
-const design6 = `${baseUrl}/designs/LTDS Mockup.png`;
-const design7 = `${baseUrl}/designs/ClassicRashguardMockup.png`;
-const design8 = `${baseUrl}/designs/BlueRashguardMockup.png`;
-const design9 = `${baseUrl}/designs/BlackRashgaurdMockup.png`;
-const design10 = `${baseUrl}/designs/NoPawsRanburneMockup.png`;
-const design11 = `${baseUrl}/designs/10pDeathSquad Mockup.png`;
-const design12 = `${baseUrl}/designs/NickPoloMockupFinal.png`;
+// Design image paths with direct paths
+const design1 = "/images/custom-apparel/Athens Mockup.png";
+const design2 = "/images/custom-apparel/BrooksMockupFinal.png";
+const design3 = "/images/custom-apparel/BraggMockup.png";
+const design4 = "/images/custom-apparel/CaneNationMockup.png";
+const design5 = "/images/custom-apparel/ElevateMockup5.png";
+const design6 = "/images/custom-apparel/LTDS Mockup.png";
+const design7 = "/images/custom-apparel/ClassicRashguardMockup.png";
+const design8 = "/images/custom-apparel/BlueRashguardMockup.png";
+const design9 = "/images/custom-apparel/BlackRashgaurdMockup.png";
+const design10 = "/images/custom-apparel/10pDeathSquad Mockup.png";
+const design11 = "/images/custom-apparel/10pDeathSquad Mockup.png";
+const design12 = "/images/custom-apparel/10th Planet Crewneck.png";
 
 interface GalleryImage {
   src: string;
@@ -103,9 +102,19 @@ export function TeamGallery() {
   ];
 
   return (
-    <div className="py-12 bg-gray-50">
+    <div className="py-16 bg-gray-50 relative">
+      {/* Subtle sky blue accent elements */}
+      <div className="absolute top-0 left-0 w-1 h-16 bg-sky-200 opacity-30"></div>
+      <div className="absolute top-0 right-0 w-1 h-16 bg-sky-200 opacity-30"></div>
+      
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Our Custom Design Portfolio</h2>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl title-font mb-6">Our Custom Design Portfolio</h2>
+          <div className="h-1 w-20 bg-gray-900 mx-auto mb-6"></div>
+          <p className="max-w-2xl mx-auto subtitle-font text-gray-700">
+            Browse our collection of custom designs created for wrestling teams across the country.
+          </p>
+        </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {galleryImages.map((image, index) => (
@@ -119,9 +128,10 @@ export function TeamGallery() {
                     src={image.src} 
                     alt={image.alt} 
                     className="h-full object-contain hover:scale-105 transition-transform duration-300"
+                    style={{ filter: 'grayscale(60%)' }}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = `${baseUrl}/designs/bragg.png`;
+                      e.currentTarget.src = "/images/custom-apparel/BraggMockup.png";
                     }}
                   />
                   {image.team && (
@@ -145,20 +155,22 @@ export function TeamGallery() {
                         src={image.src} 
                         alt={image.alt} 
                         className="h-full object-contain rounded-md"
+                        style={{ filter: 'grayscale(60%)' }}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = `${baseUrl}/designs/bragg.png`;
+                          e.currentTarget.src = "/images/custom-apparel/BraggMockup.png";
                         }}
                       />
                     </div>
                     <div className="flex flex-col justify-center">
-                      <h3 className="text-xl font-bold mb-2">{image.team || "Rich Habits Custom Apparel"}</h3>
-                      <p className="text-gray-600 mb-4">{image.description || "Premium athletic wear designed for champions."}</p>
-                      <p className="text-sm text-gray-500">{image.alt}</p>
+                      <div className="mb-3 h-1 w-12 bg-gray-900"></div>
+                      <h3 className="text-xl title-font mb-2">{image.team || "Rich Habits Custom Apparel"}</h3>
+                      <p className="text-gray-600 mb-4 subtitle-font">{image.description || "Premium athletic wear designed for champions."}</p>
+                      <p className="text-sm text-gray-500 subtitle-font">{image.alt}</p>
                       <div className="mt-6">
                         <a 
-                          href="#custom-form" 
-                          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+                          href="#contact-form" 
+                          className="inline-block border border-gray-900 text-gray-900 py-3 px-8 hover:bg-gray-900 hover:text-white transition-colors subtitle-font"
                         >
                           Request Similar Design
                         </a>

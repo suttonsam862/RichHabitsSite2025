@@ -2,24 +2,23 @@ import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Use image URLs instead of imports for better compatibility
-const baseUrl = window.location.origin;
+// School package images with direct paths
 // Auburn images
-const auburnMens = `${baseUrl}/images/custom-apparel/AuburnMen_s Final.png`;
-const auburnWomens = `${baseUrl}/images/custom-apparel/AuburnWomens FInal.png`;
-const auburnJV = `${baseUrl}/images/custom-apparel/Auburn JV Pack Final.png`;
+const auburnMens = "/images/custom-apparel/AuburnMen_s Final.png";
+const auburnWomens = "/images/custom-apparel/AuburnWomens FInal.png";
+const auburnJV = "/images/custom-apparel/Auburn JV Pack Final.png";
 
-// Berry images - using what we have as fallbacks
-const berryGearPack = `${baseUrl}/images/custom-apparel/BerryGearpAckV2.png`;
-const berryGearPackV2 = `${baseUrl}/images/custom-apparel/Berry Middle Gear Pack.png`;
+// Berry images
+const berryGearPack = "/images/custom-apparel/BerryGearpAckV2.png";
+const berryGearPackV2 = "/images/custom-apparel/Berry Middle Gear Pack.png";
 
-// Coosa images - using what we have as fallbacks
-const coosaChristianTech = `${baseUrl}/images/custom-apparel/Coosa Christian Tech.png`;
-const coosaChristianLogo = `${baseUrl}/images/custom-apparel/CoosaChristianPNG.png`;
+// Coosa images
+const coosaChristianTech = "/images/custom-apparel/Coosa Christian Tech.png";
+const coosaChristianLogo = "/images/custom-apparel/CoosaChristianPNG.png";
 
-// Dora images - using another design as fallback
-const doraMensFinal = `${baseUrl}/images/custom-apparel/DoraMensFinal.png`;
-const doraMensSinglet = `${baseUrl}/images/custom-apparel/DoraMens Singlet.png`;
+// Dora images
+const doraMensFinal = "/images/custom-apparel/DoraMensFinal.png";
+const doraMensSinglet = "/images/custom-apparel/DoraMen's Singlet.png";
 
 export function SchoolPackages() {
   const [selectedSchool, setSelectedSchool] = useState(0);
@@ -91,11 +90,16 @@ export function SchoolPackages() {
   }, [selectedSchool, schoolPackages]);
 
   return (
-    <section className="py-24">
+    <section className="py-24 bg-gray-50 relative">
+      {/* Subtle sky blue accent elements */}
+      <div className="absolute top-0 left-0 w-1 h-16 bg-sky-200 opacity-30"></div>
+      <div className="absolute top-0 right-0 w-1 h-16 bg-sky-200 opacity-30"></div>
+      
       <Container>
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">School Apparel Packages</h2>
-          <p className="text-lg max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl title-font mb-6">School Apparel Packages</h2>
+          <div className="h-1 w-20 bg-gray-900 mx-auto mb-6"></div>
+          <p className="text-lg max-w-3xl mx-auto subtitle-font">
             We've helped numerous schools and teams create cohesive, professional apparel packages. 
             Here are some examples of our recent work.
           </p>
@@ -104,18 +108,19 @@ export function SchoolPackages() {
         <div className="flex flex-col lg:flex-row gap-10">
           {/* School Selection */}
           <div className="lg:w-1/3">
-            <div className="bg-[hsl(var(--muted))] p-6 rounded-md">
-              <h3 className="text-xl font-semibold mb-6">Featured Schools</h3>
+            <div className="bg-white p-6 shadow-lg">
+              <h3 className="text-xl title-font mb-4">Featured Schools</h3>
+              <div className="mb-4 h-1 w-12 bg-gray-900"></div>
               
               <div className="space-y-3">
                 {schoolPackages.map((school, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedSchool(index)}
-                    className={`w-full text-left p-4 rounded-md transition-colors ${
+                    className={`w-full text-left p-4 transition-colors subtitle-font ${
                       selectedSchool === index
-                        ? 'bg-[hsl(var(--primary))] text-white'
-                        : 'bg-white hover:bg-[hsl(var(--primary)/0.1)]'
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                     }`}
                   >
                     <div className="flex items-center">
@@ -131,35 +136,36 @@ export function SchoolPackages() {
                 ))}
               </div>
               
-              <div className="mt-8 p-5 bg-white rounded-md">
-                <h4 className="font-medium mb-3">Package Features:</h4>
-                <ul className="space-y-2 text-[hsl(var(--foreground)/0.8)]">
+              <div className="mt-8 p-5 bg-gray-50 shadow-sm">
+                <h4 className="title-font mb-4">Package Features:</h4>
+                <div className="mb-3 h-1 w-12 bg-gray-900"></div>
+                <ul className="space-y-3 text-gray-700 subtitle-font">
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Custom singlets/uniforms
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Team warmup gear
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Practice t-shirts &amp; shorts
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Headgear &amp; accessories
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Fan &amp; parent apparel
@@ -178,7 +184,7 @@ export function SchoolPackages() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="bg-[hsl(var(--muted))] p-6 rounded-md h-full"
+                className="bg-white p-6 shadow-lg h-full"
               >
                 <div className="h-[400px] mb-6 rounded-lg overflow-hidden bg-white">
                   {/* Image Carousel for School Mockups */}
@@ -194,7 +200,8 @@ export function SchoolPackages() {
                       <img 
                         src={schoolPackages[selectedSchool].images[currentImageIndex]} 
                         alt={`${schoolPackages[selectedSchool].name} apparel design`}
-                        className="object-contain max-h-full max-w-full p-4"
+                        className="object-contain max-h-full max-w-full p-4 transition-transform duration-500 hover:scale-105"
+                        style={{ filter: 'grayscale(60%)' }}
                         onError={(e) => {
                           // If image fails to load, show a styled div with school info instead
                           const target = e.target as HTMLImageElement;
@@ -241,21 +248,23 @@ export function SchoolPackages() {
                 </div>
                 
                 <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 bg-white p-5 rounded-md">
-                    <h4 className="font-semibold mb-3">Custom Design Process</h4>
-                    <p>Our team works closely with coaches and athletic directors to develop a unique identity that represents your school's spirit and traditions.</p>
+                  <div className="flex-1 bg-gray-50 p-5 shadow-sm">
+                    <h4 className="title-font mb-3">Custom Design Process</h4>
+                    <div className="mb-3 h-1 w-12 bg-gray-900"></div>
+                    <p className="subtitle-font">Our team works closely with coaches and athletic directors to develop a unique identity that represents your school's spirit and traditions.</p>
                   </div>
                   
-                  <div className="flex-1 bg-white p-5 rounded-md">
-                    <h4 className="font-semibold mb-3">Team Colors</h4>
-                    <p>School colors: {schoolPackages[selectedSchool].colors}. We offer volume discounts for complete team packages.</p>
+                  <div className="flex-1 bg-gray-50 p-5 shadow-sm">
+                    <h4 className="title-font mb-3">Team Colors</h4>
+                    <div className="mb-3 h-1 w-12 bg-gray-900"></div>
+                    <p className="subtitle-font">School colors: {schoolPackages[selectedSchool].colors}. We offer volume discounts for complete team packages.</p>
                   </div>
                 </div>
                 
                 <div className="mt-6 text-center">
                   <a 
-                    href="#contactForm" 
-                    className="inline-block bg-primary text-white py-3 px-8 rounded-md hover:bg-opacity-90 transition-colors"
+                    href="#contact-form" 
+                    className="inline-block border border-gray-900 text-gray-900 py-3 px-8 hover:bg-gray-900 hover:text-white transition-colors subtitle-font"
                   >
                     Request School Package Info
                   </a>

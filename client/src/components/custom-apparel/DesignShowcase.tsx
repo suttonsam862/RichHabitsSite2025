@@ -2,27 +2,23 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 
-// Using image URLs with baseUrl instead of direct imports for better compatibility
-const baseUrl = window.location.origin;
-
 // Team designs mockups
-const athensMockup = `${baseUrl}/designs/Athens Mockup.png`;
-const ltdsMockup = `${baseUrl}/designs/LTDS Mockup.png`; 
-const ltdsMockups = `${baseUrl}/designs/LTDS Mockups.png`;
-const brooksMockup = `${baseUrl}/designs/BrooksMockup.png`;
-const brooksMockupFinal = `${baseUrl}/designs/BrooksMockupFinal.png`;
+const athensMockup = "/images/custom-apparel/Athens Mockup.png";
+const ltdsMockup = "/images/custom-apparel/LTDS Mockup.png"; 
+const ltdsMockups = "/images/custom-apparel/LTDS Mockups.png";
+const brooksMockupFinal = "/images/custom-apparel/BrooksMockupFinal.png";
 
 // Performance gear mockups
-const braggMockup = `${baseUrl}/designs/BraggMockup.png`;
-const elevateMockup = `${baseUrl}/designs/ElevateMockup5.png`;
-const caneNationMockup = `${baseUrl}/designs/CaneNationMockup.png`;
-const northsideDesign = `${baseUrl}/designs/Northside Takedown Mockups.png`;
+const braggMockup = "/images/custom-apparel/BraggMockup.png";
+const elevateMockup = "/images/custom-apparel/ElevateMockup5.png";
+const caneNationMockup = "/images/custom-apparel/CaneNationMockup.png";
+const northsideDesign = "/images/custom-apparel/Northside Takedown Mockups.png";
 
 // Apparel mockups
-const deathSquadMockup = `${baseUrl}/designs/10pDeathSquad Mockup.png`;
-const planetShorts = `${baseUrl}/designs/10thPlanet Shorts.png`;
-const planetCrewneck = `${baseUrl}/designs/10th Planet Crewneck.png`;
-const planetSweats = `${baseUrl}/designs/10th Planet Sweats.png`;
+const deathSquadMockup = "/images/custom-apparel/10pDeathSquad Mockup.png";
+const planetShorts = "/images/custom-apparel/10thPlanet Shorts.png";
+const planetCrewneck = "/images/custom-apparel/10th Planet Crewneck.png";
+const planetSweats = "/images/custom-apparel/10th Planet Sweats.png";
 
 export function DesignShowcase() {
   const [currentDesignSet, setCurrentDesignSet] = useState(0);
@@ -114,16 +110,20 @@ export function DesignShowcase() {
   }, [designSets.length]);
 
   return (
-    <section className="py-24 bg-[hsl(var(--muted))]">
+    <section className="py-24 bg-gray-50 relative">
+      {/* Subtle sky blue accent element */}
+      <div className="absolute top-0 left-0 w-1 h-24 bg-sky-200 opacity-30"></div>
+      <div className="absolute top-0 right-0 w-1 h-24 bg-sky-200 opacity-30"></div>
+      
       <Container>
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Design Portfolio</h2>
-          <p className="text-lg max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl title-font mb-6">Our Design Portfolio</h2>
+          <p className="text-lg max-w-3xl mx-auto subtitle-font">
             Browse through some of our latest custom apparel designs for wrestling teams across the country.
           </p>
         </div>
         
-        <div className="relative h-[500px] overflow-hidden">
+        <div className="relative overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentDesignSet}
@@ -134,46 +134,35 @@ export function DesignShowcase() {
               transition={{ duration: 0.6 }}
             >
               {designSets[currentDesignSet].map((design, index) => (
-                <div 
-                  key={index} 
-                  className="bg-white p-3 shadow-md flex items-center justify-center overflow-hidden h-[450px]"
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="bg-white shadow-lg overflow-hidden h-[450px]"
                 >
-                  <div className="w-full h-full flex flex-col items-center justify-center relative">
-                    {/* Image */}
+                  <div className="w-full h-[350px] overflow-hidden">
                     <img
                       src={design.image}
                       alt={design.name}
-                      className="object-contain w-full h-full"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      style={{ filter: 'grayscale(60%)' }}
                       onError={(e) => {
-                        // If image fails to load, show a styled div with design info instead
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         
                         // Find the parent container
                         const container = target.parentElement;
                         if (container) {
-                          // Add a styled div with design information
+                          // Create a styled fallback div
                           const fallbackDiv = document.createElement('div');
-                          fallbackDiv.className = 'w-full h-full rounded flex flex-col items-center justify-center p-8 text-white';
-                          
-                          // Generate a unique gradient based on the design name for visual variety
-                          const gradients = [
-                            "linear-gradient(135deg, #0039A6, #4CB4FD)",
-                            "linear-gradient(135deg, #6B21A8, #9333EA)",
-                            "linear-gradient(135deg, #991B1B, #F87171)",
-                            "linear-gradient(135deg, #831843, #EC4899)",
-                            "linear-gradient(135deg, #422006, #EAB308)",
-                            "linear-gradient(135deg, #064E3B, #34D399)"
-                          ];
-                          fallbackDiv.style.background = gradients[index % gradients.length];
+                          fallbackDiv.className = 'w-full h-full flex flex-col items-center justify-center p-8 bg-gray-200';
                           
                           fallbackDiv.innerHTML = `
                             <div class="text-center">
-                              <h3 class="text-2xl font-bold mb-4">${design.name}</h3>
-                              <p class="text-lg">${design.description}</p>
-                              <div class="mt-6 p-4 bg-white/20 rounded">
-                                <span class="text-xl">Rich Habits Custom Design</span>
-                              </div>
+                              <div class="mb-4 h-1 w-16 bg-gray-900 mx-auto"></div>
+                              <h3 class="text-2xl title-font mb-4">${design.name}</h3>
+                              <p class="subtitle-font">${design.description}</p>
                             </div>
                           `;
                           
@@ -181,25 +170,27 @@ export function DesignShowcase() {
                         }
                       }}
                     />
-                    
-                    {/* Caption overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
-                      <h3 className="text-lg font-bold">{design.name}</h3>
-                      <p className="text-sm">{design.description}</p>
-                    </div>
                   </div>
-                </div>
+                  
+                  <div className="p-6">
+                    <div className="mb-3 h-1 w-12 bg-gray-900"></div>
+                    <h3 className="text-xl title-font mb-2">{design.name}</h3>
+                    <p className="text-gray-600 subtitle-font">{design.description}</p>
+                  </div>
+                </motion.div>
               ))}
             </motion.div>
           </AnimatePresence>
         </div>
         
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-12 space-x-3">
           {designSets.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentDesignSet(index)}
-              className={`h-3 w-3 mx-1 rounded-full ${index === currentDesignSet ? 'bg-primary' : 'bg-gray-300'}`}
+              className={`h-3 w-3 mx-1 rounded-full transition-all duration-300 ${
+                index === currentDesignSet ? 'bg-gray-900 w-6' : 'bg-gray-300 hover:bg-gray-400'
+              }`}
               aria-label={`View design set ${index + 1}`}
             />
           ))}

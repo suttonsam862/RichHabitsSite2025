@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Use image URLs instead of imports
-const baseUrl = window.location.origin;
-const blackRashguard = `${baseUrl}/images/custom-apparel/BlackRashgaurdMockup.png`;
-const blueRashguard = `${baseUrl}/images/custom-apparel/BlueRashguardMockup.png`;
-const brownRashguard = `${baseUrl}/images/custom-apparel/BrownRashguardMockup.png`; // May need fallback
-const whiteRashguard = `${baseUrl}/images/custom-apparel/ClassicRashguardMockup.png`; // Using classic as fallback
-const purpleRashguard = `${baseUrl}/images/custom-apparel/BlueRashguardMockup.png`; // Using blue as fallback
-const classicRashguard = `${baseUrl}/images/custom-apparel/ClassicRashguardMockup.png`;
+// Rashguard images with direct paths
+const blackRashguard = "/images/custom-apparel/BlackRashgaurdMockup.png";
+const blueRashguard = "/images/custom-apparel/BlueRashguardMockup.png";
+const brownRashguard = "/images/custom-apparel/BrownRashguardMockup.png";
+const whiteRashguard = "/images/custom-apparel/ClassicRashguardMockup.png";
+const purpleRashguard = "/images/custom-apparel/BlueRashguardMockup.png"; // Using blue as fallback
+const classicRashguard = "/images/custom-apparel/ClassicRashguardMockup.png";
 
 export function RashguardColorways() {
   const [selectedColorway, setSelectedColorway] = useState(0);
@@ -55,11 +54,14 @@ export function RashguardColorways() {
   ];
 
   return (
-    <section className="py-20 bg-[hsl(var(--muted))]">
+    <section className="py-20 bg-gray-50 relative">
+      {/* Subtle sky blue accent element */}
+      <div className="absolute top-0 left-0 w-1 h-16 bg-sky-200 opacity-30"></div>
+      <div className="absolute top-0 right-0 w-1 h-16 bg-sky-200 opacity-30"></div>
       <Container>
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Rashguard Colorways</h2>
-          <p className="text-lg max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl title-font mb-6">Rashguard Colorways</h2>
+          <p className="text-lg max-w-3xl mx-auto subtitle-font">
             Our premium rashguards are available in multiple colorways to match your team's identity.
           </p>
         </div>
@@ -68,16 +70,17 @@ export function RashguardColorways() {
           {/* Color Selector */}
           <div className="lg:w-1/3">
             <div className="bg-white p-6 rounded-md shadow-sm">
-              <h3 className="text-xl font-semibold mb-6">Select Colorway</h3>
+              <h3 className="text-xl title-font mb-6">Select Colorway</h3>
+              <div className="mb-4 h-1 w-12 bg-gray-900"></div>
               
               <div className="space-y-4">
                 {colorways.map((colorway, index) => (
                   <button
                     key={index}
-                    className={`flex items-center w-full p-3 rounded-md transition-colors ${
+                    className={`flex items-center w-full p-3 transition-colors subtitle-font ${
                       selectedColorway === index 
-                        ? 'bg-[hsl(var(--primary))] text-white' 
-                        : 'bg-[hsl(var(--muted-foreground)/0.1)] hover:bg-[hsl(var(--muted-foreground)/0.2)]'
+                        ? 'bg-gray-900 text-white' 
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                     }`}
                     onClick={() => setSelectedColorway(index)}
                   >
@@ -91,34 +94,34 @@ export function RashguardColorways() {
               </div>
               
               <div className="mt-8">
-                <h4 className="font-medium mb-2">Features:</h4>
-                <ul className="space-y-2 text-[hsl(var(--foreground)/0.8)]">
+                <h4 className="title-font mb-3">Features:</h4>
+                <ul className="space-y-3 text-gray-700 subtitle-font">
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Moisture-wicking fabric
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Four-way stretch
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Antimicrobial treatment
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Flatlock stitching
                   </li>
                   <li className="flex items-start">
-                    <svg className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-gray-900 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Custom sublimation printing
@@ -146,7 +149,8 @@ export function RashguardColorways() {
                       <img 
                         src={colorways[selectedColorway].image}
                         alt={colorways[selectedColorway].name}
-                        className="w-full h-full object-contain p-4"
+                        className="w-full h-full object-contain p-4 transition-transform duration-500 hover:scale-105"
+                        style={{ filter: 'grayscale(50%)' }}
                         onError={(e) => {
                           // If image fails to load, show a styled div with colorway info instead
                           const target = e.target as HTMLImageElement;
@@ -184,12 +188,12 @@ export function RashguardColorways() {
                   </div>
                   
                   <div className="mt-6 text-center">
-                    <p className="text-lg font-medium">
+                    <p className="text-lg subtitle-font">
                       Custom sizing and design options available for teams
                     </p>
                     <a 
-                      href="#contactForm" 
-                      className="inline-block mt-4 bg-primary text-white py-2 px-6 rounded-md hover:bg-opacity-90 transition-colors"
+                      href="#contact-form" 
+                      className="inline-block mt-4 border border-gray-900 text-gray-900 py-3 px-8 hover:bg-gray-900 hover:text-white transition-colors subtitle-font"
                     >
                       Request Team Pricing
                     </a>
