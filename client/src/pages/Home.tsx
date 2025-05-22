@@ -138,7 +138,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="bg-white shadow-md overflow-hidden"
               >
-                <div className="h-48 overflow-hidden">
+                <div className="h-40 overflow-hidden">
                   <img 
                     src="/images/texas-recruiting-clinic.webp" 
                     alt="Texas Recruiting Clinic - Elite Wrestling Training in Arlington"
