@@ -13,10 +13,10 @@ const events = [
     fullPrice: 249,
     singleDayPrice: 149,
     shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
-    longDescription: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Not just training — it's a statement. The Birmingham Slam Camp brings together elite coaches and wrestlers for three days of intensive training, featuring a unique blend of technical instruction, live wrestling, and mental preparation exercises. Featuring exclusive partnership with Fruit Hunters providing premium exotic fruits for optimal athlete performance and recovery throughout the camp.",
-    image: "/images/DSC09491.JPG",
+    longDescription: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Not just training — it's a statement. The Birmingham Slam Camp brings together elite coaches and wrestlers for three days of intensive training, featuring a unique blend of technical instruction, live wrestling, and mental preparation exercises. Each wrestler will receive personal attention from our outstanding coaching staff with a focus on developing strong fundamentals and advanced techniques. Featuring exclusive partnership with Fruit Hunters providing premium exotic fruits for optimal athlete performance and recovery throughout the camp.",
+    image: "/images/DSC09354.JPG",
     additionalImages: [
-      "/images/DSC09354.JPG",
+      "/images/DSC09491.JPG",
       "/images/DSC09353.JPG"
     ],
     videoUrl: "/videos/camp-highlight-1.mp4",
@@ -30,19 +30,19 @@ const events = [
       {
         name: "Michael Johnson",
         title: "3x State Champion Coach",
-        image: "/images/Michael_McGee_JouQS.jpg",
+        image: "/images/DSC09273.JPG",
         bio: "Coach Johnson has led teams to three state championships and developed over 25 individual state champions throughout his coaching career. His innovative training methods have helped wrestlers at all levels reach their full potential."
       },
       {
         name: "David Williams",
         title: "NCAA All-American",
-        image: "/images/VALENCIA_Zahid-headshot.jpg",
+        image: "/images/DSC09355.JPG",
         bio: "As an NCAA All-American and international competitor, Coach Williams brings elite-level insights to his coaching. He specializes in neutral position techniques and competitive strategy development."
       },
       {
         name: "Robert Smith",
         title: "Mental Performance Specialist",
-        image: "/images/IMG_6807_1745781570887.jpg",
+        image: "/images/DSC00521--.JPG",
         bio: "With a background in sports psychology and competitive wrestling, Coach Smith focuses on the mental aspects of wrestling. His approach helps athletes develop the mindset needed for championship performance."
       }
     ],
@@ -66,11 +66,11 @@ const events = [
     fullPrice: 349,
     singleDayPrice: 175,
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
-    longDescription: "The most elite wrestling camp in the country, bringing together NCAA champions and Olympic athletes to provide world-class instruction. Designed for serious wrestlers looking to compete at the highest levels, this camp focuses on advanced techniques, strategic development, and championship mindset training. Each day features intensive training sessions led by accomplished champions who share the techniques and strategies that took them to the highest levels of the sport. Participants will also receive personalized feedback and guidance throughout the camp.",
-    image: "/images/DSC09374--.JPG",
+    longDescription: "The most elite wrestling camp in the country, bringing together NCAA champions and Olympic athletes to provide world-class instruction. The National Champ Camp is designed for serious wrestlers looking to compete at the highest levels, with focused training on advanced techniques, strategic development, and championship mindset training. Each day features intensive training sessions led by accomplished champions who share the techniques and strategies that took them to the highest levels of the sport. Participants receive personalized feedback, video analysis of their technique, and a customized improvement plan to implement after camp.",
+    image: "/images/DSC09353.JPG",
     additionalImages: [
       "/images/DSC08631.JPG",
-      "/images/DSC08460--.jpg"
+      "/images/DSC07386.JPG"
     ],
     videoUrl: "/videos/camp-highlight-2.mp4",
     accent: "blue",
@@ -83,19 +83,19 @@ const events = [
       {
         name: "James Thompson",
         title: "Olympic Gold Medalist",
-        image: "/images/DSC08657--.JPG",
+        image: "/images/DSC09488.JPG",
         bio: "Thompson's gold medal performance established him as one of the most technically precise wrestlers in the world. He specializes in teaching advanced techniques that give wrestlers a competitive edge at the highest levels."
       },
       {
         name: "Marcus Allen",
         title: "3x NCAA Champion",
-        image: "/images/DSC09299.JPG",
+        image: "/images/DSC02187--.jpg",
         bio: "With three NCAA titles to his name, Allen brings championship-level insights to his coaching. His specialty is developing strategic approaches to match preparation and execution."
       },
       {
         name: "Thomas Wilson",
         title: "World Team Coach",
-        image: "/images/DSC07386.JPG",
+        image: "/images/DSC08657--.JPG",
         bio: "Having coached multiple World and Olympic teams, Wilson has developed training systems that have produced champions at every level. His holistic approach addresses all aspects of elite wrestling development."
       }
     ],
@@ -119,10 +119,10 @@ const events = [
     fullPrice: 249,
     singleDayPrice: null,
     shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
-    longDescription: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development with college coaches and recruiting workshops. Wrestlers will receive direct feedback from college coaches and learn how to navigate the recruiting process. This comprehensive two-day clinic combines intensive training with educational sessions on college recruiting, NCAA eligibility requirements, and athletic scholarship opportunities. Participants will leave with a personal evaluation, highlight video footage, and a customized plan for their recruiting journey.",
-    image: "/images/DSC00423.JPG",
+    longDescription: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. The Texas Recruiting Clinic brings together college coaches and recruiting specialists to provide comprehensive guidance on the recruiting process. Participants will receive detailed evaluations from active college coaches, participate in skill development sessions, and learn about NCAA eligibility requirements. Day one focuses on technical skill assessment while day two centers on the business of college recruiting including highlight videos, contacting coaches, and scholarship opportunities. Each wrestler leaves with a personalized recruiting plan and video highlights.",
+    image: "/images/DSC08612.JPG",
     additionalImages: [
-      "/images/DSC08612.JPG",
+      "/images/DSC00423.JPG",
       "/images/DSC02190--.jpg"
     ],
     videoUrl: "/videos/recruiting-clinic.mp4",
@@ -135,19 +135,19 @@ const events = [
       {
         name: "Brian Davis",
         title: "D1 College Coach",
-        image: "/images/DSC09488.JPG",
+        image: "/images/DSC09299.JPG",
         bio: "Coach Davis has developed multiple All-Americans and NCAA qualifiers during his tenure as a Division I coach. He has an exceptional eye for talent and understands what it takes to compete at the collegiate level."
       },
       {
         name: "Mark Wilson",
         title: "D2 College Coach",
-        image: "/images/DSC09355.JPG",
+        image: "/images/DSC07386.JPG",
         bio: "With over 15 years of coaching experience at the Division II level, Coach Wilson has guided numerous wrestlers to conference titles and national recognition. He specializes in helping wrestlers find the right collegiate fit."
       },
       {
         name: "Sarah Johnson",
         title: "Recruiting Specialist",
-        image: "/images/DSC09283--.JPG",
+        image: "/images/VALENCIA_Zahid-headshot.jpg",
         bio: "Johnson has helped hundreds of athletes navigate the recruiting process and secure athletic scholarships. Her knowledge of NCAA regulations and requirements is unmatched in the wrestling community."
       }
     ],
@@ -171,11 +171,11 @@ const events = [
     fullPrice: 200,
     singleDayPrice: 99,
     shortDescription: "A multi-location training tour with elite coaches.",
-    longDescription: "Experience training in multiple elite facilities over three days. The Panther Train Tour moves to a new location each day, exposing wrestlers to different training environments and coaching philosophies. This unique format challenges athletes to adapt quickly and apply techniques in various settings. Each day features specialized training in a specific position with dedicated coaches who are experts in their area. The changing training environments create a dynamic experience that prepares athletes for the adaptability required in competition.",
+    longDescription: "Experience training in multiple elite facilities over three days with the innovative Panther Train Tour. This unique wrestling camp moves to a different training location each day, providing athletes with diverse environments and coaching perspectives. Specialized coaches focus on specific wrestling positions each day - neutral on day one, bottom on day two, and top position on day three. The program is designed to simulate tournament conditions and develop adaptability. Transportation between facilities is provided, and each participant receives exclusive Panther Train Tour gear. Limited to 120 wrestlers to ensure quality instruction.",
     image: "/images/DSC08615.JPG",
     additionalImages: [
       "/images/DSC09295--.JPG",
-      "/images/DSC07337--.jpg"
+      "/images/DSC09273.JPG"
     ],
     videoUrl: "/videos/tour-highlights.mp4",
     accent: "black",
@@ -188,19 +188,19 @@ const events = [
       {
         name: "Cory Land",
         title: "5x National Champion",
-        image: "/coaches/panther-train-tour/cory-land.webp",
+        image: "/images/DSC09374--.JPG",
         bio: "Cory Land is a decorated wrestler with multiple national titles and international medals. His dynamic wrestling style and innovative techniques have made him a sought-after clinician across the country."
       },
       {
         name: "Garrett Funk",
         title: "NCAA Division I All-American",
-        image: "/coaches/panther-train-tour/garrett-funk.webp",
+        image: "/images/DSC09283--.JPG",
         bio: "Funk brings high-level collegiate experience to his coaching. His specialization in bottom position work has helped countless wrestlers improve their escapes and reversals."
       },
       {
         name: "Trever Anderson",
         title: "Elite Development Coach",
-        image: "/coaches/panther-train-tour/trever-anderson.webp",
+        image: "/images/DSC07337--.jpg",
         bio: "Anderson has developed a systematic approach to top position control that has been adopted by numerous successful programs. His teaching methods make complex techniques accessible to wrestlers of all levels."
       }
     ],
