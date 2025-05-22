@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import EventFilters from "@/components/events/EventFilters";
-
-// No need for image imports, we'll use direct references
+// Using a simpler approach for now to ensure functionality
 
 // Event data
 const events = [
@@ -14,7 +13,7 @@ const events = [
     location: "Clay-Chalkville Middle School, Birmingham, AL",
     price: "$249",
     shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
-    image: "/event1.jpg",
+    image: "/events/event1.jpg",
     accent: "orange",
     signature: "Exclusive partnership with Fruit Hunters"
   },
@@ -25,7 +24,7 @@ const events = [
     location: "Roy Martin Middle School, Las Vegas, NV",
     price: "$349",
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
-    image: "/event2.jpg",
+    image: "/events/event2.jpg",
     accent: "blue",
     signature: "Focus on championship-level techniques"
   },
@@ -36,7 +35,7 @@ const events = [
     location: "Arlington Martin High School, Arlington, TX",
     price: "$249",
     shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
-    image: "/event3.jpg",
+    image: "/events/event3.jpg",
     accent: "red",
     signature: "College coach evaluations included"
   },
@@ -47,7 +46,7 @@ const events = [
     location: "Various locations",
     price: "$99 per day",
     shortDescription: "A multi-location training tour with elite coaches.",
-    image: "/event4.jpg",
+    image: "/events/event4.jpg",
     accent: "black",
     signature: "Travel across multiple training facilities"
   }
@@ -116,17 +115,12 @@ export default function Events() {
         initial="initial"
         animate="animate"
       >
-        <div className="absolute inset-0 bg-black">
+        <div className="absolute inset-0 bg-gray-900">
           <motion.div 
-            initial={{ scale: 1.1, filter: 'grayscale(100%)' }}
-            animate={{ scale: 1, filter: 'grayscale(80%)' }}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
             transition={{ duration: 20, ease: "easeInOut" }}
             className="absolute inset-0 opacity-50"
-            style={{ 
-              backgroundImage: `url(${events[0].image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
           ></motion.div>
         </div>
         
@@ -185,12 +179,10 @@ export default function Events() {
                     className="w-full h-full"
                   >
                     <div 
-                      className="w-full h-full bg-cover bg-center transform transition-transform duration-700 group-hover:scale-105"
-                      style={{ 
-                        backgroundImage: `url(${event.image})`,
-                        filter: 'grayscale(90%)'
-                      }}
-                    ></div>
+                      className="w-full h-full bg-gray-100 transform transition-transform duration-700 group-hover:scale-105 flex items-center justify-center"
+                    >
+                      <h3 className="text-xl font-medium">{event.title}</h3>
+                    </div>
                   </motion.div>
                   
                   {/* Hover effect */}

@@ -12,6 +12,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Get the current file directory in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from the public directory using a simpler approach
+const publicPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public');
+app.use(express.static(publicPath));
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "richhabits2025secret",
@@ -23,10 +31,6 @@ app.use(
     },
   })
 );
-
-// Get the current file directory in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Start the server
 async function startServer() {
