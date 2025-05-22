@@ -1,0 +1,16 @@
+# robots.txt for rich-habits.com
+User-agent: *
+Allow: /
+
+# Don't allow crawling of admin pages
+Disallow: /admin
+Disallow: /checkout-debug
+Disallow: /image-debug
+Disallow: /redirect
+Disallow: /direct-checkout
+Disallow: /stripe-checkout
+Disallow: /embedded-cart
+Disallow: /add-to-cart
+
+# Sitemap location
+Sitemap: https://rich-habits.com/sitemap.xml
