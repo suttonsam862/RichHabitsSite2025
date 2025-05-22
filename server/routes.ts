@@ -522,31 +522,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     // Serve the Rich Habits frontend
     if (process.env.NODE_ENV === 'production') {
-      // Try multiple possible locations for the built files
-      const possiblePaths = [
-        path.resolve(process.cwd(), 'dist', 'public', 'index.html'),
-        path.resolve(process.cwd(), 'dist', 'index.html'),
-        path.resolve(__dirname, '..', 'dist', 'public', 'index.html'),
-        path.resolve(__dirname, '..', 'public', 'index.html')
-      ];
+      // Direct path to your Rich Habits site 
+      const indexPath = path.resolve(process.cwd(), 'dist', 'public', 'index.html');
+      console.log('🎯 Serving Rich Habits from:', indexPath);
       
-      let indexPath = '';
-      for (const testPath of possiblePaths) {
-        if (fs.existsSync(testPath)) {
-          indexPath = testPath;
-          break;
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error('❌ Error serving Rich Habits site:', err);
+          res.status(500).send('Rich Habits site error');
         }
-      }
-      
-      console.log('🔍 Searching for Rich Habits index.html...');
-      console.log('✅ Found at:', indexPath);
-      
-      if (indexPath && fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-      } else {
-        console.error('❌ Rich Habits site files not found in any expected location');
-        res.status(500).send(`Rich Habits site not found. Searched: ${possiblePaths.join(', ')}`);
-      }
+      });
     } else {
       // In development, let Vite handle the frontend
       res.status(404).send('Development mode - frontend handled by Vite');
