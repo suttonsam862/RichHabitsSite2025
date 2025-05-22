@@ -5,11 +5,13 @@ import path from "path";
 import fs from "fs";
 import "express-session";
 import multer from "multer";
-import { pool } from "./db";
+import { pool, getDatabaseHealthStatus } from "./db.js";
 import Stripe from "stripe";
-import { approveRegistrations } from "./registrationApproval";
-import { storage } from "./storage";
-import { fixCompletedRegistrationsWithMissingInfo } from './completedRegistrationFix';
+import { approveRegistrations } from "./registrationApproval.js";
+import { storage } from "./storage.js";
+import { fixCompletedRegistrationsWithMissingInfo } from './completedRegistrationFix.js';
+import { authenticateUser, authorizeAdmin } from './auth.js';
+import { supabase } from './supabase.js';
 import { 
   insertContactSubmissionSchema, 
   insertCustomApparelInquirySchema, 
@@ -18,7 +20,7 @@ import {
   insertCollaborationSchema,
   insertCoachSchema,
   insertEventCoachSchema
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { z } from "zod";
 
 // Initialize Stripe
@@ -199,6 +201,182 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         error: "Failed to fix completed registrations",
         details: error.message || "Unknown error"
+      });
+    }
+  });
+
+  // Enhanced security routes with Supabase
+  app.get('/api/health', async (req, res) => {
+    try {
+      const dbStatus = await getDatabaseHealthStatus();
+      res.json(dbStatus);
+    } catch (error: any) {
+      res.status(500).json({ 
+        status: 'error', 
+        message: error.message || 'Health check failed' 
+      });
+    }
+  });
+
+  // Auth routes
+  app.post('/api/auth/signup', async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email and password are required'
+        });
+      }
+      
+      // Create user in Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName
+          }
+        }
+      });
+      
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: 'User registered successfully',
+        user: data.user
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Registration failed'
+      });
+    }
+  });
+  
+  app.post('/api/auth/signin', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email and password are required'
+        });
+      }
+      
+      // Sign in with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: 'Signed in successfully',
+        session: data.session,
+        user: data.user
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Sign in failed'
+      });
+    }
+  });
+  
+  app.post('/api/auth/signout', authenticateUser, async (req, res) => {
+    try {
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: 'Signed out successfully'
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Sign out failed'
+      });
+    }
+  });
+  
+  // User profile route (protected)
+  app.get('/api/user/profile', authenticateUser, async (req, res) => {
+    try {
+      // Get user profile from Supabase
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', req.user.id)
+        .single();
+      
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+      
+      res.json({
+        success: true,
+        profile: data
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to get profile'
+      });
+    }
+  });
+
+  // Admin routes (protected with admin authorization)
+  app.get('/api/admin/users', authenticateUser, authorizeAdmin, async (req, res) => {
+    try {
+      // Get all users from Supabase (admin only)
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+      
+      res.json({
+        success: true,
+        users: data
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to get users'
       });
     }
   });
