@@ -13,7 +13,7 @@ const events = [
     fullPrice: 249,
     singleDayPrice: 149,
     shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
-    longDescription: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Not just training — it's a statement. The Birmingham Slam Camp brings together elite coaches and wrestlers for three days of intensive training, featuring a unique blend of technical instruction, live wrestling, and mental preparation exercises. Each wrestler will receive personal attention from our outstanding coaching staff with a focus on developing strong fundamentals and advanced techniques. Featuring exclusive partnership with Fruit Hunters providing premium exotic fruits for optimal athlete performance and recovery throughout the camp.",
+    longDescription: "The Birmingham Slam Wrestling Camp represents the pinnacle of wrestling instruction in Alabama and the Southeast region. Located at Clay-Chalkville Middle School in Birmingham, this three-day intensive wrestling camp brings together some of the most accomplished wrestlers in NCAA history. Our camp attracts wrestlers from across Alabama, Tennessee, Georgia, Mississippi, and Florida seeking elite-level training from proven champions. Zahid Valencia, a two-time NCAA Champion and four-time All-American, leads our world-class instruction team alongside NCAA All-American Josh Shields, NCAA Finalist Brandon Courtney, and Pac-12 Champion Michael McGee. This Birmingham wrestling camp focuses on technical excellence, competition strategy, and mental preparation using proven methodologies from championship programs. Athletes receive individualized attention in small group settings, video analysis of their technique, and comprehensive training in all aspects of competitive wrestling. The camp serves wrestlers of all skill levels, from youth competitors to high school athletes preparing for collegiate wrestling. Birmingham's central location makes this the premier wrestling camp destination for Southeast wrestlers seeking championship-level instruction.",
     image: "/event1.jpg",
     additionalImages: [
       "/gallery-1-1.jpg",
@@ -21,35 +21,30 @@ const events = [
     ],
     videoUrl: "/videos/camp-highlight-1.mp4",
     accent: "orange",
-    schedule: [
-      { day: "Day 1", time: "9:00 AM - 4:00 PM", focus: "Technique Fundamentals & Position" },
-      { day: "Day 2", time: "9:00 AM - 4:00 PM", focus: "Advanced Strategy & Live Wrestling" },
-      { day: "Day 3", time: "9:00 AM - 4:00 PM", focus: "Competition Preparation & Mental Toughness" }
-    ],
     coaches: [
       {
         name: "Zahid Valencia",
         title: "2x NCAA Champion, 4x All-American",
         image: "/coach-1.jpg",
-        bio: "Valencia brings championship-level expertise with his impressive accolades as a 2x NCAA Champion and 4x All-American. His technical precision and competitive mindset make him one of the most sought-after clinicians in wrestling today."
+        bio: "Zahid Valencia stands as one of the most accomplished wrestlers in Arizona State University history and contemporary American wrestling. As a two-time NCAA Champion at 174 pounds (2017, 2019) and four-time All-American, Valencia dominated the collegiate wrestling scene with his exceptional technique and competitive drive. His wrestling career includes multiple Pac-12 Conference titles and a reputation for technical mastery that extends beyond college wrestling into international competition. Valencia's coaching methodology focuses on positional wrestling, scrambling techniques, and the mental preparation required for championship performance. His experience competing at the highest levels of wrestling, combined with his natural teaching ability, makes him an invaluable resource for wrestlers seeking to elevate their technical skills and competitive mindset. Valencia specializes in teaching advanced takedown sequences, defensive positioning, and the strategic thinking necessary for success in high-stakes competition."
       },
       {
         name: "Josh Shields",
         title: "NCAA All-American, Former ASU Captain",
         image: "/coach-2.jpg",
-        bio: "As an NCAA All-American and former Arizona State captain, Shields combines elite-level technique with proven leadership skills. He specializes in developing both the physical and mental aspects of competitive wrestling."
+        bio: "Josh Shields exemplifies the combination of athletic excellence and leadership that defines elite collegiate wrestling. As an NCAA All-American and former captain of the Arizona State University wrestling team, Shields brings both technical expertise and proven leadership experience to his coaching. His collegiate career was marked by consistent high-level performance and the respect of teammates and coaches alike. Shields' coaching approach emphasizes the development of complete wrestlers who excel in all phases of the sport - technique, conditioning, and mental preparation. His experience as a team captain provides unique insights into the leadership qualities and team dynamics essential for success in wrestling programs. Shields specializes in teaching fundamental techniques with precision, helping wrestlers build a solid foundation that supports advanced skill development. His instruction covers neutral position control, effective shot setups, and the defensive awareness necessary for competing against elite-level opponents."
       },
       {
         name: "Brandon Courtney",
         title: "NCAA Finalist, 3x All-American",
         image: "/coach-3.jpg",
-        bio: "Courtney's experience as an NCAA Finalist and 3x All-American provides invaluable insights into championship-level preparation and execution. His coaching focuses on advanced techniques and competitive strategy."
+        bio: "Brandon Courtney's wrestling credentials speak to a career defined by excellence and consistency at the highest levels of collegiate competition. As an NCAA Finalist and three-time All-American, Courtney demonstrated the technical skill, mental toughness, and competitive consistency that characterize championship-level wrestlers. His path to the NCAA finals showcases the systematic approach to training and competition that he now shares with developing wrestlers. Courtney's coaching focuses on the strategic elements of wrestling that separate good wrestlers from great ones - timing, positioning, and the ability to execute techniques under pressure. His experience competing in high-stakes matches provides invaluable insights into preparation, match strategy, and the mental approach required for success in tournament wrestling. Courtney specializes in teaching advanced positioning concepts, scrambling techniques, and the tactical decision-making that enables wrestlers to perform at their best when it matters most."
       },
       {
         name: "Michael McGee",
         title: "NCAA All-American, Pac-12 Champion",
         image: "/coach-4.jpg",
-        bio: "McGee brings his championship experience as an NCAA All-American and Pac-12 Champion to develop wrestlers at all levels. His expertise in technical wrestling and training methodology helps athletes reach their full potential."
+        bio: "Michael McGee brings a wealth of championship experience and technical knowledge to his role as a wrestling instructor. As an NCAA All-American and Pac-12 Conference Champion, McGee competed successfully at the highest levels of collegiate wrestling, demonstrating the technical precision and competitive mindset that define elite athletes. His championship experience in the highly competitive Pac-12 Conference showcases his ability to perform against top-tier competition throughout his collegiate career. McGee's coaching methodology emphasizes the systematic development of wrestling skills, from fundamental techniques to advanced competition strategies. His approach to instruction focuses on helping wrestlers understand not just how to execute techniques, but when and why to use them in competitive situations. McGee specializes in teaching position-specific techniques, transition wrestling, and the tactical awareness necessary for success in modern wrestling. His experience as both competitor and coach provides a comprehensive understanding of what it takes to develop wrestlers who can compete successfully at any level."
       }
     ],
     capacity: 200,
@@ -72,7 +67,7 @@ const events = [
     fullPrice: 349,
     singleDayPrice: 175,
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
-    longDescription: "The most elite wrestling camp in the country, bringing together NCAA champions and Olympic athletes to provide world-class instruction. The National Champ Camp is designed for serious wrestlers looking to compete at the highest levels, with focused training on advanced techniques, strategic development, and championship mindset training. Each day features intensive training sessions led by accomplished champions who share the techniques and strategies that took them to the highest levels of the sport. Participants receive personalized feedback, video analysis of their technique, and a customized improvement plan to implement after camp.",
+    longDescription: "The National Champ Wrestling Camp in Las Vegas represents the ultimate destination for serious wrestlers seeking championship-level instruction from proven NCAA champions and World Team members. This elite Las Vegas wrestling camp attracts competitors from across Nevada, California, Arizona, Utah, and Colorado who are committed to reaching the highest levels of the sport. Located in Las Vegas with the exact venue to be announced, this intensive three-day camp provides unparalleled access to some of the most accomplished wrestlers in American history. Jason Nolf, a three-time NCAA Champion and World Team member, leads our exceptional instruction team alongside NCAA Champion Mark Hall and two-time NCAA Champion Vincenzo Joseph. This Las Vegas wrestling camp focuses on advanced technical development, competition strategy, and the mental preparation necessary for elite-level success. The camp curriculum emphasizes systematic skill development, tactical awareness, and the competitive mindset that separates championship wrestlers from the field. Participants receive individualized instruction, comprehensive video analysis, and detailed feedback from wrestlers who have competed successfully at the highest levels of international competition. The National Champ Camp serves dedicated wrestlers aged 14-22 who are serious about pursuing excellence in wrestling, whether at the high school, collegiate, or beyond.",
     image: "/event2.jpg",
     additionalImages: [
       "/gallery-2-1.jpg",
@@ -80,11 +75,6 @@ const events = [
     ],
     videoUrl: "/videos/camp-highlight-2.mp4",
     accent: "blue",
-    schedule: [
-      { day: "Day 1", time: "9:00 AM - 4:30 PM", focus: "Advanced Techniques & Position Control" },
-      { day: "Day 2", time: "9:00 AM - 4:30 PM", focus: "Strategic Development & Competition Simulation" },
-      { day: "Day 3", time: "9:00 AM - 4:30 PM", focus: "Championship Mindset & Elite Performance" }
-    ],
     coaches: [
       {
         name: "Jason Nolf",
