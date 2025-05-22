@@ -2,6 +2,8 @@ import express from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
 import { setupVite } from "./vite";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Create Express application
 const app = express();
@@ -22,6 +24,10 @@ app.use(
   })
 );
 
+// Get the current file directory in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Start the server
 async function startServer() {
   try {
@@ -36,6 +42,21 @@ async function startServer() {
     // Setup Vite only in development
     if (process.env.NODE_ENV !== 'production') {
       await setupVite(app, server);
+    } else {
+      // In production, serve static files from the React build directory
+      const clientDistPath = path.join(__dirname, '../client/dist');
+      console.log(`Serving static files from: ${clientDistPath}`);
+      app.use(express.static(clientDistPath));
+      
+      // Serve index.html for all routes not handled by the API to support client-side routing
+      app.get('*', (req, res) => {
+        // Skip API routes
+        if (req.path.startsWith('/api/')) return;
+        
+        const indexPath = path.join(clientDistPath, 'index.html');
+        console.log(`Serving index.html for client-side routing: ${req.path}`);
+        res.sendFile(indexPath);
+      });
     }
 
     // Use PORT from environment with fallback
