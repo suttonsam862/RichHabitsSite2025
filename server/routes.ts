@@ -455,11 +455,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const paymentIntent = event.data.object;
       
       try {
+        console.log(`Processing succeeded payment intent: ${paymentIntent.id}`);
+        
         // Update the payment status in our database
-        await storage.updateEventRegistrationPaymentStatus(
+        const updated = await storage.updateEventRegistrationPaymentStatus(
           paymentIntent.id,
-          "completed"
+          "succeeded" // Use "succeeded" to match Stripe's terminology
         );
+        
+        if (updated) {
+          console.log(`Successfully updated registration for payment ${paymentIntent.id}`);
+        } else {
+          console.warn(`No registration found for payment ${paymentIntent.id}`);
+        }
         
         // Additional actions like sending confirmation emails could go here
         
@@ -471,11 +479,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const paymentIntent = event.data.object;
       
       try {
+        console.log(`Processing failed payment intent: ${paymentIntent.id}`);
+        
         // Update the payment status in our database
-        await storage.updateEventRegistrationPaymentStatus(
+        const updated = await storage.updateEventRegistrationPaymentStatus(
           paymentIntent.id,
           "failed"
         );
+        
+        if (updated) {
+          console.log(`Updated registration status to failed for payment ${paymentIntent.id}`);
+          
+          // Get registration info to notify customer about the failure
+          const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
+          
+          if (registrations && registrations.length > 0) {
+            console.log(`Found ${registrations.length} registrations for failed payment, notifying customers`);
+            
+            // Here you could add logic to send notification emails to customers
+            // about their failed payment and how to retry
+          }
+        } else {
+          console.warn(`No registration found for failed payment ${paymentIntent.id}`);
+        }
         
         console.log(`PaymentIntent ${paymentIntent.id} failed.`);
       } catch (error) {

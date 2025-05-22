@@ -143,7 +143,7 @@ export const eventRegistrations = pgTable("event_registrations", {
   age: text("age"), // Adding this to match existing database column
   experience: text("experience"), // Adding this to match existing database column
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
 // Create the base schema first
