@@ -10,7 +10,7 @@ const camps = [
     date: 'June 19-21, 2025',
     location: 'Clay-Chalkville Middle School',
     description: 'Join us for 3 days of intensive training with top wrestling coaches.',
-    video: '/videos/slamcamp.mov',
+    image: '/assets/DSC09374--.JPG',
     link: '/events/1',
     color: 'from-orange-600 to-red-600'
   },
@@ -85,30 +85,16 @@ export function CampSlideshow() {
               transition={{ duration: 0.5 }}
               className="absolute inset-0"
             >
-              {/* Background: either video or image */}
-              {currentCamp.video ? (
-                <div className="absolute inset-0">
-                  <iframe 
-                    src="https://www.youtube.com/embed/sBmEPQ5CQs4?autoplay=1&mute=1&loop=1&playlist=sBmEPQ5CQs4&controls=0&showinfo=0" 
-                    className="object-cover w-full h-full"
-                    title={currentCamp.name}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowFullScreen
-                    style={{ filter: 'brightness(0.7)' }}
-                  ></iframe>
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-cover bg-center">
-                  <img 
-                    src={currentCamp.image} 
-                    alt={currentCamp.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    style={{ filter: 'brightness(0.7)' }}
-                  />
-                </div>
-              )}
+              {/* Display background image */}
+              <div className="absolute inset-0 bg-cover bg-center">
+                <img 
+                  src={currentCamp.image} 
+                  alt={currentCamp.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  style={{ filter: 'brightness(0.7)' }}
+                />
+              </div>
               
               {/* Content */}
               <div className="absolute inset-0 flex items-center justify-center z-20">

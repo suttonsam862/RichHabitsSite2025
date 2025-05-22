@@ -1,35 +1,8 @@
 import { Container } from "@/components/ui/container";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { useEffect, useRef } from "react";
 
 export function SlamCampVideo() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  
-  useEffect(() => {
-    // Enforce autoplay when component mounts
-    const playVideo = () => {
-      if (videoRef.current) {
-        videoRef.current.play().catch(error => {
-          console.log("Autoplay prevented:", error);
-        });
-      }
-    };
-    
-    playVideo();
-    
-    // Add a click event listener to the document to play video on user interaction
-    const handleUserInteraction = () => {
-      playVideo();
-      document.removeEventListener("click", handleUserInteraction);
-    };
-    
-    document.addEventListener("click", handleUserInteraction);
-    
-    return () => {
-      document.removeEventListener("click", handleUserInteraction);
-    };
-  }, []);
   return (
     <section className="py-20 bg-[hsl(var(--secondary))]">
       <Container>
@@ -84,26 +57,14 @@ export function SlamCampVideo() {
                 border: '1px solid rgba(255, 255, 255, 0.1)'
                }}
             >
-              {/* Play a video in background with fallback image */}
+              {/* Static image background instead of problematic video */}
               <div className="absolute inset-0 z-0 bg-black">
-                {/* Hidden video element that will be used if autoplay works */}
-                <video
-                  ref={videoRef}
-                  src="/videos/slamcamp.mp4"
+                <img 
+                  src="/assets/DSC09374--.JPG" 
                   className="w-full h-full object-cover"
-                  poster="/assets/DSC09374--.JPG"
-                  muted
-                  autoPlay
-                  loop
-                  playsInline
-                  controls={false}
-                  preload="none"
-                  onLoadedMetadata={(e) => {
-                    if (videoRef.current) {
-                      videoRef.current.play().catch(err => console.log('Autoplay failed:', err));
-                    }
-                  }}
-                ></video>
+                  alt="Birmingham Slam Camp"
+                  loading="lazy"
+                />
                 
                 {/* Animated overlay elements */}
                 <div className="absolute inset-0 overflow-hidden">
