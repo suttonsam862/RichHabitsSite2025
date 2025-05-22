@@ -39,21 +39,36 @@ app.use((req, res, next) => {
 // Start the server
 async function startServer() {
   try {
+    // Add fallback/health route before route registration
+    app.get('/health', (req, res) => {
+      res.json({ status: 'ok', version: '1.0.0' });
+    });
+
+    // Add an error handling middleware
+    app.use((err: any, req: any, res: any, next: any) => {
+      console.error('Server error:', err);
+      res.status(500).json({ error: 'Internal server error', message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong' });
+    });
+    
     // Register all the routes
     const server = await registerRoutes(app);
     
     // Setup Vite for development environment
     await setupVite(app, server);
     
-    // Add fallback/health route
-    app.get('/health', (req, res) => {
-      res.json({ status: 'ok', version: '1.0.0' });
+    // Start listening on port with error handling
+    const port = process.env.PORT || 5000;
+    server.listen(port, '0.0.0.0', () => {
+      console.log(`Server running on port ${port}`);
     });
     
-    // Start listening on port
-    const port = process.env.PORT || 5000;
-    server.listen(port, () => {
-      console.log(`Server running on port ${port}`);
+    // Handle server errors
+    server.on('error', (e) => {
+      console.error('Server error:', e);
+      if (e.code === 'EADDRINUSE') {
+        console.error(`Port ${port} is already in use. Try a different port.`);
+      }
+      process.exit(1);
     });
   } catch (error) {
     console.error("Failed to start server:", error);
