@@ -8,7 +8,7 @@ const events = [
     id: 1,
     title: "Birmingham Slam Camp",
     date: "June 19-21, 2025",
-    location: "Clay-Chalkville Middle School, Birmingham, AL",
+    location: "Clay-Chalkville Middle School, Alabama",
     price: "$249",
     fullPrice: 249,
     singleDayPrice: 149,
@@ -28,29 +28,35 @@ const events = [
     ],
     coaches: [
       {
-        name: "Michael Johnson",
-        title: "3x State Champion Coach",
+        name: "Zahid Valencia",
+        title: "2x NCAA Champion, 4x All-American",
         image: "/coach-1.jpg",
-        bio: "Coach Johnson has led teams to three state championships and developed over 25 individual state champions throughout his coaching career. His innovative training methods have helped wrestlers at all levels reach their full potential."
+        bio: "Valencia brings championship-level expertise with his impressive accolades as a 2x NCAA Champion and 4x All-American. His technical precision and competitive mindset make him one of the most sought-after clinicians in wrestling today."
       },
       {
-        name: "David Williams",
-        title: "NCAA All-American",
+        name: "Josh Shields",
+        title: "NCAA All-American, Former ASU Captain",
         image: "/coach-2.jpg",
-        bio: "As an NCAA All-American and international competitor, Coach Williams brings elite-level insights to his coaching. He specializes in neutral position techniques and competitive strategy development."
+        bio: "As an NCAA All-American and former Arizona State captain, Shields combines elite-level technique with proven leadership skills. He specializes in developing both the physical and mental aspects of competitive wrestling."
       },
       {
-        name: "Robert Smith",
-        title: "Mental Performance Specialist",
+        name: "Brandon Courtney",
+        title: "NCAA Finalist, 3x All-American",
         image: "/coach-3.jpg",
-        bio: "With a background in sports psychology and competitive wrestling, Coach Smith focuses on the mental aspects of wrestling. His approach helps athletes develop the mindset needed for championship performance."
+        bio: "Courtney's experience as an NCAA Finalist and 3x All-American provides invaluable insights into championship-level preparation and execution. His coaching focuses on advanced techniques and competitive strategy."
+      },
+      {
+        name: "Michael McGee",
+        title: "NCAA All-American, Pac-12 Champion",
+        image: "/coach-4.jpg",
+        bio: "McGee brings his championship experience as an NCAA All-American and Pac-12 Champion to develop wrestlers at all levels. His expertise in technical wrestling and training methodology helps athletes reach their full potential."
       }
     ],
     capacity: 200,
     ageGroup: "12-18 years",
-    signature: "Exclusive partnership with Fruit Hunters",
+    signature: "Elite NCAA Champions & All-Americans",
     benefits: [
-      "Personalized instruction from elite coaches",
+      "Personalized instruction from NCAA Champions",
       "Video analysis of technique",
       "Daily exotic fruit nutrition provided by Fruit Hunters",
       "Camp T-shirt and merchandise package",
@@ -61,7 +67,7 @@ const events = [
     id: 2,
     title: "National Champ Camp",
     date: "June 5-7, 2025",
-    location: "Roy Martin Middle School, Las Vegas, NV",
+    location: "Las Vegas, NV (exact location TBA)",
     price: "$349",
     fullPrice: 349,
     singleDayPrice: 175,
@@ -81,29 +87,29 @@ const events = [
     ],
     coaches: [
       {
-        name: "James Thompson",
-        title: "Olympic Gold Medalist",
+        name: "Jason Nolf",
+        title: "3x NCAA Champion, World Team Member",
         image: "/coach-4.jpg",
-        bio: "Thompson's gold medal performance established him as one of the most technically precise wrestlers in the world. He specializes in teaching advanced techniques that give wrestlers a competitive edge at the highest levels."
+        bio: "Nolf's dominance as a 3x NCAA Champion and World Team Member makes him one of the most accomplished clinicians in wrestling. His technical expertise and competitive experience provide invaluable insights for elite-level development."
       },
       {
-        name: "Marcus Allen",
-        title: "3x NCAA Champion",
+        name: "Mark Hall",
+        title: "NCAA Champion, Junior World Champion",
         image: "/coach-5.jpg",
-        bio: "With three NCAA titles to his name, Allen brings championship-level insights to his coaching. His specialty is developing strategic approaches to match preparation and execution."
+        bio: "Hall brings championship experience at both collegiate and international levels as an NCAA Champion and Junior World Champion. His coaching focuses on developing the technical precision and mental toughness needed for elite competition."
       },
       {
-        name: "Thomas Wilson",
-        title: "World Team Coach",
+        name: "Vincenzo Joseph",
+        title: "2x NCAA Champion",
         image: "/coach-6.jpg",
-        bio: "Having coached multiple World and Olympic teams, Wilson has developed training systems that have produced champions at every level. His holistic approach addresses all aspects of elite wrestling development."
+        bio: "Joseph's success as a 2x NCAA Champion demonstrates his mastery of high-level wrestling techniques and competition strategy. He specializes in developing wrestlers for championship-level performance and mental preparation."
       }
     ],
     capacity: 200,
     ageGroup: "14-22 years",
-    signature: "Focus on championship-level techniques",
+    signature: "Elite NCAA Champions & World Team Members",
     benefits: [
-      "Train directly with Olympic and NCAA champion wrestlers",
+      "Train directly with NCAA Champions and World Team members",
       "Advanced video analysis system",
       "Professional nutrition plan and guidance",
       "Premium camp gear package",
@@ -113,13 +119,13 @@ const events = [
   {
     id: 3,
     title: "Texas Recruiting Clinic",
-    date: "June 12-13, 2025",
-    location: "Arlington Martin High School, Arlington, TX",
+    date: "June 12, 2025",
+    location: "Arlington Martin High School, Texas",
     price: "$249",
     fullPrice: 249,
     singleDayPrice: null,
     shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
-    longDescription: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. The Texas Recruiting Clinic brings together college coaches and recruiting specialists to provide comprehensive guidance on the recruiting process. Participants will receive detailed evaluations from active college coaches, participate in skill development sessions, and learn about NCAA eligibility requirements. Day one focuses on technical skill assessment while day two centers on the business of college recruiting including highlight videos, contacting coaches, and scholarship opportunities. Each wrestler leaves with a personalized recruiting plan and video highlights.",
+    longDescription: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. The Texas Recruiting Clinic brings together multiple NCAA stars for spotlight matches and breakout training groups, providing comprehensive guidance on the recruiting process. Participants will receive detailed evaluations from active college coaches, participate in skill development sessions, and learn about NCAA eligibility requirements. The focus is on recruiting exposure and high-level matches that showcase athlete abilities in a competitive environment. Each wrestler leaves with enhanced visibility and a personalized recruiting plan.",
     image: "/event3.jpg",
     additionalImages: [
       "/gallery-3-1.jpg",
@@ -128,50 +134,49 @@ const events = [
     videoUrl: "/videos/recruiting-clinic.mp4",
     accent: "red",
     schedule: [
-      { day: "Day 1", time: "9:00 AM - 4:00 PM", focus: "Skill Assessment & Development with College Coaches" },
-      { day: "Day 2", time: "9:00 AM - 4:00 PM", focus: "Recruiting Process Workshop & Individual Evaluations" }
+      { day: "Day 1", time: "9:00 AM - 4:00 PM", focus: "NCAA Star Spotlight Matches & Breakout Training Groups" }
     ],
     coaches: [
       {
-        name: "Brian Davis",
-        title: "D1 College Coach",
+        name: "Multiple NCAA Stars",
+        title: "Elite College Athletes",
         image: "/coach-7.jpg",
-        bio: "Coach Davis has developed multiple All-Americans and NCAA qualifiers during his tenure as a Division I coach. He has an exceptional eye for talent and understands what it takes to compete at the collegiate level."
+        bio: "A rotating roster of current and former NCAA champions and All-Americans who will lead spotlight matches and provide technical instruction. Names to be announced closer to the event date."
       },
       {
-        name: "Mark Wilson",
-        title: "D2 College Coach",
+        name: "College Recruiting Panel",
+        title: "D1 & D2 Coaches",
         image: "/coach-8.jpg",
-        bio: "With over 15 years of coaching experience at the Division II level, Coach Wilson has guided numerous wrestlers to conference titles and national recognition. He specializes in helping wrestlers find the right collegiate fit."
+        bio: "Active college coaches from Division I and Division II programs who understand the recruiting process and what it takes to compete at the collegiate level. They provide evaluations and recruiting guidance."
       },
       {
-        name: "Sarah Johnson",
-        title: "Recruiting Specialist",
+        name: "Recruiting Specialists",
+        title: "NCAA Compliance Experts",
         image: "/coach-9.jpg",
-        bio: "Johnson has helped hundreds of athletes navigate the recruiting process and secure athletic scholarships. Her knowledge of NCAA regulations and requirements is unmatched in the wrestling community."
+        bio: "Specialists who help athletes navigate the complex NCAA recruiting process, including eligibility requirements, scholarship opportunities, and communication strategies with college coaches."
       }
     ],
     capacity: 150,
     ageGroup: "15-18 years",
-    signature: "College coach evaluations included",
+    signature: "Recruiting exposure with NCAA stars",
     benefits: [
+      "Spotlight matches with NCAA stars",
       "Direct evaluation from college coaches",
-      "Creation of recruiting profile and highlight video",
+      "Enhanced recruiting visibility and exposure",
       "Workshop on NCAA eligibility requirements",
-      "Guidance on contacting college coaches",
       "One-on-one recruiting consultation"
     ]
   },
   {
     id: 4,
-    title: "Panther Train Tour",
-    date: "July 23-25, 2025",
-    location: "Various locations",
+    title: "Panther Train Tour Camp",
+    date: "July (TBA), 2025",
+    location: "Chicago, IL (exact location TBA)",
     price: "$99 per day",
     fullPrice: 200,
     singleDayPrice: 99,
-    shortDescription: "A multi-location training tour with elite coaches.",
-    longDescription: "Experience training in multiple elite facilities over three days with the innovative Panther Train Tour. This unique wrestling camp moves to a different training location each day, providing athletes with diverse environments and coaching perspectives. Specialized coaches focus on specific wrestling positions each day - neutral on day one, bottom on day two, and top position on day three. The program is designed to simulate tournament conditions and develop adaptability. Transportation between facilities is provided, and each participant receives exclusive Panther Train Tour gear. Limited to 120 wrestlers to ensure quality instruction.",
+    shortDescription: "D1 technique and mindset training with Northwestern wrestlers and coaches.",
+    longDescription: "Experience elite-level training with Northwestern University wrestlers and coaches in this unique camp focused on D1 technique and championship mindset development. The Panther Train Tour Camp brings together the proven training methodologies of a top Division I program with the expertise of RTC (Regional Training Center) and Panther Train staff. Participants will learn the systematic approaches and mental preparation strategies that have made Northwestern a consistent force in collegiate wrestling. This intensive training experience emphasizes both technical excellence and the competitive mindset required for success at the highest levels.",
     image: "/event4.jpg",
     additionalImages: [
       "/gallery-4-1.jpg",
@@ -180,38 +185,38 @@ const events = [
     videoUrl: "/videos/tour-highlights.mp4",
     accent: "black",
     schedule: [
-      { day: "Day 1", time: "10:00 AM - 3:00 PM", focus: "Neutral Position & Takedowns - North Training Center" },
-      { day: "Day 2", time: "10:00 AM - 3:00 PM", focus: "Bottom Position & Escapes - East Wrestling Academy" },
-      { day: "Day 3", time: "10:00 AM - 3:00 PM", focus: "Top Position & Control - Central Athletic Complex" }
+      { day: "Day 1", time: "TBA", focus: "D1 Technical Training & Position Work" },
+      { day: "Day 2", time: "TBA", focus: "Championship Mindset & Competition Preparation" },
+      { day: "Day 3", time: "TBA", focus: "Elite Performance Systems & Mental Toughness" }
     ],
     coaches: [
       {
-        name: "Cory Land",
-        title: "5x National Champion",
+        name: "Northwestern Wrestlers",
+        title: "D1 Collegiate Athletes",
         image: "/coach-10.jpg",
-        bio: "Cory Land is a decorated wrestler with multiple national titles and international medals. His dynamic wrestling style and innovative techniques have made him a sought-after clinician across the country."
+        bio: "Current Northwestern University wrestlers who bring active D1 competition experience and cutting-edge technique to their instruction. They provide insights into the daily training and competitive mindset of elite collegiate wrestling."
       },
       {
-        name: "Garrett Funk",
-        title: "NCAA Division I All-American",
+        name: "Northwestern Coaches",
+        title: "D1 Coaching Staff",
         image: "/coach-11.jpg",
-        bio: "Funk brings high-level collegiate experience to his coaching. His specialization in bottom position work has helped countless wrestlers improve their escapes and reversals."
+        bio: "Members of the Northwestern University coaching staff who have developed successful systems for training championship-level wrestlers. Their expertise in technique and program development provides invaluable guidance for serious competitors."
       },
       {
-        name: "Trever Anderson",
-        title: "Elite Development Coach",
+        name: "RTC/Panther Train Staff",
+        title: "Elite Training Specialists",
         image: "/coach-12.jpg",
-        bio: "Anderson has developed a systematic approach to top position control that has been adopted by numerous successful programs. His teaching methods make complex techniques accessible to wrestlers of all levels."
+        bio: "Experienced coaches from the Regional Training Center and Panther Train organization who specialize in developing elite-level wrestling skills and competitive mindset. They bring proven methodologies for athletic development."
       }
     ],
     capacity: 120,
     ageGroup: "13-20 years",
-    signature: "Travel across multiple training facilities",
+    signature: "D1 Northwestern training experience",
     benefits: [
-      "Experience diverse training environments",
-      "Learn from multiple coaching philosophies",
-      "Network with wrestlers from different regions",
-      "Daily transportation between locations",
+      "Train with active D1 wrestlers and coaches",
+      "Learn Northwestern's proven training systems",
+      "Develop championship-level mindset",
+      "Experience elite collegiate training environment",
       "Panther Train Tour exclusive gear"
     ]
   }
