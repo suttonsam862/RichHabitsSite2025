@@ -148,59 +148,11 @@ export default function Shop() {
     { id: "competition", name: "Competition Series" }
   ];
 
-  // Create structured data for product list
-  const productListSchema = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "itemListElement": Array.isArray(filteredProducts) ? filteredProducts.map((product, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "item": {
-        "@type": "Product",
-        "name": product?.title || "Athletic Apparel",
-        "description": product?.description || "Premium athletic apparel from Rich Habits",
-        "image": product?.image || "",
-        "url": `/product/${product?.handle || product?.id || ""}`,
-        "brand": {
-          "@type": "Brand",
-          "name": "Rich Habits"
-        },
-        "offers": {
-          "@type": "Offer",
-          "price": product?.price ? product.price.replace('$', '') : "0",
-          "priceCurrency": "USD",
-          "availability": product?.availableForSale ? 
-            "https://schema.org/InStock" : 
-            "https://schema.org/OutOfStock"
-        }
-      }
-    })) : []
-  };
-
   return (
     <>
       <Helmet>
         <title>Shop | Rich Habits</title>
         <meta name="description" content="Shop premium athletic apparel designed for high-performing athletes." />
-        <meta name="keywords" content="wrestling gear, athletic apparel, performance clothing, custom team uniforms" />
-        
-        {/* Open Graph tags */}
-        <meta property="og:title" content="Shop | Rich Habits" />
-        <meta property="og:description" content="Shop premium athletic apparel designed for high-performing athletes." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rich-habits.com/shop" />
-        <meta property="og:image" content="https://rich-habits.com/shop-featured.jpg" />
-        
-        {/* Twitter Card tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Shop | Rich Habits" />
-        <meta name="twitter:description" content="Shop premium athletic apparel designed for high-performing athletes." />
-        <meta name="twitter:image" content="https://rich-habits.com/shop-twitter.jpg" />
-        
-        {/* Structured data JSON-LD */}
-        <script type="application/ld+json">
-          {JSON.stringify(productListSchema)}
-        </script>
       </Helmet>
       
       <div className="min-h-[80vh] flex items-center justify-center bg-white">

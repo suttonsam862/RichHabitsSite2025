@@ -28,24 +28,6 @@ export default function Contact() {
   const [submissionComplete, setSubmissionComplete] = useState(false);
   const { toast } = useToast();
   
-  // Structured data for contact page - with extra safety for production builds
-  const contactPageSchema = {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    "name": "Contact Rich Habits",
-    "description": "Get in touch with the Rich Habits team for inquiries about custom orders, wrestling camps, or general questions.",
-    "mainEntity": {
-      "@type": "Organization",
-      "name": "Rich Habits",
-      "telephone": "+1-480-810-4477",
-      "email": "samsutton@rich-habits.com",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "US"
-      }
-    }
-  };
-  
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -80,25 +62,6 @@ export default function Contact() {
       <Helmet>
         <title>Contact | Rich Habits</title>
         <meta name="description" content="Get in touch with Rich Habits. Send us a message or find our contact information." />
-        <meta name="keywords" content="contact Rich Habits, wrestling camp inquiries, custom apparel orders, athlete support" />
-        
-        {/* Open Graph tags */}
-        <meta property="og:title" content="Contact | Rich Habits" />
-        <meta property="og:description" content="Get in touch with Rich Habits. Send us a message or find our contact information." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rich-habits.com/contact" />
-        <meta property="og:image" content="https://rich-habits.com/contact-featured.jpg" />
-        
-        {/* Twitter Card tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Contact | Rich Habits" />
-        <meta name="twitter:description" content="Get in touch with Rich Habits. Send us a message or find our contact information." />
-        <meta name="twitter:image" content="https://rich-habits.com/contact-twitter.jpg" />
-        
-        {/* Structured data JSON-LD */}
-        <script type="application/ld+json">
-          {JSON.stringify(contactPageSchema)}
-        </script>
       </Helmet>
       
       <div className="bg-white">

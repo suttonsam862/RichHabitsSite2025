@@ -8,85 +8,11 @@ import samProfileImage from "@assets/sam.png";
 import carterProfileImage from "@assets/carter.jpg";
 
 export default function About() {
-  // Structured data for about page (organization)
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "SportsOrganization",
-    "name": "Rich Habits",
-    "url": "https://rich-habits.com",
-    "logo": "https://rich-habits.com/logo.png",
-    "description": "Premium athletic apparel and wrestling camps for high-performing athletes.",
-    "foundingDate": "2020",
-    "founder": {
-      "@type": "Person",
-      "name": "Sam Sutton"
-    },
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "US"
-    },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+1-480-810-4477",
-      "email": "samsutton@rich-habits.com",
-      "contactType": "Customer Service"
-    },
-    "sameAs": [
-      "https://instagram.com/richhabits",
-      "https://facebook.com/richhabits"
-    ]
-  };
-
-  // Team member structured data
-  const teamSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Rich Habits Team",
-    "member": [
-      {
-        "@type": "Person",
-        "name": "Sam Sutton",
-        "jobTitle": "Founder & CEO",
-        "image": samProfileImage || "",
-        "description": "Sam brings years of experience in wrestling and business to Rich Habits, with a vision to create premium athletic experiences."
-      },
-      {
-        "@type": "Person",
-        "name": "Carter Fretty",
-        "jobTitle": "Operations Manager",
-        "image": carterProfileImage || "",
-        "description": "Carter manages the day-to-day operations and ensures all Rich Habits events and products maintain the highest quality standards."
-      }
-    ]
-  };
-
   return (
     <>
       <Helmet>
         <title>About | Rich Habits</title>
         <meta name="description" content="Learn about Rich Habits, our mission, values, and the team behind our premium athletic apparel." />
-        <meta name="keywords" content="Rich Habits team, wrestling coaches, athletic apparel company, sports organization" />
-        
-        {/* Open Graph tags */}
-        <meta property="og:title" content="About | Rich Habits" />
-        <meta property="og:description" content="Learn about Rich Habits, our mission, values, and the team behind our premium athletic apparel." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rich-habits.com/about" />
-        <meta property="og:image" content="https://rich-habits.com/about-featured.jpg" />
-        
-        {/* Twitter Card tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="About | Rich Habits" />
-        <meta name="twitter:description" content="Learn about Rich Habits, our mission, values, and the team behind our premium athletic apparel." />
-        <meta name="twitter:image" content="https://rich-habits.com/about-twitter.jpg" />
-        
-        {/* Structured data for organization and team */}
-        <script type="application/ld+json">
-          {JSON.stringify(organizationSchema)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(teamSchema)}
-        </script>
       </Helmet>
       
       <div className="bg-white">

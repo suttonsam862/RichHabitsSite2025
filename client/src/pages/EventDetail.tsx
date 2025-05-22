@@ -347,68 +347,6 @@ export default function EventDetail() {
       <Helmet>
         <title>{event.title} | Rich Habits</title>
         <meta name="description" content={event.shortDescription} />
-        <meta name="keywords" content={`${event.title}, wrestling camp, wrestling clinic, rich habits, ${event.location}`} />
-        
-        {/* Open Graph tags for social sharing */}
-        <meta property="og:title" content={`${event.title} | Rich Habits`} />
-        <meta property="og:description" content={event.shortDescription} />
-        <meta property="og:type" content="event" />
-        <meta property="og:url" content={`https://rich-habits.com${location}`} />
-        <meta property="og:image" content={getEventMedia(event.id).banner} />
-        
-        {/* Twitter card tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${event.title} | Rich Habits`} />
-        <meta name="twitter:description" content={event.shortDescription} />
-        <meta name="twitter:image" content={getEventMedia(event.id).banner} />
-        
-        {/* Structured data for the event */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SportsEvent",
-            "name": event.title,
-            "description": event.description || event.shortDescription,
-            "startDate": event.startDate || "2025-06-01",
-            "endDate": event.endDate || event.startDate || "2025-06-03",
-            "eventStatus": "https://schema.org/EventScheduled",
-            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-            "location": {
-              "@type": "Place",
-              "name": event.location || "Wrestling Venue",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": event.city || "Birmingham",
-                "addressRegion": event.state || "AL",
-                "addressCountry": "US"
-              }
-            },
-            "image": [
-              event && event.id && getEventMedia && typeof getEventMedia(event.id).banner === 'string' 
-                ? getEventMedia(event.id).banner 
-                : "https://rich-habits.com/event-image.jpg"
-            ],
-            "organizer": {
-              "@type": "Organization",
-              "name": "Rich Habits",
-              "url": "https://rich-habits.com"
-            },
-            "offers": {
-              "@type": "Offer",
-              "price": (event.fullCampPrice || "249").toString(),
-              "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock",
-              "url": `https://rich-habits.com${location}`,
-              "validFrom": "2025-01-01"
-            },
-            "performer": event && event.coaches && Array.isArray(event.coaches) ? 
-              event.coaches.map((coach: any) => ({
-                "@type": "Person",
-                "name": coach?.name || "",
-                "jobTitle": coach?.title || ""
-              })) : []
-          })}
-        </script>
       </Helmet>
       
       {/* Banner at the top with lighting effects based on event */}
