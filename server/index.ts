@@ -16,9 +16,18 @@ app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from the public directory using a simpler approach
-const publicPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public');
-app.use(express.static(publicPath));
+// Serve static files - production and development
+if (process.env.NODE_ENV === 'production') {
+  // In production, serve built assets
+  const distPublicPath = path.resolve(process.cwd(), 'dist', 'public');
+  console.log('Production: Serving static files from:', distPublicPath);
+  app.use(express.static(distPublicPath));
+} else {
+  // In development, serve from public folder
+  const publicPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public');
+  console.log('Development: Serving static files from:', publicPath);
+  app.use(express.static(publicPath));
+}
 
 app.use(
   session({

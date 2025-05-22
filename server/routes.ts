@@ -522,11 +522,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     // Serve the Rich Habits frontend
     if (process.env.NODE_ENV === 'production') {
-      const indexPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
+      const indexPath = path.resolve(process.cwd(), 'dist', 'public', 'index.html');
+      console.log('Attempting to serve index.html from:', indexPath);
+      console.log('File exists:', fs.existsSync(indexPath));
+      
       if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
       } else {
-        res.status(404).send('Rich Habits site not found - build required');
+        res.status(404).send(`Rich Habits site not found at: ${indexPath}`);
       }
     } else {
       // In development, let Vite handle the frontend
