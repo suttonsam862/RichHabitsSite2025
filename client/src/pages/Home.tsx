@@ -7,9 +7,13 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Inspired by Kourtney Roy aesthetic */}
       <section className="w-full min-h-[95vh] flex items-center justify-center relative overflow-hidden">
-        {/* Red color block replacing heavy hero image */}
+        {/* Hero background image */}
         <div className="absolute inset-0 w-full h-full">
-          <div className="w-full h-full bg-red-600"></div>
+          <img 
+            src="/images/hero-background.webp" 
+            alt="Rich Habits premium athletic wear collection"
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
         </div>
