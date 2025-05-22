@@ -96,33 +96,68 @@ app.get('*', (req, res) => {
   `);
 });
 
-// Start server with proper port binding for Replit
-const PORT = process.env.PORT || 3000;
+// Enhanced port handling for Replit deployment
+// Start by checking preferred ports in order of priority
+const preferredPorts = [
+  process.env.PORT, // First try Replit's assigned port
+  3000,             // Then standard Node port
+  8080,             // Common alternative
+  0                 // Let OS assign random port as last resort
+].filter(Boolean);  // Remove any undefined values
 
-// Try to start the server, with fallback ports if needed
-const startServer = (port, attempts = 0) => {
-  try {
-    const server = app.listen(port, '0.0.0.0', () => {
-      console.log(`Server successfully running on port ${port}`);
-      console.log(`Health check: http://localhost:${port}/health`);
-      console.log(`API info: http://localhost:${port}/api/info`);
-    });
-    
-    // Handle server errors
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE' && attempts < 3) {
-        console.log(`Port ${port} is in use, trying port ${port + 1}...`);
-        startServer(port + 1, attempts + 1);
-      } else {
-        console.error('Failed to start server:', err.message);
-        process.exit(1);
-      }
-    });
-  } catch (error) {
-    console.error('Server start error:', error);
-    process.exit(1);
+/**
+ * Find an available port and start the server
+ * This function tries each port in sequence, with smart fallback
+ */
+const findAvailablePortAndStart = async () => {
+  let lastError = null;
+  
+  // Try each port in our preferred list
+  for (const port of preferredPorts) {
+    try {
+      console.log(`Attempting to start server on port ${port}...`);
+      const server = app.listen(port, '0.0.0.0');
+      
+      // Wait a moment to ensure server is fully started
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Get the actual server address (with safer access)
+      const address = server.address();
+      const actualPort = address ? address.port : port;
+      
+      console.log(`✅ SUCCESS! Server running on port ${actualPort}`);
+      console.log(`   Health check: http://localhost:${actualPort}/health`);
+      console.log(`   API info: http://localhost:${actualPort}/api/info`);
+      
+      // Graceful shutdown handling
+      const shutdown = () => {
+        console.log('Shutting down server gracefully...');
+        server.close(() => {
+          console.log('Server closed successfully');
+          process.exit(0);
+        });
+      };
+      
+      // Register shutdown handlers
+      process.on('SIGTERM', shutdown);
+      process.on('SIGINT', shutdown);
+      
+      // Successfully started
+      return;
+    } catch (err) {
+      lastError = err;
+      console.log(`Could not use port ${port}: ${err.message}`);
+    }
   }
+  
+  // If we get here, we couldn't start on any port
+  console.error('Failed to start server on any port');
+  console.error('Last error:', lastError);
+  process.exit(1);
 };
 
-// Start the server
-startServer(PORT);
+// Start the server on best available port
+findAvailablePortAndStart().catch(err => {
+  console.error('Unexpected error during server startup:', err);
+  process.exit(1);
+});
