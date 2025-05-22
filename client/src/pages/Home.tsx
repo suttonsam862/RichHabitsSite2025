@@ -177,8 +177,14 @@ export default function Home() {
       
       {/* Fruit Hunters Partnership - Minimalist Approach */}
       <section className="py-24 bg-gray-100 relative">
-        {/* Red background block instead of image */}
-        <div className="absolute inset-0 opacity-10 bg-red-600"></div>
+        {/* Fruit Hunters branded background */}
+        <div className="absolute inset-0 opacity-15">
+          <img 
+            src="/images/fruit-hunters-box.webp" 
+            alt="Fruit Hunters premium nutrition partnership"
+            className="w-full h-full object-cover"
+          />
+        </div>
         
         <div className="container mx-auto px-4 relative z-10">
           <motion.div 
