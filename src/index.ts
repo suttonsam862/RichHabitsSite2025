@@ -117,9 +117,9 @@ async function startServer() {
     
     // Use the correct port for Replit deployment
     // Always use process.env.PORT (default 3000) in production for Replit
-    const port = process.env.PORT || 3000;
+    const port = parseInt(process.env.PORT || '3000', 10);
       
-    server.listen(port, '0.0.0.0', () => {
+    server.listen(port, () => {
       console.log(`✅ Server successfully started!`);
       console.log(`✅ Listening on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
       console.log(`✅ Health check available at http://localhost:${port}/health`);

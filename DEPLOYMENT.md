@@ -1,51 +1,96 @@
-# Replit Deployment Guide
+# Rich Habits Replit Deployment Guide
 
-This guide provides instructions for deploying this TypeScript project on Replit.
+This guide provides comprehensive instructions for deploying your Rich Habits e-commerce platform on Replit, with specific solutions for the 502 Bad Gateway error.
 
-## Configuration Summary
+## Replit Configuration
 
-The application has been configured for proper deployment with the following settings:
+The application is now configured with robust deployment settings:
 
-- Server listens on `process.env.PORT` (defaulting to 3000) in production mode
-- TypeScript configuration is set with proper output directory (`./dist`)
-- ESBuild is used to bundle server-side code for production
-- Development mode uses port 5000 for local testing
+- Server automatically detects and uses the appropriate port (`process.env.PORT`)
+- TypeScript compilation now correctly handles ESM modules
+- Advanced error handling captures and logs all issues in production
+- Health check endpoint provides deployment verification
+- Proper handling of missing build files prevents silent failures
 
-## Deployment Steps
+## Deployment Process
 
-1. **Verify Server Configuration**
-   - The server is configured to use environment variables correctly
-   - Health endpoint is available at `/health` for monitoring
-
-2. **Run Deployment Check**
+1. **Pre-Deployment Check**
    ```
-   ./scripts/deploy-production.sh
+   chmod +x scripts/deploy.sh && ./scripts/deploy.sh
    ```
-   This script checks that everything is properly configured and builds the server code.
+   This script ensures all files are correctly compiled and ready for deployment.
 
-3. **Deploy on Replit**
+2. **Manual Build**
+   If the deployment script doesn't complete, follow these steps:
+   ```
+   # Compile TypeScript code
+   npx tsc
+
+   # Bundle server code for production
+   npx esbuild src/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+   # Build client
+   npx vite build
+   ```
+
+3. **Start Production Server**
+   ```
+   NODE_ENV=production node launch.js
+   ```
+   The launcher script includes additional error handling and verification.
+
+4. **Deploy on Replit**
+   - Click the "Run" button to verify everything works locally
    - Click the "Deploy" button in the Replit interface
-   - Replit will automatically run the build process using the configuration in `.replit`
-   - The production server will start on the assigned port
+   - The deployment will use the configurations set in `.replit`
 
-4. **Verify Deployment**
-   - Check that the application is accessible at your custom domain
-   - Verify the health endpoint at `/health` returns `{"status":"ok"}`
+5. **Verify Deployment**
+   - The application should now be accessible at your custom domain
+   - Check that the health endpoint returns a valid response:
+   ```
+   curl https://your-domain.com/health
+   ```
 
-## Environment Settings
+## Fixing 502 Bad Gateway Errors
 
-Ensure these environment variables are properly set:
+If you encounter a 502 Bad Gateway error:
 
-- `NODE_ENV`: Set to "production" for deployment
-- `PORT`: Set automatically by Replit during deployment (defaults to 3000 if not set)
-- `DATABASE_URL`: Connection string for your database
-- All application API keys and secrets should be configured in the Secrets section
+1. **Check Server Logs**
+   - Look for specific error messages in the Replit console
+   - Verify the server started successfully
 
-## Troubleshooting
+2. **Port Configuration**
+   - Ensure the server is listening on the correct port (automatically set by Replit)
+   - The code now uses `const port = parseInt(process.env.PORT || '3000', 10)` and doesn't specify host binding
 
-If you encounter any deployment issues:
+3. **Build Process**
+   - Check that all TypeScript files compiled correctly
+   - The `dist` directory should contain the compiled JavaScript
 
-1. Check server logs for error messages
-2. Verify that the server is listening on the correct port
-3. Ensure all required environment variables are set
-4. Confirm that the application builds correctly before deployment
+4. **Module Resolution**
+   - TypeScript is now configured with the Bundler module resolution
+   - ESM imports are properly handled
+
+5. **Domain Verification**
+   - Ensure your domain is correctly linked to your Replit project
+   - DNS settings should include the proper CNAME or A record
+   - SSL certification should be active
+
+## Environment Variables
+
+Make sure these environment variables are properly set in the Replit Secrets panel:
+
+- `NODE_ENV`: Should be "production" in deployment
+- `PORT`: Automatically set by Replit (don't override)
+- `DATABASE_URL`: Your PostgreSQL database connection string
+- All API keys and external service credentials as listed in your environment secrets
+
+## DNS Troubleshooting
+
+If your domain isn't connecting:
+
+1. Verify that the domain is properly verified in Replit
+2. Check that DNS records are correct:
+   - CNAME: `your-domain.com` should point to `your-repl-name.your-username.repl.co`
+   - Allow up to 24 hours for DNS changes to propagate
+3. SSL certificates are automatically provisioned by Replit
