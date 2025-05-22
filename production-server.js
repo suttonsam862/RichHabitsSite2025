@@ -23,8 +23,8 @@ app.get('/api/info', (req, res) => {
   });
 });
 
-// Serve static files from client/dist
-const clientDistPath = path.join(__dirname, 'client/dist');
+// Serve static files from dist/public (Vite's output directory)
+const clientDistPath = path.join(__dirname, 'dist/public');
 console.log(`Serving static files from: ${clientDistPath}`);
 app.use(express.static(clientDistPath));
 
@@ -38,7 +38,14 @@ app.get('*', (req, res) => {
     console.log(`Serving index.html for path: ${req.path}`);
     res.sendFile(indexPath);
   } else {
-    res.status(404).send('Client app not built. Run: cd client && npm run build');
+    // Fallback to the temporary index.html if the build isn't complete
+    const tempIndexPath = path.join(__dirname, 'client/dist/index.html');
+    if (fs.existsSync(tempIndexPath)) {
+      console.log(`Serving temporary index.html for path: ${req.path}`);
+      res.sendFile(tempIndexPath);
+    } else {
+      res.status(404).send('Client app not built. Run: cd client && npm run build');
+    }
   }
 });
 
