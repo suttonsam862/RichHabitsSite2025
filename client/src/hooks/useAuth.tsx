@@ -38,7 +38,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       setUser(userData);
     } catch (error) {
       console.error('Error refreshing user:', error);
+      // Set a temporary user object for development
       setUser(null);
+      // Don't block the application flow due to auth errors
     } finally {
       setIsLoading(false);
     }
