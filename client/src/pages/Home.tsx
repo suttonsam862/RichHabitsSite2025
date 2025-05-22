@@ -12,7 +12,7 @@ export default function Home() {
           <img 
             src="/images/hero-background.webp" 
             alt="Rich Habits premium athletic wear collection"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-right"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
