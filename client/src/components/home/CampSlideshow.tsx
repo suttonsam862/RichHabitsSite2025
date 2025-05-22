@@ -99,13 +99,15 @@ export function CampSlideshow() {
                   ></iframe>
                 </div>
               ) : (
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ 
-                    backgroundImage: `url(${currentCamp.image})`,
-                    filter: 'brightness(0.7)'
-                  }}
-                ></div>
+                <div className="absolute inset-0 bg-cover bg-center">
+                  <img 
+                    src={currentCamp.image} 
+                    alt={currentCamp.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    style={{ filter: 'brightness(0.7)' }}
+                  />
+                </div>
               )}
               
               {/* Content */}

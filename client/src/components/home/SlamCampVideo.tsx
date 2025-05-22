@@ -97,7 +97,7 @@ export function SlamCampVideo() {
                   loop
                   playsInline
                   controls={false}
-                  preload="auto"
+                  preload="none"
                   onLoadedMetadata={(e) => {
                     if (videoRef.current) {
                       videoRef.current.play().catch(err => console.log('Autoplay failed:', err));
