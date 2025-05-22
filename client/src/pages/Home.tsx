@@ -10,8 +10,7 @@ export default function Home() {
           <div className="bg-white bg-opacity-85 backdrop-blur-sm p-8 md:p-12 rounded-lg shadow-md max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Performance Gear for Elite Athletes</h2>
             <p className="text-xl text-gray-700 mb-8">
-              A comprehensive athlete-centric e-commerce and event management platform providing 
-              advanced, interactive experiences for sports enthusiasts.
+              Premium athletic apparel for high-performing athletes who demand quality and style. Shop our collections and custom team apparel.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/events" className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-md text-center transition-colors">
