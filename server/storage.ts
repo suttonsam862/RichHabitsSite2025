@@ -36,7 +36,8 @@ export interface IStorage {
   getRegistration(id: number): Promise<EventRegistration | undefined>;
   getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined>;
   updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined>;
-  getEventRegistrations(eventId?: number): Promise<EventRegistration[]>;
+  updateEventRegistrationPaymentStatus(paymentIntentId: string, status: string): Promise<boolean>;
+  getEventRegistrations(eventId?: number, paymentStatus?: string): Promise<EventRegistration[]>;
   getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]>;
   createCompletedEventRegistration(data: InsertCompletedEventRegistration): Promise<CompletedEventRegistration>;
   updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
@@ -144,6 +145,54 @@ export class DatabaseStorage implements IStorage {
       .where(eq(eventRegistrations.id, id))
       .returning();
     return updated;
+  }
+  
+  async updateEventRegistrationPaymentStatus(paymentIntentId: string, status: string): Promise<boolean> {
+    try {
+      const client = await pool.connect();
+      
+      try {
+        // Find registrations with this payment intent ID
+        const findQuery = `
+          SELECT id FROM event_registrations 
+          WHERE stripe_payment_intent_id = $1
+        `;
+        
+        const result = await client.query(findQuery, [paymentIntentId]);
+        
+        if (result.rows.length === 0) {
+          console.warn(`No registration found with payment intent ID ${paymentIntentId}`);
+          return false;
+        }
+        
+        // Update payment status and complete registration if necessary
+        for (const row of result.rows) {
+          const registrationId = row.id;
+          
+          // Update the existing registration record
+          const updateQuery = `
+            UPDATE event_registrations 
+            SET payment_status = $1, 
+                updated_at = NOW() 
+            WHERE id = $2
+          `;
+          
+          await client.query(updateQuery, [status, registrationId]);
+          
+          // If payment is completed, create a completed registration record
+          if (status === 'completed') {
+            await this.createCompletedEventRegistration(registrationId, paymentIntentId);
+          }
+        }
+        
+        return true;
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('Error updating registration payment status:', error);
+      return false;
+    }
   }
   
   async getEventRegistrations(eventId?: number, paymentStatus?: string): Promise<EventRegistration[]> {

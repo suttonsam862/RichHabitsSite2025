@@ -381,6 +381,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stripe API endpoints for event registrations
+  app.post("/api/create-payment-intent", async (req, res) => {
+    try {
+      const { amount, eventId, registrationType, attendee } = req.body;
+      
+      if (!amount || isNaN(amount) || amount <= 0) {
+        return res.status(400).json({ error: "Invalid amount" });
+      }
+      
+      // Create a payment intent with the order amount and currency
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // convert to cents
+        currency: "usd",
+        metadata: {
+          eventId: eventId.toString(),
+          registrationType,
+          attendeeName: `${attendee.firstName} ${attendee.lastName}`,
+          attendeeEmail: attendee.email
+        },
+      });
+      
+      // Store registration information pending payment confirmation
+      await storage.createEventRegistration({
+        eventId,
+        registrationType,
+        attendeeInfo: {
+          firstName: attendee.firstName,
+          lastName: attendee.lastName,
+          email: attendee.email,
+          phone: attendee.phone,
+          age: parseInt(attendee.age, 10),
+          experience: attendee.experience,
+          emergencyContact: {
+            name: attendee.emergencyContact.name,
+            phone: attendee.emergencyContact.phone
+          },
+          specialRequirements: attendee.specialRequirements || null
+        },
+        amount: amount,
+        paymentIntentId: paymentIntent.id,
+        paymentStatus: "pending",
+        createdAt: new Date()
+      });
+      
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+      });
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+      res.status(500).json({ 
+        error: "Failed to create payment intent",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+  
+  // Webhook endpoint to handle Stripe events
+  app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    
+    let event;
+    
+    try {
+      // Verify the webhook signature
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig || '',
+        process.env.STRIPE_WEBHOOK_SECRET || ''
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err);
+      return res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
+    
+    // Handle specific events
+    if (event.type === 'payment_intent.succeeded') {
+      const paymentIntent = event.data.object;
+      
+      try {
+        // Update the payment status in our database
+        await storage.updateEventRegistrationPaymentStatus(
+          paymentIntent.id,
+          "completed"
+        );
+        
+        // Additional actions like sending confirmation emails could go here
+        
+        console.log(`PaymentIntent ${paymentIntent.id} was successful!`);
+      } catch (error) {
+        console.error('Error processing successful payment:', error);
+      }
+    } else if (event.type === 'payment_intent.payment_failed') {
+      const paymentIntent = event.data.object;
+      
+      try {
+        // Update the payment status in our database
+        await storage.updateEventRegistrationPaymentStatus(
+          paymentIntent.id,
+          "failed"
+        );
+        
+        console.log(`PaymentIntent ${paymentIntent.id} failed.`);
+      } catch (error) {
+        console.error('Error processing failed payment:', error);
+      }
+    }
+    
+    // Return a 200 response to acknowledge receipt of the event
+    res.status(200).json({received: true});
+  });
+
   // Create Express HTTP server
   const httpServer = createServer(app);
   
