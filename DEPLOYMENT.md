@@ -1,96 +1,172 @@
-# Rich Habits Replit Deployment Guide
+# Rich Habits Deployment Guide
 
-This guide provides comprehensive instructions for deploying your Rich Habits e-commerce platform on Replit, with specific solutions for the 502 Bad Gateway error.
+This guide explains how to properly deploy the Rich Habits e-commerce and event management platform on Replit.
 
-## Replit Configuration
+## Deployment Steps
 
-The application is now configured with robust deployment settings:
+### 1. Build the Application
 
-- Server automatically detects and uses the appropriate port (`process.env.PORT`)
-- TypeScript compilation now correctly handles ESM modules
-- Advanced error handling captures and logs all issues in production
-- Health check endpoint provides deployment verification
-- Proper handling of missing build files prevents silent failures
+Before deploying, make sure to build both the client and server:
 
-## Deployment Process
+```bash
+# Run from project root
+npm run build
+```
 
-1. **Pre-Deployment Check**
-   ```
-   chmod +x scripts/deploy.sh && ./scripts/deploy.sh
-   ```
-   This script ensures all files are correctly compiled and ready for deployment.
+This command will:
+- Build the React frontend using Vite
+- Compile the TypeScript server code
+- Generate all necessary files in the `dist` directory
 
-2. **Manual Build**
-   If the deployment script doesn't complete, follow these steps:
-   ```
-   # Compile TypeScript code
-   npx tsc
+### 2. Start the Application
 
-   # Bundle server code for production
-   npx esbuild src/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+There are two ways to run the application:
 
-   # Build client
-   npx vite build
-   ```
+#### Development Mode
 
-3. **Start Production Server**
-   ```
-   NODE_ENV=production node launch.js
-   ```
-   The launcher script includes additional error handling and verification.
+```bash
+npm run dev
+```
 
-4. **Deploy on Replit**
-   - Click the "Run" button to verify everything works locally
-   - Click the "Deploy" button in the Replit interface
-   - The deployment will use the configurations set in `.replit`
+This starts the development server with hot-reloading enabled.
 
-5. **Verify Deployment**
-   - The application should now be accessible at your custom domain
-   - Check that the health endpoint returns a valid response:
-   ```
-   curl https://your-domain.com/health
-   ```
+#### Production Mode
 
-## Fixing 502 Bad Gateway Errors
+```bash
+NODE_ENV=production node server.js
+```
 
-If you encounter a 502 Bad Gateway error:
+This starts the server in production mode, which is optimized for performance.
 
-1. **Check Server Logs**
-   - Look for specific error messages in the Replit console
-   - Verify the server started successfully
+### 3. Deployment on Replit
 
-2. **Port Configuration**
-   - Ensure the server is listening on the correct port (automatically set by Replit)
-   - The code now uses `const port = parseInt(process.env.PORT || '3000', 10)` and doesn't specify host binding
+Replit uses the `Procfile` to determine how to run your application. Our Procfile is already configured:
 
-3. **Build Process**
-   - Check that all TypeScript files compiled correctly
-   - The `dist` directory should contain the compiled JavaScript
+```
+web: NODE_ENV=production node server.js
+```
 
-4. **Module Resolution**
-   - TypeScript is now configured with the Bundler module resolution
-   - ESM imports are properly handled
+To deploy on Replit:
 
-5. **Domain Verification**
-   - Ensure your domain is correctly linked to your Replit project
-   - DNS settings should include the proper CNAME or A record
-   - SSL certification should be active
+1. Click the "Deploy" button in the Replit interface
+2. The system will use the Procfile to start the server
+3. Your application will be available at your Replit domain
 
-## Environment Variables
+### 4. Troubleshooting 502 Bad Gateway Errors
 
-Make sure these environment variables are properly set in the Replit Secrets panel:
+If you're experiencing 502 Bad Gateway errors on Replit, try these solutions:
 
-- `NODE_ENV`: Should be "production" in deployment
-- `PORT`: Automatically set by Replit (don't override)
-- `DATABASE_URL`: Your PostgreSQL database connection string
-- All API keys and external service credentials as listed in your environment secrets
+#### Solution 1: Verify Port Configuration
 
-## DNS Troubleshooting
+Make sure the server is listening on the right port. In production, use:
 
-If your domain isn't connecting:
+```javascript
+const PORT = process.env.PORT || 3000;
+```
 
-1. Verify that the domain is properly verified in Replit
-2. Check that DNS records are correct:
-   - CNAME: `your-domain.com` should point to `your-repl-name.your-username.repl.co`
-   - Allow up to 24 hours for DNS changes to propagate
-3. SSL certificates are automatically provisioned by Replit
+This ensures the server binds to the port that Replit assigns.
+
+#### Solution 2: Check Server Startup
+
+Verify your server is starting correctly by checking the logs in the Replit console. Look for:
+
+```
+Server running on port [PORT] in production mode
+```
+
+#### Solution 3: Health Check
+
+The application includes a health check endpoint at `/health`. Use this to verify the server is running:
+
+```bash
+curl https://your-replit-domain.repl.co/health
+```
+
+If this returns a 200 response, the server is working correctly.
+
+#### Solution 4: Verify File Structure
+
+Make sure your project has the right structure:
+
+- Server code in `/src` directory
+- Client build in `/dist/client` directory
+- Entry point in `server.js`
+
+#### Solution 5: Clear Replit Cache
+
+Sometimes Replit caches can cause issues. Try:
+
+1. Click on the three dots (...) next to the "Run" button
+2. Select "Secrets"
+3. Add a new secret with a random name and value
+4. Delete the secret
+5. Redeploy
+
+This forces Replit to clear some of its caches.
+
+### 5. Environment Variables
+
+Make sure all required environment variables are set in the Replit Secrets panel:
+
+- `STRIPE_SECRET_KEY`
+- `SHOPIFY_ACCESS_TOKEN`
+- `SHOPIFY_API_KEY`
+- `SHOPIFY_STOREFRONT_TOKEN`
+- `SHOPIFY_STORE_DOMAIN`
+- `SUPABASE_URL`
+- `SUPABASE_KEY`
+- `DATABASE_URL`
+- `UNIVERSAL_DISCOUNT_CODE`
+
+### 6. Database
+
+The application uses a PostgreSQL database. Make sure it's properly configured:
+
+1. Verify the `DATABASE_URL` environment variable is set
+2. Check the database connection in the logs
+3. If needed, use the database UI in Replit to verify tables exist
+
+### 7. Post-Deployment Checks
+
+After deploying, verify:
+
+1. The site loads correctly
+2. API endpoints respond properly (test with the health endpoint)
+3. Authentication works
+4. Payment processing works 
+5. Event registrations flow properly
+
+## Maintenance
+
+### Logs
+
+To view logs in production:
+
+1. Go to your Replit project
+2. Click on the "Shell" tab
+3. Run `tail -f .replit/logs/console.log`
+
+### Updates
+
+To update the deployed application:
+
+1. Make your changes
+2. Rebuild the application
+3. Click "Deploy" in the Replit interface
+
+## Advanced Troubleshooting
+
+If you continue to experience issues:
+
+1. Check if the server is binding to the right address (0.0.0.0)
+2. Verify all dependencies are installed
+3. Check for memory limitations
+4. Ensure your Replit plan has sufficient resources
+5. Try the simplified server.js entry point provided in this repo
+
+## Help and Support
+
+For further assistance with deployment issues:
+
+- Email: admin@rich-habits.com
+- Phone: +1 (480) 810-4477
