@@ -1,8 +1,9 @@
-// Ultra Simple Replit Deployment Server - CommonJS Version
+// Ultra Simple Replit Deployment Server - ES Module Version
 
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 // Create Express app
 const app = express();
@@ -24,6 +25,10 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Get current directory with ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Static file serving - try various possible paths
 const possibleClientPaths = [
