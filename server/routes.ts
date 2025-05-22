@@ -126,13 +126,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all events for the admin dashboard
-  app.get("/api/events", authenticateAdmin, async (req, res) => {
+  app.get("/api/events", async (req, res) => {
     try {
       const events = await storage.getEvents();
       res.status(200).json(events);
     } catch (error) {
       console.error("Error fetching events:", error);
       res.status(500).json({ error: "Failed to fetch events" });
+    }
+  });
+  
+  // API endpoint to fetch a single event by ID
+  app.get("/api/events/:id", async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.id, 10);
+      
+      if (isNaN(eventId)) {
+        return res.status(400).json({ error: "Invalid event ID" });
+      }
+      
+      const event = await storage.getEvent(eventId);
+      
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      
+      res.status(200).json(event);
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      res.status(500).json({ error: "Failed to fetch event" });
     }
   });
   
