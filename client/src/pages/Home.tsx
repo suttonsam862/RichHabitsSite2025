@@ -105,9 +105,11 @@ export default function Home() {
                 className="bg-white shadow-md overflow-hidden"
               >
                 <div className="h-48 overflow-hidden">
-                  <div 
-                    className="w-full h-full bg-red-600 transition-transform duration-500 hover:scale-105"
-                  ></div>
+                  <img 
+                    src="/images/national-champ-camp.webp" 
+                    alt="National Champ Camp - Elite Wrestling Training in Las Vegas"
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
                 </div>
                 <div className="p-6">
                   <div className="mb-4 h-1 w-16 bg-gray-900"></div>
