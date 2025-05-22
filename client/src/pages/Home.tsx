@@ -199,10 +199,11 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="flex justify-center">
-                <div 
-                  className="w-full h-60 bg-red-600 shadow-lg"
-                  aria-label="Fruit Hunters Partnership Logo (placeholder)"
-                ></div>
+                <img 
+                  src="/images/fruit-hunters-partnership.webp" 
+                  alt="Fruit Hunters Partnership - Athletes enjoying exotic fruits for premium nutrition"
+                  className="w-full h-60 object-cover shadow-lg rounded-sm"
+                />
               </div>
               <div>
                 <p className="text-xl mb-8 leading-relaxed text-gray-700 subtitle-font">
