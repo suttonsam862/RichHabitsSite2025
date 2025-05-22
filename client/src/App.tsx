@@ -2,6 +2,7 @@ import React from "react";
 import { Switch, Route } from "wouter";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
+import MaintenanceBanner from "./components/layout/MaintenanceBanner";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 
@@ -38,6 +39,7 @@ function App() {
   return (
     <TooltipProvider>
       <div className="flex flex-col min-h-screen">
+        {!isSpecialPage && <MaintenanceBanner />}
         {!isSpecialPage && <Header />}
         <main className={`flex-grow ${!isSpecialPage ? 'pt-16' : ''}`}>
           <Router />
