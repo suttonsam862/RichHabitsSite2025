@@ -515,21 +515,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve frontend - catch-all route for Rich Habits wrestling site
   app.get('*', (req: Request, res: Response) => {
-    // Skip API routes
+    // Skip API routes and webhooks
     if (req.path.startsWith('/api/') || req.path.startsWith('/webhook')) {
       return res.status(404).json({ error: 'API endpoint not found' });
     }
     
     // Serve the Rich Habits frontend
     if (process.env.NODE_ENV === 'production') {
-      const indexPath = path.resolve(process.cwd(), 'dist', 'public', 'index.html');
-      console.log('Attempting to serve index.html from:', indexPath);
-      console.log('File exists:', fs.existsSync(indexPath));
+      // Try multiple possible locations for the built files
+      const possiblePaths = [
+        path.resolve(process.cwd(), 'dist', 'public', 'index.html'),
+        path.resolve(process.cwd(), 'dist', 'index.html'),
+        path.resolve(__dirname, '..', 'dist', 'public', 'index.html'),
+        path.resolve(__dirname, '..', 'public', 'index.html')
+      ];
       
-      if (fs.existsSync(indexPath)) {
+      let indexPath = '';
+      for (const testPath of possiblePaths) {
+        if (fs.existsSync(testPath)) {
+          indexPath = testPath;
+          break;
+        }
+      }
+      
+      console.log('🔍 Searching for Rich Habits index.html...');
+      console.log('✅ Found at:', indexPath);
+      
+      if (indexPath && fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
       } else {
-        res.status(404).send(`Rich Habits site not found at: ${indexPath}`);
+        console.error('❌ Rich Habits site files not found in any expected location');
+        res.status(500).send(`Rich Habits site not found. Searched: ${possiblePaths.join(', ')}`);
       }
     } else {
       // In development, let Vite handle the frontend

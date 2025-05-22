@@ -58,28 +58,29 @@ async function startServer() {
       // Start Vite setup in the background to speed up initialization
       setupVite(app, server).catch(err => console.error("Vite setup error:", err));
     } else {
-      // In production, serve static files from the React build directory
-      const clientDistPath = path.join(__dirname, '../client/dist');
-      console.log(`Serving static files from: ${clientDistPath}`);
-      app.use(express.static(clientDistPath));
-      
-      // Serve index.html for all routes not handled by the API to support client-side routing
-      app.get('*', (req, res) => {
-        // Skip API routes
-        if (req.path.startsWith('/api/')) return;
-        
-        const indexPath = path.join(clientDistPath, 'index.html');
-        console.log(`Serving index.html for client-side routing: ${req.path}`);
-        res.sendFile(indexPath);
-      });
+      console.log('Production mode: Static files handled by routes.ts');
     }
 
-    // Use PORT from environment with fallback to 5000 (expected by workflow)
+    // Use PORT from environment with fallback - deployment uses PORT 
     const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
+    
+    // Test database connection before starting server
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Testing database connection...');
+      try {
+        const { checkDatabaseConnection } = await import('./db.js');
+        const dbConnected = await checkDatabaseConnection();
+        if (!dbConnected) {
+          console.error('Database connection failed - starting anyway');
+        }
+      } catch (error) {
+        console.error('Database setup error:', error);
+      }
+    }
 
     server.listen(port, '0.0.0.0', () => {
-      console.log(`Server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
-      console.log(`Server address:`, server.address());
+      console.log(`✅ Rich Habits server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
+      console.log(`🌐 Server address:`, server.address());
     });
 
     // Error handling
