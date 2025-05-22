@@ -48,7 +48,7 @@ const events = [
       }
     ],
     capacity: 200,
-    ageGroup: "12-18 years",
+    ageGroup: "8-18 years",
     signature: "Elite NCAA Champions & All-Americans",
     benefits: [
       "Personalized instruction from NCAA Champions",
@@ -67,7 +67,7 @@ const events = [
     fullPrice: 349,
     singleDayPrice: 175,
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
-    longDescription: "The National Champ Wrestling Camp in Las Vegas represents the ultimate destination for serious wrestlers seeking championship-level instruction from proven NCAA champions and World Team members. This elite Las Vegas wrestling camp attracts competitors from across Nevada, California, Arizona, Utah, and Colorado who are committed to reaching the highest levels of the sport. Located in Las Vegas with the exact venue to be announced, this intensive three-day camp provides unparalleled access to some of the most accomplished wrestlers in American history. Jason Nolf, a three-time NCAA Champion and World Team member, leads our exceptional instruction team alongside NCAA Champion Mark Hall and two-time NCAA Champion Vincenzo Joseph. This Las Vegas wrestling camp focuses on advanced technical development, competition strategy, and the mental preparation necessary for elite-level success. The camp curriculum emphasizes systematic skill development, tactical awareness, and the competitive mindset that separates championship wrestlers from the field. Participants receive individualized instruction, comprehensive video analysis, and detailed feedback from wrestlers who have competed successfully at the highest levels of international competition. The National Champ Camp serves dedicated wrestlers aged 14-22 who are serious about pursuing excellence in wrestling, whether at the high school, collegiate, or beyond.",
+    longDescription: "The National Champ Wrestling Camp in Las Vegas represents the ultimate destination for serious wrestlers seeking championship-level instruction from proven NCAA champions and World Team members. This elite Las Vegas wrestling camp attracts competitors from across Nevada, California, Arizona, Utah, and Colorado who are committed to reaching the highest levels of the sport. Located in Las Vegas with the exact venue to be announced, this intensive three-day camp provides unparalleled access to some of the most accomplished wrestlers in American history. Jason Nolf, a three-time NCAA Champion and World Team member, leads our exceptional instruction team alongside NCAA Champion Mark Hall and two-time NCAA Champion Vincenzo Joseph. This Las Vegas wrestling camp focuses on advanced technical development, competition strategy, and the mental preparation necessary for elite-level success. The camp curriculum emphasizes systematic skill development, tactical awareness, and the competitive mindset that separates championship wrestlers from the field. Participants receive individualized instruction, comprehensive video analysis, and detailed feedback from wrestlers who have competed successfully at the highest levels of international competition. The National Champ Camp serves dedicated wrestlers aged 8-18 who are serious about pursuing excellence in wrestling, whether at the youth, high school, or preparing for collegiate levels.",
     image: "/event2.jpg",
     additionalImages: [
       "/gallery-2-1.jpg",
@@ -96,7 +96,7 @@ const events = [
       }
     ],
     capacity: 200,
-    ageGroup: "14-22 years",
+    ageGroup: "8-18 years",
     signature: "Elite NCAA Champions & World Team Members",
     benefits: [
       "Train directly with NCAA Champions and World Team members",
