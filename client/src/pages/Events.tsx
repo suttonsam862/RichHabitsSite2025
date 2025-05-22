@@ -89,30 +89,31 @@ export default function Events() {
         animate="animate"
       >
         <div className="absolute inset-0 bg-black">
-          <div 
+          <motion.div 
+            initial={{ scale: 1.1, filter: 'grayscale(100%)' }}
+            animate={{ scale: 1, filter: 'grayscale(80%)' }}
+            transition={{ duration: 20, ease: "easeInOut" }}
             className="absolute inset-0 opacity-50"
             style={{ 
               backgroundImage: `url(${events[0].image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'grayscale(80%)'
             }}
-          ></div>
+          ></motion.div>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
         
         <div className="container mx-auto px-6 h-full flex items-center relative z-10">
           <div className="max-w-3xl">
             <h1 
-              className="text-5xl md:text-7xl text-white mb-8"
-              style={{ fontFamily: "'Playfair Display FC', serif" }}
+              className="text-5xl md:text-7xl text-white mb-8 title-font"
             >
               Events
             </h1>
             <p 
-              className="text-xl text-gray-200 mb-10"
-              style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+              className="text-xl text-gray-200 mb-10 subtitle-font"
             >
               Premium wrestling camps and clinics designed to elevate your skills, technique, and competitive edge.
             </p>
@@ -174,45 +175,39 @@ export default function Events() {
                 <div className="flex flex-col justify-center">
                   <div className="mb-2">
                     <span 
-                      className="text-sm text-gray-500"
-                      style={{ fontFamily: "'Arial', sans-serif" }}
+                      className="text-sm text-gray-500 subtitle-font"
                     >
                       {event.date}
                     </span>
                   </div>
                   
                   <h2 
-                    className="text-3xl md:text-4xl mb-4"
-                    style={{ fontFamily: "'Bodoni FLF', serif" }}
+                    className="text-3xl md:text-4xl mb-4 title-font"
                   >
                     {event.title}
                   </h2>
                   
                   <p
-                    className="italic mb-6 text-gray-600"
-                    style={{ fontFamily: "'Symphony', cursive" }}
+                    className="italic mb-6 text-gray-600 subtitle-font"
                   >
                     {event.signature}
                   </p>
                   
                   <div className="space-y-3 mb-8">
                     <p 
-                      className="text-gray-600"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                      className="text-gray-600 subtitle-font"
                     >
                       <span className="font-medium">Location:</span> {event.location}
                     </p>
                     <p 
-                      className="text-gray-600"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                      className="text-gray-600 subtitle-font"
                     >
                       <span className="font-medium">Price:</span> {event.price}
                     </p>
                   </div>
                   
                   <p 
-                    className="text-gray-700 mb-8"
-                    style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                    className="text-gray-700 mb-8 subtitle-font"
                   >
                     {event.shortDescription}
                   </p>
@@ -220,14 +215,13 @@ export default function Events() {
                   <div className="flex space-x-4">
                     <Link href={`/events/${event.id}`}>
                       <motion.span
-                        className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer"
+                        className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer subtitle-font"
                         whileHover={{ 
                           backgroundColor: '#1f2937', 
                           color: '#ffffff',
                           x: 2
                         }}
                         transition={{ duration: 0.2 }}
-                        style={{ fontFamily: "'Sanchez', serif" }}
                       >
                         View Details
                       </motion.span>
@@ -235,13 +229,12 @@ export default function Events() {
                     
                     <Link href={`/register/${event.id}`}>
                       <motion.span
-                        className="inline-block bg-gray-900 border border-gray-900 px-6 py-3 text-white cursor-pointer"
+                        className="inline-block bg-gray-900 border border-gray-900 px-6 py-3 text-white cursor-pointer subtitle-font"
                         whileHover={{ 
                           backgroundColor: '#111827',
                           x: 2
                         }}
                         transition={{ duration: 0.2 }}
-                        style={{ fontFamily: "'Sanchez', serif" }}
                       >
                         Register Now
                       </motion.span>

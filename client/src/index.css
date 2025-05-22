@@ -1,22 +1,18 @@
 /* Import custom fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Sanchez&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Arial&display=swap');
+@import './styles/fonts.css';
 
-/* Simulate Bodoni FLF with Playfair Display as fallback */
+/* Fallback in case Rogbold/Rodmole aren't available */
 @font-face {
-  font-family: 'Bodoni FLF';
-  src: local('Playfair Display');
-  font-weight: normal;
+  font-family: 'Rogbold-Fallback';
+  src: local('Arial Black'), local('Arial-Bold');
+  font-weight: bold;
 }
 
-/* Simulate Symphony with a script font as fallback */
 @font-face {
-  font-family: 'Symphony';
-  src: local('Playfair Display');
-  font-style: italic;
-  font-weight: normal;
+  font-family: 'Rodmole-Fallback';
+  src: local('Impact'), local('Arial-Bold');
+  font-weight: bold;
 }
 
 @tailwind base;
@@ -25,29 +21,37 @@
 
 :root {
   --color-sky: rgb(186, 230, 253, 0.3);
+  --title-font: 'Rogbold', 'Rodmole', 'Rogbold-Fallback', sans-serif;
+  --subtitle-font: 'Arial', sans-serif;
 }
 
 body {
-  font-family: 'Didact Gothic', sans-serif;
+  font-family: var(--subtitle-font);
   color: #333;
   background-color: #f8f8f8;
 }
 
 h1, h2, h3 {
-  font-family: 'Playfair Display FC', 'Bodoni FLF', serif;
+  font-family: var(--title-font);
   letter-spacing: -0.025em;
 }
 
 h4, h5, h6 {
-  font-family: 'Sanchez', serif;
+  font-family: var(--title-font);
 }
 
 .subtitle {
-  font-family: 'Didact Gothic', sans-serif;
+  font-family: var(--subtitle-font);
+  font-weight: 600;
 }
 
-.script-text {
-  font-family: 'Symphony', cursive;
+.title-font {
+  font-family: var(--title-font);
+}
+
+.subtitle-font {
+  font-family: var(--subtitle-font);
+  font-weight: 600;
 }
 
 /* Animation utilities */

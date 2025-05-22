@@ -233,24 +233,27 @@ export default function EventDetail() {
         transition={{ duration: 1.2 }}
       >
         <div className="absolute inset-0 bg-black">
-          <div 
+          <motion.div 
+            initial={{ scale: 1.1, filter: 'grayscale(100%)' }}
+            animate={{ scale: 1, filter: 'grayscale(80%)' }}
+            transition={{ duration: 20, ease: "easeInOut" }}
             className="absolute inset-0 opacity-60"
             style={{ 
               backgroundImage: `url(${event.image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'grayscale(80%)'
             }}
-          ></div>
+          ></motion.div>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent"></div>
         
         <div className="container mx-auto px-6 h-full flex items-center relative z-10">
           <div className="max-w-4xl">
             <motion.h1 
-              className="text-4xl md:text-6xl text-white mb-6"
-              style={{ fontFamily: "'Playfair Display FC', serif" }}
+              className="text-4xl md:text-6xl text-white mb-6 title-font"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -259,8 +262,7 @@ export default function EventDetail() {
             </motion.h1>
             
             <motion.p 
-              className="italic text-lg text-gray-200 mb-8"
-              style={{ fontFamily: "'Symphony', cursive" }}
+              className="italic text-lg text-gray-200 mb-8 subtitle-font"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -276,13 +278,12 @@ export default function EventDetail() {
             >
               <Link href={`/register/${event.id}`}>
                 <motion.span
-                  className="inline-block bg-gray-50 px-6 py-3 text-gray-900 cursor-pointer"
+                  className="inline-block bg-gray-50 px-6 py-3 text-gray-900 cursor-pointer subtitle-font"
                   whileHover={{ 
                     backgroundColor: '#f9fafb',
                     x: 2
                   }}
                   transition={{ duration: 0.2 }}
-                  style={{ fontFamily: "'Sanchez', serif" }}
                 >
                   Register Now
                 </motion.span>
@@ -307,14 +308,12 @@ export default function EventDetail() {
           >
             <div className="mb-12">
               <h2 
-                className="text-3xl mb-6"
-                style={{ fontFamily: "'Bodoni FLF', serif" }}
+                className="text-3xl mb-6 title-font"
               >
                 About This Event
               </h2>
               <p 
-                className="text-gray-700 leading-relaxed mb-8"
-                style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                className="text-gray-700 leading-relaxed mb-8 subtitle-font"
               >
                 {event.longDescription}
               </p>
@@ -362,8 +361,7 @@ export default function EventDetail() {
               
               {/* Schedule */}
               <h2 
-                className="text-3xl mb-6"
-                style={{ fontFamily: "'Bodoni FLF', serif" }}
+                className="text-3xl mb-6 title-font"
               >
                 Schedule
               </h2>
@@ -377,20 +375,17 @@ export default function EventDetail() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <h3 
-                      className="text-xl mb-2"
-                      style={{ fontFamily: "'Sanchez', serif" }}
+                      className="text-xl mb-2 title-font"
                     >
                       {item.day}
                     </h3>
                     <p 
-                      className="text-gray-500 mb-2"
-                      style={{ fontFamily: "'Arial', sans-serif" }}
+                      className="text-gray-500 mb-2 subtitle-font"
                     >
                       {item.time}
                     </p>
                     <p 
-                      className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                      className="text-gray-700 subtitle-font"
                     >
                       <span className="font-medium">Focus:</span> {item.focus}
                     </p>
@@ -400,8 +395,7 @@ export default function EventDetail() {
               
               {/* Coaches */}
               <h2 
-                className="text-3xl mb-6"
-                style={{ fontFamily: "'Bodoni FLF', serif" }}
+                className="text-3xl mb-6 title-font"
               >
                 Coaches
               </h2>
