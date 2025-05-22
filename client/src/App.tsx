@@ -7,7 +7,6 @@ import { Footer } from "@/components/layout/Footer";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
-import ProductDetail from "@/pages/ProductDetail";
 import CustomApparel from "@/pages/CustomApparel";
 import Events from "@/pages/Events";
 import EventDetail from "@/pages/EventDetail";
@@ -31,7 +30,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/shop" component={Shop} />
-      <Route path="/shop/product/:handle" component={ProductDetail} />
       <Route path="/custom-apparel" component={CustomApparel} />
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
