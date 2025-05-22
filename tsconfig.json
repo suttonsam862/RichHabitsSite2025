@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./client/src/*"],
@@ -21,6 +21,6 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["shared/**/*", "server/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "client", "**/*.test.ts"]
 }
