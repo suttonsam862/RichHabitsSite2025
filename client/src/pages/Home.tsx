@@ -1,25 +1,19 @@
 import React from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import HeroSlider from "@/components/home/HeroSlider";
+import Testimonials from "@/components/home/Testimonials";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Inspired by Kourtney Roy aesthetic */}
+      {/* Hero Slider Section - Inspired by Kourtney Roy aesthetic */}
       <section className="w-full min-h-[95vh] flex items-center justify-center relative overflow-hidden">
-        {/* Hero background image with grayscale filter */}
-        <div className="absolute inset-0 w-full h-full">
-          <img 
-            src="/images/DSC09491.JPG" 
-            alt="Rich Habits Hero" 
-            className="w-full h-full object-cover"
-            style={{ filter: 'grayscale(85%)' }}
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
-        </div>
+        {/* Hero Slider */}
+        <HeroSlider />
         
-        <div className="container mx-auto px-4 z-10 text-white">
+        {/* Content Overlay */}
+        <div className="container mx-auto px-4 z-10 text-white absolute inset-0 flex items-center">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -177,10 +171,13 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Testimonials Section */}
+      <Testimonials />
+      
       {/* Fruit Hunters Partnership - Minimalist Approach */}
       <section className="py-24 bg-gray-100 relative">
         <div className="absolute inset-0 opacity-10" style={{ 
-          backgroundImage: 'url("/images/fruit-hunters-logo.png")', 
+          backgroundImage: 'url("/attached_assets/fruit-hunters-logo.png")', 
           backgroundPosition: 'center',
           backgroundSize: '40%',
           backgroundRepeat: 'no-repeat',
@@ -207,7 +204,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="flex justify-center">
                 <img 
-                  src="/images/fruit-hunters-logo.png" 
+                  src="/attached_assets/fruit-hunters-logo.png" 
                   alt="Fruit Hunters Partnership" 
                   className="max-w-full h-auto shadow-lg"
                   style={{ maxHeight: '240px', filter: 'grayscale(20%)' }}
