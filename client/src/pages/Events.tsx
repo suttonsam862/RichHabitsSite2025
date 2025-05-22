@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import EventFilters from "@/components/events/EventFilters";
@@ -165,26 +165,22 @@ export default function Events() {
           variants={stagger}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-1 gap-20"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8"
         >
-          {filteredEvents.map((event, index) => (
+          {filteredEvents.map((event) => (
             <motion.div 
               key={event.id}
               variants={fadeIn}
-              className="group"
+              className="group bg-white shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
               onMouseEnter={() => setHoveredEvent(event.id)}
               onMouseLeave={() => setHoveredEvent(null)}
             >
-              <div 
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-8 ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
-              >
+              <Link href={`/events/${event.id}`}>
                 {/* Image Section */}
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden h-60">
                   <motion.div
                     variants={imageReveal}
-                    className="aspect-[4/3] w-full h-full"
+                    className="w-full h-full"
                   >
                     <div 
                       className="w-full h-full bg-cover bg-center transform transition-transform duration-700 group-hover:scale-105"
@@ -206,82 +202,22 @@ export default function Events() {
                   ></motion.div>
                 </div>
                 
-                {/* Content Section */}
-                <div className="flex flex-col justify-center">
-                  <div className="mb-2">
-                    <span 
-                      className="text-sm text-gray-500 subtitle-font"
-                    >
-                      {event.date}
+                {/* Content Section - Only Title, Date, Location */}
+                <div className="p-6">
+                  <h2 className="text-2xl mb-3 title-font">{event.title}</h2>
+                  <div className="mb-1">
+                    <span className="text-sm text-gray-500 subtitle-font">{event.date}</span>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-600 subtitle-font">{event.location}</span>
+                  </div>
+                  <div className="mt-5">
+                    <span className="text-sm font-medium text-gray-900 border-b border-gray-900 pb-1 hover:text-sky-800 hover:border-sky-800 transition-colors inline-block subtitle-font">
+                      View Details
                     </span>
                   </div>
-                  
-                  <h2 
-                    className="text-3xl md:text-4xl mb-4 title-font"
-                  >
-                    {event.title}
-                  </h2>
-                  
-                  <p
-                    className="italic mb-6 text-gray-600 subtitle-font"
-                  >
-                    {event.signature}
-                  </p>
-                  
-                  <div className="space-y-3 mb-8">
-                    <p 
-                      className="text-gray-600 subtitle-font"
-                    >
-                      <span className="font-medium">Location:</span> {event.location}
-                    </p>
-                    <p 
-                      className="text-gray-600 subtitle-font"
-                    >
-                      <span className="font-medium">Price:</span> {event.price}
-                    </p>
-                  </div>
-                  
-                  <p 
-                    className="text-gray-700 mb-8 subtitle-font"
-                  >
-                    {event.shortDescription}
-                  </p>
-                  
-                  <div className="flex space-x-4">
-                    <Link href={`/events/${event.id}`}>
-                      <motion.span
-                        className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer subtitle-font"
-                        whileHover={{ 
-                          backgroundColor: '#1f2937', 
-                          color: '#ffffff',
-                          x: 2
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        View Details
-                      </motion.span>
-                    </Link>
-                    
-                    <Link href={`/register/${event.id}`}>
-                      <motion.span
-                        className="inline-block bg-gray-900 border border-gray-900 px-6 py-3 text-white cursor-pointer subtitle-font"
-                        whileHover={{ 
-                          backgroundColor: '#111827',
-                          x: 2
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        Register Now
-                      </motion.span>
-                    </Link>
-                  </div>
                 </div>
-              </div>
-              
-              {/* Divider except for the last item */}
-              {index < events.length - 1 && (
-                <div className="w-full h-px bg-gray-200 my-20"></div>
-              )}
+              </Link>
             </motion.div>
           ))}
         </motion.div>
