@@ -1,19 +1,26 @@
 import React from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import HeroSlider from "@/components/home/HeroSlider";
-import Testimonials from "@/components/home/Testimonials";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Slider Section - Inspired by Kourtney Roy aesthetic */}
+      {/* Hero Section - Inspired by Kourtney Roy aesthetic */}
       <section className="w-full min-h-[95vh] flex items-center justify-center relative overflow-hidden">
-        {/* Hero Slider */}
-        <HeroSlider />
+        {/* Hero background image with grayscale filter */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src="/image1.jpg" 
+            alt="Rich Habits Hero" 
+            className="w-full h-full object-cover"
+            style={{ filter: 'grayscale(85%)' }}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
+        </div>
         
         {/* Content Overlay */}
-        <div className="container mx-auto px-4 z-10 text-white absolute inset-0 flex items-center">
+        <div className="container mx-auto px-4 z-10 text-white relative flex items-center">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -171,8 +178,6 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Testimonials Section */}
-      <Testimonials />
       
       {/* Fruit Hunters Partnership - Minimalist Approach */}
       <section className="py-24 bg-gray-100 relative">

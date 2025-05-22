@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Using direct public paths for images
+const sliderImage1 = "/image1.jpg";
+const sliderImage2 = "/image2.jpg";
+const sliderImage3 = "/image3.jpg";
+const sliderImage4 = "/image4.jpg";
+
 const sliderImages = [
-  "/attached_assets/DSC09491.JPG",
-  "/attached_assets/DSC08631.JPG",
-  "/attached_assets/DSC08612.JPG",
-  "/attached_assets/DSC09353.JPG"
+  sliderImage1,
+  sliderImage2,
+  sliderImage3,
+  sliderImage4
 ];
 
 export default function HeroSlider() {
