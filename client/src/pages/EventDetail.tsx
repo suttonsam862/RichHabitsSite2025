@@ -115,7 +115,7 @@ const events = [
     fullPrice: 249,
     singleDayPrice: null,
     shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
-    longDescription: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. The Texas Recruiting Clinic brings together multiple NCAA stars for spotlight matches and breakout training groups, providing comprehensive guidance on the recruiting process. Participants will receive detailed evaluations from active college coaches, participate in skill development sessions, and learn about NCAA eligibility requirements. The focus is on recruiting exposure and high-level matches that showcase athlete abilities in a competitive environment. Each wrestler leaves with enhanced visibility and a personalized recruiting plan.",
+    longDescription: "The Texas Recruiting Clinic at Arlington Martin High School represents the premier recruiting opportunity for high school wrestlers in Texas and surrounding states. This specialized Arlington wrestling clinic attracts serious competitors from across Texas, Oklahoma, Louisiana, Arkansas, and New Mexico who are committed to pursuing collegiate wrestling opportunities. The clinic brings together multiple NCAA stars for spotlight matches and breakout training groups, providing unparalleled recruiting exposure and comprehensive guidance on the college wrestling recruitment process. High school wrestlers receive detailed evaluations from active Division I and Division II college coaches, participate in skill development sessions led by current NCAA athletes, and learn essential information about NCAA eligibility requirements and the college recruiting timeline. The Texas Recruiting Clinic focuses specifically on creating recruiting exposure through high-level competitive matches that showcase athlete abilities in front of college coaches and recruiters. Each participant leaves with enhanced visibility in the college wrestling community, direct feedback from college coaches, and a personalized recruiting plan tailored to their abilities and collegiate wrestling goals. This Arlington wrestling recruiting clinic serves as a crucial stepping stone for high school wrestlers serious about competing at the collegiate level.",
     image: "/event3.jpg",
     additionalImages: [
       "/gallery-3-1.jpg",
@@ -123,9 +123,6 @@ const events = [
     ],
     videoUrl: "/videos/recruiting-clinic.mp4",
     accent: "red",
-    schedule: [
-      { day: "Day 1", time: "9:00 AM - 4:00 PM", focus: "NCAA Star Spotlight Matches & Breakout Training Groups" }
-    ],
     coaches: [
       {
         name: "Multiple NCAA Stars",
@@ -166,7 +163,7 @@ const events = [
     fullPrice: 200,
     singleDayPrice: 99,
     shortDescription: "D1 technique and mindset training with Northwestern wrestlers and coaches.",
-    longDescription: "Experience elite-level training with Northwestern University wrestlers and coaches in this unique camp focused on D1 technique and championship mindset development. The Panther Train Tour Camp brings together the proven training methodologies of a top Division I program with the expertise of RTC (Regional Training Center) and Panther Train staff. Participants will learn the systematic approaches and mental preparation strategies that have made Northwestern a consistent force in collegiate wrestling. This intensive training experience emphasizes both technical excellence and the competitive mindset required for success at the highest levels.",
+    longDescription: "The Panther Train Tour wrestling camp in Chicago provides an exclusive opportunity for serious wrestlers to experience authentic Division I training methodologies with Northwestern University wrestlers and coaches. This elite Chicago wrestling camp attracts dedicated competitors from throughout Illinois, Wisconsin, Indiana, Michigan, and Iowa who are committed to training at the highest collegiate level. The Panther Train Tour combines the proven training systems of Northwestern University's wrestling program with the expertise of accomplished Regional Training Center (RTC) coaches and Panther Train staff. Participants gain invaluable insight into the systematic approaches, technical precision, and mental preparation strategies that have established Northwestern as a consistent force in Big Ten Conference wrestling competition. This intensive Chicago wrestling experience emphasizes both advanced technical development and the championship mindset required for success at elite levels of competition. Wrestlers receive instruction in position-specific techniques, advanced conditioning protocols, and the tactical decision-making that separates good wrestlers from championship-level competitors. The camp provides authentic access to Division I training culture, allowing participants to understand the daily commitment, technical standards, and competitive intensity that define successful collegiate wrestling programs.",
     image: "/event4.jpg",
     additionalImages: [
       "/gallery-4-1.jpg",
