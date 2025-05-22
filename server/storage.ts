@@ -139,12 +139,56 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined> {
-    const [registration] = await db
-      .select()
-      .from(eventRegistrations)
-      .where(eq(eventRegistrations.email, email))
-      .where(eq(eventRegistrations.eventId, eventId));
-    return registration;
+    try {
+      const client = await pool.connect();
+      
+      try {
+        const query = `
+          SELECT * FROM event_registrations 
+          WHERE email = $1 AND event_id = $2
+        `;
+        
+        const result = await client.query(query, [email, eventId]);
+        
+        if (result.rows.length === 0) {
+          return undefined;
+        }
+        
+        const row = result.rows[0];
+        
+        // Map the database row to our TypeScript type
+        return {
+          id: row.id,
+          eventId: row.event_id,
+          firstName: row.first_name,
+          lastName: row.last_name,
+          contactName: row.contact_name,
+          email: row.email,
+          phone: row.phone,
+          tShirtSize: row.t_shirt_size,
+          grade: row.grade,
+          schoolName: row.school_name,
+          clubName: row.club_name,
+          medicalReleaseAccepted: row.medical_release_accepted,
+          registrationType: row.registration_type,
+          shopifyOrderId: row.shopify_order_id,
+          stripePaymentIntentId: row.stripe_payment_intent_id,
+          paymentStatus: row.payment_status,
+          day1: row.day1,
+          day2: row.day2,
+          day3: row.day3,
+          age: row.age,
+          experience: row.experience,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at
+        };
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('Error in getEventRegistrationByEmail:', error);
+      return undefined;
+    }
   }
   
   async updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined> {
@@ -225,11 +269,8 @@ export class DatabaseStorage implements IStorage {
         
         // Apply payment status filter if provided
         if (paymentStatus) {
-          if (paymentStatus === 'paid') {
-            query += ` AND (shopify_order_id LIKE 'pi_%')`;
-          } else if (paymentStatus === 'pending') {
-            query += ` AND (shopify_order_id IS NULL OR shopify_order_id NOT LIKE 'pi_%')`;
-          }
+          params.push(paymentStatus);
+          query += ` AND payment_status = $${params.length}`;
         }
         
         // Add sorting
@@ -255,12 +296,14 @@ export class DatabaseStorage implements IStorage {
           registrationType: row.registration_type,
           shopifyOrderId: row.shopify_order_id,
           stripePaymentIntentId: row.stripe_payment_intent_id,
+          paymentStatus: row.payment_status,
           day1: row.day1,
           day2: row.day2,
           day3: row.day3,
           age: row.age,
           experience: row.experience,
-          createdAt: row.created_at
+          createdAt: row.created_at,
+          updatedAt: row.updated_at
         }));
       } finally {
         client.release();
