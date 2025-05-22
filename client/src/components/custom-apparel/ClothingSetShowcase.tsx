@@ -26,22 +26,22 @@ export function ClothingSetShowcase() {
       items: [
         {
           name: "Crewneck Sweatshirt",
-          imgSrc: "/attached_assets/10th Planet Crewneck.png",
+          imgSrc: "/images/custom-apparel/10th Planet Crewneck.png",
           description: "Premium cotton-blend crewneck with custom 10th Planet graphics."
         },
         {
           name: "Jogger Sweatpants",
-          imgSrc: "/attached_assets/10th Planet Sweats.png",
+          imgSrc: "/images/custom-apparel/10th Planet Sweats.png",
           description: "Comfortable training joggers with elastic cuffs and custom branding."
         },
         {
           name: "T-Shirt",
-          imgSrc: "/attached_assets/10th Planet Triblend.png",
+          imgSrc: "/images/custom-apparel/10th Planet Triblend.png",
           description: "Soft tri-blend t-shirt with the iconic 10th Planet logo."
         },
         {
           name: "Training Shorts",
-          imgSrc: "/attached_assets/10thPlanet Shorts.png",
+          imgSrc: "/images/custom-apparel/10thPlanet Shorts.png",
           description: "Quick-dry training shorts perfect for grappling and striking workouts."
         }
       ]
@@ -53,22 +53,22 @@ export function ClothingSetShowcase() {
       items: [
         {
           name: "Classic Rashguard",
-          imgSrc: "/attached_assets/ClassicRashguardMockup.png",
+          imgSrc: "/images/custom-apparel/ClassicRashguardMockup.png",
           description: "White and black rashguard with red accents and 10th Planet Birmingham branding."
         },
         {
           name: "Purple Rashguard",
-          imgSrc: "/attached_assets/Purple Rashguard.png",
+          imgSrc: "/images/custom-apparel/Purple Rashguard.png",
           description: "Black and purple signature rashguard with number 24 on back."
         },
         {
           name: "Brown Rashguard",
-          imgSrc: "/attached_assets/BrownRashguardMockup.png",
+          imgSrc: "/images/custom-apparel/BrownRashguardMockup.png",
           description: "Black and brown rashguard with 10th Planet Birmingham branding."
         },
         {
           name: "White Rashguard",
-          imgSrc: "/attached_assets/WhiteRashguardMockup.png",
+          imgSrc: "/images/custom-apparel/WhiteRashguardMockup.png",
           description: "Black and white rashguard with 10th Planet Birmingham branding."
         }
       ]
@@ -80,22 +80,22 @@ export function ClothingSetShowcase() {
       items: [
         {
           name: "Team Singlet",
-          imgSrc: "/attached_assets/AuburnMen's Final.png",
+          imgSrc: "/images/custom-apparel/AuburnMen_s Final.png",
           description: "Official Auburn team singlet with school logo and custom design."
         },
         {
           name: "Women's Package",
-          imgSrc: "/attached_assets/AuburnWomens FInal.png",
+          imgSrc: "/images/custom-apparel/AuburnWomens FInal.png",
           description: "Complete women's team package including compression shorts and singlet."
         },
         {
           name: "JV Package",
-          imgSrc: "/attached_assets/AuburnJV.png",
+          imgSrc: "/images/custom-apparel/AuburnJV.png",
           description: "Junior varsity gear package with Auburn Wrestling branding."
         },
         {
           name: "Full Team Package",
-          imgSrc: "/attached_assets/Auburn JV Pack Final.png",
+          imgSrc: "/images/custom-apparel/Auburn JV Pack Final.png",
           description: "Comprehensive Auburn team apparel package with multiple gear options."
         }
       ]
@@ -107,22 +107,22 @@ export function ClothingSetShowcase() {
       items: [
         {
           name: "Team Package",
-          imgSrc: "/attached_assets/Berry Middle Gear Pack.png",
+          imgSrc: "/images/custom-apparel/Berry Middle Gear Pack.png",
           description: "Complete Berry Middle School team package with Jaguar branding."
         },
         {
           name: "Jaguar Collection",
-          imgSrc: "/attached_assets/BerryGearpAckV2.png",
+          imgSrc: "/images/custom-apparel/BerryGearpAckV2.png",
           description: "Berry 'Jaguars' branded training gear collection."
         },
         {
           name: "Training Apparel",
-          imgSrc: "/attached_assets/Coosa Christian Tech.png",
+          imgSrc: "/images/custom-apparel/Coosa Christian Tech.png",
           description: "Performance training apparel with lightweight, moisture-wicking fabric."
         },
         {
           name: "Signature Jogger",
-          imgSrc: "/attached_assets/SweatsSmallLogo.png",
+          imgSrc: "/images/custom-apparel/SweatsSmallLogo.png",
           description: "Signature jogger sweatpants with small logo branding."
         }
       ]

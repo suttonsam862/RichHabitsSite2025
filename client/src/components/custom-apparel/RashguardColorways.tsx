@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Import actual rashguard images directly
-import blackRashguard from "@assets/BlackRashgaurdMockup.png";
-import blueRashguard from "@assets/BlueRashguardMockup.png";
-import brownRashguard from "@assets/BrownRashguardMockup.png";
-import whiteRashguard from "@assets/WhiteRashguardMockup.png";
-import purpleRashguard from "@assets/Purple Rashguard.png";
-import classicRashguard from "@assets/ClassicRashguardMockup.png";
+// Use image URLs instead of imports
+const baseUrl = window.location.origin;
+const blackRashguard = `${baseUrl}/images/custom-apparel/BlackRashgaurdMockup.png`;
+const blueRashguard = `${baseUrl}/images/custom-apparel/BlueRashguardMockup.png`;
+const brownRashguard = `${baseUrl}/images/custom-apparel/BrownRashguardMockup.png`; // May need fallback
+const whiteRashguard = `${baseUrl}/images/custom-apparel/ClassicRashguardMockup.png`; // Using classic as fallback
+const purpleRashguard = `${baseUrl}/images/custom-apparel/BlueRashguardMockup.png`; // Using blue as fallback
+const classicRashguard = `${baseUrl}/images/custom-apparel/ClassicRashguardMockup.png`;
 
 export function RashguardColorways() {
   const [selectedColorway, setSelectedColorway] = useState(0);

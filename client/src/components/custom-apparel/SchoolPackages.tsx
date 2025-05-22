@@ -2,23 +2,24 @@ import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Import the actual images to ensure they're properly bundled by Vite
+// Use image URLs instead of imports for better compatibility
+const baseUrl = window.location.origin;
 // Auburn images
-import auburnMens from "@assets/AuburnMen's Final.png";
-import auburnWomens from "@assets/AuburnWomens FInal.png"; 
-import auburnJV from "@assets/AuburnJV.png";
+const auburnMens = `${baseUrl}/images/custom-apparel/AuburnMen_s Final.png`;
+const auburnWomens = `${baseUrl}/images/custom-apparel/AuburnWomens FInal.png`;
+const auburnJV = `${baseUrl}/images/custom-apparel/Auburn JV Pack Final.png`;
 
-// Berry images
-import berryGearPack from "@assets/Berry Middle Gear Pack.png";
-import berryGearPackV2 from "@assets/BerryGearpAckV2.png";
+// Berry images - using what we have as fallbacks
+const berryGearPack = `${baseUrl}/images/custom-apparel/BerryGearpAckV2.png`;
+const berryGearPackV2 = `${baseUrl}/images/custom-apparel/Berry Middle Gear Pack.png`;
 
-// Coosa images
-import coosaChristianTech from "@assets/Coosa Christian Tech.png";
-import coosaChristianLogo from "@assets/CoosaChristianPNG.png";
+// Coosa images - using what we have as fallbacks
+const coosaChristianTech = `${baseUrl}/images/custom-apparel/Coosa Christian Tech.png`;
+const coosaChristianLogo = `${baseUrl}/images/custom-apparel/CoosaChristianPNG.png`;
 
-// Dora images
-import doraMensFinal from "@assets/DoraMensFinal.png";
-import doraMensSinglet from "@assets/DoraMen's Singlet.png";
+// Dora images - using another design as fallback
+const doraMensFinal = `${baseUrl}/images/custom-apparel/DoraMensFinal.png`;
+const doraMensSinglet = `${baseUrl}/images/custom-apparel/DoraMens Singlet.png`;
 
 export function SchoolPackages() {
   const [selectedSchool, setSelectedSchool] = useState(0);

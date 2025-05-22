@@ -4,18 +4,18 @@ import { X } from "lucide-react";
 
 // Design image paths - using actual designs instead of wrestler photos
 const baseUrl = window.location.origin;
-const design1 = `${baseUrl}/designs/athens.png`;
-const design2 = `${baseUrl}/designs/brooksfinal.png`;
-const design3 = `${baseUrl}/designs/bragg.png`;
-const design4 = `${baseUrl}/designs/canenation.png`;
-const design5 = `${baseUrl}/designs/elevate.png`;
-const design6 = `${baseUrl}/designs/ltds.png`;
-const design7 = `${baseUrl}/designs/classicrashguard.png`;
-const design8 = `${baseUrl}/designs/bluerashguard.png`;
-const design9 = `${baseUrl}/designs/blackrashguard.png`;
-const design10 = `${baseUrl}/designs/nopaws.png`;
-const design11 = `${baseUrl}/designs/deathsquad.png`;
-const design12 = `${baseUrl}/designs/nickpolo.png`;
+const design1 = `${baseUrl}/designs/Athens Mockup.png`;
+const design2 = `${baseUrl}/designs/BrooksMockupFinal.png`;
+const design3 = `${baseUrl}/designs/BraggMockup.png`;
+const design4 = `${baseUrl}/designs/CaneNationMockup.png`;
+const design5 = `${baseUrl}/designs/ElevateMockup5.png`;
+const design6 = `${baseUrl}/designs/LTDS Mockup.png`;
+const design7 = `${baseUrl}/designs/ClassicRashguardMockup.png`;
+const design8 = `${baseUrl}/designs/BlueRashguardMockup.png`;
+const design9 = `${baseUrl}/designs/BlackRashgaurdMockup.png`;
+const design10 = `${baseUrl}/designs/NoPawsRanburneMockup.png`;
+const design11 = `${baseUrl}/designs/10pDeathSquad Mockup.png`;
+const design12 = `${baseUrl}/designs/NickPoloMockupFinal.png`;
 
 interface GalleryImage {
   src: string;

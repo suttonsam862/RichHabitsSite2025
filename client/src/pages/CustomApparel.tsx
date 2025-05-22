@@ -302,6 +302,24 @@ export default function CustomApparel() {
         {/* Team Gallery Section */}
         <TeamGallery />
         
+        {/* Featured Teams Section */}
+        <FeaturedTeams />
+        
+        {/* Rashguard Colorways Section */}
+        <RashguardColorways />
+        
+        {/* School Packages Section */}
+        <SchoolPackages />
+        
+        {/* Clothing Set Showcase Section */}
+        <ClothingSetShowcase />
+        
+        {/* Design Showcase Section */}
+        <DesignShowcase />
+        
+        {/* Testimonials Section */}
+        <Testimonials />
+        
         {/* Request Form */}
         <motion.div
           id="contact-form"

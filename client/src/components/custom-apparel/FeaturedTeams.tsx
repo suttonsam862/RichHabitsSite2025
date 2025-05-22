@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge";
 
 // Image paths with baseUrl for production reliability
 const baseUrl = window.location.origin;
-const homewoodSinglet = `${baseUrl}/designs/brooksfinal.png`;
-const mortimerJordanSinglet = `${baseUrl}/designs/bragg.png`;
-const clayChalkvilleSinglet = `${baseUrl}/designs/athens.png`;
+const homewoodSinglet = `${baseUrl}/designs/BrooksMockupFinal.png`;
+const mortimerJordanSinglet = `${baseUrl}/designs/BraggMockup.png`;
+const clayChalkvilleSinglet = `${baseUrl}/designs/Athens Mockup.png`;
 
 interface Team {
   name: string;

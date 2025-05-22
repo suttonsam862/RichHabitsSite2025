@@ -2,25 +2,27 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 
-// Import actual design mockups directly for reliable loading
+// Using image URLs with baseUrl instead of direct imports for better compatibility
+const baseUrl = window.location.origin;
+
 // Team designs mockups
-import athensMockup from "@assets/Athens Mockup.png";
-import ltdsMockup from "@assets/LTDS Mockup.png"; 
-import ltdsMockups from "@assets/LTDS Mockups.png";
-import brooksMockup from "@assets/BrooksMockup.png";
-import brooksMockupFinal from "@assets/BrooksMockupFinal.png";
+const athensMockup = `${baseUrl}/designs/Athens Mockup.png`;
+const ltdsMockup = `${baseUrl}/designs/LTDS Mockup.png`; 
+const ltdsMockups = `${baseUrl}/designs/LTDS Mockups.png`;
+const brooksMockup = `${baseUrl}/designs/BrooksMockup.png`;
+const brooksMockupFinal = `${baseUrl}/designs/BrooksMockupFinal.png`;
 
 // Performance gear mockups
-import braggMockup from "@assets/BraggMockup.png";
-import elevateMockup from "@assets/ElevateMockup5.png";
-import caneNationMockup from "@assets/CaneNationMockup.png";
-import northsideDesign from "@assets/Northside Takedown Mockups.png";
+const braggMockup = `${baseUrl}/designs/BraggMockup.png`;
+const elevateMockup = `${baseUrl}/designs/ElevateMockup5.png`;
+const caneNationMockup = `${baseUrl}/designs/CaneNationMockup.png`;
+const northsideDesign = `${baseUrl}/designs/Northside Takedown Mockups.png`;
 
 // Apparel mockups
-import deathSquadMockup from "@assets/10pDeathSquad Mockup.png";
-import planetShorts from "@assets/10thPlanet Shorts.png";
-import planetCrewneck from "@assets/10th Planet Crewneck.png";
-import planetSweats from "@assets/10th Planet Sweats.png";
+const deathSquadMockup = `${baseUrl}/designs/10pDeathSquad Mockup.png`;
+const planetShorts = `${baseUrl}/designs/10thPlanet Shorts.png`;
+const planetCrewneck = `${baseUrl}/designs/10th Planet Crewneck.png`;
+const planetSweats = `${baseUrl}/designs/10th Planet Sweats.png`;
 
 export function DesignShowcase() {
   const [currentDesignSet, setCurrentDesignSet] = useState(0);
