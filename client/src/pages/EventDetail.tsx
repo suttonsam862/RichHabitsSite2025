@@ -416,38 +416,29 @@ export default function EventDetail() {
                 </div>
               )}
               
-              {/* Schedule */}
+              {/* Training Excellence */}
               <h2 
                 className="text-3xl mb-6 title-font"
               >
-                Schedule
+                Training Excellence
               </h2>
-              <div className="mb-12 grid grid-cols-1 gap-6">
-                {event.schedule.map((item: any, index: number) => (
-                  <motion.div 
-                    key={index}
-                    className="border border-gray-200 p-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <h3 
-                      className="text-xl mb-2 title-font"
-                    >
-                      {item.day}
-                    </h3>
-                    <p 
-                      className="text-gray-500 mb-2 subtitle-font"
-                    >
-                      {item.time}
-                    </p>
-                    <p 
-                      className="text-gray-700 subtitle-font"
-                    >
-                      <span className="font-medium">Focus:</span> {item.focus}
-                    </p>
-                  </motion.div>
-                ))}
+              <div className="mb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border border-gray-200 p-6">
+                  <h3 className="text-xl mb-2 title-font">Elite Instruction</h3>
+                  <p className="text-gray-700 subtitle-font">Learn from proven champions who have competed at the highest levels of wrestling.</p>
+                </div>
+                <div className="border border-gray-200 p-6">
+                  <h3 className="text-xl mb-2 title-font">Personalized Development</h3>
+                  <p className="text-gray-700 subtitle-font">Receive individual attention and customized feedback to accelerate your progress.</p>
+                </div>
+                <div className="border border-gray-200 p-6">
+                  <h3 className="text-xl mb-2 title-font">Competition Preparation</h3>
+                  <p className="text-gray-700 subtitle-font">Master the mental and physical preparation needed for championship performance.</p>
+                </div>
+                <div className="border border-gray-200 p-6">
+                  <h3 className="text-xl mb-2 title-font">Technical Mastery</h3>
+                  <p className="text-gray-700 subtitle-font">Perfect advanced techniques with step-by-step instruction from elite athletes.</p>
+                </div>
               </div>
               
               {/* Coaches */}
