@@ -1,265 +1,831 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
-import { Helmet } from 'react-helmet';
-import { Container } from '@/components/Container';
-import { useToast } from '@/hooks/use-toast';
-import { RegistrationProgress, type RegistrationStep } from '@/components/RegistrationProgress';
-import { 
-  updateRegistrationStatus, 
-  handleRegistrationError,
-  getCompletedRegistrations 
-} from '@/lib/registrationUtils';
-import { 
-  EventRegistrationForm, 
-  type RegistrationFormData 
-} from '@/components/events/EventRegistrationForm';
+import React, { useState, useEffect } from "react";
+import { useRoute, Link } from "wouter";
+import { motion } from "framer-motion";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../components/checkout/CheckoutForm";
+
+// Event data (in production this would be fetched from API)
+const events = [
+  {
+    id: 1,
+    title: "Birmingham Slam Camp",
+    date: "June 19-21, 2025",
+    location: "Clay-Chalkville Middle School, Birmingham, AL",
+    price: "$249",
+    fullPrice: 249,
+    singleDayPrice: 149,
+    image: "/images/wrestlers/DSC09491.JPG",
+    signature: "Exclusive partnership with Fruit Hunters"
+  },
+  {
+    id: 2,
+    title: "National Champ Camp",
+    date: "June 5-7, 2025",
+    location: "Roy Martin Middle School, Las Vegas, NV",
+    price: "$349",
+    fullPrice: 349,
+    singleDayPrice: 175,
+    image: "/images/wrestlers/DSC09374--.JPG",
+    signature: "Focus on championship-level techniques"
+  },
+  {
+    id: 3,
+    title: "Texas Recruiting Clinic",
+    date: "June 12-13, 2025",
+    location: "Arlington Martin High School, Arlington, TX",
+    price: "$249",
+    fullPrice: 249,
+    singleDayPrice: null,
+    image: "/images/wrestlers/DSC00423.JPG",
+    signature: "College coach evaluations included"
+  },
+  {
+    id: 4,
+    title: "Panther Train Tour",
+    date: "July 23-25, 2025",
+    location: "Various locations",
+    price: "$99 per day",
+    fullPrice: 200,
+    singleDayPrice: 99,
+    image: "/images/wrestlers/DSC08615.JPG",
+    signature: "Travel across multiple training facilities"
+  }
+];
+
+// Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6 }
+  }
+};
 
 export default function EventRegistration() {
-  const [location, navigate] = useLocation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-
-  // Extract the event ID from the URL
-  const eventId = parseInt(location.split('/')[2] || "0", 10);
+  const [, params] = useRoute("/register/:id");
+  const eventId = params?.id ? parseInt(params.id, 10) : 0;
   
-  // State for loading event data
   const [event, setEvent] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState<RegistrationStep>('form');
-
-  // Fetch event data from API
+  const [registrationType, setRegistrationType] = useState<string>("full");
+  const [isLoading, setIsLoading] = useState(true);
+  const [clientSecret, setClientSecret] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    age: "",
+    experience: "beginner",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
+    specialRequirements: "",
+    agrees: false
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [step, setStep] = useState(1);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  
   useEffect(() => {
-    async function fetchEvent() {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/events/${eventId}`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('Event not found');
-          } else {
-            throw new Error('Failed to fetch event data');
-          }
-          return;
+    // Simulate API call to get event details
+    const fetchEvent = () => {
+      setIsLoading(true);
+      
+      // Find event by ID
+      const foundEvent = events.find(e => e.id === eventId);
+      
+      setTimeout(() => {
+        if (foundEvent) {
+          setEvent(foundEvent);
         }
-        
-        const data = await response.json();
-        setEvent(data);
-      } catch (err) {
-        console.error('Error fetching event:', err);
-        setError('Could not load event data. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    }
+        setIsLoading(false);
+      }, 300);
+    };
     
     fetchEvent();
   }, [eventId]);
   
-  // Handle standardized form submission process
-  const handleFormSubmit = async (formData: RegistrationFormData) => {
-    try {
-      setIsSubmitting(true);
-      setCurrentStep('processing');
-      
-      // Update registration status in our centralized system
-      updateRegistrationStatus(eventId, 'processing');
-      
-      // Notify user we're processing
-      toast({
-        title: "Registration In Progress",
-        description: "Preparing your registration...",
+  // Calculate price based on selection
+  const calculatePrice = () => {
+    if (!event) return 0;
+    
+    return registrationType === "full" 
+      ? event.fullPrice 
+      : (event.singleDayPrice || event.fullPrice);
+  };
+  
+  // Handle input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+      const checkbox = e.target as HTMLInputElement;
+      setFormData(prev => ({
+        ...prev,
+        [name]: checkbox.checked
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+    
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors[name];
+        return newErrors;
       });
-      
-      // Prepare form data with consistent naming for the API
-      const apiFormData = {
-        ...formData,
-        eventId: eventId,
-        // Explicitly map 'option' to 'registrationType' to ensure consistency with the API schema
-        registrationType: formData.option,
-      };
-      
-      console.log('Submitting registration data:', apiFormData);
-      
-      // Submit to backend API
-      const response = await fetch(`/api/events/${eventId}/register`, {
+    }
+  };
+  
+  // Validate form
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    // Required fields
+    const requiredFields: (keyof typeof formData)[] = [
+      'firstName', 'lastName', 'email', 'phone', 'age',
+      'emergencyContactName', 'emergencyContactPhone'
+    ];
+    
+    requiredFields.forEach(field => {
+      if (!formData[field]) {
+        newErrors[field] = 'This field is required';
+      }
+    });
+    
+    // Email validation
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    // Age validation
+    if (formData.age && (isNaN(Number(formData.age)) || Number(formData.age) < 5 || Number(formData.age) > 100)) {
+      newErrors.age = 'Please enter a valid age between 5 and 100';
+    }
+    
+    // Phone validation
+    if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
+      newErrors.phone = 'Please enter a valid 10-digit phone number';
+    }
+    
+    // Emergency phone validation
+    if (formData.emergencyContactPhone && !/^\d{10}$/.test(formData.emergencyContactPhone.replace(/\D/g, ''))) {
+      newErrors.emergencyContactPhone = 'Please enter a valid 10-digit phone number';
+    }
+    
+    // Agreement required
+    if (!formData.agrees) {
+      newErrors.agrees = 'You must agree to the terms and conditions';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  // Handle proceed to payment
+  const handleProceedToPayment = async () => {
+    if (!validateForm()) return;
+    
+    try {
+      // In a real app, this would call your backend to create a payment intent
+      const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(apiFormData),
+        body: JSON.stringify({
+          amount: calculatePrice(),
+          eventId: event.id,
+          registrationType,
+          attendee: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            age: formData.age,
+            experience: formData.experience,
+            emergencyContact: {
+              name: formData.emergencyContactName,
+              phone: formData.emergencyContactPhone
+            },
+            specialRequirements: formData.specialRequirements
+          }
+        }),
       });
       
-      const data = await response.json();
-      console.log('Registration response received:', data);
-      
-      if (!response.ok) {
-        console.error('Registration request failed:', response.status, data);
-        throw new Error(data.message || 'Failed to register');
-      }
-      
-      // Registration successful, show toast message
-      toast({
-        title: "Registration Successful",
-        description: "Preparing your checkout...",
-      });
-      
-      setCurrentStep('checkout');
-      updateRegistrationStatus(eventId, 'checkout');
-      
-      // Always use Stripe checkout instead of Shopify direct checkout
-      const stripeCheckoutUrl = `/stripe-checkout?eventId=${eventId}&eventName=${encodeURIComponent(event.title)}&option=${encodeURIComponent(formData.option)}`;
-      
-      console.log('Using Stripe checkout:', stripeCheckoutUrl);
-      
-      toast({
-        title: "Registration Successful",
-        description: "Redirecting to secure payment...",
-      });
-      
-      // Short timeout to allow the success toast to be seen
-      setTimeout(() => {
-        navigate(stripeCheckoutUrl);
-      }, 1000);
-      
+      const { clientSecret } = await response.json();
+      setClientSecret(clientSecret);
+      setStep(2);
     } catch (error) {
-      // Use our centralized error handling
-      const errorObj = error instanceof Error ? error : new Error('Unknown registration error');
-      handleRegistrationError(eventId, errorObj);
-      
-      // Extract message for the toast
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      
-      // Display the error to the user
-      toast({
-        title: "Registration Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
+      // For the demo, we'll simulate this step
+      console.log("Would create payment intent here");
+      // Simulate getting a client secret
+      setTimeout(() => {
+        // In a real app, we'd get this from the Stripe API
+        setClientSecret("pi_mock_" + Math.random().toString(36).substring(2, 15));
+        setStep(2);
+      }, 500);
     }
   };
   
-  // Loading state
-  if (loading) {
+  const handleSubmitRegistration = () => {
+    setFormSubmitted(true);
+    // In a real app, this would be handled by the Stripe webhook
+    // which would confirm the payment was successful before
+    // finalizing the registration
+  };
+  
+  if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] py-12">
-        <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full"></div>
-        <p className="mt-4 text-gray-600">Loading event information...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
+        <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
       </div>
     );
   }
   
-  // Error state
-  if (error) {
+  if (!event) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] py-12">
-        <div className="text-red-600 text-4xl mb-4">⚠️</div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">{error}</h1>
-        <p className="text-gray-600 mb-6">We couldn't find the event you're looking for.</p>
-        <button 
-          onClick={() => navigate('/events')}
-          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 pt-16">
+        <h1 
+          className="text-3xl mb-4"
+          style={{ fontFamily: "'Bodoni FLF', serif" }}
         >
-          Browse All Events
-        </button>
+          Event Not Found
+        </h1>
+        <p 
+          className="text-gray-600 mb-8"
+          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+        >
+          The event you are trying to register for does not exist.
+        </p>
+        <Link href="/events">
+          <motion.span
+            className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer"
+            whileHover={{ 
+              backgroundColor: '#1f2937', 
+              color: '#ffffff'
+            }}
+            transition={{ duration: 0.2 }}
+            style={{ fontFamily: "'Sanchez', serif" }}
+          >
+            Back to Events
+          </motion.span>
+        </Link>
       </div>
     );
   }
   
-  // Event found, show registration form
-  return (
-    <>
-      <Helmet>
-        <title>{event.title} Registration | Rich Habits</title>
-        <meta name="description" content={`Register for ${event.title}, ${event.date} at ${event.location}.`} />
-      </Helmet>
-      
-      <div className="bg-gray-50 py-4 border-b">
-        <Container>
-          <RegistrationProgress currentStep="form" />
-        </Container>
-      </div>
-      
-      <Container className="py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <div className="flex flex-col md:flex-row gap-6 mb-6">
-              {event.imageUrl && (
-                <div className="w-full md:w-1/3 lg:w-1/4">
-                  <img 
-                    src={event.imageUrl}
-                    alt={event.title} 
-                    className="w-full h-auto rounded-md object-cover"
-                  />
-                </div>
-              )}
-              
-              <div className="flex-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{event.title}</h1>
-                <div className="flex flex-col space-y-2 text-gray-700">
-                  <div>📅 <span className="font-medium">Date:</span> {event.date}</div>
-                  <div>📍 <span className="font-medium">Location:</span> {event.location}</div>
-                  <div>👥 <span className="font-medium">Capacity:</span> {event.capacity || 'Limited spots available'}</div>
-                  
-                  {event.id === 4 ? (
-                    <div className="mt-4">
-                      <div className="font-medium text-gray-800 mb-1">Pricing:</div>
-                      <div className="text-sm">
-                        <div>• Full Tour (all locations): $200 (save $97)</div>
-                        <div>• Individual locations: $99 per day</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-4">
-                      <div className="font-medium text-gray-800 mb-1">Pricing:</div>
-                      <div className="text-sm">
-                        <div>• Full Camp: ${event.id === 2 ? '349' : '249'}</div>
-                        <div>• Single Day: ${event.id === 2 ? '175' : '149'}</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+  if (formSubmitted) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-24 pb-20">
+        <div className="container mx-auto px-6">
+          <motion.div 
+            className="max-w-2xl mx-auto text-center p-12 bg-white border border-gray-200"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+          >
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
             
-            <div className="prose max-w-none mb-6">
-              <h2>About This Event</h2>
-              <p>{event.description}</p>
-              
-              {event.id === 1 && (
-                <div className="not-prose p-4 bg-amber-50 border border-amber-200 rounded-md mb-4">
-                  <div className="font-medium text-amber-800">Special Feature: Fruit Hunters Collaboration</div>
-                  <p className="text-amber-700 text-sm mt-1">
-                    This camp features an exclusive partnership with Fruit Hunters, an American exotic fruits company. 
-                    Participants will receive special tropical fruit treats during the camp.
-                  </p>
+            <h1 
+              className="text-3xl mb-6"
+              style={{ fontFamily: "'Bodoni FLF', serif" }}
+            >
+              Registration Complete
+            </h1>
+            
+            <p 
+              className="text-gray-700 mb-8"
+              style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+            >
+              Thank you for registering for {event.title}. We've sent a confirmation email to {formData.email} with all the details.
+            </p>
+            
+            <Link href="/">
+              <motion.span
+                className="inline-block bg-gray-900 px-6 py-3 text-white cursor-pointer"
+                whileHover={{ 
+                  backgroundColor: '#111827',
+                  x: 2
+                }}
+                transition={{ duration: 0.2 }}
+                style={{ fontFamily: "'Sanchez', serif" }}
+              >
+                Return to Home
+              </motion.span>
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen bg-gray-50 pt-24 pb-20">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <motion.div 
+            className="mb-12 text-center"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+          >
+            <h1 
+              className="text-3xl md:text-4xl mb-4"
+              style={{ fontFamily: "'Bodoni FLF', serif" }}
+            >
+              Register for {event.title}
+            </h1>
+            <p 
+              className="text-gray-600"
+              style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+            >
+              {event.date} • {event.location}
+            </p>
+          </motion.div>
+          
+          {/* Steps */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center">
+              <div className={`flex flex-col items-center ${step >= 1 ? 'text-gray-900' : 'text-gray-400'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${step >= 1 ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  1
                 </div>
-              )}
+                <span style={{ fontFamily: "'Sanchez', serif" }}>Registration</span>
+              </div>
               
-              <h2>What to Bring</h2>
-              <ul>
-                <li>Wrestling shoes</li>
-                <li>Workout clothes</li>
-                <li>Water bottle</li>
-                <li>Snacks</li>
-                <li>Small towel</li>
-              </ul>
+              <div className={`flex-1 h-px mx-4 ${step >= 2 ? 'bg-gray-900' : 'bg-gray-200'}`}></div>
+              
+              <div className={`flex flex-col items-center ${step >= 2 ? 'text-gray-900' : 'text-gray-400'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${step >= 2 ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  2
+                </div>
+                <span style={{ fontFamily: "'Sanchez', serif" }}>Payment</span>
+              </div>
+              
+              <div className={`flex-1 h-px mx-4 ${step >= 3 ? 'bg-gray-900' : 'bg-gray-200'}`}></div>
+              
+              <div className={`flex flex-col items-center ${step >= 3 ? 'text-gray-900' : 'text-gray-400'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${step >= 3 ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  3
+                </div>
+                <span style={{ fontFamily: "'Sanchez', serif" }}>Confirmation</span>
+              </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Registration Form</h2>
-            <EventRegistrationForm 
-              event={event}
-              onSubmit={handleFormSubmit}
-              isSubmitting={isSubmitting}
-            />
-          </div>
+          {/* Registration Form */}
+          {step === 1 && (
+            <motion.div
+              variants={fadeIn}
+              initial="initial"
+              animate="animate"
+            >
+              <div className="bg-white border border-gray-200 p-8 mb-8">
+                <h2 
+                  className="text-2xl mb-6"
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}
+                >
+                  Registration Options
+                </h2>
+                
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      id="full"
+                      name="registrationType"
+                      value="full"
+                      checked={registrationType === "full"}
+                      onChange={() => setRegistrationType("full")}
+                      className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                    />
+                    <label 
+                      htmlFor="full" 
+                      className="text-gray-800"
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                    >
+                      Full Event (${event.fullPrice})
+                    </label>
+                  </div>
+                  
+                  {event.singleDayPrice && (
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="radio"
+                        id="singleDay"
+                        name="registrationType"
+                        value="singleDay"
+                        checked={registrationType === "singleDay"}
+                        onChange={() => setRegistrationType("singleDay")}
+                        className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                      />
+                      <label 
+                        htmlFor="singleDay" 
+                        className="text-gray-800"
+                        style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                      >
+                        Single Day (${event.singleDayPrice})
+                      </label>
+                    </div>
+                  )}
+                </div>
+                
+                <hr className="my-8" />
+                
+                <h2 
+                  className="text-2xl mb-6"
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}
+                >
+                  Personal Information
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <label 
+                      htmlFor="firstName" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.firstName && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.firstName}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="lastName" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.lastName && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.lastName}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="email" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.email && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.email}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="phone" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.phone && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.phone}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="age" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Age *
+                    </label>
+                    <input
+                      type="number"
+                      id="age"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleChange}
+                      min="5"
+                      max="100"
+                      className={`w-full p-3 border ${errors.age ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.age && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.age}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="experience" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Wrestling Experience
+                    </label>
+                    <select
+                      id="experience"
+                      name="experience"
+                      value={formData.experience}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 focus:outline-none focus:border-gray-900"
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    >
+                      <option value="beginner">Beginner (0-2 years)</option>
+                      <option value="intermediate">Intermediate (3-5 years)</option>
+                      <option value="advanced">Advanced (5+ years)</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <hr className="my-8" />
+                
+                <h2 
+                  className="text-2xl mb-6"
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}
+                >
+                  Emergency Contact
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <label 
+                      htmlFor="emergencyContactName" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Emergency Contact Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="emergencyContactName"
+                      name="emergencyContactName"
+                      value={formData.emergencyContactName}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.emergencyContactName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.emergencyContactName && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.emergencyContactName}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="emergencyContactPhone" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Emergency Contact Phone *
+                    </label>
+                    <input
+                      type="tel"
+                      id="emergencyContactPhone"
+                      name="emergencyContactPhone"
+                      value={formData.emergencyContactPhone}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.emergencyContactPhone ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.emergencyContactPhone && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.emergencyContactPhone}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="mb-8">
+                  <label 
+                    htmlFor="specialRequirements" 
+                    className="block mb-2 text-gray-800"
+                    style={{ fontFamily: "'Sanchez', serif" }}
+                  >
+                    Special Requirements/Medical Information
+                  </label>
+                  <textarea
+                    id="specialRequirements"
+                    name="specialRequirements"
+                    value={formData.specialRequirements}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full p-3 border border-gray-300 focus:outline-none focus:border-gray-900"
+                    style={{ fontFamily: "'Arial', sans-serif" }}
+                    placeholder="Enter any allergies, medical conditions, or special needs"
+                  ></textarea>
+                </div>
+                
+                <div className="mb-8">
+                  <div className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      id="agrees"
+                      name="agrees"
+                      checked={formData.agrees}
+                      onChange={handleChange}
+                      className={`mt-1 h-5 w-5 ${errors.agrees ? 'border-red-500' : 'border-gray-300'} text-gray-900 focus:ring-gray-500`}
+                    />
+                    <label 
+                      htmlFor="agrees" 
+                      className="text-gray-800"
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                    >
+                      I agree to the terms and conditions, including the waiver of liability for this event. I understand that registration is not complete until payment is processed.
+                    </label>
+                  </div>
+                  {errors.agrees && (
+                    <p className="mt-1 text-red-500 text-sm">{errors.agrees}</p>
+                  )}
+                </div>
+                
+                <div className="flex justify-between">
+                  <Link href={`/events/${event.id}`}>
+                    <motion.span
+                      className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer"
+                      whileHover={{ 
+                        backgroundColor: '#f3f4f6'
+                      }}
+                      transition={{ duration: 0.2 }}
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Back to Event
+                    </motion.span>
+                  </Link>
+                  
+                  <motion.button
+                    type="button"
+                    onClick={handleProceedToPayment}
+                    className="bg-gray-900 px-6 py-3 text-white"
+                    whileHover={{ 
+                      backgroundColor: '#111827',
+                      x: 2
+                    }}
+                    transition={{ duration: 0.2 }}
+                    style={{ fontFamily: "'Sanchez', serif" }}
+                  >
+                    Proceed to Payment
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Payment Section */}
+          {step === 2 && (
+            <motion.div
+              variants={fadeIn}
+              initial="initial"
+              animate="animate"
+              className="bg-white border border-gray-200 p-8 mb-8"
+            >
+              <h2 
+                className="text-2xl mb-6"
+                style={{ fontFamily: "'Bodoni FLF', serif" }}
+              >
+                Payment
+              </h2>
+              
+              <div className="mb-8">
+                <h3 
+                  className="text-lg mb-4"
+                  style={{ fontFamily: "'Sanchez', serif" }}
+                >
+                  Order Summary
+                </h3>
+                
+                <div className="border border-gray-200 p-6 mb-6">
+                  <div className="flex justify-between mb-4">
+                    <span style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                      {event.title} - {registrationType === "full" ? "Full Event" : "Single Day"}
+                    </span>
+                    <span className="font-medium" style={{ fontFamily: "'Arial', sans-serif" }}>
+                      ${calculatePrice()}
+                    </span>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-gray-200 flex justify-between font-medium">
+                    <span style={{ fontFamily: "'Sanchez', serif" }}>Total</span>
+                    <span style={{ fontFamily: "'Sanchez', serif" }}>${calculatePrice()}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-8">
+                <h3 
+                  className="text-lg mb-4"
+                  style={{ fontFamily: "'Sanchez', serif" }}
+                >
+                  Payment Details
+                </h3>
+                
+                {clientSecret && (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CheckoutForm onSuccess={() => setStep(3)} />
+                  </Elements>
+                )}
+              </div>
+              
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="border border-gray-900 px-6 py-3 text-gray-900"
+                  style={{ fontFamily: "'Sanchez', serif" }}
+                >
+                  Back
+                </button>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Confirmation Step */}
+          {step === 3 && (
+            <motion.div
+              variants={fadeIn}
+              initial="initial"
+              animate="animate"
+              className="bg-white border border-gray-200 p-8 mb-8 text-center"
+            >
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              
+              <h2 
+                className="text-2xl mb-6"
+                style={{ fontFamily: "'Bodoni FLF', serif" }}
+              >
+                Payment Successful
+              </h2>
+              
+              <p 
+                className="text-gray-700 mb-8"
+                style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+              >
+                Your payment has been processed successfully. Click the button below to complete your registration.
+              </p>
+              
+              <button
+                type="button"
+                onClick={handleSubmitRegistration}
+                className="bg-gray-900 px-6 py-3 text-white"
+                style={{ fontFamily: "'Sanchez', serif" }}
+              >
+                Complete Registration
+              </button>
+            </motion.div>
+          )}
         </div>
-      </Container>
-    </>
+      </div>
+    </div>
   );
 }

@@ -1,1021 +1,263 @@
-import { useState } from "react";
-import { Container } from "@/components/ui/container";
-import { AnimatedUnderline } from "@/components/ui/animated-underline";
+import React, { useState } from "react";
+import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { Helmet } from "react-helmet";
-import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue 
-} from "@/components/ui/select";
-import { EventDetails } from "@/components/events/EventDetails";
 
-// Event images - use existing path references that are working
-const event1Image = "/assets/events/SlamCampSiteBanner.png";
-const event2Image = "/assets/events/LongSitePhotovegas.png";
-const event3Image = "/assets/events/RecruitingWebsiteimage4.png";
-const event4Image = "/assets/events/image_1745720198123.png";
-
-// Import videos directly from the assets/videos directory
-import birminghamVideo from "../assets/videos/birmingham_slam.mov";
-import champCampVideo from "../assets/videos/04243.mov"; 
-import texasRecruitingVideo from "../assets/videos/trcvid.mov";
-import pantherTrainVideo from "../assets/videos/corylandloopvide.mov";
-
-// Static events data
+// Event data
 const events = [
   {
+    id: 1,
+    title: "Birmingham Slam Camp",
+    date: "June 19-21, 2025",
+    location: "Clay-Chalkville Middle School, Birmingham, AL",
+    price: "$249",
+    shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
+    image: "/images/wrestlers/DSC09491.JPG",
+    accent: "orange",
+    signature: "Exclusive partnership with Fruit Hunters"
+  },
+  {
     id: 2,
-    title: "NATIONAL CHAMP CAMP",
-    category: "Wrestling",
-    categoryClass: "bg-[hsl(var(--accent2)_/_0.1)] text-[hsl(var(--accent2))]",
-    date: "June 5th-7th, 2025",
-    time: "9:00 AM - 4:00 PM",
-    location: "Roy Martin Middle School",
-    city: "Las Vegas, NV",
-    description: "Train with NCAA champions and Olympic athletes in this intensive three-day camp focused on advanced wrestling techniques. Designed for competitive wrestlers looking to elevate their skill set to championship level.",
+    title: "National Champ Camp",
+    date: "June 5-7, 2025",
+    location: "Roy Martin Middle School, Las Vegas, NV",
     price: "$349",
-    image: event2Image
+    shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
+    image: "/images/wrestlers/DSC09374--.JPG",
+    accent: "blue",
+    signature: "Focus on championship-level techniques"
   },
   {
     id: 3,
-    title: "TEXAS RECRUITING CLINIC",
-    category: "Wrestling",
-    categoryClass: "bg-[hsl(var(--accent3)_/_0.1)] text-[hsl(var(--accent3))]",
-    date: "June 12th-13th, 2025",
-    time: "9:00 AM - 4:00 PM",
-    location: "Arlington Martin High School",
-    city: "Arlington, TX",
-    description: "A unique clinic designed specifically for high school wrestlers seeking collegiate opportunities. Features skill development sessions with college coaches, recruiting workshops, professional video profiling, and low scale competition to enhance recruitment portfolios.",
+    title: "Texas Recruiting Clinic",
+    date: "June 12-13, 2025",
+    location: "Arlington Martin High School, Arlington, TX",
     price: "$249",
-    originalPrice: "$300",
-    image: event3Image
-  },
-  {
-    id: 1,
-    title: "BIRMINGHAM SLAM CAMP",
-    category: "Wrestling",
-    categoryClass: "bg-[hsl(var(--accent)_/_0.1)] text-[hsl(var(--accent))]",
-    date: "June 19th-21st, 2025",
-    time: "9:00 AM - 3:00 PM",
-    location: "Clay Chalkville Middle School",
-    city: "Birmingham, AL",
-    description: "Something different is happening June 19–21. A camp where lights hit harder, technique runs deeper, and the energy feels bigger than wrestling. Birmingham Slam Camp isn't just training — it's a statement.",
-    price: "$249",
-    image: event1Image
+    shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
+    image: "/images/wrestlers/DSC00423.JPG",
+    accent: "red",
+    signature: "College coach evaluations included"
   },
   {
     id: 4,
-    title: "PANTHER TRAIN TOUR",
-    category: "Wrestling",
-    categoryClass: "bg-[#4B0082]/10 text-[#4B0082]",
-    date: "July 23rd-25th, 2025",
-    time: "9:00 AM - 3:00 PM",
-    location: "East Hamilton, Ironclad, Fairhope",
-    city: "Multiple Locations, TN & AL",
-    description: "Join Northern Iowa standout wrestlers and their elite teammates for this unique 3-day clinic tour. Each day features a new location with intensive technique training, live wrestling, and personalized coaching from these collegiate athletes. Focus on neutral, mat wrestling, and bottom position techniques.",
-    price: "$99/day",
-    originalPrice: "$299",
-    image: event4Image,
-    locations: [
-      { day: "Day 1 - July 23", location: "East Hamilton High School", city: "Chattanooga, TN" },
-      { day: "Day 2 - July 24", location: "Ironclad Wrestling Club", city: "Atlanta, GA" },
-      { day: "Day 3 - July 25", location: "Fairhope High School", city: "Fairhope, AL" }
-    ]
+    title: "Panther Train Tour",
+    date: "July 23-25, 2025",
+    location: "Various locations",
+    price: "$99 per day",
+    shortDescription: "A multi-location training tour with elite coaches.",
+    image: "/images/wrestlers/DSC08615.JPG",
+    accent: "black",
+    signature: "Travel across multiple training facilities"
   }
 ];
 
+// Animation variants
+const fadeIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.8 } }
+};
+
+const stagger = {
+  animate: {
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const imageReveal = {
+  initial: { scale: 1.2, opacity: 0 },
+  animate: { 
+    scale: 1, 
+    opacity: 1, 
+    transition: { 
+      duration: 1.2,
+      ease: [0.25, 1, 0.5, 1]
+    } 
+  }
+};
+
 export default function Events() {
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [showRegistrationDialog, setShowRegistrationDialog] = useState(false);
-  const [registrationForm, setRegistrationForm] = useState({
-    firstName: "",
-    lastName: "",
-    contactName: "",
-    email: "",
-    phone: "",
-    tShirtSize: "Large",
-    grade: "",
-    schoolName: "",
-    clubName: "",
-    medicalReleaseAccepted: false,
-    registrationType: "full",
-    day1: false,
-    day2: false,
-    day3: false
-  });
-  
-  // Add event handler for video errors - with improved fallback handling
-  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement>) => {
-    const videoElement = e.currentTarget;
-    videoElement.classList.add('error');
-    videoElement.style.display = 'none'; // Hide the video completely on error
-    
-    // Find the parent container and ensure the image is visible
-    const parentContainer = videoElement.parentElement;
-    if (parentContainer) {
-      parentContainer.classList.add('video-error');
-      // Find any sibling image and make sure it's visible
-      const fallbackImage = parentContainer.querySelector('img');
-      if (fallbackImage) {
-        fallbackImage.style.opacity = '1';
-        fallbackImage.style.zIndex = '1';
-      }
-    }
-    
-    // Log the error for debugging purposes
-    console.warn('Video error:', videoElement.src);
-  };
-  
-  const { toast } = useToast();
-
-  const handleRegister = (event: any) => {
-    // Instead of showing the dialog, navigate to the dedicated registration page
-    window.location.href = `/events/${event.id}/register`;
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRegistrationForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmitRegistration = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedEvent) {
-      toast({
-        title: "Error",
-        description: "No event selected.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      // Submit to the API for registration
-      const response = await fetch(`/api/events/${selectedEvent.id}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(registrationForm)
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to register for event');
-      }
-      
-      // If checkout URL exists, redirect the user
-      if (data.checkoutUrl) {
-        console.log('Redirecting to Shopify checkout:', data.checkoutUrl);
-        // Use timeout to ensure toast is seen before redirect
-        toast({
-          title: "Registration successful!",
-          description: "Redirecting to secure checkout...",
-          duration: 3000
-        });
-        
-        // Slight delay to ensure toast is visible before redirect
-        setTimeout(() => {
-          window.location.href = data.checkoutUrl;
-        }, 1000);
-      } else {
-        // Otherwise show partial success message and info about the error
-        console.warn('Registration saved but checkout failed:', data);
-        
-        // Check if we have specific Shopify error info
-        const errorDetail = data.shopifyError 
-          ? `Error: ${data.shopifyError}` 
-          : 'The system could not generate a checkout link';
-        
-        toast({
-          title: "Registration saved",
-          description: `Your registration information was saved, but we couldn't create the checkout. ${errorDetail}. Please contact support.`,
-          variant: "destructive",
-          duration: 10000
-        });
-        
-        setShowRegistrationDialog(false);
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-      // Reset form
-      setRegistrationForm({
-        firstName: "",
-        lastName: "",
-        contactName: "",
-        email: "",
-        phone: "",
-        tShirtSize: "Large",
-        grade: "",
-        schoolName: "",
-        clubName: "",
-        medicalReleaseAccepted: false,
-        registrationType: "full",
-        day1: false,
-        day2: false,
-        day3: false
-      });
-    }
-  };
+  const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
   
   return (
-    <>
-      <Helmet>
-        <title>Events & Clinics | Rich Habits</title>
-        <meta name="description" content="Sports clinics and training events for dedicated athletes. Improve your skills with expert coaching." />
-      </Helmet>
-      
-      <div className="bg-white">
-        {/* Events Section */}
-        <section className="py-16">
-          <Container>
-            <div className="mb-12">
-              <h2 className="text-5xl font-serif font-medium mb-6 group text-center tracking-wide">
-                <AnimatedUnderline>
-                  <span className="text-gray-300">UPCOMING EVENTS</span>
-                </AnimatedUnderline>
-              </h2>
-              <p className="text-lg text-center mb-10">Register for our sports clinics and training events to take your skills to the next level.</p>
-            </div>
-
-            {/* Event Row 0: National Champ Camp */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-24 relative"
-            >
-              {/* Animated Edge Top Left - Red */}
-              <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
-                style={{ 
-                  borderColor: '#bf0a30'
-                }}
-              />
-              
-              {/* Animated Edge Bottom Right - Blue */}
-              <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                viewport={{ once: true }}
-                style={{ 
-                  borderColor: '#002868'
-                }}
-              />
-              
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6" style={{ 
-                  border: '2px solid',
-                  borderImageSlice: 1,
-                  borderImageSource: 'linear-gradient(to right, #bf0a30, #ffffff, #002868)'
-                }}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm relative">
-                    {/* Using image as primary with optional video enhancement */}
-                    <img 
-                      src={events[0].image} 
-                      alt={events[0].title} 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/images/event-placeholder.png';
-                      }}
-                    />
-                    <video 
-                      src={champCampVideo}
-                      autoPlay 
-                      loop 
-                      muted 
-                      playsInline
-                      onError={handleVideoError}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 absolute top-0 left-0 opacity-0"
-                      onCanPlay={(e) => {
-                        // Only show video if it successfully loads
-                        e.currentTarget.style.opacity = "1";
-                      }}
-                    ></video>
-                  </div>
-                  <div className="md:col-span-2">
-                    <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
-                        background: 'var(--psu-gradient)'
-                      }}>
-                        {events[0].category}
-                      </span>
-                    </div>
-                    <h3 className="text-3xl font-bold mb-1">
-                      <span style={{ 
-                        background: 'var(--psu-gradient)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        fontWeight: 800,
-                        letterSpacing: '0.08em',
-                        textShadow: 'var(--psu-text-shadow)'
-                      }}>
-                        {events[0].title}
-                      </span>
-                    </h3>
-                    <div className="mb-3">
-                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'var(--psu-gradient)',
-                        color: 'white',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                      }}>
-                        {events[0].city}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[0].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[0].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[0].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[0].price} <span className="line-through text-red-500 ml-1">{events[0].originalPrice}</span> <span className="text-xs bg-red-100 text-red-600 px-1 rounded ml-1">SALE</span></p>
-                    </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[0].description}</p>
-                    <div className="flex space-x-4">
-                      <a 
-                        href={`/events/${events[0].id}`}
-                        className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
-                        style={{ background: 'var(--psu-gradient)' }}
-                      >
-                        View Details
-                      </a>
-                      <button 
-                        onClick={() => handleRegister(events[0])}
-                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm transition-colors"
-                        style={{ borderColor: '#00205B', color: '#00205B' }}
-                      >
-                        Register Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Event Row 1: Texas Recruiting Clinic */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-24 relative"
-            >
-              {/* Animated Edge Top Left - Purple */}
-              <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
-                style={{ 
-                  borderColor: '#4B0082'
-                }}
-              />
-              
-              {/* Animated Edge Bottom Right - Gold */}
-              <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                viewport={{ once: true }}
-                style={{ 
-                  borderColor: '#D4AF37'
-                }}
-              />
-              
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 panther-train-border">
-                {/* Add animated background elements */}
-                <div className="panther-train-diamond-pattern"></div>
-                <div className="panther-train-purple-wave"></div>
-                <div className="panther-train-gold-wave"></div>
-                <div className="panther-train-stripe"></div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm relative">
-                    {/* Using image as primary with optional video enhancement */}
-                    <img 
-                      src={events[1].image} 
-                      alt={events[1].title} 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/images/event-placeholder.png';
-                      }}
-                    />
-                    <video 
-                      src={texasRecruitingVideo}
-                      autoPlay 
-                      loop 
-                      muted 
-                      playsInline
-                      onError={handleVideoError}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 absolute top-0 left-0 opacity-0"
-                      onCanPlay={(e) => {
-                        // Only show video if it successfully loads
-                        e.currentTarget.style.opacity = "1";
-                      }}
-                    ></video>
-                  </div>
-                  <div className="md:col-span-2 relative z-10">
-                    <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
-                        background: 'var(--usa-gradient)'
-                      }}>
-                        {events[1].category}
-                      </span>
-                    </div>
-                    <h3 className="text-3xl font-bold mb-1 relative">
-                      <span style={{ 
-                        background: 'var(--usa-gradient)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        fontWeight: 800,
-                        letterSpacing: '0.08em',
-                        textShadow: 'var(--usa-text-shadow)'
-                      }}>
-                        {events[1].title}
-                      </span>
-                    </h3>
-                    <div className="mb-3">
-                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'var(--usa-gradient)',
-                        color: 'white',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                      }}>
-                        {events[1].city}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[1].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[1].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[1].price} <span className="line-through text-red-500 ml-1">{events[1].originalPrice}</span> <span className="text-xs bg-purple-100 text-purple-600 px-1 rounded ml-1">ALL DAYS: $200</span></p>
-                    </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[1].description}</p>
-                    
-                    {/* Location details */}
-                    <div className="mb-6 pl-2 border-l-2 border-purple-600">
-                      {events[1].locations?.map((loc, idx) => (
-                        <p key={idx} className="text-sm text-gray-700 mb-1"><strong>{loc.day}:</strong> {loc.location}</p>
-                      ))}
-                    </div>
-                    
-                    <div className="flex space-x-4">
-                      <a 
-                        href={`/events/${events[1].id}`}
-                        className="text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
-                        style={{ background: 'var(--usa-gradient)' }}
-                      >
-                        View Details
-                      </a>
-                      <button 
-                        onClick={() => handleRegister(events[1])}
-                        className="py-2 px-6 font-medium tracking-wide inline-block rounded-sm border"
-                        style={{ borderColor: '#bf0a30', color: '#002868' }}
-                      >
-                        Register Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Event Row 2: Birmingham Slam Camp */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-24 relative"
-            >
-              {/* Animated Edge Top Left - Red */}
-              <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
-                style={{ 
-                  borderColor: '#bf0a30'
-                }}
-              />
-              
-              {/* Animated Edge Bottom Right - Blue */}
-              <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                viewport={{ once: true }}
-                style={{ 
-                  borderColor: '#002868'
-                }}
-              />
-            </motion.div>
-            
-            {/* Event Row 2: Birmingham Slam Camp (continued) */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="mb-24 relative"
-            >
-              {/* Animated Edge Top Right */}
-              <motion.div 
-                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 border-[#041e42] z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                viewport={{ once: true }}
-              />
-              
-              {/* Animated Edge Bottom Left */}
-              <motion.div 
-                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 border-[#1e88e5] z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                viewport={{ once: true }}
-              />
-              
-              <div className="relative overflow-hidden bg-white shadow-lg rounded-sm p-6 fire-border">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm relative">
-                    <video 
-                      src={birminghamVideo}
-                      autoPlay 
-                      loop 
-                      muted 
-                      playsInline
-                      onError={handleVideoError}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                      style={{ position: "absolute", top: 0, left: 0 }}
-                    ></video>
-                    {/* Use overlay image as fallback */}
-                    <div className="absolute inset-0 z-0">
-                      <img 
-                        src={events[2].image} 
-                        alt={events[2].title} 
-                        className="w-full h-full object-cover opacity-0 video-fallback"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = '/images/event-placeholder.png';
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="md:col-span-2">
-                    <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
-                        background: 'var(--fire-gradient)'
-                      }}>
-                        {events[2].category}
-                      </span>
-                    </div>
-                    <h3 className="text-3xl font-bold mb-1 fire-title">
-                      <span style={{ 
-                        background: 'var(--fire-gradient)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        fontWeight: 800, 
-                        letterSpacing: '0.08em',
-                        textShadow: 'var(--fire-text-shadow)'
-                      }}>BIRMINGHAM SLAM CAMP</span>
-                    </h3>
-                    <div className="mb-3">
-                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'var(--fire-gradient)',
-                        color: 'white',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                      }}>
-                        {events[2].city}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[2].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[2].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[2].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[2].price}</p>
-                    </div>
-                    <p className="text-gray-700 mb-6 font-medium text-base leading-relaxed">{events[2].description}</p>
-                    <div className="flex space-x-4">
-                      <a 
-                        href={`/events/${events[2].id}`}
-                        className="fire-gradient-btn text-white py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
-                      >
-                        View Details
-                      </a>
-                      <button 
-                        onClick={() => handleRegister(events[2])}
-                        className="fire-outline-btn py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
-                      >
-                        Register Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Event Row 3: Panther Train Tour */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="mb-16 relative"
-            >
-              {/* Animated Edge Top Left */}
-              <motion.div 
-                className="absolute -top-3 -left-3 w-12 h-12 border-t-2 border-l-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                viewport={{ once: true }}
-                style={{ borderColor: '#D4AF37' }}
-              />
-              
-              {/* Animated Edge Top Right */}
-              <motion.div 
-                className="absolute -top-3 -right-3 w-12 h-12 border-t-2 border-r-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                viewport={{ once: true }}
-                style={{ borderColor: '#D4AF37' }}
-              />
-              
-              {/* Animated Edge Bottom Left */}
-              <motion.div 
-                className="absolute -bottom-3 -left-3 w-12 h-12 border-b-2 border-l-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                viewport={{ once: true }}
-                style={{ borderColor: '#D4AF37' }}
-              />
-              
-              {/* Animated Edge Bottom Right */}
-              <motion.div 
-                className="absolute -bottom-3 -right-3 w-12 h-12 border-b-2 border-r-2 z-10"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-                viewport={{ once: true }}
-                style={{ borderColor: '#D4AF37' }}
-              />
-              
-              <div className="relative overflow-hidden bg-white border-2 border-[#4B0082] shadow-lg rounded-sm p-6" style={{ boxShadow: '0 0 20px rgba(212, 175, 55, 0.25)' }}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="h-64 overflow-hidden rounded-sm relative">
-                    <video
-                      src={pantherTrainVideo}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      onError={handleVideoError}
-                      className="w-full h-full object-cover absolute inset-0"
-                      style={{ filter: 'brightness(1.1) contrast(1.1)' }}
-                    ></video>
-                    {/* Use overlay image as fallback */}
-                    <div className="absolute inset-0 z-0">
-                      <img 
-                        src={events[3].image} 
-                        alt={events[3].title} 
-                        className="w-full h-full object-cover opacity-0 video-fallback"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = '/images/event-placeholder.png';
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="md:col-span-2">
-                    <div className="mb-4">
-                      <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm text-white" style={{
-                        background: 'var(--panther-gradient)'
-                      }}>
-                        {events[3].category}
-                      </span>
-                    </div>
-                    <h3 className="text-3xl font-bold mb-1">
-                      <span style={{ 
-                        background: 'var(--panther-gradient)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        fontWeight: 800,
-                        letterSpacing: '0.08em',
-                        textShadow: 'var(--panther-text-shadow)'
-                      }}>
-                        {events[3].title}
-                      </span>
-                    </h3>
-                    <div className="mb-3">
-                      <span className="text-lg font-extrabold tracking-wide px-3 py-1 rounded-sm inline-block" style={{
-                        background: 'var(--panther-gradient)',
-                        color: 'white',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                      }}>
-                        {events[3].city}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                      <p className="text-sm text-gray-600"><strong>Date:</strong> {events[3].date}</p>
-                      <p className="text-sm text-gray-600"><strong>Time:</strong> {events[3].time}</p>
-                      <p className="text-sm text-gray-600"><strong>Location:</strong> {events[3].location}</p>
-                      <p className="text-sm text-gray-600"><strong>Price:</strong> {events[3].price}</p>
-                    </div>
-                    <p className="text-gray-700 mb-6">{events[3].description}</p>
-                    <div className="flex space-x-4">
-                      <a 
-                        href={`/events/${events[3].id}`}
-                        className="py-2 px-6 font-medium tracking-wide text-white inline-block rounded-sm"
-                        style={{ background: 'var(--panther-gradient)' }}
-                      >
-                        View Details
-                      </a>
-                      <button 
-                        onClick={() => handleRegister(events[3])}
-                        className="border py-2 px-6 font-medium tracking-wide inline-block rounded-sm"
-                        style={{ borderColor: '#4B0082', color: '#4B0082' }}
-                      >
-                        Register Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </Container>
-        </section>
+    <div className="min-h-screen bg-gray-50 pt-24 pb-20">
+      {/* Hero Section */}
+      <motion.div 
+        className="relative h-[70vh] mb-20 overflow-hidden"
+        variants={fadeIn}
+        initial="initial"
+        animate="animate"
+      >
+        <div className="absolute inset-0 bg-black">
+          <div 
+            className="absolute inset-0 opacity-50"
+            style={{ 
+              backgroundImage: `url(${events[0].image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'grayscale(80%)'
+            }}
+          ></div>
+        </div>
         
-        {/* Detailed Event Information Section */}
-        <EventDetails />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         
-
-      </div>
+        <div className="container mx-auto px-6 h-full flex items-center relative z-10">
+          <div className="max-w-3xl">
+            <h1 
+              className="text-5xl md:text-7xl text-white mb-8"
+              style={{ fontFamily: "'Playfair Display FC', serif" }}
+            >
+              Events
+            </h1>
+            <p 
+              className="text-xl text-gray-200 mb-10"
+              style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+            >
+              Premium wrestling camps and clinics designed to elevate your skills, technique, and competitive edge.
+            </p>
+          </div>
+        </div>
+        
+        {/* Subtle sky accent line */}
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-30"></div>
+      </motion.div>
       
-      {/* Registration Dialog */}
-      <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Register for {selectedEvent?.title}</DialogTitle>
-            <DialogDescription>
-              Fill out the form below to register for this event. Payment will be processed through our secure checkout.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form onSubmit={handleSubmitRegistration} className="space-y-4 pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  value={registrationForm.firstName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  value={registrationForm.lastName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="contactName">Parent/Guardian Name</Label>
-                <Input
-                  id="contactName"
-                  name="contactName"
-                  value={registrationForm.contactName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={registrationForm.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  value={registrationForm.phone}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="tShirtSize">T-Shirt Size</Label>
-                <Select 
-                  name="tShirtSize" 
-                  defaultValue={registrationForm.tShirtSize}
-                  onValueChange={(value) => {
-                    setRegistrationForm(prev => ({
-                      ...prev,
-                      tShirtSize: value
-                    }));
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a t-shirt size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Youth S">Youth Small</SelectItem>
-                    <SelectItem value="Youth M">Youth Medium</SelectItem>
-                    <SelectItem value="Youth L">Youth Large</SelectItem>
-                    <SelectItem value="Adult XS">Adult XS</SelectItem>
-                    <SelectItem value="Adult S">Adult Small</SelectItem>
-                    <SelectItem value="Adult M">Adult Medium</SelectItem>
-                    <SelectItem value="Adult L">Adult Large</SelectItem>
-                    <SelectItem value="Adult XL">Adult XL</SelectItem>
-                    <SelectItem value="Adult 2XL">Adult 2XL</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="grade">Current Grade</Label>
-                <Input
-                  id="grade"
-                  name="grade"
-                  value={registrationForm.grade}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="schoolName">School Name</Label>
-                <Input
-                  id="schoolName"
-                  name="schoolName"
-                  value={registrationForm.schoolName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="clubName">Club Name (optional)</Label>
-                <Input
-                  id="clubName"
-                  name="clubName"
-                  value={registrationForm.clubName}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="registrationType">Registration Type</Label>
-                <Select 
-                  name="registrationType" 
-                  defaultValue={registrationForm.registrationType}
-                  onValueChange={(value) => {
-                    setRegistrationForm(prev => ({
-                      ...prev,
-                      registrationType: value
-                    }));
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select registration type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {selectedEvent?.id === 4 ? (
-                      <>
-                        <SelectItem value="full">All Days ($200)</SelectItem>
-                        <SelectItem value="single">Individual Days ($99 each)</SelectItem>
-                      </>
-                    ) : (
-                      <>
-                        <SelectItem value="full">Full Camp ($249)</SelectItem>
-                        <SelectItem value="single">Single Day ($149)</SelectItem>
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {/* Day selection for Panther Train Tour */}
-              {selectedEvent?.id === 4 && (
-                <div className="md:col-span-2 space-y-3 mt-2 p-3 bg-purple-50 rounded-md">
-                  <Label>Select Camp Days (Panther Train Tour)</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
-                    {events[1]?.locations?.map((loc, idx) => (
-                      <div key={idx} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`day${idx+1}`} 
-                          checked={registrationForm[`day${idx+1}` as keyof typeof registrationForm] as boolean}
-                          onCheckedChange={(checked) => {
-                            setRegistrationForm(prev => ({
-                              ...prev,
-                              [`day${idx+1}`]: checked
-                            }));
-                          }} 
-                        />
-                        <Label 
-                          htmlFor={`day${idx+1}`}
-                          className="text-sm font-normal cursor-pointer"
-                        >
-                          {loc.day} ({loc.location})
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs text-purple-600 mt-1">
-                    {registrationForm.registrationType === 'full' ? 
-                      'Full camp includes all days for $200 (save $97!)' : 
-                      'Select one or more days ($99 each)'}
-                  </p>
-                </div>
-              )}
-              <div className="md:col-span-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="medicalReleaseAccepted"
-                    checked={registrationForm.medicalReleaseAccepted}
-                    onCheckedChange={(checked) => {
-                      setRegistrationForm(prev => ({
-                        ...prev,
-                        medicalReleaseAccepted: checked === true
-                      }));
-                    }}
-                    required
-                  />
-                  <Label 
-                    htmlFor="medicalReleaseAccepted" 
-                    className="text-sm leading-tight cursor-pointer"
+      {/* Events Grid */}
+      <div className="container mx-auto px-6">
+        <motion.div
+          variants={stagger}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-1 gap-20"
+        >
+          {events.map((event, index) => (
+            <motion.div 
+              key={event.id}
+              variants={fadeIn}
+              className="group"
+              onMouseEnter={() => setHoveredEvent(event.id)}
+              onMouseLeave={() => setHoveredEvent(null)}
+            >
+              <div 
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-8 ${
+                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                }`}
+              >
+                {/* Image Section */}
+                <div className="relative overflow-hidden">
+                  <motion.div
+                    variants={imageReveal}
+                    className="aspect-[4/3] w-full h-full"
                   >
-                    I acknowledge that my child is in good health and able to participate in the activities. 
-                    I accept all responsibility for my child's health and safety and waive any liability against Rich Habits.
-                  </Label>
+                    <div 
+                      className="w-full h-full bg-cover bg-center transform transition-transform duration-700 group-hover:scale-105"
+                      style={{ 
+                        backgroundImage: `url(${event.image})`,
+                        filter: 'grayscale(90%)'
+                      }}
+                    ></div>
+                  </motion.div>
+                  
+                  {/* Hover effect */}
+                  <motion.div 
+                    className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+                    animate={{ 
+                      width: hoveredEvent === event.id ? '100%' : '0%',
+                      opacity: hoveredEvent === event.id ? 0.7 : 0
+                    }}
+                    transition={{ duration: 0.5 }}
+                  ></motion.div>
+                </div>
+                
+                {/* Content Section */}
+                <div className="flex flex-col justify-center">
+                  <div className="mb-2">
+                    <span 
+                      className="text-sm text-gray-500"
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    >
+                      {event.date}
+                    </span>
+                  </div>
+                  
+                  <h2 
+                    className="text-3xl md:text-4xl mb-4"
+                    style={{ fontFamily: "'Bodoni FLF', serif" }}
+                  >
+                    {event.title}
+                  </h2>
+                  
+                  <p
+                    className="italic mb-6 text-gray-600"
+                    style={{ fontFamily: "'Symphony', cursive" }}
+                  >
+                    {event.signature}
+                  </p>
+                  
+                  <div className="space-y-3 mb-8">
+                    <p 
+                      className="text-gray-600"
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                    >
+                      <span className="font-medium">Location:</span> {event.location}
+                    </p>
+                    <p 
+                      className="text-gray-600"
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                    >
+                      <span className="font-medium">Price:</span> {event.price}
+                    </p>
+                  </div>
+                  
+                  <p 
+                    className="text-gray-700 mb-8"
+                    style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                  >
+                    {event.shortDescription}
+                  </p>
+                  
+                  <div className="flex space-x-4">
+                    <Link href={`/events/${event.id}`}>
+                      <motion.span
+                        className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer"
+                        whileHover={{ 
+                          backgroundColor: '#1f2937', 
+                          color: '#ffffff',
+                          x: 2
+                        }}
+                        transition={{ duration: 0.2 }}
+                        style={{ fontFamily: "'Sanchez', serif" }}
+                      >
+                        View Details
+                      </motion.span>
+                    </Link>
+                    
+                    <Link href={`/register/${event.id}`}>
+                      <motion.span
+                        className="inline-block bg-gray-900 border border-gray-900 px-6 py-3 text-white cursor-pointer"
+                        whileHover={{ 
+                          backgroundColor: '#111827',
+                          x: 2
+                        }}
+                        transition={{ duration: 0.2 }}
+                        style={{ fontFamily: "'Sanchez', serif" }}
+                      >
+                        Register Now
+                      </motion.span>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <DialogFooter>
-              <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? (
-                  <>
-                    <span className="mr-2">Processing</span>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  </>
-                ) : (
-                  "Proceed to Payment"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
+              
+              {/* Divider except for the last item */}
+              {index < events.length - 1 && (
+                <div className="w-full h-px bg-gray-200 my-20"></div>
+              )}
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
   );
 }
