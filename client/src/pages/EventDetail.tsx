@@ -369,22 +369,22 @@ export default function EventDetail() {
             "@type": "SportsEvent",
             "name": event.title,
             "description": event.description || event.shortDescription,
-            "startDate": event.startDate,
-            "endDate": event.endDate || event.startDate,
+            "startDate": event.startDate || "2025-06-01",
+            "endDate": event.endDate || event.startDate || "2025-06-03",
             "eventStatus": "https://schema.org/EventScheduled",
             "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
             "location": {
               "@type": "Place",
-              "name": event.location,
+              "name": event.location || "Wrestling Venue",
               "address": {
                 "@type": "PostalAddress",
-                "addressLocality": event.city || "",
-                "addressRegion": event.state || "",
+                "addressLocality": event.city || "Birmingham",
+                "addressRegion": event.state || "AL",
                 "addressCountry": "US"
               }
             },
             "image": [
-              getEventMedia(event.id).banner
+              typeof getEventMedia(event.id).banner === 'string' ? getEventMedia(event.id).banner : "https://rich-habits.com/event-image.jpg"
             ],
             "organizer": {
               "@type": "Organization",
@@ -393,17 +393,18 @@ export default function EventDetail() {
             },
             "offers": {
               "@type": "Offer",
-              "price": event.fullCampPrice?.toString() || "",
+              "price": (event.fullCampPrice || "249").toString(),
               "priceCurrency": "USD",
               "availability": "https://schema.org/InStock",
               "url": `https://rich-habits.com${location}`,
               "validFrom": "2025-01-01"
             },
-            "performer": event.coaches ? event.coaches.map((coach: any) => ({
-              "@type": "Person",
-              "name": coach.name,
-              "jobTitle": coach.title
-            })) : []
+            "performer": event.coaches && Array.isArray(event.coaches) ? 
+              event.coaches.map((coach: any) => ({
+                "@type": "Person",
+                "name": coach.name,
+                "jobTitle": coach.title
+              })) : []
           })}
         </script>
       </Helmet>
