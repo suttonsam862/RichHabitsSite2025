@@ -135,12 +135,15 @@ export const eventRegistrations = pgTable("event_registrations", {
   medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
   registrationType: text("registration_type"),
   shopifyOrderId: text("shopify_order_id"),
+  stripePaymentIntentId: text("stripe_payment_intent_id"), // Added for Stripe integration
+  paymentStatus: text("payment_status").default("pending"), // Added for tracking payment status
   day1: boolean("day1").default(false), // For multi-day events to track day selection
   day2: boolean("day2").default(false), // For multi-day events to track day selection
   day3: boolean("day3").default(false), // For multi-day events to track day selection
   age: text("age"), // Adding this to match existing database column
   experience: text("experience"), // Adding this to match existing database column
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at")
 });
 
 // Create the base schema first
@@ -158,9 +161,13 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   medicalReleaseAccepted: true,
   registrationType: true,
   shopifyOrderId: true,
+  stripePaymentIntentId: true,
+  paymentStatus: true,
   day1: true,
   day2: true,
-  day3: true
+  day3: true,
+  age: true,
+  experience: true
 })
 // Now extend it with stricter validation
 .extend({

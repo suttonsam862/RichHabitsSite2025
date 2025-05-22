@@ -39,7 +39,7 @@ export interface IStorage {
   updateEventRegistrationPaymentStatus(paymentIntentId: string, status: string): Promise<boolean>;
   getEventRegistrations(eventId?: number, paymentStatus?: string): Promise<EventRegistration[]>;
   getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]>;
-  createCompletedEventRegistration(data: InsertCompletedEventRegistration): Promise<CompletedEventRegistration>;
+  createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined>;
   updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
   
   // Coach methods
@@ -135,6 +135,15 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(eventRegistrations)
       .where(eq(eventRegistrations.id, id));
+    return registration;
+  }
+  
+  async getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined> {
+    const [registration] = await db
+      .select()
+      .from(eventRegistrations)
+      .where(eq(eventRegistrations.email, email))
+      .where(eq(eventRegistrations.eventId, eventId));
     return registration;
   }
   

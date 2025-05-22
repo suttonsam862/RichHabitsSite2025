@@ -405,24 +405,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Store registration information pending payment confirmation
       await storage.createEventRegistration({
         eventId,
+        firstName: attendee.firstName,
+        lastName: attendee.lastName,
+        email: attendee.email,
+        phone: attendee.phone,
         registrationType,
-        attendeeInfo: {
-          firstName: attendee.firstName,
-          lastName: attendee.lastName,
-          email: attendee.email,
-          phone: attendee.phone,
-          age: parseInt(attendee.age, 10),
-          experience: attendee.experience,
-          emergencyContact: {
-            name: attendee.emergencyContact.name,
-            phone: attendee.emergencyContact.phone
-          },
-          specialRequirements: attendee.specialRequirements || null
-        },
-        amount: amount,
-        paymentIntentId: paymentIntent.id,
-        paymentStatus: "pending",
-        createdAt: new Date()
+        stripePaymentIntentId: paymentIntent.id,
+        contactName: `${attendee.emergencyContact.name}`,
+        medicalReleaseAccepted: true,
+        tShirtSize: "L", // Default value
+        grade: "N/A", // Default value
+        schoolName: "N/A", // Default value
+        age: attendee.age ? attendee.age : null,
+        experience: attendee.experience || null
       });
       
       res.json({
