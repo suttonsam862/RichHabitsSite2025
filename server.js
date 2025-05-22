@@ -37,9 +37,18 @@ const possibleClientPaths = [
   path.join(__dirname, 'public')
 ];
 
+// Add standard client directories to check
+const clientDirectories = [
+  path.join(__dirname, 'client/dist'),
+  path.join(__dirname, 'dist/client'),
+  path.join(__dirname, 'client/build'),
+  path.join(__dirname, 'public'),
+  path.join(__dirname, 'dist')
+];
+
 // Try each possible path
 let staticPath = null;
-for (const clientPath of possibleClientPaths) {
+for (const clientPath of clientDirectories) {
   if (fs.existsSync(clientPath)) {
     staticPath = clientPath;
     console.log(`Found static files at: ${clientPath}`);
@@ -49,7 +58,10 @@ for (const clientPath of possibleClientPaths) {
 
 // Serve static files if we found them
 if (staticPath) {
+  console.log(`Serving static files from: ${staticPath}`);
   app.use(express.static(staticPath));
+} else {
+  console.warn('No static files found! The server will not serve a frontend.');
 }
 
 // Basic API endpoints 
@@ -61,12 +73,8 @@ app.get('/api/info', (req, res) => {
   });
 });
 
-// Fallback route for static site
-app.get('*', (req, res) => {
-  // Skip API routes
-  if (req.path.startsWith('/api/')) return;
-  
-  // For static site, serve index.html if it exists
+// Explicit route for the root path to ensure it works correctly
+app.get('/', (req, res) => {
   if (staticPath) {
     const indexPath = path.join(staticPath, 'index.html');
     if (fs.existsSync(indexPath)) {
@@ -74,8 +82,8 @@ app.get('*', (req, res) => {
     }
   }
   
-  // Ultimate fallback
-  res.status(200).send(`
+  // If no index.html was found, show a helpful message
+  return res.status(200).send(`
     <html>
       <head>
         <title>Rich Habits</title>
@@ -83,14 +91,56 @@ app.get('*', (req, res) => {
           body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; max-width: 650px; margin: 0 auto; padding: 2rem; }
           h1 { color: #d35400; border-bottom: 1px solid #eee; padding-bottom: 10px; }
           p { line-height: 1.6; }
+          code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
         </style>
       </head>
       <body>
         <h1>Rich Habits Server</h1>
-        <p>The server is running correctly.</p>
-        <p>Static files will be served once the application is built.</p>
-        <p>Health check endpoint: <a href="/health">/health</a></p>
-        <p>API information: <a href="/api/info">/api/info</a></p>
+        <p>The server is running correctly but we couldn't find an <code>index.html</code> file to serve.</p>
+        <p>Available routes:</p>
+        <ul>
+          <li>Health check: <a href="/health">/health</a></li>
+          <li>API information: <a href="/api/info">/api/info</a></li>
+        </ul>
+        <p>To fix this, make sure your client application is built and the static files are available.</p>
+      </body>
+    </html>
+  `);
+});
+
+// Fallback route for client-side routing and other paths
+app.get('*', (req, res) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/')) return;
+  
+  // For static site, serve index.html if it exists (client-side routing)
+  if (staticPath) {
+    const indexPath = path.join(staticPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+  }
+  
+  // Ultimate fallback for missing files
+  res.status(404).send(`
+    <html>
+      <head>
+        <title>Page Not Found | Rich Habits</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; max-width: 650px; margin: 0 auto; padding: 2rem; }
+          h1 { color: #d35400; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+          p { line-height: 1.6; }
+        </style>
+      </head>
+      <body>
+        <h1>Page Not Found</h1>
+        <p>The page you requested could not be found.</p>
+        <p>You can try going back to the <a href="/">home page</a>.</p>
+        <p>Server API endpoints:</p>
+        <ul>
+          <li>Health check: <a href="/health">/health</a></li>
+          <li>API information: <a href="/api/info">/api/info</a></li>
+        </ul>
       </body>
     </html>
   `);
