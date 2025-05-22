@@ -11,6 +11,7 @@ import Shop from "./pages/Shop";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import EventRegistration from "./pages/EventRegistration";
+import CustomApparel from "./pages/CustomApparel";
 import NotFound from "./pages/not-found";
 
 function Router() {
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/register/:id" component={EventRegistration} />
+      <Route path="/custom-apparel" component={CustomApparel} />
       <Route component={NotFound} />
     </Switch>
   );

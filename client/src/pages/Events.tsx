@@ -11,7 +11,7 @@ const events = [
     location: "Clay-Chalkville Middle School, Birmingham, AL",
     price: "$249",
     shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
-    image: "/images/wrestlers/DSC09491.JPG",
+    image: "/images/events/birmingham-slam-camp.jpg",
     accent: "orange",
     signature: "Exclusive partnership with Fruit Hunters"
   },
@@ -22,7 +22,7 @@ const events = [
     location: "Roy Martin Middle School, Las Vegas, NV",
     price: "$349",
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
-    image: "/images/wrestlers/DSC09374--.JPG",
+    image: "/images/events/national-champ-camp.jpg",
     accent: "blue",
     signature: "Focus on championship-level techniques"
   },
@@ -33,7 +33,7 @@ const events = [
     location: "Arlington Martin High School, Arlington, TX",
     price: "$249",
     shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
-    image: "/images/wrestlers/DSC00423.JPG",
+    image: "/images/events/texas-recruiting-clinic.jpg",
     accent: "red",
     signature: "College coach evaluations included"
   },
@@ -44,7 +44,7 @@ const events = [
     location: "Various locations",
     price: "$99 per day",
     shortDescription: "A multi-location training tour with elite coaches.",
-    image: "/images/wrestlers/DSC08615.JPG",
+    image: "/images/DSC08615.JPG",
     accent: "black",
     signature: "Travel across multiple training facilities"
   }

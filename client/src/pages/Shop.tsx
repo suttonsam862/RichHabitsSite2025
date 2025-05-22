@@ -1,35 +1,64 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 // Sample product data
 const products = [
   {
     id: 1,
-    name: "Performance Track Jacket",
-    category: "Outerwear",
-    price: "$85",
-    image: "/images/wrestlers/DSC09491.JPG"
+    name: "Performance Rashguard - Black",
+    category: "Competition Gear",
+    price: "$65",
+    image: "/images/custom-apparel/BlackRashgaurdMockup.png"
   },
   {
     id: 2,
-    name: "Competition Singlet",
+    name: "Performance Rashguard - Blue",
     category: "Competition Gear",
     price: "$65",
-    image: "/images/wrestlers/DSC09374--.JPG"
+    image: "/images/custom-apparel/BlueRashguardMockup.png"
   },
   {
     id: 3,
-    name: "Training Shorts",
+    name: "Classic Rashguard",
     category: "Training Gear",
-    price: "$45",
-    image: "/images/wrestlers/DSC07386.JPG"
+    price: "$60",
+    image: "/images/custom-apparel/ClassicRashguardMockup.png"
   },
   {
     id: 4,
-    name: "Team Warmup Pullover",
+    name: "Team Polo - Premium",
     category: "Outerwear",
     price: "$75",
-    image: "/images/wrestlers/DSC00423.JPG"
+    image: "/images/custom-apparel/NickPoloMockupFinal.png"
+  },
+  {
+    id: 5,
+    name: "Brooks Team Collection",
+    category: "Team Packages",
+    price: "From $349",
+    image: "/images/custom-apparel/BrooksMockupFinal.png"
+  },
+  {
+    id: 6,
+    name: "Cane Nation Team Package",
+    category: "Team Packages",
+    price: "From $299",
+    image: "/images/custom-apparel/CaneNationMockup.png"
+  },
+  {
+    id: 7,
+    name: "Elevate Team Package",
+    category: "Team Packages",
+    price: "From $399",
+    image: "/images/custom-apparel/ElevateMockup5.png"
+  },
+  {
+    id: 8,
+    name: "Death Squad Collection",
+    category: "Special Editions",
+    price: "$85",
+    image: "/images/custom-apparel/10pDeathSquad Mockup.png"
   }
 ];
 
@@ -47,7 +76,13 @@ const fadeIn = {
 };
 
 export default function Shop() {
-  const categories = ["All", "Competition Gear", "Training Gear", "Outerwear"];
+  const [activeCategory, setActiveCategory] = useState("All");
+  const categories = ["All", "Competition Gear", "Training Gear", "Outerwear", "Team Packages", "Special Editions"];
+
+  // Filter products based on selected category
+  const filteredProducts = activeCategory === "All" 
+    ? products 
+    : products.filter(product => product.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-20">
@@ -74,16 +109,17 @@ export default function Shop() {
           
           {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <motion.button
                 key={category}
+                onClick={() => setActiveCategory(category)}
                 className={`px-6 py-2 ${
-                  index === 0 
+                  category === activeCategory
                     ? "bg-gray-900 text-white" 
                     : "bg-transparent text-gray-800 border border-gray-300"
                 }`}
                 whileHover={{ 
-                  backgroundColor: index === 0 ? "#1f2937" : "#f3f4f6",
+                  backgroundColor: category === activeCategory ? "#1f2937" : "#f3f4f6",
                   scale: 1.02
                 }}
                 style={{ fontFamily: "'Sanchez', serif" }}
@@ -95,8 +131,8 @@ export default function Shop() {
         </motion.div>
         
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {products.map((product, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {filteredProducts.map((product, index) => (
             <motion.div
               key={product.id}
               custom={index}
@@ -106,10 +142,13 @@ export default function Shop() {
               viewport={{ once: true }}
               className="group hover-lift"
             >
-              <div className="aspect-[3/4] mb-4 overflow-hidden bg-gray-100 relative">
+              <div className="aspect-square mb-4 overflow-hidden bg-gray-100 relative">
                 <div 
                   className="w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url(${product.image})` }}
+                  style={{ 
+                    backgroundImage: `url(${product.image})`,
+                    filter: 'grayscale(30%)'
+                  }}
                 ></div>
                 <div className="absolute bottom-0 left-0 w-full p-4 bg-white bg-opacity-90 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                   <button 

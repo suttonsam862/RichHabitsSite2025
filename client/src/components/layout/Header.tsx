@@ -45,7 +45,7 @@ export function Header() {
               { path: '/', label: 'Home' },
               { path: '/events', label: 'Events' },
               { path: '/shop', label: 'Shop' },
-              { path: '/about', label: 'About' },
+              { path: '/custom-apparel', label: 'Custom Apparel' },
               { path: '/contact', label: 'Contact' }
             ].map(({ path, label }) => (
               <li key={path}>
