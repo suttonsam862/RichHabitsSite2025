@@ -217,20 +217,19 @@ const events = [
   }
 ];
 
-// Animation variants
+// Simplified animation variants for better performance
 const fadeIn = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0 },
   animate: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.6 }
+    opacity: 1,
+    transition: { duration: 0.3 }
   }
 };
 
 const staggerContainer = {
   animate: {
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.05
     }
   }
 };
@@ -306,24 +305,13 @@ export default function EventDetail() {
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-20">
       {/* Hero Section */}
-      <motion.div 
+      <div 
         className="relative h-[60vh] mb-16 overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2 }}
       >
         <div className="absolute inset-0 bg-black">
-          <motion.div 
-            initial={{ scale: 1.1, filter: 'grayscale(100%)' }}
-            animate={{ scale: 1, filter: 'grayscale(80%)' }}
-            transition={{ duration: 20, ease: "easeInOut" }}
-            className="absolute inset-0 opacity-60"
-            style={{ 
-              backgroundImage: `url(${event.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          ></motion.div>
+          <div 
+            className="absolute inset-0 opacity-60 bg-red-600"
+          ></div>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -332,49 +320,35 @@ export default function EventDetail() {
         
         <div className="container mx-auto px-6 h-full flex items-center relative z-10">
           <div className="max-w-4xl">
-            <motion.h1 
+            <h1 
               className="text-4xl md:text-6xl text-white mb-6 title-font"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
             >
               {event.title}
-            </motion.h1>
+            </h1>
             
-            <motion.p 
+            <p 
               className="italic text-lg text-gray-200 mb-8 subtitle-font"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
             >
               {event.signature}
-            </motion.p>
+            </p>
             
-            <motion.div
+            <div
               className="flex flex-col sm:flex-row gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
             >
               <Link href={`/register/${event.id}`}>
-                <motion.span
-                  className="inline-block bg-gray-50 px-6 py-3 text-gray-900 cursor-pointer subtitle-font"
-                  whileHover={{ 
-                    backgroundColor: '#f9fafb',
-                    x: 2
-                  }}
-                  transition={{ duration: 0.2 }}
+                <span
+                  className="inline-block bg-gray-50 px-6 py-3 text-gray-900 cursor-pointer subtitle-font hover:bg-gray-100"
                 >
                   Register Now
-                </motion.span>
+                </span>
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
         
         {/* Subtle sky accent line */}
         <div className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-30"></div>
-      </motion.div>
+      </div>
       
       {/* Event Details */}
       <div className="container mx-auto px-6">
@@ -401,12 +375,10 @@ export default function EventDetail() {
               {/* Image Gallery */}
               <div className="mt-12 mb-16">
                 <div className="aspect-video w-full overflow-hidden mb-4">
-                  <img
-                    src={selectedImage}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                    style={{ filter: 'grayscale(70%)' }}
-                  />
+                  <div
+                    className="w-full h-full bg-red-600"
+                    aria-label={event.title}
+                  ></div>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4">
@@ -414,12 +386,10 @@ export default function EventDetail() {
                     className="aspect-[4/3] overflow-hidden cursor-pointer"
                     onClick={() => setSelectedImage(event.image)}
                   >
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      style={{ filter: 'grayscale(70%)' }}
-                    />
+                    <div
+                      className="w-full h-full bg-red-600 hover:scale-105 transition-transform duration-500"
+                      aria-label={event.title}
+                    ></div>
                   </div>
                   
                   {event.additionalImages.map((img: string, index: number) => (
@@ -428,12 +398,10 @@ export default function EventDetail() {
                       className="aspect-[4/3] overflow-hidden cursor-pointer"
                       onClick={() => setSelectedImage(img)}
                     >
-                      <img
-                        src={img}
-                        alt={`${event.title} ${index + 2}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                        style={{ filter: 'grayscale(70%)' }}
-                      />
+                      <div
+                        className="w-full h-full bg-red-600 hover:scale-105 transition-transform duration-500"
+                        aria-label={`${event.title} ${index + 2}`}
+                      ></div>
                     </div>
                   ))}
                 </div>
@@ -509,11 +477,10 @@ export default function EventDetail() {
                     variants={fadeIn}
                   >
                     <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-                      <img 
-                        src={coach.image} 
-                        alt={coach.name}
-                        className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-300"
-                      />
+                      <div
+                        className="w-full h-full bg-red-600 hover:opacity-80 transition-all duration-300"
+                        aria-label={coach.name}
+                      ></div>
                     </div>
                     <h3 
                       className="text-xl mb-1 title-font"

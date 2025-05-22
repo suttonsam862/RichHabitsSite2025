@@ -7,14 +7,9 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Inspired by Kourtney Roy aesthetic */}
       <section className="w-full min-h-[95vh] flex items-center justify-center relative overflow-hidden">
-        {/* Hero background image with grayscale filter */}
+        {/* Red color block replacing heavy hero image */}
         <div className="absolute inset-0 w-full h-full">
-          <img 
-            src="/image1.jpg" 
-            alt="Rich Habits Hero" 
-            className="w-full h-full object-cover"
-            style={{ filter: 'grayscale(85%)' }}
-          />
+          <div className="w-full h-full bg-red-600"></div>
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
         </div>
@@ -72,12 +67,9 @@ export default function Home() {
                 className="bg-white shadow-md overflow-hidden"
               >
                 <div className="h-48 overflow-hidden">
-                  <img 
-                    src="/images/DSC09354.JPG" 
-                    alt="Birmingham Slam Camp" 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    style={{ filter: 'grayscale(60%)' }} 
-                  />
+                  <div 
+                    className="w-full h-full bg-red-600 transition-transform duration-500 hover:scale-105"
+                  ></div>
                 </div>
                 <div className="p-6">
                   <div className="mb-4 h-1 w-16 bg-gray-900"></div>
@@ -107,12 +99,9 @@ export default function Home() {
                 className="bg-white shadow-md overflow-hidden"
               >
                 <div className="h-48 overflow-hidden">
-                  <img 
-                    src="/images/DSC09353.JPG" 
-                    alt="National Champ Camp" 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    style={{ filter: 'grayscale(60%)' }} 
-                  />
+                  <div 
+                    className="w-full h-full bg-red-600 transition-transform duration-500 hover:scale-105"
+                  ></div>
                 </div>
                 <div className="p-6">
                   <div className="mb-4 h-1 w-16 bg-gray-900"></div>
@@ -142,12 +131,9 @@ export default function Home() {
                 className="bg-white shadow-md overflow-hidden"
               >
                 <div className="h-48 overflow-hidden">
-                  <img 
-                    src="/images/DSC08615.JPG" 
-                    alt="Texas Recruiting Clinic" 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    style={{ filter: 'grayscale(60%)' }} 
-                  />
+                  <div 
+                    className="w-full h-full bg-red-600 transition-transform duration-500 hover:scale-105"
+                  ></div>
                 </div>
                 <div className="p-6">
                   <div className="mb-4 h-1 w-16 bg-gray-900"></div>
@@ -181,13 +167,8 @@ export default function Home() {
       
       {/* Fruit Hunters Partnership - Minimalist Approach */}
       <section className="py-24 bg-gray-100 relative">
-        <div className="absolute inset-0 opacity-10" style={{ 
-          backgroundImage: 'url("/attached_assets/fruit-hunters-logo.png")', 
-          backgroundPosition: 'center',
-          backgroundSize: '40%',
-          backgroundRepeat: 'no-repeat',
-          filter: 'grayscale(40%)'
-        }}></div>
+        {/* Red background block instead of image */}
+        <div className="absolute inset-0 opacity-10 bg-red-600"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <motion.div 
@@ -208,12 +189,10 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="flex justify-center">
-                <img 
-                  src="/attached_assets/fruit-hunters-logo.png" 
-                  alt="Fruit Hunters Partnership" 
-                  className="max-w-full h-auto shadow-lg"
-                  style={{ maxHeight: '240px', filter: 'grayscale(20%)' }}
-                />
+                <div 
+                  className="w-full h-60 bg-red-600 shadow-lg"
+                  aria-label="Fruit Hunters Partnership Logo (placeholder)"
+                ></div>
               </div>
               <div>
                 <p className="text-xl mb-8 leading-relaxed text-gray-700 subtitle-font">

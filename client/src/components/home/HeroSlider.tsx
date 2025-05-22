@@ -36,12 +36,10 @@ export default function HeroSlider() {
           transition={{ duration: 1 }}
           className="absolute inset-0"
         >
-          <img 
-            src={sliderImages[current]} 
-            alt={`Rich Habits Hero ${current + 1}`} 
-            className="w-full h-full object-cover"
-            style={{ filter: 'grayscale(85%)' }}
-          />
+          <div 
+            className="w-full h-full bg-red-600"
+            aria-label={`Rich Habits Hero ${current + 1}`}
+          ></div>
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
         </motion.div>

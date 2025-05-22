@@ -43,9 +43,11 @@ async function startServer() {
     // Register all routes
     const server = await registerRoutes(app);
 
-    // Setup Vite only in development
+    // Setup Vite only in development - with faster startup
+    console.log("Setting up application...");
     if (process.env.NODE_ENV !== 'production') {
-      await setupVite(app, server);
+      // Start Vite setup in the background to speed up initialization
+      setupVite(app, server).catch(err => console.error("Vite setup error:", err));
     } else {
       // In production, serve static files from the React build directory
       const clientDistPath = path.join(__dirname, '../client/dist');
@@ -63,8 +65,8 @@ async function startServer() {
       });
     }
 
-    // Use PORT from environment with fallback
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+    // Use PORT from environment with fallback to 5000 (expected by workflow)
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
     server.listen(port, '0.0.0.0', () => {
       console.log(`Server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);

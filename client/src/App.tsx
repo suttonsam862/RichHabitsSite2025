@@ -8,7 +8,7 @@ import { TooltipProvider } from "./components/ui/tooltip";
 // Page imports
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
-import Events from "./pages/Events";
+import Events from "./pages/EventsSimple";
 import EventDetail from "./pages/EventDetail";
 import EventRegistration from "./pages/EventRegistration";
 import CustomApparel from "./pages/CustomApparel";
