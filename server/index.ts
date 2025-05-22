@@ -57,9 +57,14 @@ async function startServer() {
     await setupVite(app, server);
     
     // Start listening on port with error handling
-    const port = process.env.PORT || 5000;
+    // For production deployment, we need to use PORT, defaulting to 3000 if not set
+    // For development, we use port 5000 to match the workflow configuration
+    const port = process.env.NODE_ENV === 'production' 
+      ? (process.env.PORT || 3000)
+      : 5000;
+      
     server.listen(port, '0.0.0.0', () => {
-      console.log(`Server running on port ${port}`);
+      console.log(`Server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
     });
     
     // Handle server errors

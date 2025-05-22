@@ -14,7 +14,12 @@
       "@shared/*": ["./shared/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable"],
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "sourceMap": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["shared/**/*", "server/**/*"],
   "exclude": ["node_modules", "client", "**/*.test.ts"]
