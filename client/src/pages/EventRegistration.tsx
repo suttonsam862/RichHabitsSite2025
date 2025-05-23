@@ -252,7 +252,7 @@ export default function EventRegistration() {
     
     // Required fields
     const requiredFields: (keyof typeof formData)[] = [
-      'firstName', 'lastName', 'email', 'phone', 'age',
+      'firstName', 'lastName', 'email', 'phone', 'grade', 'gender', 'schoolName',
       'emergencyContactName', 'emergencyContactPhone'
     ];
     
@@ -267,9 +267,9 @@ export default function EventRegistration() {
       newErrors.email = 'Please enter a valid email address';
     }
     
-    // Age validation
-    if (formData.age && (isNaN(Number(formData.age)) || Number(formData.age) < 5 || Number(formData.age) > 100)) {
-      newErrors.age = 'Please enter a valid age between 5 and 100';
+    // Grade validation
+    if (formData.grade && formData.grade.trim().length === 0) {
+      newErrors.grade = 'Please enter your current grade';
     }
     
     // Phone validation
@@ -292,49 +292,33 @@ export default function EventRegistration() {
   };
   
   // Handle proceed to payment
-  const handleProceedToPayment = async () => {
+  const handleProceedToPayment = () => {
     if (!validateForm()) return;
     
-    try {
-      // In a real app, this would call your backend to create a payment intent
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: calculatePrice(),
-          eventId: event.id,
-          registrationType,
-          attendee: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phone,
-            age: formData.age,
-            experience: formData.experience,
-            emergencyContact: {
-              name: formData.emergencyContactName,
-              phone: formData.emergencyContactPhone
-            },
-            specialRequirements: formData.specialRequirements
-          }
-        }),
-      });
-      
-      const { clientSecret } = await response.json();
-      setClientSecret(clientSecret);
-      setStep(2);
-    } catch (error) {
-      // For the demo, we'll simulate this step
-      console.log("Would create payment intent here");
-      // Simulate getting a client secret
-      setTimeout(() => {
-        // In a real app, we'd get this from the Stripe API
-        setClientSecret("pi_mock_" + Math.random().toString(36).substring(2, 15));
-        setStep(2);
-      }, 500);
-    }
+    // Store form data in sessionStorage temporarily - NO database writes until payment succeeds
+    const registrationData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      grade: formData.grade,
+      gender: formData.gender,
+      schoolName: formData.schoolName,
+      clubName: formData.clubName,
+      emergencyContactName: formData.emergencyContactName,
+      emergencyContactPhone: formData.emergencyContactPhone,
+      specialRequirements: formData.specialRequirements,
+      registrationType: registrationType
+    };
+    
+    // Save to sessionStorage for the checkout process
+    Object.entries(registrationData).forEach(([key, value]) => {
+      sessionStorage.setItem(`registration_${key}`, value || '');
+    });
+    
+    // Route directly to Stripe checkout page with event details
+    const checkoutUrl = `/stripe-checkout?eventId=${event.id}&eventName=${encodeURIComponent(event.title)}&option=${registrationType}`;
+    window.location.href = checkoutUrl;
   };
   
   const handleSubmitRegistration = () => {
