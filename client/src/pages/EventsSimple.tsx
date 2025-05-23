@@ -36,8 +36,21 @@ const events = [
 export default function EventsSimple() {
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-20">
-      {/* Hero Section - Red color block instead of image */}
-      <div className="relative h-[30vh] mb-20 bg-red-600">
+      {/* Hero Section - Video background */}
+      <div className="relative h-[30vh] mb-20 bg-red-600 overflow-hidden">
+        {/* Video Background */}
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/events-hero.webm" type="video/webm" />
+          <source src="/videos/events-hero.mp4" type="video/mp4" />
+          {/* Fallback for browsers that don't support video */}
+        </video>
+        
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         
         <div className="container mx-auto px-6 h-full flex items-center relative z-10">
