@@ -409,9 +409,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate price based on option
       let price = 0;
       if (option === 'full') {
-        price = event.price || 299; // Default full price
+        price = parseInt(event.price) || 299; // Default full price
       } else if (option === 'single') {
-        price = Math.round((event.price || 299) * 0.6); // 60% of full price for single day
+        price = Math.round((parseInt(event.price) || 299) * 0.6); // 60% of full price for single day
       }
       
       // Return product details
