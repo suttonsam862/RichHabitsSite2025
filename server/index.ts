@@ -16,17 +16,31 @@ app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files - production and development
+// Serve static files - production and development with cache headers
 if (process.env.NODE_ENV === 'production') {
-  // In production, serve built assets
+  // In production, serve built assets with proper headers for mobile
   const distPublicPath = path.resolve(process.cwd(), 'dist', 'public');
   console.log('Production: Serving static files from:', distPublicPath);
-  app.use(express.static(distPublicPath));
+  app.use(express.static(distPublicPath, {
+    setHeaders: (res, path) => {
+      // Cache images for better mobile performance
+      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg')) {
+        res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+    }
+  }));
 } else {
-  // In development, serve from public folder
+  // In development, serve from public folder with mobile-friendly headers
   const publicPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public');
   console.log('Development: Serving static files from:', publicPath);
-  app.use(express.static(publicPath));
+  app.use(express.static(publicPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg')) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+    }
+  }));
 }
 
 app.use(

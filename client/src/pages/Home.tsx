@@ -75,6 +75,11 @@ export default function Home() {
                     src="/images/birmingham-slam-camp.webp" 
                     alt="Birmingham Slam Camp - Premium Wrestling Training"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      console.log('Image load error:', e.currentTarget.src);
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                    }}
                   />
                 </div>
                 <div className="p-6">
@@ -109,6 +114,11 @@ export default function Home() {
                     src="/images/national-champ-camp.webp" 
                     alt="National Champ Camp - Elite Wrestling Training in Las Vegas"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      console.log('Image load error:', e.currentTarget.src);
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                    }}
                   />
                 </div>
                 <div className="p-6">
@@ -143,6 +153,11 @@ export default function Home() {
                     src="/images/texas-recruiting-clinic.webp" 
                     alt="Texas Recruiting Clinic - Elite Wrestling Training in Arlington"
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      console.log('Image load error:', e.currentTarget.src);
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                    }}
                   />
                 </div>
                 <div className="p-6">
