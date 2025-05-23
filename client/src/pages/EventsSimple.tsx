@@ -37,7 +37,7 @@ export default function EventsSimple() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Video background */}
-      <div className="relative h-screen mb-8 bg-red-600 overflow-hidden">
+      <div className="relative h-[67vh] mb-8 bg-red-600 overflow-hidden">
         {/* Video Background */}
         <video 
           autoPlay 
