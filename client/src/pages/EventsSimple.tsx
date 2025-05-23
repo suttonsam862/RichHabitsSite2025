@@ -77,8 +77,20 @@ export default function EventsSimple() {
               className="group bg-white shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
               <Link href={`/events/${event.id}`}>
-                {/* Red color block replacing image */}
-                <div className="h-40 bg-red-600 w-full"></div>
+                {/* Video preview for event */}
+                <div className="h-40 w-full relative overflow-hidden bg-red-600">
+                  <video 
+                    muted 
+                    loop 
+                    playsInline
+                    className="w-full h-full object-cover"
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => e.currentTarget.pause()}
+                  >
+                    <source src="/videos/slamcamp.webm" type="video/webm" />
+                    <source src="/videos/slamcamp.mp4" type="video/mp4" />
+                  </video>
+                </div>
                 
                 {/* Content Section */}
                 <div className="p-6">
