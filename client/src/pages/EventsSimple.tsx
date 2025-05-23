@@ -101,6 +101,11 @@ export default function EventsSimple() {
                         <source src="/videos/texas-recruiting-clinic.webm" type="video/webm" />
                         <source src="/videos/texas-recruiting-clinic.mp4" type="video/mp4" />
                       </>
+                    ) : event.id === 4 ? (
+                      <>
+                        <source src="/videos/panther-train-tour.webm" type="video/webm" />
+                        <source src="/videos/panther-train-tour.mp4" type="video/mp4" />
+                      </>
                     ) : (
                       // Default fallback for other events
                       <>
