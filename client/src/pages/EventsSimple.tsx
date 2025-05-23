@@ -53,7 +53,7 @@ export default function EventsSimple() {
         
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         
-        <div className="container mx-auto px-6 h-full flex items-center relative z-10">
+        <div className="container mx-auto px-6 h-full flex items-end pb-16 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-5xl md:text-7xl text-white mb-8 title-font tracking-wider">
               Events
