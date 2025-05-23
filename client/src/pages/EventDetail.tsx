@@ -544,22 +544,7 @@ export default function EventDetail() {
                 </div>
               )}
 
-              {/* Event Video */}
-              {event.videoUrl && (
-                <div className="mb-16">
-                  <h3 className="text-2xl mb-6 title-font">Event Highlights</h3>
-                  <div className="aspect-video w-full overflow-hidden">
-                    <video 
-                      controls
-                      className="w-full h-full object-cover"
-                      poster={event.image}
-                    >
-                      <source src={event.videoUrl} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                </div>
-              )}
+
               
               {/* Training Excellence */}
               <h2 
