@@ -15,8 +15,27 @@ process.env.NODE_ENV = 'production';
 
 console.log('🏆 Starting Rich Habits Wrestling Events server...');
 
-// Serve static assets (videos, logos, images)
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static assets (videos, logos, images) with proper headers
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, filePath) => {
+    // Set proper MIME types and cache headers for wrestling event media
+    if (filePath.endsWith('.webm')) {
+      res.setHeader('Content-Type', 'video/webm');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    }
+    if (filePath.endsWith('.webp')) {
+      res.setHeader('Content-Type', 'image/webp');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+    if (filePath.endsWith('.jpg') || filePath.endsWith('.JPG')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+    // CORS headers for Rich Habits media
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  }
+}));
 
 // Try to serve built client files
 const clientDistPath = path.join(__dirname, 'dist', 'client');
@@ -38,8 +57,8 @@ const events = [
     signature: "Elite Wrestling Training Intensive",
     description: "Transform your wrestling with championship-level coaching",
     longDescription: "Join elite wrestlers and coaches for an intensive training experience designed to elevate your skills to championship level.",
-    image: "/events-hero.webm",
-    videoUrl: "/slamcamp.webv",
+    image: "/videos/events-hero.webm",
+    videoUrl: "/videos/slamcamp.webm",
     date: "July 15-17, 2024",
     location: "Elite Training Center, Austin, TX",
     price: "$299",
@@ -55,7 +74,7 @@ const events = [
     signature: "Championship Training Excellence", 
     description: "Train with national champions and elite coaches",
     longDescription: "Experience championship-level training with proven winners.",
-    image: "/events-hero.webm",
+    image: "/videos/events-hero.webm",
     date: "August 5-7, 2024",
     location: "Championship Center, Dallas, TX",
     price: "$349",
@@ -71,7 +90,7 @@ const events = [
     signature: "High School Wrestling Recruiting Event",
     description: "Get recruited by top D1 programs", 
     longDescription: "Premier recruiting event featuring D1 coaches from top programs.",
-    image: "/events-hero.webm",
+    image: "/videos/events-hero.webm",
     date: "September 12-13, 2024",
     location: "University Center, Houston, TX",
     price: "$199",
@@ -88,8 +107,8 @@ const events = [
     signature: "Elite Wrestling Tour Experience",
     description: "Join the exclusive wrestling tour",
     longDescription: "Experience elite wrestling training across multiple venues.",
-    image: "/events-hero.webm",
-    videoUrl: "/panther-train-tour.webm",
+    image: "/videos/events-hero.webm",
+    videoUrl: "/videos/panther-train-tour.webm",
     date: "October 1-15, 2024",
     location: "Multi-City Tour", 
     price: "$599",
