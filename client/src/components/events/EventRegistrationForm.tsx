@@ -17,6 +17,7 @@ export interface RegistrationFormData {
   phone: string;
   tShirtSize: string;
   grade: string;
+  gender: string;
   schoolName: string;
   clubName: string;
   medicalReleaseAccepted: boolean;
@@ -49,6 +50,7 @@ export function EventRegistrationForm({
     phone: '',
     tShirtSize: '',
     grade: '',
+    gender: '',
     schoolName: '',
     clubName: '',
     medicalReleaseAccepted: false,
@@ -331,6 +333,22 @@ export function EventRegistrationForm({
               required
               placeholder="e.g., 8th, 11th, etc."
             />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="gender">Gender</Label>
+            <Select 
+              value={registrationForm.gender}
+              onValueChange={(value) => setRegistrationForm({...registrationForm, gender: value})}
+            >
+              <SelectTrigger id="gender">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">
