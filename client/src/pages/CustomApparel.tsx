@@ -138,7 +138,6 @@ export default function CustomApparel() {
                   src="/images/custom-apparel/ClassicRashguardMockup.png" 
                   alt="Competition Gear" 
                   className="w-full h-auto"
-                  style={{ filter: 'grayscale(30%)' }}
                 />
               </div>
               <h3 
@@ -164,7 +163,6 @@ export default function CustomApparel() {
                   src="/images/custom-apparel/BrooksMockupFinal.png" 
                   alt="Team Packages" 
                   className="w-full h-auto"
-                  style={{ filter: 'grayscale(30%)' }}
                 />
               </div>
               <h3 
@@ -190,7 +188,6 @@ export default function CustomApparel() {
                   src="/images/custom-apparel/10pDeathSquad Mockup.png" 
                   alt="Special Editions" 
                   className="w-full h-auto"
-                  style={{ filter: 'grayscale(30%)' }}
                 />
               </div>
               <h3 
@@ -316,9 +313,6 @@ export default function CustomApparel() {
         
         {/* Design Showcase Section */}
         <DesignShowcase />
-        
-        {/* Testimonials Section */}
-        <Testimonials />
         
         {/* Request Form */}
         <motion.div
