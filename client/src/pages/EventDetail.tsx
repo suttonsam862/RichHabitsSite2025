@@ -300,6 +300,20 @@ export default function EventDetail() {
       <div 
         className="relative h-[60vh] mb-16 overflow-hidden"
       >
+        {/* Video Background for Birmingham Slam Camp */}
+        {event.id === 1 && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/videos/events-hero.webm" type="video/webm" />
+            <source src="/videos/events-hero.mp4" type="video/mp4" />
+          </video>
+        )}
+
         {/* Video Background for Panther Train Tour */}
         {event.id === 4 && (
           <>
@@ -328,7 +342,7 @@ export default function EventDetail() {
         )}
         
         {/* Fallback background for other events */}
-        {event.id !== 4 && (
+        {event.id !== 1 && event.id !== 4 && (
           <div className="absolute inset-0 bg-black">
             <div 
               className="absolute inset-0 opacity-60 bg-red-600"
