@@ -86,18 +86,18 @@ export default function EventsSimple() {
                     playsInline
                     className="w-full h-full object-cover"
                   >
-                    {event.id === 'slam-camp' ? (
+                    {event.id === 1 ? (
                       <>
                         <source src="/videos/slamcamp.webm" type="video/webm" />
                         <source src="/videos/slamcamp.mp4" type="video/mp4" />
                       </>
-                    ) : event.id === 'national-champ-camp' ? (
+                    ) : event.id === 2 ? (
                       <>
                         <source src="/videos/national-champ-camp.webm" type="video/webm" />
                         <source src="/videos/national-champ-camp.mp4" type="video/mp4" />
                       </>
                     ) : (
-                      // Default fallback
+                      // Default fallback for other events
                       <>
                         <source src="/videos/slamcamp.webm" type="video/webm" />
                         <source src="/videos/slamcamp.mp4" type="video/mp4" />
