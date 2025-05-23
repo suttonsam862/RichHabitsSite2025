@@ -12,6 +12,7 @@ import Shop from "./pages/Shop";
 import Events from "./pages/EventsSimple";
 import EventDetail from "./pages/EventDetail";
 import EventRegistration from "./pages/EventRegistration";
+import StripeCheckout from "./pages/StripeCheckout";
 import CustomApparel from "./pages/CustomApparel";
 import NotFound from "./pages/not-found";
 
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/register/:id" component={EventRegistration} />
+      <Route path="/stripe-checkout" component={StripeCheckout} />
       <Route path="/custom-apparel" component={CustomApparel} />
       <Route component={NotFound} />
     </Switch>
