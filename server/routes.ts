@@ -513,16 +513,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(200).json({received: true});
   });
 
-  // Serve frontend - catch-all route for Rich Habits wrestling site
-  app.get('*', (req: Request, res: Response) => {
-    // Skip API routes and webhooks
-    if (req.path.startsWith('/api/') || req.path.startsWith('/webhook')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
-    }
-    
-    // Serve the Rich Habits frontend
-    if (process.env.NODE_ENV === 'production') {
-      // Direct path to your Rich Habits site 
+  // Only add catch-all route in production
+  if (process.env.NODE_ENV === 'production') {
+    app.get('*', (req: Request, res: Response) => {
+      // Skip API routes and webhooks
+      if (req.path.startsWith('/api/') || req.path.startsWith('/webhook')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
+      }
+      
+      // Serve the Rich Habits frontend
       const indexPath = path.resolve(process.cwd(), 'dist', 'public', 'index.html');
       console.log('🎯 Serving Rich Habits from:', indexPath);
       
@@ -532,11 +531,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.status(500).send('Rich Habits site error');
         }
       });
-    } else {
-      // In development, let Vite middleware handle this
-      return;
-    }
-  });
+    });
+  }
 
   // Create Express HTTP server
   const httpServer = createServer(app);
