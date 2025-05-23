@@ -114,6 +114,46 @@ export default function EventsSimple() {
                       </>
                     )}
                   </video>
+                  
+                  {/* Texas Recruiting Clinic Overlay */}
+                  {event.id === 3 && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      {/* Main recruiting event banner */}
+                      <div className="absolute top-2 left-2 right-2">
+                        <div className="bg-red-600 text-white px-3 py-1 text-xs font-bold tracking-wider text-center transform -rotate-1 shadow-lg">
+                          HIGH SCHOOL WRESTLING RECRUITING EVENT
+                        </div>
+                      </div>
+                      
+                      {/* University logos row */}
+                      <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center space-x-1">
+                        {/* Oklahoma logo */}
+                        <div className="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">OU</span>
+                        </div>
+                        
+                        {/* Pittsburgh logo */}
+                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">P</span>
+                        </div>
+                        
+                        {/* Brown logo */}
+                        <div className="w-6 h-6 bg-amber-800 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">B</span>
+                        </div>
+                        
+                        {/* George Mason logo */}
+                        <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">G</span>
+                        </div>
+                        
+                        {/* Tarleton State logo */}
+                        <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">T</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Content Section */}
