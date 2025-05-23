@@ -146,7 +146,6 @@ export function DesignShowcase() {
                       src={design.image}
                       alt={design.name}
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                      style={{ filter: 'grayscale(60%)' }}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';

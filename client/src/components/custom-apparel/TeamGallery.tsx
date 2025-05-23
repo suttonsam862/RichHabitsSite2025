@@ -128,7 +128,6 @@ export function TeamGallery() {
                     src={image.src} 
                     alt={image.alt} 
                     className="h-full object-contain hover:scale-105 transition-transform duration-300"
-                    style={{ filter: 'grayscale(60%)' }}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = "/images/custom-apparel/BraggMockup.png";
@@ -155,7 +154,6 @@ export function TeamGallery() {
                         src={image.src} 
                         alt={image.alt} 
                         className="h-full object-contain rounded-md"
-                        style={{ filter: 'grayscale(60%)' }}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = "/images/custom-apparel/BraggMockup.png";

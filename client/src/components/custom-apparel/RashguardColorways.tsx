@@ -150,7 +150,6 @@ export function RashguardColorways() {
                         src={colorways[selectedColorway].image}
                         alt={colorways[selectedColorway].name}
                         className="w-full h-full object-contain p-4 transition-transform duration-500 hover:scale-105"
-                        style={{ filter: 'grayscale(50%)' }}
                         onError={(e) => {
                           // If image fails to load, show a styled div with colorway info instead
                           const target = e.target as HTMLImageElement;

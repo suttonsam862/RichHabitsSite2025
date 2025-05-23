@@ -201,7 +201,6 @@ export function SchoolPackages() {
                         src={schoolPackages[selectedSchool].images[currentImageIndex]} 
                         alt={`${schoolPackages[selectedSchool].name} apparel design`}
                         className="object-contain max-h-full max-w-full p-4 transition-transform duration-500 hover:scale-105"
-                        style={{ filter: 'grayscale(60%)' }}
                         onError={(e) => {
                           // If image fails to load, show a styled div with school info instead
                           const target = e.target as HTMLImageElement;
