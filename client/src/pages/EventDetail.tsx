@@ -519,6 +519,31 @@ export default function EventDetail() {
                 </div>
               </div>
               
+              {/* Jason Nolf Highlights for National Champ Camp */}
+              {event.id === 2 && (
+                <div className="mb-16">
+                  <h3 className="text-2xl mb-6 title-font">Featured Clinician Highlights</h3>
+                  <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                    <h4 className="text-lg mb-2 title-font text-blue-600">Jason Nolf - 3x NCAA Champion</h4>
+                    <p className="text-gray-700 subtitle-font mb-4">
+                      Watch highlights from one of wrestling's most dominant champions who will be leading instruction at National Champ Camp.
+                    </p>
+                  </div>
+                  <div className="aspect-video w-full overflow-hidden rounded-lg shadow-lg">
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src="https://www.youtube.com/embed/orpdaK707Y4"
+                      title="Jason Nolf Wrestling Highlights"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="w-full h-full"
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+
               {/* Event Video */}
               {event.videoUrl && (
                 <div className="mb-16">
