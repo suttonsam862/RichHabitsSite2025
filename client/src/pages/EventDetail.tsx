@@ -404,58 +404,13 @@ export default function EventDetail() {
 
 
 
-              {/* Event Video Showcase - Texas RC only */}
+              {/* Texas RC Video Elements - positioned as stickers/corner elements */}
               {event.id === 3 && (
-                <div className="mb-16">
-                  <h3 className="text-3xl mb-8 title-font text-center">Event Experience</h3>
-                  
-                  {/* Main Feature Video */}
-                  <div className="mb-12">
-                    <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl">
-                      <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover"
-                      >
-                        <source src="/texas-rc-main.webm" type="video/webm" />
-                      </video>
-                      
-                      {/* Elegant overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-                      
-                      {/* Subtle border effect */}
-                      <div className="absolute inset-0 rounded-lg border-2 border-white/20"></div>
-                    </div>
-                  </div>
-                  
-                  {/* Secondary Video with Split Layout */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                    <div className="order-2 lg:order-1">
-                      <h4 className="text-2xl mb-4 title-font">Elite Training Environment</h4>
-                      <p className="text-gray-700 subtitle-font mb-4">
-                        Experience the intensity and focus of championship-level training at our Texas Recruiting Clinic. 
-                        Watch as elite wrestlers push their limits under the guidance of D1 coaches.
-                      </p>
-                      <div className="space-y-2">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
-                          Live college-level training sessions
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
-                          Direct coaching from D1 staff
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
-                          Recruiting evaluation opportunities
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="order-1 lg:order-2">
-                      <div className="relative aspect-video overflow-hidden rounded-lg shadow-xl">
+                <>
+                  {/* Newspaper video as random sticker element */}
+                  <div className="relative mb-16">
+                    <div className="absolute -top-8 -right-4 lg:right-8 z-20 transform rotate-12">
+                      <div className="relative w-48 h-32 overflow-hidden rounded-lg shadow-lg border-4 border-white">
                         <video
                           autoPlay
                           loop
@@ -463,18 +418,36 @@ export default function EventDetail() {
                           playsInline
                           className="w-full h-full object-cover"
                         >
-                          <source src="/texas-rc-loop.webm" type="video/webm" />
+                          <source src="/texas-rc-main.webm" type="video/webm" />
                         </video>
                         
-                        {/* Refined overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/20"></div>
-                        
-                        {/* Premium border */}
-                        <div className="absolute inset-0 rounded-lg border border-white/30"></div>
+                        {/* Sticker-style border effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
                       </div>
+                      
+                      {/* Sticker shadow */}
+                      <div className="absolute inset-0 bg-black/20 transform translate-x-1 translate-y-1 -z-10 rounded-lg"></div>
                     </div>
                   </div>
-                </div>
+
+                  {/* Loop video as small corner square */}
+                  <div className="fixed bottom-6 right-6 z-30 lg:bottom-8 lg:right-8">
+                    <div className="relative w-24 h-24 lg:w-32 lg:h-32 overflow-hidden rounded-xl shadow-xl border-2 border-white/50">
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                      >
+                        <source src="/texas-rc-loop.webm" type="video/webm" />
+                      </video>
+                      
+                      {/* Subtle overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                    </div>
+                  </div>
+                </>
               )}
 
               {/* Schedule Preview */}
