@@ -178,8 +178,10 @@ export default function EventRegistration() {
     lastName: "",
     email: "",
     phone: "",
-    age: "",
-    experience: "beginner",
+    grade: "",
+    gender: "",
+    schoolName: "",
+    clubName: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
     specialRequirements: "",
@@ -643,48 +645,94 @@ export default function EventRegistration() {
                   
                   <div>
                     <label 
-                      htmlFor="age" 
+                      htmlFor="grade" 
                       className="block mb-2 text-gray-800"
                       style={{ fontFamily: "'Sanchez', serif" }}
                     >
-                      Age *
+                      Grade *
                     </label>
                     <input
-                      type="number"
-                      id="age"
-                      name="age"
-                      value={formData.age}
+                      type="text"
+                      id="grade"
+                      name="grade"
+                      value={formData.grade}
                       onChange={handleChange}
-                      min="5"
-                      max="100"
-                      className={`w-full p-3 border ${errors.age ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      placeholder="e.g., 8th, 11th, etc."
+                      className={`w-full p-3 border ${errors.grade ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
                       style={{ fontFamily: "'Arial', sans-serif" }}
                     />
-                    {errors.age && (
-                      <p className="mt-1 text-red-500 text-sm">{errors.age}</p>
+                    {errors.grade && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.grade}</p>
                     )}
                   </div>
                   
                   <div>
                     <label 
-                      htmlFor="experience" 
+                      htmlFor="gender" 
                       className="block mb-2 text-gray-800"
                       style={{ fontFamily: "'Sanchez', serif" }}
                     >
-                      Wrestling Experience
+                      Gender *
                     </label>
                     <select
-                      id="experience"
-                      name="experience"
-                      value={formData.experience}
+                      id="gender"
+                      name="gender"
+                      value={formData.gender}
                       onChange={handleChange}
-                      className="w-full p-3 border border-gray-300 focus:outline-none focus:border-gray-900"
+                      className={`w-full p-3 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
                       style={{ fontFamily: "'Arial', sans-serif" }}
                     >
-                      <option value="beginner">Beginner (0-2 years)</option>
-                      <option value="intermediate">Intermediate (3-5 years)</option>
-                      <option value="advanced">Advanced (5+ years)</option>
+                      <option value="">Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
                     </select>
+                    {errors.gender && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.gender}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="schoolName" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      School Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="schoolName"
+                      name="schoolName"
+                      value={formData.schoolName}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.schoolName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.schoolName && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.schoolName}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label 
+                      htmlFor="clubName" 
+                      className="block mb-2 text-gray-800"
+                      style={{ fontFamily: "'Sanchez', serif" }}
+                    >
+                      Wrestling Club (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="clubName"
+                      name="clubName"
+                      value={formData.clubName}
+                      onChange={handleChange}
+                      className={`w-full p-3 border ${errors.clubName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-900`}
+                      style={{ fontFamily: "'Arial', sans-serif" }}
+                    />
+                    {errors.clubName && (
+                      <p className="mt-1 text-red-500 text-sm">{errors.clubName}</p>
+                    )}
                   </div>
                 </div>
                 
