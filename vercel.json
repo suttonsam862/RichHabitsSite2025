@@ -2,20 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "run-production.js",
+      "src": "production-server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/run-production.js"
+      "dest": "/production-server.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
   },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/run-production.js" }
-  ]
+  "buildCommand": "npm run build"
 }
