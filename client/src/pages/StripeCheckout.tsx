@@ -63,7 +63,26 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           variant: 'destructive',
         });
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        // Payment succeeded - call our API to record the payment and create the registration
+        // Payment succeeded - gather all registration data and call our API
+        const registrationData = {
+          firstName: sessionStorage.getItem('registration_firstName') || '',
+          lastName: sessionStorage.getItem('registration_lastName') || '',
+          contactName: sessionStorage.getItem('registration_contactName') || '',
+          email: sessionStorage.getItem('registration_email') || '',
+          phone: sessionStorage.getItem('registration_phone') || '',
+          tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
+          grade: sessionStorage.getItem('registration_grade') || '',
+          gender: sessionStorage.getItem('registration_gender') || '',
+          schoolName: sessionStorage.getItem('registration_schoolName') || '',
+          clubName: sessionStorage.getItem('registration_clubName') || '',
+          registrationType: option || 'full',
+          day1: sessionStorage.getItem('registration_day1') === 'true',
+          day2: sessionStorage.getItem('registration_day2') === 'true',
+          day3: sessionStorage.getItem('registration_day3') === 'true',
+        };
+
+        console.log('Sending complete registration data to backend:', registrationData);
+
         const registrationResponse = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
           method: 'POST',
           headers: {
@@ -73,6 +92,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
             paymentIntentId: paymentIntent.id,
             eventId: eventId,
             amount: paymentIntent.amount,
+            ...registrationData
           }),
         });
 

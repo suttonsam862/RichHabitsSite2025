@@ -319,8 +319,25 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       console.error('Missing name information in registration data. This will cause issues with Shopify orders.');
     }
 
-    // Create the registration in your database
-    const registration = await storage.createEventRegistration(registrationData);
+    // First create the Shopify order to get the order ID
+    console.log('Creating Shopify order for registration...');
+    const shopifyOrder = await createShopifyOrderFromRegistration(
+      registrationData, 
+      event, 
+      paymentIntent.amount / 100 // Convert cents to dollars
+    );
+    
+    // Create final registration data with all required fields
+    const finalRegistrationData = {
+      ...registrationData,
+      shopifyOrderId: shopifyOrder?.id?.toString() || '',
+      stripePaymentIntentId: paymentIntent.id,
+      paymentStatus: 'completed'
+    };
+    
+    // Create the registration in your database with complete data
+    const registration = await storage.createEventRegistration(finalRegistrationData);
+    console.log(`Registration created in database: ${registration.id}`);
 
     // Send the registration confirmation email
     await sendRegistrationConfirmationEmail({
@@ -332,21 +349,9 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       eventLocation: event.location,
       registrationType: registrationData.registrationType,
       amount: (paymentIntent.amount / 100).toFixed(2), // Convert cents to dollars
-      paymentId: paymentIntent.id
+      paymentId: paymentIntent.id,
+      shopifyOrderId: shopifyOrder?.id?.toString()
     });
-
-    // Create a Shopify order (for inventory and record-keeping)
-    const shopifyOrder = await createShopifyOrderFromRegistration(
-      registrationData, 
-      event, 
-      paymentIntent.amount / 100 // Convert cents to dollars
-    );
-    
-    // If we got a Shopify order, update the registration with the order ID
-    if (shopifyOrder && shopifyOrder.id) {
-      // For future: update the registration in the database with the Shopify order ID
-      console.log(`Registration ${registration.id} linked to Shopify order ${shopifyOrder.id}`);
-    }
 
     // Success response
     res.status(200).json({
