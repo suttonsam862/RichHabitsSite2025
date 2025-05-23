@@ -279,31 +279,24 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
     // Log the metadata for debugging
     console.log('Payment intent metadata:', paymentIntent.metadata);
     
+    // Use the complete registration data sent from frontend, not just metadata
     const registrationData = {
       eventId,
-      firstName: freeRegistration ? req.body.firstName : paymentIntent.metadata.firstName || 'Not provided',
-      lastName: freeRegistration ? req.body.lastName : paymentIntent.metadata.lastName || 'Not provided',
-      contactName: freeRegistration ? req.body.contactName : paymentIntent.metadata.contactName || 'Not provided',
-      email: freeRegistration ? req.body.email : paymentIntent.metadata.email || 'Not provided',
-      phone: freeRegistration ? req.body.phone : paymentIntent.metadata.phone || '',
-      tShirtSize: freeRegistration ? req.body.tShirtSize : paymentIntent.metadata.tShirtSize || 'Not provided',
-      grade: freeRegistration ? req.body.grade : paymentIntent.metadata.grade || 'Not provided',
-      schoolName: freeRegistration ? req.body.schoolName : paymentIntent.metadata.schoolName || 'Not provided',
-      clubName: freeRegistration ? req.body.clubName : paymentIntent.metadata.clubName || '',
+      firstName: req.body.firstName || paymentIntent.metadata.firstName || '',
+      lastName: req.body.lastName || paymentIntent.metadata.lastName || '',
+      contactName: req.body.contactName || paymentIntent.metadata.contactName || '',
+      email: req.body.email || paymentIntent.metadata.email || '',
+      phone: req.body.phone || paymentIntent.metadata.phone || '',
+      tShirtSize: req.body.tShirtSize || paymentIntent.metadata.tShirtSize || '',
+      grade: req.body.grade || paymentIntent.metadata.grade || '',
+      gender: req.body.gender || paymentIntent.metadata.gender || '',
+      schoolName: req.body.schoolName || paymentIntent.metadata.schoolName || '',
+      clubName: req.body.clubName || paymentIntent.metadata.clubName || '',
       medicalReleaseAccepted: true,
-      registrationType: freeRegistration 
-        ? req.body.registrationType || req.body.option || 'full' 
-        : paymentIntent.metadata.option || 'full',
-      shopifyOrderId: paymentIntent.id, // Use the payment intent ID as the order ID
-      day1: freeRegistration 
-        ? req.body.day1 === 'true' || req.body.day1 === true
-        : paymentIntent.metadata.day1 === 'true',
-      day2: freeRegistration
-        ? req.body.day2 === 'true' || req.body.day2 === true
-        : paymentIntent.metadata.day2 === 'true',
-      day3: freeRegistration
-        ? req.body.day3 === 'true' || req.body.day3 === true
-        : paymentIntent.metadata.day3 === 'true',
+      registrationType: req.body.registrationType || req.body.option || paymentIntent.metadata.option || 'full',
+      day1: req.body.day1 === true || req.body.day1 === 'true' || paymentIntent.metadata.day1 === 'true',
+      day2: req.body.day2 === true || req.body.day2 === 'true' || paymentIntent.metadata.day2 === 'true',
+      day3: req.body.day3 === true || req.body.day3 === 'true' || paymentIntent.metadata.day3 === 'true',
     };
     
     // Verify the registration data is complete
