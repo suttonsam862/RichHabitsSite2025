@@ -80,15 +80,29 @@ export default function EventsSimple() {
                 {/* Video preview for event */}
                 <div className="h-40 w-full relative overflow-hidden bg-red-600">
                   <video 
+                    autoPlay
                     muted 
                     loop 
                     playsInline
                     className="w-full h-full object-cover"
-                    onMouseEnter={(e) => e.currentTarget.play()}
-                    onMouseLeave={(e) => e.currentTarget.pause()}
                   >
-                    <source src="/videos/slamcamp.webm" type="video/webm" />
-                    <source src="/videos/slamcamp.mp4" type="video/mp4" />
+                    {event.id === 'slam-camp' ? (
+                      <>
+                        <source src="/videos/slamcamp.webm" type="video/webm" />
+                        <source src="/videos/slamcamp.mp4" type="video/mp4" />
+                      </>
+                    ) : event.id === 'national-champ-camp' ? (
+                      <>
+                        <source src="/videos/national-champ-camp.webm" type="video/webm" />
+                        <source src="/videos/national-champ-camp.mp4" type="video/mp4" />
+                      </>
+                    ) : (
+                      // Default fallback
+                      <>
+                        <source src="/videos/slamcamp.webm" type="video/webm" />
+                        <source src="/videos/slamcamp.mp4" type="video/mp4" />
+                      </>
+                    )}
                   </video>
                 </div>
                 
