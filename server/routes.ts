@@ -533,8 +533,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } else {
-      // In development, let Vite handle the frontend
-      res.status(404).send('Development mode - frontend handled by Vite');
+      // In development, this should never be reached because Vite middleware handles frontend
+      // If we get here, something is wrong with the setup
+      next();
     }
   });
 
