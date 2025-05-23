@@ -353,16 +353,71 @@ export default function EventDetail() {
             animate="animate"
           >
             <div className="mb-12">
-              <h2 
-                className="text-3xl mb-6 title-font"
-              >
-                About This Event
-              </h2>
-              <p 
-                className="text-gray-700 leading-relaxed mb-8 subtitle-font"
-              >
-                {event.longDescription}
-              </p>
+              {/* Event Overview Section */}
+              <div className="mb-12">
+                <h2 className="text-3xl mb-6 title-font">About This Event</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  <div>
+                    <h3 className="text-xl mb-3 title-font text-red-600">Event Highlights</h3>
+                    <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
+                      Join elite wrestlers and coaches for an intensive training experience designed to elevate your skills to championship level.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-xl mb-3 title-font text-red-600">Who Should Attend</h3>
+                    <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
+                      Perfect for serious athletes looking to improve technique, mental toughness, and competitive performance.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Training Focus Section */}
+              <div className="mb-12 bg-gray-50 p-8 -mx-8">
+                <h3 className="text-2xl mb-6 title-font">Training Focus Areas</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-white text-2xl font-bold">T</span>
+                    </div>
+                    <h4 className="text-lg mb-2 title-font">Technique</h4>
+                    <p className="text-gray-600 subtitle-font">Master fundamental and advanced wrestling moves</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-white text-2xl font-bold">S</span>
+                    </div>
+                    <h4 className="text-lg mb-2 title-font">Strategy</h4>
+                    <p className="text-gray-600 subtitle-font">Develop winning game plans and tactics</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <span className="text-white text-2xl font-bold">M</span>
+                    </div>
+                    <h4 className="text-lg mb-2 title-font">Mental</h4>
+                    <p className="text-gray-600 subtitle-font">Build championship mindset and confidence</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Schedule Preview */}
+              <div className="mb-12">
+                <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
+                <div className="space-y-4">
+                  <div className="border-l-4 border-red-600 pl-6 py-2">
+                    <h4 className="font-bold subtitle-font">Morning Sessions</h4>
+                    <p className="text-gray-600 subtitle-font">Technique development, drill work, and fundamentals</p>
+                  </div>
+                  <div className="border-l-4 border-red-600 pl-6 py-2">
+                    <h4 className="font-bold subtitle-font">Afternoon Training</h4>
+                    <p className="text-gray-600 subtitle-font">Live wrestling, situation training, and conditioning</p>
+                  </div>
+                  <div className="border-l-4 border-red-600 pl-6 py-2">
+                    <h4 className="font-bold subtitle-font">Evening Sessions</h4>
+                    <p className="text-gray-600 subtitle-font">Mental preparation, video review, and Q&A</p>
+                  </div>
+                </div>
+              </div>
               
               {/* Image Gallery */}
               <div className="mt-12 mb-16">
