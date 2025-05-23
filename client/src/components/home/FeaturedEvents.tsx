@@ -288,7 +288,12 @@ export function FeaturedEvents() {
                   <div className="grid grid-cols-3 gap-1 mb-2 text-xs">
                     <p className="text-gray-600"><strong>Date:</strong> June 5-7, 2025</p>
                     <p className="text-gray-600"><strong>Location:</strong> Roy Martin Middle School</p>
-                    <p className="text-gray-600"><strong>Price:</strong> $349</p>
+                    <div className="text-gray-600">
+                      <strong>Price:</strong> 
+                      <span className="text-red-500 line-through text-xs ml-1">$349</span>
+                      <span className="text-green-600 font-bold ml-1">$299</span>
+                      <span className="bg-red-500 text-white text-xs px-1 ml-1 rounded">SAVE $50</span>
+                    </div>
                   </div>
                   
                   <p className="text-gray-700 mb-3 text-xs flex-grow">

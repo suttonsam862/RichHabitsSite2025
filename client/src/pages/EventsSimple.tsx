@@ -14,7 +14,8 @@ const events = [
     title: "National Champ Camp",
     date: "June 5-7, 2025",
     location: "Roy Martin Middle School, Las Vegas, NV",
-    price: "$349"
+    price: "$299",
+    originalPrice: "$349"
   },
   {
     id: 3,
@@ -166,7 +167,20 @@ export default function EventsSimple() {
                     <span className="text-sm text-gray-600 subtitle-font">{event.location}</span>
                   </div>
                   <div className="text-md font-medium text-gray-800 subtitle-font">
-                    {event.price}
+                    {/* Show price drop for National Champ Camp */}
+                    {event.originalPrice ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-500 line-through text-sm">{event.originalPrice}</span>
+                          <span className="text-green-600 font-bold">{event.price}</span>
+                        </div>
+                        <div className="bg-red-500 text-white text-xs px-2 py-1 rounded inline-block">
+                          SAVE $50
+                        </div>
+                      </div>
+                    ) : (
+                      event.price
+                    )}
                   </div>
                   <div className="mt-5">
                     <span className="text-sm font-medium text-gray-900 border-b border-gray-900 pb-1 hover:text-sky-800 hover:border-sky-800 transition-colors inline-block subtitle-font">

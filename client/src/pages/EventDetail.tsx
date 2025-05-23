@@ -63,8 +63,9 @@ const events = [
     title: "National Champ Camp",
     date: "June 5-7, 2025",
     location: "Las Vegas, NV (exact location TBA)",
-    price: "$349",
-    fullPrice: 349,
+    price: "$299",
+    originalPrice: "$349",
+    fullPrice: 299,
     singleDayPrice: 175,
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
     longDescription: "The National Champ Wrestling Camp in Las Vegas represents the ultimate destination for serious wrestlers seeking championship-level instruction from proven NCAA champions and World Team members. This elite Las Vegas wrestling camp attracts competitors from across Nevada, California, Arizona, Utah, and Colorado who are committed to reaching the highest levels of the sport. Located in Las Vegas with the exact venue to be announced, this intensive three-day camp provides unparalleled access to some of the most accomplished wrestlers in American history. Jason Nolf, a three-time NCAA Champion and World Team member, leads our exceptional instruction team alongside NCAA Champion Mark Hall and two-time NCAA Champion Vincenzo Joseph. This Las Vegas wrestling camp focuses on advanced technical development, competition strategy, and the mental preparation necessary for elite-level success. The camp curriculum emphasizes systematic skill development, tactical awareness, and the competitive mindset that separates championship wrestlers from the field. Participants receive individualized instruction, comprehensive video analysis, and detailed feedback from wrestlers who have competed successfully at the highest levels of international competition. The National Champ Camp serves dedicated wrestlers aged 8-18 who are serious about pursuing excellence in wrestling, whether at the youth, high school, or preparing for collegiate levels.",
@@ -748,17 +749,30 @@ export default function EventDetail() {
                     >
                       Price
                     </p>
-                    <p 
+                    <div 
                       className="text-gray-700"
                       style={{ fontFamily: "'Didact Gothic', sans-serif" }}
                     >
-                      {event.price}
+                      {/* Show price drop for National Champ Camp */}
+                      {event.originalPrice ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-red-500 line-through text-sm">{event.originalPrice}</span>
+                            <span className="text-green-600 font-bold text-lg">{event.price}</span>
+                          </div>
+                          <div className="bg-red-500 text-white text-xs px-2 py-1 rounded inline-block">
+                            SAVE $50
+                          </div>
+                        </div>
+                      ) : (
+                        <span>{event.price}</span>
+                      )}
                       {event.singleDayPrice && (
-                        <span className="block text-sm text-gray-500 mt-1">
+                        <span className="block text-sm text-gray-500 mt-2">
                           Single day: ${event.singleDayPrice}
                         </span>
                       )}
-                    </p>
+                    </div>
                   </div>
                   
                   <div>

@@ -1022,7 +1022,7 @@ export const EVENT_PRODUCTS = {
     fullCamp: {
       productId: 'gid://shopify/Product/8948577272045',
       variantId: 'gid://shopify/ProductVariant/47800987943149', // Actual variant ID from Shopify
-      price: 349.00  // Full camp price - updated to match website display
+      price: 299.00  // Full camp price - updated to match website display
     },
     singleDay: {
       productId: 'gid://shopify/Product/8948577272045',
