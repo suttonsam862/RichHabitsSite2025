@@ -30,7 +30,7 @@ export function Header() {
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link href="/">
           <motion.img 
-            src="@assets/Cursive-Logo.webp"
+            src="/Cursive-Logo.webp"
             alt="Rich Habits"
             className="h-8 w-auto cursor-pointer"
             whileHover={{ scale: 1.03 }}
