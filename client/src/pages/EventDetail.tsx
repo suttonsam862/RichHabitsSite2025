@@ -26,25 +26,25 @@ const events = [
         name: "Zahid Valencia",
         title: "2x NCAA Champion, 4x All-American",
         image: "/coach-1.jpg",
-        bio: "Zahid Valencia stands as one of the most accomplished wrestlers in Arizona State University history and contemporary American wrestling. As a two-time NCAA Champion at 174 pounds (2017, 2019) and four-time All-American, Valencia dominated the collegiate wrestling scene with his exceptional technique and competitive drive. His wrestling career includes multiple Pac-12 Conference titles and a reputation for technical mastery that extends beyond college wrestling into international competition. Valencia's coaching methodology focuses on positional wrestling, scrambling techniques, and the mental preparation required for championship performance. His experience competing at the highest levels of wrestling, combined with his natural teaching ability, makes him an invaluable resource for wrestlers seeking to elevate their technical skills and competitive mindset. Valencia specializes in teaching advanced takedown sequences, defensive positioning, and the strategic thinking necessary for success in high-stakes competition."
+        bio: "Two-time NCAA Champion and four-time All-American who dominated at Arizona State. Known for exceptional technique and mental toughness. Specializes in advanced takedowns, defensive positioning, and high-level competition strategy."
       },
       {
         name: "Josh Shields",
         title: "NCAA All-American, Former ASU Captain",
         image: "/coach-2.jpg",
-        bio: "Josh Shields exemplifies the combination of athletic excellence and leadership that defines elite collegiate wrestling. As an NCAA All-American and former captain of the Arizona State University wrestling team, Shields brings both technical expertise and proven leadership experience to his coaching. His collegiate career was marked by consistent high-level performance and the respect of teammates and coaches alike. Shields' coaching approach emphasizes the development of complete wrestlers who excel in all phases of the sport - technique, conditioning, and mental preparation. His experience as a team captain provides unique insights into the leadership qualities and team dynamics essential for success in wrestling programs. Shields specializes in teaching fundamental techniques with precision, helping wrestlers build a solid foundation that supports advanced skill development. His instruction covers neutral position control, effective shot setups, and the defensive awareness necessary for competing against elite-level opponents."
+        bio: "NCAA All-American and former ASU team captain with proven leadership experience. Focuses on developing complete wrestlers through precise fundamentals, neutral position control, and defensive awareness."
       },
       {
         name: "Brandon Courtney",
         title: "NCAA Finalist, 3x All-American",
         image: "/coach-3.jpg",
-        bio: "Brandon Courtney's wrestling credentials speak to a career defined by excellence and consistency at the highest levels of collegiate competition. As an NCAA Finalist and three-time All-American, Courtney demonstrated the technical skill, mental toughness, and competitive consistency that characterize championship-level wrestlers. His path to the NCAA finals showcases the systematic approach to training and competition that he now shares with developing wrestlers. Courtney's coaching focuses on the strategic elements of wrestling that separate good wrestlers from great ones - timing, positioning, and the ability to execute techniques under pressure. His experience competing in high-stakes matches provides invaluable insights into preparation, match strategy, and the mental approach required for success in tournament wrestling. Courtney specializes in teaching advanced positioning concepts, scrambling techniques, and the tactical decision-making that enables wrestlers to perform at their best when it matters most."
+        bio: "NCAA Finalist and three-time All-American known for technical excellence and competitive consistency. Specializes in advanced positioning, scrambling techniques, and tactical decision-making for tournament success."
       },
       {
         name: "Michael McGee",
         title: "NCAA All-American, Pac-12 Champion",
         image: "/coach-4.jpg",
-        bio: "Michael McGee brings a wealth of championship experience and technical knowledge to his role as a wrestling instructor. As an NCAA All-American and Pac-12 Conference Champion, McGee competed successfully at the highest levels of collegiate wrestling, demonstrating the technical precision and competitive mindset that define elite athletes. His championship experience in the highly competitive Pac-12 Conference showcases his ability to perform against top-tier competition throughout his collegiate career. McGee's coaching methodology emphasizes the systematic development of wrestling skills, from fundamental techniques to advanced competition strategies. His approach to instruction focuses on helping wrestlers understand not just how to execute techniques, but when and why to use them in competitive situations. McGee specializes in teaching position-specific techniques, transition wrestling, and the tactical awareness necessary for success in modern wrestling. His experience as both competitor and coach provides a comprehensive understanding of what it takes to develop wrestlers who can compete successfully at any level."
+        bio: "NCAA All-American and Pac-12 Champion with elite-level competitive experience. Emphasizes systematic skill development, position-specific techniques, and tactical awareness for modern wrestling success."
       }
     ],
     capacity: 200,

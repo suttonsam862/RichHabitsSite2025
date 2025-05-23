@@ -381,6 +381,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Import stripe functions from stripe.ts
+  const { createPaymentIntent, handleSuccessfulPayment, updatePaymentIntent } = await import('./stripe.js');
+
+  // Add the event-specific payment intent endpoint that frontend expects
+  app.post("/api/events/:eventId/create-payment-intent", createPaymentIntent);
+  
+  // Add the payment success handler
+  app.post("/api/events/:eventId/stripe-payment-success", handleSuccessfulPayment);
+  
+  // Add the payment update endpoint for discounts
+  app.post("/api/events/:eventId/update-payment-intent", updatePaymentIntent);
+
   // Stripe API endpoints for event registrations
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
