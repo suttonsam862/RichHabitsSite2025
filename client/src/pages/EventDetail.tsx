@@ -300,11 +300,41 @@ export default function EventDetail() {
       <div 
         className="relative h-[60vh] mb-16 overflow-hidden"
       >
-        <div className="absolute inset-0 bg-black">
-          <div 
-            className="absolute inset-0 opacity-60 bg-red-600"
-          ></div>
-        </div>
+        {/* Video Background for Panther Train Tour */}
+        {event.id === 4 && (
+          <>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/panther-train-tour.webm" type="video/webm" />
+            </video>
+            
+            {/* Video overlay with border effect */}
+            <div className="absolute inset-0">
+              {/* Top border */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+              {/* Bottom border */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+              {/* Left border */}
+              <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-transparent via-white to-transparent opacity-30"></div>
+              {/* Right border */}
+              <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-transparent via-white to-transparent opacity-30"></div>
+            </div>
+          </>
+        )}
+        
+        {/* Fallback background for other events */}
+        {event.id !== 4 && (
+          <div className="absolute inset-0 bg-black">
+            <div 
+              className="absolute inset-0 opacity-60 bg-red-600"
+            ></div>
+          </div>
+        )}
         
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
