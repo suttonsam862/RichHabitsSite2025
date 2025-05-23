@@ -128,28 +128,28 @@ export default function EventsSimple() {
                       {/* University logos row */}
                       <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center space-x-1">
                         {/* Oklahoma logo */}
-                        <div className="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">OU</span>
+                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
+                          <img src="/oklahoma-logo.webp" alt="OU" className="w-full h-full object-contain" />
                         </div>
                         
                         {/* Pittsburgh logo */}
-                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">P</span>
+                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
+                          <img src="/pitt-logo.webp" alt="Pitt" className="w-full h-full object-contain" />
                         </div>
                         
                         {/* Brown logo */}
-                        <div className="w-6 h-6 bg-amber-800 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">B</span>
+                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
+                          <img src="/brown-logo.webp" alt="Brown" className="w-full h-full object-contain" />
                         </div>
                         
                         {/* George Mason logo */}
-                        <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">G</span>
+                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
+                          <img src="/george-mason-logo.webp" alt="George Mason" className="w-full h-full object-contain" />
                         </div>
                         
                         {/* Tarleton State logo */}
-                        <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">T</span>
+                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
+                          <img src="/tarleton-logo.webp" alt="Tarleton State" className="w-full h-full object-contain" />
                         </div>
                       </div>
                     </div>
