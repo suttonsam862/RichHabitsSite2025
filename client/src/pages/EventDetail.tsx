@@ -571,114 +571,150 @@ export default function EventDetail() {
                 </div>
               </div>
               
-              {/* Elite D1 Coaches */}
-              <div className="mb-12">
-                <h2 className="text-3xl mb-6 title-font">Elite D1 Coaching Staff</h2>
-                <p className="text-gray-700 mb-8 subtitle-font">Learn from current Division I coaches who are actively developing championship-level wrestlers at the highest level of collegiate competition.</p>
-                
-                <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                  variants={staggerContainer}
-                  initial="initial"
-                  animate="animate"
-                >
-                  {/* Max Murin - George Mason */}
+              {/* Elite D1 Coaches - Only show for Texas Recruiting Clinic */}
+              {event.id === 3 && (
+                <div className="mb-12">
+                  <h2 className="text-3xl mb-6 title-font">Elite D1 Coaching Staff</h2>
+                  <p className="text-gray-700 mb-8 subtitle-font">Learn from current Division I coaches who are actively developing championship-level wrestlers at the highest level of collegiate competition.</p>
+                  
                   <motion.div 
-                    className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
-                    variants={fadeIn}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
                   >
-                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-green-600">
-                      <div className="w-full h-full bg-green-600 flex items-center justify-center">
-                        <span className="text-white text-4xl font-bold">MM</span>
+                    {/* Max Murin - George Mason */}
+                    <motion.div 
+                      className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                      variants={fadeIn}
+                    >
+                      <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-green-600">
+                        <div className="w-full h-full bg-green-600 flex items-center justify-center">
+                          <span className="text-white text-4xl font-bold">MM</span>
+                        </div>
                       </div>
-                    </div>
-                    <h3 className="text-xl mb-1 title-font text-center">Max Murin</h3>
-                    <p className="text-sm text-green-600 mb-2 subtitle-font text-center font-medium">George Mason University</p>
-                    <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Head Coach</p>
-                    <p className="text-gray-700 text-sm subtitle-font">Former Iowa standout and NCAA finalist. Known for developing technical wrestlers with championship-level conditioning and mental toughness.</p>
+                      <h3 className="text-xl mb-1 title-font text-center">Max Murin</h3>
+                      <p className="text-sm text-green-600 mb-2 subtitle-font text-center font-medium">George Mason University</p>
+                      <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Head Coach</p>
+                      <p className="text-gray-700 text-sm subtitle-font">Former Iowa standout and NCAA finalist. Known for developing technical wrestlers with championship-level conditioning and mental toughness.</p>
+                    </motion.div>
+
+                    {/* Josh Shields - Brown */}
+                    <motion.div 
+                      className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                      variants={fadeIn}
+                    >
+                      <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-amber-800">
+                        <div className="w-full h-full bg-amber-800 flex items-center justify-center">
+                          <span className="text-white text-4xl font-bold">JS</span>
+                        </div>
+                      </div>
+                      <h3 className="text-xl mb-1 title-font text-center">Josh Shields</h3>
+                      <p className="text-sm text-amber-800 mb-2 subtitle-font text-center font-medium">Brown University</p>
+                      <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Head Coach</p>
+                      <p className="text-gray-700 text-sm subtitle-font">Ivy League champion and respected tactician. Specializes in position-specific training and developing wrestlers for elite academic-athletic balance.</p>
+                    </motion.div>
+
+                    {/* Mark Hall - Oklahoma */}
+                    <motion.div 
+                      className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                      variants={fadeIn}
+                    >
+                      <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-red-600">
+                        <div className="w-full h-full bg-red-600 flex items-center justify-center">
+                          <span className="text-white text-4xl font-bold">MH</span>
+                        </div>
+                      </div>
+                      <h3 className="text-xl mb-1 title-font text-center">Mark Hall</h3>
+                      <p className="text-sm text-red-600 mb-2 subtitle-font text-center font-medium">University of Oklahoma</p>
+                      <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Assistant Coach</p>
+                      <p className="text-gray-700 text-sm subtitle-font">3x NCAA Champion from Penn State. Elite-level competitor who brings championship experience and advanced technique instruction to developing wrestlers.</p>
+                    </motion.div>
+
+                    {/* Grant Leeth - Tarleton State */}
+                    <motion.div 
+                      className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                      variants={fadeIn}
+                    >
+                      <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-purple-600">
+                        <div className="w-full h-full bg-purple-600 flex items-center justify-center">
+                          <span className="text-white text-4xl font-bold">GL</span>
+                        </div>
+                      </div>
+                      <h3 className="text-xl mb-1 title-font text-center">Grant Leeth</h3>
+                      <p className="text-sm text-purple-600 mb-2 subtitle-font text-center font-medium">Tarleton State University</p>
+                      <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Head Coach</p>
+                      <p className="text-gray-700 text-sm subtitle-font">Experienced D1 program builder with expertise in developing complete wrestlers. Known for innovative training methods and recruiting elite talent.</p>
+                    </motion.div>
+
+                    {/* Micky Phillippi - Pitt */}
+                    <motion.div 
+                      className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                      variants={fadeIn}
+                    >
+                      <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-blue-600">
+                        <div className="w-full h-full bg-blue-600 flex items-center justify-center">
+                          <span className="text-white text-4xl font-bold">MP</span>
+                        </div>
+                      </div>
+                      <h3 className="text-xl mb-1 title-font text-center">Micky Phillippi</h3>
+                      <p className="text-sm text-blue-600 mb-2 subtitle-font text-center font-medium">University of Pittsburgh</p>
+                      <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Assistant Coach</p>
+                      <p className="text-gray-700 text-sm subtitle-font">Former ACC standout with extensive coaching experience. Focuses on technical development and mental preparation for high-level competition.</p>
+                    </motion.div>
                   </motion.div>
 
-                  {/* Josh Shields - Brown */}
-                  <motion.div 
-                    className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
-                    variants={fadeIn}
-                  >
-                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-amber-800">
-                      <div className="w-full h-full bg-amber-800 flex items-center justify-center">
-                        <span className="text-white text-4xl font-bold">JS</span>
+                  {/* Coaching Credentials Section */}
+                  <div className="mt-8 bg-gray-50 p-6 rounded-lg">
+                    <h4 className="text-lg mb-4 title-font">Collective Coaching Excellence</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm subtitle-font">
+                      <div>
+                        <span className="font-bold text-red-600">✓</span> Multiple NCAA Champions & Finalists
                       </div>
-                    </div>
-                    <h3 className="text-xl mb-1 title-font text-center">Josh Shields</h3>
-                    <p className="text-sm text-amber-800 mb-2 subtitle-font text-center font-medium">Brown University</p>
-                    <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Head Coach</p>
-                    <p className="text-gray-700 text-sm subtitle-font">Ivy League champion and respected tactician. Specializes in position-specific training and developing wrestlers for elite academic-athletic balance.</p>
-                  </motion.div>
-
-                  {/* Mark Hall - Oklahoma */}
-                  <motion.div 
-                    className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
-                    variants={fadeIn}
-                  >
-                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-red-600">
-                      <div className="w-full h-full bg-red-600 flex items-center justify-center">
-                        <span className="text-white text-4xl font-bold">MH</span>
+                      <div>
+                        <span className="font-bold text-red-600">✓</span> Current D1 Program Leadership
                       </div>
-                    </div>
-                    <h3 className="text-xl mb-1 title-font text-center">Mark Hall</h3>
-                    <p className="text-sm text-red-600 mb-2 subtitle-font text-center font-medium">University of Oklahoma</p>
-                    <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Assistant Coach</p>
-                    <p className="text-gray-700 text-sm subtitle-font">3x NCAA Champion from Penn State. Elite-level competitor who brings championship experience and advanced technique instruction to developing wrestlers.</p>
-                  </motion.div>
-
-                  {/* Grant Leeth - Tarleton State */}
-                  <motion.div 
-                    className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
-                    variants={fadeIn}
-                  >
-                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-purple-600">
-                      <div className="w-full h-full bg-purple-600 flex items-center justify-center">
-                        <span className="text-white text-4xl font-bold">GL</span>
+                      <div>
+                        <span className="font-bold text-red-600">✓</span> Elite Competition Experience
                       </div>
-                    </div>
-                    <h3 className="text-xl mb-1 title-font text-center">Grant Leeth</h3>
-                    <p className="text-sm text-purple-600 mb-2 subtitle-font text-center font-medium">Tarleton State University</p>
-                    <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Head Coach</p>
-                    <p className="text-gray-700 text-sm subtitle-font">Experienced D1 program builder with expertise in developing complete wrestlers. Known for innovative training methods and recruiting elite talent.</p>
-                  </motion.div>
-
-                  {/* Micky Phillippi - Pitt */}
-                  <motion.div 
-                    className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
-                    variants={fadeIn}
-                  >
-                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-blue-600">
-                      <div className="w-full h-full bg-blue-600 flex items-center justify-center">
-                        <span className="text-white text-4xl font-bold">MP</span>
-                      </div>
-                    </div>
-                    <h3 className="text-xl mb-1 title-font text-center">Micky Phillippi</h3>
-                    <p className="text-sm text-blue-600 mb-2 subtitle-font text-center font-medium">University of Pittsburgh</p>
-                    <p className="text-xs text-gray-500 mb-3 subtitle-font text-center">Assistant Coach</p>
-                    <p className="text-gray-700 text-sm subtitle-font">Former ACC standout with extensive coaching experience. Focuses on technical development and mental preparation for high-level competition.</p>
-                  </motion.div>
-                </motion.div>
-
-                {/* Coaching Credentials Section */}
-                <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-                  <h4 className="text-lg mb-4 title-font">Collective Coaching Excellence</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm subtitle-font">
-                    <div>
-                      <span className="font-bold text-red-600">✓</span> Multiple NCAA Champions & Finalists
-                    </div>
-                    <div>
-                      <span className="font-bold text-red-600">✓</span> Current D1 Program Leadership
-                    </div>
-                    <div>
-                      <span className="font-bold text-red-600">✓</span> Elite Competition Experience
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {/* Camp Clinicians - Show actual event coaches for all other events */}
+              {event.id !== 3 && (
+                <div className="mb-12">
+                  <h2 className="text-3xl mb-6 title-font">Elite Clinicians</h2>
+                  <p className="text-gray-700 mb-8 subtitle-font">Train directly with championship-level wrestlers who have competed at the highest levels of the sport.</p>
+                  
+                  <motion.div 
+                    className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    {event.coaches.map((coach, index) => (
+                      <motion.div 
+                        key={index}
+                        className="p-6 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                        variants={fadeIn}
+                      >
+                        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-gradient-to-br from-red-600 to-red-700">
+                          <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center">
+                            <span className="text-white text-3xl font-bold">
+                              {coach.name.split(' ').map(n => n[0]).join('')}
+                            </span>
+                          </div>
+                        </div>
+                        <h3 className="text-xl mb-1 title-font text-center">{coach.name}</h3>
+                        <p className="text-sm text-red-600 mb-3 subtitle-font text-center font-medium">{coach.title}</p>
+                        <p className="text-gray-700 text-sm subtitle-font">{coach.bio}</p>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              )}
               
               {/* Benefits */}
               <h2 
