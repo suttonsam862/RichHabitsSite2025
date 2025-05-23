@@ -404,6 +404,79 @@ export default function EventDetail() {
 
 
 
+              {/* Event Video Showcase - Texas RC only */}
+              {event.id === 3 && (
+                <div className="mb-16">
+                  <h3 className="text-3xl mb-8 title-font text-center">Event Experience</h3>
+                  
+                  {/* Main Feature Video */}
+                  <div className="mb-12">
+                    <div className="relative aspect-video overflow-hidden rounded-lg shadow-2xl">
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                      >
+                        <source src="/texas-rc-main.webm" type="video/webm" />
+                      </video>
+                      
+                      {/* Elegant overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+                      
+                      {/* Subtle border effect */}
+                      <div className="absolute inset-0 rounded-lg border-2 border-white/20"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Secondary Video with Split Layout */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div className="order-2 lg:order-1">
+                      <h4 className="text-2xl mb-4 title-font">Elite Training Environment</h4>
+                      <p className="text-gray-700 subtitle-font mb-4">
+                        Experience the intensity and focus of championship-level training at our Texas Recruiting Clinic. 
+                        Watch as elite wrestlers push their limits under the guidance of D1 coaches.
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
+                          Live college-level training sessions
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
+                          Direct coaching from D1 staff
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="w-2 h-2 bg-red-600 rounded-full mr-3"></span>
+                          Recruiting evaluation opportunities
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="order-1 lg:order-2">
+                      <div className="relative aspect-video overflow-hidden rounded-lg shadow-xl">
+                        <video
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover"
+                        >
+                          <source src="/texas-rc-loop.webm" type="video/webm" />
+                        </video>
+                        
+                        {/* Refined overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/20"></div>
+                        
+                        {/* Premium border */}
+                        <div className="absolute inset-0 rounded-lg border border-white/30"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Schedule Preview */}
               <div className="mb-12">
                 <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
