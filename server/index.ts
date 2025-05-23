@@ -69,8 +69,9 @@ async function startServer() {
     // Setup Vite only in development - with faster startup
     console.log("Setting up application...");
     if (process.env.NODE_ENV !== 'production') {
-      // Start Vite setup in the background to speed up initialization
-      setupVite(app, server).catch(err => console.error("Vite setup error:", err));
+      // Wait for Vite setup to complete before starting server
+      await setupVite(app, server);
+      console.log("✅ Vite development server ready");
     } else {
       console.log('Production mode: Static files handled by routes.ts');
     }
