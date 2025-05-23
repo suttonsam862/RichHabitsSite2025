@@ -1,0 +1,81 @@
+/* Import custom fonts */
+@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+@import './styles/fonts.css';
+
+/* Fallback in case Rogbold/Rodmole aren't available */
+@font-face {
+  font-family: 'Rogbold-Fallback';
+  src: local('Arial Black'), local('Arial-Bold');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Rodmole-Fallback';
+  src: local('Impact'), local('Arial-Bold');
+  font-weight: bold;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-sky: rgb(186, 230, 253, 0.3);
+  --title-font: 'Rogbold', 'Rodmole', 'Rogbold-Fallback', sans-serif;
+  --subtitle-font: 'Arial', sans-serif;
+}
+
+body {
+  font-family: var(--subtitle-font);
+  color: #333;
+  background-color: #f8f8f8;
+}
+
+h1, h2, h3 {
+  font-family: var(--title-font);
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
+}
+
+h4, h5, h6 {
+  font-family: var(--title-font);
+}
+
+.subtitle {
+  font-family: var(--subtitle-font);
+  font-weight: 600;
+}
+
+.title-font {
+  font-family: var(--title-font);
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
+}
+
+.subtitle-font {
+  font-family: var(--subtitle-font);
+  font-weight: 600;
+}
+
+/* Animation utilities */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -15px rgba(0, 0, 0, 0.1);
+}
+
+/* Subtle sky accents */
+.sky-accent {
+  border-color: var(--color-sky);
+}
+
+.sky-hover:hover {
+  color: #0369a1;
+}

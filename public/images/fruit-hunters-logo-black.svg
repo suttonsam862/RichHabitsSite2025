@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="100" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: bold; }
+    .large { font-size: 28px; }
+    .small { font-size: 16px; letter-spacing: 1px; }
+  </style>
+  
+  <!-- Fruit icon -->
+  <g transform="translate(150, 38)" fill="#000000">
+    <path d="M-10,0 C-10,-15 10,-15 10,0 C10,15 -10,15 -10,0 Z" />
+    <path d="M0,-20 C15,-20 15,20 0,20 C-15,20 -15,-20 0,-20 Z" />
+    <path d="M0,-25 L0,-40 M0,-35 L-5,-30 M0,-35 L5,-30" stroke="#000000" stroke-width="3" fill="none" />
+  </g>
+  
+  <!-- Text -->
+  <text x="150" y="70" text-anchor="middle" class="text large" fill="#000000">FRUIT HUNTERS</text>
+  <text x="150" y="90" text-anchor="middle" class="text small" fill="#000000">EXOTIC NUTRITION</text>
+</svg>
