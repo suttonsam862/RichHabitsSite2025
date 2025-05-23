@@ -24,8 +24,29 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(distPublicPath, {
     setHeaders: (res, path) => {
       // Cache images for better mobile performance
-      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg')) {
+      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.JPG')) {
         res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+      if (path.endsWith('.webm') || path.endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/webm');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+    }
+  }));
+  
+  // Also serve from public folder for Rich Habits wrestling content
+  const publicPath = path.resolve(process.cwd(), 'public');
+  app.use(express.static(publicPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.JPG')) {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+      if (path.endsWith('.webm') || path.endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/webm');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
         res.setHeader('Access-Control-Allow-Origin', '*');
       }
     }
@@ -36,7 +57,11 @@ if (process.env.NODE_ENV === 'production') {
   console.log('Development: Serving static files from:', publicPath);
   app.use(express.static(publicPath, {
     setHeaders: (res, path) => {
-      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg')) {
+      if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.JPG')) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+      if (path.endsWith('.webm') || path.endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/webm');
         res.setHeader('Access-Control-Allow-Origin', '*');
       }
     }

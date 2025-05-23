@@ -15,9 +15,13 @@ process.env.NODE_ENV = 'production';
 
 console.log('🏆 Starting Rich Habits Wrestling Events server...');
 
-// Serve static assets (videos, logos, images) with proper headers
+// Serve static assets (videos, logos, images) with proper headers for Rich Habits wrestling content
+console.log('Setting up static file serving for Rich Habits wrestling content...');
+
+// Primary static serving from public folder
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
+    console.log('Serving file:', filePath);
     // Set proper MIME types and cache headers for wrestling event media
     if (filePath.endsWith('.webm')) {
       res.setHeader('Content-Type', 'video/webm');
@@ -31,11 +35,23 @@ app.use(express.static(path.join(__dirname, 'public'), {
       res.setHeader('Content-Type', 'image/jpeg');
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
+    if (filePath.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
     // CORS headers for Rich Habits media
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
   }
 }));
+
+// Specific routing for videos folder
+app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
+
+// Specific routing for images folder  
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
+console.log('Rich Habits static file serving configured successfully!');
 
 // Try to serve built client files
 const clientDistPath = path.join(__dirname, 'dist', 'client');
