@@ -29,14 +29,13 @@ export function Header() {
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link href="/">
-          <motion.span 
-            className={`text-3xl cursor-pointer ${scrolled ? 'text-gray-900' : 'text-gray-900'}`}
-            style={{ fontFamily: "'Bodoni FLF', serif" }}
+          <motion.img 
+            src="@assets/Cursive-Logo.webp"
+            alt="Rich Habits"
+            className="h-8 w-auto cursor-pointer"
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.2 }}
-          >
-            Rich Habits
-          </motion.span>
+          />
         </Link>
 
         <nav>
