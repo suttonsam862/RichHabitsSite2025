@@ -382,7 +382,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Import stripe functions from stripe.ts
-  const { createPaymentIntent, handleSuccessfulPayment, updatePaymentIntent } = await import('./stripe.js');
+  const { createPaymentIntent, handleSuccessfulPayment } = await import('./stripe.js');
+  const { updatePaymentIntent } = await import('./discounts.js');
 
   // Add the event-specific payment intent endpoint that frontend expects
   app.post("/api/events/:eventId/create-payment-intent", createPaymentIntent);
@@ -392,6 +393,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Add the payment update endpoint for discounts
   app.post("/api/events/:eventId/update-payment-intent", updatePaymentIntent);
+  
+  // Add the Stripe product endpoint that frontend expects
+  app.get("/api/events/:eventId/stripe-product", async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+      const option = req.query.option as string || 'full';
+      
+      // Get event details to determine pricing
+      const event = await storage.getEvent(eventId);
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      
+      // Calculate price based on option
+      let price = 0;
+      if (option === 'full') {
+        price = event.price || 299; // Default full price
+      } else if (option === 'single') {
+        price = Math.round((event.price || 299) * 0.6); // 60% of full price for single day
+      }
+      
+      // Return product details
+      res.json({
+        eventId,
+        option,
+        price,
+        priceId: `price_${eventId}_${option}`, // Mock price ID
+        productId: `prod_${eventId}` // Mock product ID
+      });
+    } catch (error) {
+      console.error('Error fetching Stripe product:', error);
+      res.status(500).json({ error: 'Failed to fetch product details' });
+    }
+  });
 
   // Stripe API endpoints for event registrations
   app.post("/api/create-payment-intent", async (req, res) => {
