@@ -35,9 +35,9 @@ const events = [
 // Simple Events component without animations or heavy image loading
 export default function EventsSimple() {
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-20">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Video background */}
-      <div className="relative h-[30vh] mb-20 bg-red-600 overflow-hidden">
+      <div className="relative h-screen mb-20 bg-red-600 overflow-hidden">
         {/* Video Background */}
         <video 
           autoPlay 
