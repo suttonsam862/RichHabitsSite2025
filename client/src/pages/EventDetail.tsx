@@ -402,33 +402,7 @@ export default function EventDetail() {
                 </div>
               </div>
 
-              {/* Training Focus Section */}
-              <div className="mb-12 bg-gray-50 p-8 -mx-8">
-                <h3 className="text-2xl mb-6 title-font">Training Focus Areas</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold">T</span>
-                    </div>
-                    <h4 className="text-lg mb-2 title-font">Technique</h4>
-                    <p className="text-gray-600 subtitle-font">Master fundamental and advanced wrestling moves</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold">S</span>
-                    </div>
-                    <h4 className="text-lg mb-2 title-font">Strategy</h4>
-                    <p className="text-gray-600 subtitle-font">Develop winning game plans and tactics</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold">M</span>
-                    </div>
-                    <h4 className="text-lg mb-2 title-font">Mental</h4>
-                    <p className="text-gray-600 subtitle-font">Build championship mindset and confidence</p>
-                  </div>
-                </div>
-              </div>
+
 
               {/* Schedule Preview */}
               <div className="mb-12">
