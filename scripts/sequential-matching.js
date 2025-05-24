@@ -6,9 +6,21 @@ const sql = neon(process.env.DATABASE_URL);
 
 async function sequentialMatching() {
   try {
-    console.log('Starting sequential matching - registration entry right before payment...');
+    console.log('Starting sequential matching - matching payments to registration entries immediately before them...');
     
-    // Get ALL unique successful payment intents
+    // Get ALL entries from verified_customer_registrations in chronological order
+    const allEntries = await sql`
+      SELECT 
+        event_name, camper_name, first_name, last_name, email, phone, 
+        school_name, registration_type, stripe_payment_intent_id, 
+        payment_date, payment_status
+      FROM verified_customer_registrations 
+      ORDER BY payment_date ASC
+    `;
+
+    console.log(`Found ${allEntries.length} entries in verified_customer_registrations`);
+
+    // Get all successful payment intents from Stripe
     const allPaymentIntents = [];
     let hasMore = true;
     let startingAfter = null;
@@ -34,63 +46,69 @@ async function sequentialMatching() {
       }
     }
 
-    const uniqueSuccessfulPayments = allPaymentIntents
+    const successfulPayments = allPaymentIntents
       .filter(intent => intent.status === 'succeeded')
-      .sort((a, b) => a.created - b.created); // Sort by creation time
+      .sort((a, b) => a.created - b.created);
 
-    console.log(`Found ${uniqueSuccessfulPayments.length} unique successful payments`);
+    console.log(`Found ${successfulPayments.length} successful payments from Stripe`);
 
-    // Get ALL registration entries sorted chronologically
-    const allRegistrations = await sql`
-      SELECT *, 'verified_customer_registrations' as source_table,
-             payment_date as entry_time
-      FROM verified_customer_registrations 
-      WHERE email IS NOT NULL
-      ORDER BY payment_date ASC
-    `;
+    // Track which registration entries have been used
+    const usedEntries = new Set();
 
-    console.log(`Found ${allRegistrations.length} registration entries sorted chronologically`);
-
-    // For each payment, find the registration entry immediately before it
-    for (const intent of uniqueSuccessfulPayments) {
+    // For each payment, find the closest unused registration entry that occurred before it
+    for (const intent of successfulPayments) {
       const paymentDate = new Date(intent.created * 1000);
       const eventName = intent.metadata?.event_name || intent.metadata?.eventName || 'Unknown Event';
       
-      console.log(`\nProcessing payment: ${intent.id} - ${eventName} - $${intent.amount/100} - ${paymentDate.toISOString()}`);
+      console.log(`\nProcessing: ${intent.id} - ${eventName} - $${intent.amount/100} - ${paymentDate.toISOString()}`);
       
-      // Find the registration entry that appears right before this payment chronologically
-      let matchingRegistration = null;
+      let bestMatch = null;
+      let shortestTimeDiff = Infinity;
       
-      for (let i = allRegistrations.length - 1; i >= 0; i--) {
-        const reg = allRegistrations[i];
-        const regDate = new Date(reg.entry_time);
+      // Find the best unused registration entry that occurred before this payment
+      for (let i = 0; i < allEntries.length; i++) {
+        if (usedEntries.has(i)) continue; // Skip already used entries
         
-        // Find the most recent registration entry before this payment
-        if (regDate < paymentDate) {
-          // Check if it's for the same event or close match
-          if (reg.event_name === eventName || 
-              reg.event_name?.toLowerCase().includes(eventName.toLowerCase()) ||
-              eventName.toLowerCase().includes(reg.event_name?.toLowerCase() || '')) {
-            matchingRegistration = reg;
-            break;
-          }
-        }
-      }
-      
-      // If no event-specific match, just find the chronologically previous registration
-      if (!matchingRegistration) {
-        for (let i = allRegistrations.length - 1; i >= 0; i--) {
-          const reg = allRegistrations[i];
-          const regDate = new Date(reg.entry_time);
+        const entry = allEntries[i];
+        const entryDate = new Date(entry.payment_date);
+        
+        // Only consider entries that occurred before the payment
+        if (entryDate < paymentDate) {
+          const timeDiff = Math.abs(paymentDate - entryDate);
           
-          if (regDate < paymentDate) {
-            matchingRegistration = reg;
+          // Prefer entries from the same event, but allow cross-event if needed
+          const eventMatch = entry.event_name === eventName || 
+                            entry.event_name?.toLowerCase().includes(eventName.toLowerCase()) ||
+                            eventName.toLowerCase().includes(entry.event_name?.toLowerCase() || '');
+          
+          // Priority: same event gets lower time diff, different event gets penalty
+          const priority = eventMatch ? timeDiff : timeDiff + 3600000; // 1 hour penalty for different events
+          
+          if (priority < shortestTimeDiff) {
+            shortestTimeDiff = priority;
+            bestMatch = { entry, index: i };
+          }
+        }
+      }
+      
+      // If no entry found before payment, take the earliest unused entry
+      if (!bestMatch) {
+        for (let i = 0; i < allEntries.length; i++) {
+          if (!usedEntries.has(i)) {
+            bestMatch = { entry: allEntries[i], index: i };
             break;
           }
         }
       }
       
-      // Insert the payment with the sequential registration data
+      // Mark this entry as used
+      if (bestMatch) {
+        usedEntries.add(bestMatch.index);
+      }
+      
+      // Insert the matched payment and registration data
+      const entry = bestMatch?.entry;
+      
       await sql`
         INSERT INTO paid_customers (
           stripe_payment_intent_id, event_name, camper_name, first_name, last_name,
@@ -98,33 +116,51 @@ async function sequentialMatching() {
         ) VALUES (
           ${intent.id},
           ${eventName},
-          ${matchingRegistration?.camper_name || null},
-          ${matchingRegistration?.first_name || null},
-          ${matchingRegistration?.last_name || null},
-          ${matchingRegistration?.email || null},
-          ${matchingRegistration?.phone || null},
-          ${matchingRegistration?.school_name || null},
-          ${matchingRegistration?.registration_type || 'full'},
+          ${entry?.camper_name || null},
+          ${entry?.first_name || null},
+          ${entry?.last_name || null},
+          ${entry?.email || null},
+          ${entry?.phone || null},
+          ${entry?.school_name || null},
+          ${entry?.registration_type || 'full'},
           ${intent.amount},
           ${paymentDate.toISOString()}
         )
       `;
       
-      if (matchingRegistration) {
-        const regDate = new Date(matchingRegistration.entry_time);
-        console.log(`  ✓ Matched with registration entry: ${matchingRegistration.camper_name} (${matchingRegistration.email})`);
-        console.log(`    Registration time: ${regDate.toISOString()}`);
-        console.log(`    Payment time: ${paymentDate.toISOString()}`);
+      if (entry) {
+        const entryDate = new Date(entry.payment_date);
+        const timeDiff = Math.abs(paymentDate - entryDate);
+        const minutes = Math.round(timeDiff / 60000);
+        console.log(`  ✓ Matched with: ${entry.camper_name} (${entry.email}) from ${entry.event_name}`);
+        console.log(`    Time difference: ${minutes} minutes`);
       } else {
-        console.log(`  ⚠ No prior registration entry found`);
+        console.log(`  ⚠ No registration entry available for matching`);
       }
     }
 
-    // Final summary
+    // Final verification and summary
+    const duplicateCheck = await sql`
+      SELECT camper_name, email, COUNT(*) as count
+      FROM paid_customers 
+      WHERE camper_name IS NOT NULL AND email IS NOT NULL
+      GROUP BY camper_name, email
+      HAVING COUNT(*) > 1
+    `;
+
+    if (duplicateCheck.length > 0) {
+      console.log(`\n⚠ Found ${duplicateCheck.length} duplicate customers:`);
+      duplicateCheck.forEach(dup => {
+        console.log(`  - ${dup.camper_name} (${dup.email}): ${dup.count} entries`);
+      });
+    } else {
+      console.log('\n✅ No duplicate customers found!');
+    }
+
     const summary = await sql`
       SELECT 
         event_name,
-        COUNT(*) as unique_payments,
+        COUNT(*) as total_payments,
         COUNT(email) as with_registration_data,
         SUM(amount_paid)/100 as revenue
       FROM paid_customers 
@@ -134,19 +170,19 @@ async function sequentialMatching() {
 
     console.log('\n=== SEQUENTIAL MATCHING RESULTS ===');
     summary.forEach(row => {
-      const matchRate = ((row.with_registration_data / row.unique_payments) * 100).toFixed(1);
-      console.log(`${row.event_name}: ${row.with_registration_data}/${row.unique_payments} matched (${matchRate}%) - $${row.revenue}`);
+      const matchRate = ((row.with_registration_data / row.total_payments) * 100).toFixed(1);
+      console.log(`${row.event_name}: ${row.with_registration_data}/${row.total_payments} matched (${matchRate}%) - $${row.revenue}`);
     });
 
     const totals = await sql`
       SELECT 
-        COUNT(*) as total_unique_payments,
+        COUNT(*) as total_payments,
         COUNT(email) as matched_with_data,
         SUM(amount_paid)/100 as total_revenue
       FROM paid_customers
     `;
 
-    console.log(`\nTOTAL: ${totals[0].matched_with_data}/${totals[0].total_unique_payments} unique payments`);
+    console.log(`\nTOTAL: ${totals[0].matched_with_data}/${totals[0].total_payments} payments matched`);
     console.log(`Revenue: $${totals[0].total_revenue}`);
     console.log('\n✅ Sequential matching completed!');
 
