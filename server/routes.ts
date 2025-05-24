@@ -39,6 +39,49 @@ declare module 'express-session' {
   }
 }
 
+// Helper function to convert registrations to CSV
+function convertRegistrationsToCSV(registrations: any[]) {
+  const headers = [
+    'ID',
+    'Event ID',
+    'First Name',
+    'Last Name',
+    'Contact Name',
+    'Email',
+    'Phone',
+    'T-Shirt Size',
+    'Grade',
+    'School Name',
+    'Club Name',
+    'Registration Type',
+    'Payment ID',
+    'Registration Date',
+    'Payment Status',
+    'Shopify Order ID'
+  ].join(',');
+
+  const rows = registrations.map(reg => [
+    reg.id,
+    reg.eventId,
+    reg.firstName,
+    reg.lastName,
+    reg.contactName,
+    reg.email,
+    reg.phone || '',
+    reg.tShirtSize || '',
+    reg.grade || '',
+    reg.schoolName || '',
+    reg.clubName || '',
+    reg.registrationType || '',
+    reg.stripePaymentIntentId || '',
+    new Date(reg.registrationDate).toISOString(),
+    'Completed',
+    reg.shopifyOrderId || ''
+  ].map(field => `"${field}"`).join(','));
+
+  return [headers, ...rows].join('\n');
+}
+
 // Admin authentication middleware
 const authenticateAdmin = (req: Request, res: Response, next: any) => {
   // Check if already authenticated in session
@@ -108,6 +151,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint to fetch completed event registrations
+  // Export completed registrations as CSV
+  app.get("/api/export-completed-registrations", authenticateAdmin, async (req, res) => {
+    try {
+      const completedRegistrations = await storage.getCompletedEventRegistrations();
+      const paidRegistrations = completedRegistrations.filter(reg => 
+        reg.stripePaymentIntentId && reg.paymentVerified
+      );
+      
+      const csv = convertRegistrationsToCSV(paidRegistrations);
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=completed-registrations.csv');
+      res.send(csv);
+    } catch (error) {
+      console.error("Error exporting registrations:", error);
+      res.status(500).json({ error: "Failed to export registrations" });
+    }
+  });
+
   app.get("/api/completed-registrations", authenticateAdmin, async (req, res) => {
     try {
       // Get optional event ID filter from query parameters
