@@ -487,3 +487,63 @@ export const insertVerifiedCustomerRegistrationSchema = createInsertSchema(verif
 
 export type VerifiedCustomerRegistration = typeof verifiedCustomerRegistrations.$inferSelect;
 export type InsertVerifiedCustomerRegistration = z.infer<typeof insertVerifiedCustomerRegistrationSchema>;
+
+// Completed registrations table - only customers who actually paid
+export const completedRegistrations = pgTable("completed_registrations", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  eventName: text("event_name").notNull(),
+  camperName: text("camper_name").notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  grade: text("grade"),
+  gender: text("gender"),
+  schoolName: text("school_name"),
+  clubName: text("club_name"),
+  registrationType: text("registration_type").notNull(),
+  amountPaid: integer("amount_paid").notNull(), // in cents
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  paymentDate: timestamp("payment_date"),
+  paymentSource: text("payment_source"), // 'stripe', 'database_verified'
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Customer leads table - customers who filled forms but didn't complete payment
+export const customerLeads = pgTable("customer_leads", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  eventName: text("event_name").notNull(),
+  camperName: text("camper_name").notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  grade: text("grade"),
+  gender: text("gender"),
+  schoolName: text("school_name"),
+  clubName: text("club_name"),
+  registrationType: text("registration_type").notNull(),
+  leadSource: text("lead_source"), // 'form_only', 'reached_checkout'
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  formCompletedDate: timestamp("form_completed_date"),
+  followUpStatus: text("follow_up_status").default('pending'), // 'pending', 'contacted', 'converted', 'declined'
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const insertCompletedRegistrationSchema = createInsertSchema(completedRegistrations).omit({
+  id: true,
+  createdAt: true
+});
+
+export const insertCustomerLeadSchema = createInsertSchema(customerLeads).omit({
+  id: true,
+  createdAt: true
+});
+
+export type CompletedRegistration = typeof completedRegistrations.$inferSelect;
+export type InsertCompletedRegistration = z.infer<typeof insertCompletedRegistrationSchema>;
+
+export type CustomerLead = typeof customerLeads.$inferSelect;
+export type InsertCustomerLead = z.infer<typeof insertCustomerLeadSchema>;
