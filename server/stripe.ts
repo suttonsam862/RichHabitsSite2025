@@ -320,17 +320,40 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       paymentIntent.amount / 100 // Convert cents to dollars
     );
     
-    // Create final registration data with all required fields
-    const finalRegistrationData = {
-      ...registrationData,
-      shopifyOrderId: shopifyOrder?.id?.toString() || '',
+    // Create the complete registration entry - this is the MASTER record
+    const completeRegistrationData = {
+      eventId,
+      eventName: event.title,
+      eventDate: event.date,
+      eventLocation: event.location,
+      camperName: `${registrationData.firstName} ${registrationData.lastName}`,
+      firstName: registrationData.firstName,
+      lastName: registrationData.lastName,
+      email: registrationData.email,
+      phone: registrationData.phone,
+      grade: registrationData.grade,
+      gender: registrationData.gender || 'Not specified',
+      schoolName: registrationData.schoolName,
+      clubName: registrationData.clubName || '',
+      tShirtSize: registrationData.tShirtSize,
+      parentGuardianName: registrationData.contactName,
+      registrationType: registrationData.registrationType,
+      day1: registrationData.day1,
+      day2: registrationData.day2,
+      day3: registrationData.day3,
+      medicalReleaseAccepted: true,
       stripePaymentIntentId: paymentIntent.id,
-      paymentStatus: 'completed'
+      shopifyOrderId: shopifyOrder?.id?.toString() || `ORDER_${paymentIntent.id}`,
+      amountPaid: paymentIntent.amount, // Amount in cents
+      paymentDate: new Date(),
+      paymentStatus: 'completed',
+      source: 'website',
+      notes: 'Registration completed via website'
     };
-    
-    // Create the registration in your database with complete data
-    const registration = await storage.createEventRegistration(finalRegistrationData);
-    console.log(`Registration created in database: ${registration.id}`);
+
+    // Create the COMPLETE registration - this is the master record
+    const completeRegistration = await storage.createCompleteRegistration(completeRegistrationData);
+    console.log(`Complete registration created: ${completeRegistration.id} for ${completeRegistration.camperName}`);
 
     // Send the registration confirmation email
     await sendRegistrationConfirmationEmail({

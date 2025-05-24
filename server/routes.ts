@@ -456,7 +456,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Add the payment update endpoint for discounts
   app.post("/api/events/:eventId/update-payment-intent", updatePaymentIntent);
   
-  // Get all event registrations with event names for admin
+  // Get all complete registrations for admin - CONSOLIDATED PAID SIGNUPS ONLY
+  app.get("/api/complete-registrations", async (req, res) => {
+    try {
+      const completeRegistrations = await storage.getCompleteRegistrations();
+      
+      // Return complete registrations with all data already consolidated
+      res.json(completeRegistrations.map(reg => ({
+        id: reg.id,
+        eventName: reg.eventName,
+        eventDate: reg.eventDate,
+        eventLocation: reg.eventLocation,
+        camperName: reg.camperName,
+        firstName: reg.firstName,
+        lastName: reg.lastName,
+        email: reg.email,
+        phone: reg.phone,
+        grade: reg.grade,
+        gender: reg.gender,
+        schoolName: reg.schoolName,
+        clubName: reg.clubName,
+        tShirtSize: reg.tShirtSize,
+        parentGuardianName: reg.parentGuardianName,
+        registrationType: reg.registrationType,
+        day1: reg.day1,
+        day2: reg.day2,
+        day3: reg.day3,
+        amountPaid: (reg.amountPaid / 100).toFixed(2), // Convert cents to dollars
+        paymentDate: reg.paymentDate,
+        paymentStatus: reg.paymentStatus,
+        stripePaymentIntentId: reg.stripePaymentIntentId,
+        shopifyOrderId: reg.shopifyOrderId,
+        source: reg.source,
+        notes: reg.notes
+      })));
+    } catch (error) {
+      console.error("Error fetching complete registrations:", error);
+      res.status(500).json({ error: "Failed to fetch complete registrations" });
+    }
+  });
+
+  // Legacy endpoint for old registrations (kept for compatibility)
   app.get("/api/registrations", async (req, res) => {
     try {
       const registrations = await storage.getEventRegistrations();
