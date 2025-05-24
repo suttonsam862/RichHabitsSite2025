@@ -147,6 +147,51 @@ export const eventRegistrations = pgTable("event_registrations", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Consolidated complete registrations table - ONLY for paid, complete signups
+export const completeRegistrations = pgTable("complete_registrations", {
+  id: serial("id").primaryKey(),
+  // Event Information
+  eventId: integer("event_id").notNull(),
+  eventName: text("event_name").notNull(),
+  eventDate: text("event_date").notNull(),
+  eventLocation: text("event_location").notNull(),
+  
+  // Camper Information
+  camperName: text("camper_name").notNull(), // firstName + lastName combined
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  grade: text("grade").notNull(),
+  gender: text("gender").notNull(),
+  schoolName: text("school_name").notNull(),
+  clubName: text("club_name"),
+  tShirtSize: text("t_shirt_size").notNull(),
+  
+  // Parent/Guardian Information
+  parentGuardianName: text("parent_guardian_name").notNull(),
+  
+  // Registration Details
+  registrationType: text("registration_type").notNull(), // full, single
+  day1: boolean("day1").default(false),
+  day2: boolean("day2").default(false),
+  day3: boolean("day3").default(false),
+  medicalReleaseAccepted: boolean("medical_release_accepted").default(true),
+  
+  // Payment Information
+  stripePaymentIntentId: text("stripe_payment_intent_id").notNull(),
+  shopifyOrderId: text("shopify_order_id"),
+  amountPaid: integer("amount_paid").notNull(), // Amount in cents
+  paymentDate: timestamp("payment_date").notNull(),
+  paymentStatus: text("payment_status").notNull().default("completed"),
+  
+  // Administrative
+  source: text("source").notNull().default("website"), // website, manual, import
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Create the base schema first
 export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
   eventId: true,
@@ -169,9 +214,44 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   day3: true,
   age: true,
   experience: true
-})
-// Now extend it with stricter validation
-.extend({
+});
+
+// Complete registrations schema - for consolidated paid signups only
+export const insertCompleteRegistrationSchema = createInsertSchema(completeRegistrations).pick({
+  eventId: true,
+  eventName: true,
+  eventDate: true,
+  eventLocation: true,
+  camperName: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phone: true,
+  grade: true,
+  gender: true,
+  schoolName: true,
+  clubName: true,
+  tShirtSize: true,
+  parentGuardianName: true,
+  registrationType: true,
+  day1: true,
+  day2: true,
+  day3: true,
+  medicalReleaseAccepted: true,
+  stripePaymentIntentId: true,
+  shopifyOrderId: true,
+  amountPaid: true,
+  paymentDate: true,
+  paymentStatus: true,
+  source: true,
+  notes: true
+});
+
+export type CompleteRegistration = typeof completeRegistrations.$inferSelect;
+export type CompleteRegistrationInsert = z.infer<typeof insertCompleteRegistrationSchema>;
+
+// Now extend the original schema with stricter validation
+export const strictEventRegistrationSchema = insertEventRegistrationSchema.extend({
   // Make all required fields truly required with string validation
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),

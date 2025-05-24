@@ -4,6 +4,7 @@ import {
   collections, type Collection, type InsertCollection,
   events, type Event, type InsertEvent,
   eventRegistrations, type EventRegistration, type InsertEventRegistration,
+  completeRegistrations, type CompleteRegistration, type CompleteRegistrationInsert,
   customApparelInquiries, type CustomApparelInquiry, type InsertCustomApparelInquiry,
   contactSubmissions, type ContactSubmission, type InsertContactSubmission,
   newsletterSubscribers, type NewsletterSubscriber, type InsertNewsletterSubscriber,
@@ -42,6 +43,12 @@ export interface IStorage {
   getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]>;
   createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined>;
   updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
+  
+  // Complete registrations - consolidated paid signups only
+  createCompleteRegistration(registration: CompleteRegistrationInsert): Promise<CompleteRegistration>;
+  getCompleteRegistrations(): Promise<CompleteRegistration[]>;
+  getCompleteRegistrationsByEvent(eventId: number): Promise<CompleteRegistration[]>;
+  getCompleteRegistrationByPaymentIntent(paymentIntentId: string): Promise<CompleteRegistration | undefined>;
   
   // Coach methods
   getCoaches(): Promise<Coach[]>;
