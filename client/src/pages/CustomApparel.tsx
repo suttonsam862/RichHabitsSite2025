@@ -476,9 +476,6 @@ export default function CustomApparel() {
           </form>
         </motion.div>
         
-        {/* Testimonials Section */}
-        <Testimonials />
-        
         {/* Subtle sky accent line */}
         <div className="mt-24 h-px w-full bg-sky-200 opacity-30"></div>
       </div>
