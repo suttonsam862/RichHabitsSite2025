@@ -456,3 +456,34 @@ export const insertCompletedEventRegistrationSchema = createInsertSchema(complet
 
 export type InsertCompletedEventRegistration = z.infer<typeof insertCompletedEventRegistrationSchema>;
 export type CompletedEventRegistration = typeof completedEventRegistrations.$inferSelect;
+
+// Verified customer registrations table - contains only authentic customer data
+export const verifiedCustomerRegistrations = pgTable("verified_customer_registrations", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  eventName: text("event_name").notNull(),
+  camperName: text("camper_name").notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  grade: text("grade"),
+  gender: text("gender"),
+  schoolName: text("school_name"),
+  clubName: text("club_name"),
+  registrationType: text("registration_type").notNull(),
+  amountPaid: integer("amount_paid").notNull(), // in cents
+  paymentStatus: text("payment_status").notNull(), // 'completed', 'payment_failed'
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  paymentDate: timestamp("payment_date"),
+  paymentSource: text("payment_source"), // 'stripe', 'database_verified', 'abandoned_checkout'
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const insertVerifiedCustomerRegistrationSchema = createInsertSchema(verifiedCustomerRegistrations).omit({
+  id: true,
+  createdAt: true
+});
+
+export type VerifiedCustomerRegistration = typeof verifiedCustomerRegistrations.$inferSelect;
+export type InsertVerifiedCustomerRegistration = z.infer<typeof insertVerifiedCustomerRegistrationSchema>;
