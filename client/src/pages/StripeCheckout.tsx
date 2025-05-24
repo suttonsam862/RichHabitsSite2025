@@ -63,9 +63,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         setError(error.message || 'An unknown error occurred');
         toast({
           title: 'Payment Failed',
-          description: error.message || 'An unknown error occurred',
+          description: `Payment could not be processed: ${error.message || 'Please check your payment information and try again.'}`,
           variant: 'destructive',
         });
+        
+        // Critical: Ensure no success states are triggered on payment failure
+        console.error('Stripe payment failed:', error);
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
         // Payment succeeded - gather all registration data and call our API
         const registrationData = {
@@ -101,19 +104,26 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         });
 
         if (registrationResponse.ok) {
-          toast({
-            title: 'Registration Complete',
-            description: `Your payment has been processed successfully! You're now registered for ${eventName}.`,
+          // Clear all session storage data
+          const fields = [
+            'firstName', 'lastName', 'contactName', 'email', 
+            'phone', 'tShirtSize', 'grade', 'schoolName', 
+            'clubName', 'registrationType', 'option',
+            'day1', 'day2', 'day3'
+          ];
+          fields.forEach(field => {
+            sessionStorage.removeItem(`registration_${field}`);
           });
-          onSuccess();
+          
+          // Redirect to registration page with success confirmation
+          window.location.href = `/event-registration/${eventId}?paymentSuccess=true`;
         } else {
           // Payment succeeded but registration recording failed
           toast({
-            title: 'Payment Successful',
-            description: 'Your payment was successful, but we had trouble recording your registration. Please contact support with your payment confirmation.',
+            title: 'Payment Successful - Action Required',
+            description: 'Your payment was successful, but we had trouble recording your registration. Please contact support immediately with your payment confirmation.',
             variant: 'destructive',
           });
-          onSuccess();
         }
       }
     } catch (err) {

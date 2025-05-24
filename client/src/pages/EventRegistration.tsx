@@ -322,10 +322,9 @@ export default function EventRegistration() {
   };
   
   const handleSubmitRegistration = () => {
+    // This function should ONLY be called after successful payment verification
+    // Never show "Registration Complete" until payment is actually processed
     setFormSubmitted(true);
-    // In a real app, this would be handled by the Stripe webhook
-    // which would confirm the payment was successful before
-    // finalizing the registration
   };
   
   if (isLoading) {
@@ -368,7 +367,13 @@ export default function EventRegistration() {
     );
   }
   
-  if (formSubmitted) {
+  // CRITICAL BUG FIX: Only show success page after verified payment completion
+  // This success page should ONLY be reached from successful Stripe checkout
+  // Never show "Registration Complete" from the registration form itself
+  const urlParams = new URLSearchParams(window.location.search);
+  const paymentSuccess = urlParams.get('paymentSuccess') === 'true';
+  
+  if (formSubmitted && paymentSuccess) {
     return (
       <div className="min-h-screen bg-gray-50 pt-24 pb-20">
         <div className="container mx-auto px-6">
@@ -378,8 +383,8 @@ export default function EventRegistration() {
             initial="initial"
             animate="animate"
           >
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -388,14 +393,14 @@ export default function EventRegistration() {
               className="text-3xl mb-6"
               style={{ fontFamily: "'Bodoni FLF', serif" }}
             >
-              Registration Complete
+              Payment Confirmed - Registration Complete!
             </h1>
             
             <p 
               className="text-gray-700 mb-8"
               style={{ fontFamily: "'Didact Gothic', sans-serif" }}
             >
-              Thank you for registering for {event.title}. We've sent a confirmation email to {formData.email} with all the details.
+              Your payment has been successfully processed! You are now officially registered for {event.title}. We've sent a confirmation email to {formData.email} with all the details.
             </p>
             
             <Link href="/">
