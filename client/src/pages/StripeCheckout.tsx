@@ -28,6 +28,10 @@ interface CheckoutFormProps {
 const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onDiscountApplied }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
+  
+  // Get the registration option from URL params or sessionStorage
+  const params = new URLSearchParams(window.location.search);
+  const option = params.get('option') || sessionStorage.getItem('registration_option') || 'full';
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [discountCode, setDiscountCode] = useState<string>('');
@@ -114,10 +118,11 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       }
     } catch (err) {
       console.error('Payment error:', err);
-      setError('An unexpected error occurred. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+      setError(errorMessage);
       toast({
         title: 'Payment Error',
-        description: 'An unexpected error occurred. Please try again.',
+        description: `Payment failed: ${errorMessage}. Please check your card details and try again.`,
         variant: 'destructive',
       });
     } finally {

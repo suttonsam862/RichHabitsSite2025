@@ -394,6 +394,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Add the payment update endpoint for discounts
   app.post("/api/events/:eventId/update-payment-intent", updatePaymentIntent);
   
+  // Get all event registrations with event names for admin
+  app.get("/api/registrations", async (req, res) => {
+    try {
+      const registrations = await storage.getEventRegistrations();
+      const events = await storage.getEvents();
+      
+      // Map registrations with event names instead of just IDs
+      const registrationsWithEventNames = registrations.map(registration => {
+        const event = events.find(e => e.id === registration.eventId);
+        return {
+          ...registration,
+          eventName: event ? event.title : `Event ${registration.eventId}`,
+          eventDate: event ? event.date : '',
+          eventLocation: event ? event.location : ''
+        };
+      });
+      
+      res.json(registrationsWithEventNames);
+    } catch (error) {
+      console.error("Error fetching registrations:", error);
+      res.status(500).json({ error: "Failed to fetch registrations" });
+    }
+  });
+
   // Add the Stripe product endpoint that frontend expects
   app.get("/api/events/:eventId/stripe-product", async (req, res) => {
     try {
