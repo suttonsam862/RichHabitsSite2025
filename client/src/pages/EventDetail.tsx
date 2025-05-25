@@ -561,7 +561,7 @@ export default function EventDetail() {
                         currentPrice: "$249",
                         savings: "30",
                         capacity: "150",
-                        stickerImage: "/images/locations/birmingham-academy.webp",
+                        stickerImage: "/images/birmingham-venue.webp",
                         stickerAlt: "Birmingham Wrestling Academy"
                       };
                     case 2: // National Champ Camp
