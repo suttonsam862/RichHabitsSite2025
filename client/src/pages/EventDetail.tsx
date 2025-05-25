@@ -270,7 +270,7 @@ export default function EventDetail() {
               name: "Michael McGee",
               title: "NCAA All-American, Pac-12 Champion",
               bio: "NCAA All-American and Pac-12 Champion with elite-level competitive experience. Emphasizes systematic skill development, position-specific techniques, and tactical awareness for modern wrestling success.",
-              image: "/coach-4.jpg"
+              image: "/images/coaches/michael-mcgee.jpg"
             }
           ];
           setEvent({ ...foundEvent, coaches: realCoaches });
