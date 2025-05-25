@@ -49,22 +49,16 @@ const getEventPrice = async (eventId: number, option: string): Promise<number> =
       return parseInt(singleDayMatch[1], 10) * 100; // Convert to cents for Stripe
     }
 
-    // Fallback to pre-defined prices based on the event key
-    const eventKeyMap: Record<number, string> = {
-      1: 'birmingham-slam-camp',
-      2: 'national-champ-camp',
-      3: 'texas-recruiting-clinic',
-      4: 'cory-land-tour'
+    // Use authentic stored prices - $249 for Birmingham/TRC, $299 for National Champ
+    const priceMap: Record<number, number> = {
+      1: 24900, // Birmingham Slam Camp - $249
+      2: 29900, // National Champ Camp - $299  
+      3: 24900, // Texas Recruiting Clinic - $249
+      4: 24900  // Cory Land Tour - $249
     };
     
-    const eventKey = eventKeyMap[eventId];
-    if (eventKey && EVENT_PRODUCTS[eventKey as keyof typeof EVENT_PRODUCTS]) {
-      const productMapping = EVENT_PRODUCTS[eventKey as keyof typeof EVENT_PRODUCTS];
-      if (option === 'full' && productMapping.fullCamp) {
-        return productMapping.fullCamp.price * 100;
-      } else if (option === 'single' && productMapping.singleDay) {
-        return productMapping.singleDay.price * 100;
-      }
+    if (priceMap[eventId]) {
+      return priceMap[eventId]; // Already in cents
     }
 
     throw new Error(`No price information found for event ID ${eventId} with option ${option}`);
