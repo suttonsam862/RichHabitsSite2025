@@ -512,71 +512,136 @@ export default function EventDetail() {
                 </>
               )}
 
-              {/* Registration CTA Section for National Champ Camp */}
-              {event.id === 2 && (
-                <div className="relative mb-12">
-                  {/* Small sticker image positioned outside the main div */}
-                  <div className="absolute -top-6 -right-6 z-20 transform rotate-12">
-                    <div className="relative w-20 h-14 overflow-hidden rounded-lg shadow-lg border-2 border-white">
-                      <img 
-                        src="/images/locations/roy-martin-middle-school.webp" 
-                        alt="Roy Martin Middle School"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
-                      <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
-                        School
-                      </div>
-                      {/* Sticker-style border effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
-                    </div>
-                    {/* Sticker shadow */}
-                    <div className="absolute inset-0 bg-black/20 transform translate-x-1 translate-y-1 -z-10 rounded-lg"></div>
-                  </div>
+              {/* Official Registration Portal - Universal for All Events */}
+              {(() => {
+                // Event-specific registration details
+                const getEventRegistrationDetails = (eventId: number) => {
+                  switch(eventId) {
+                    case 1: // Birmingham Slam Camp
+                      return {
+                        venue: "Birmingham Wrestling Academy",
+                        date: "April 12-14, 2025",
+                        location: "Birmingham, AL",
+                        description: "Elite Youth Wrestling Development",
+                        originalPrice: "$279",
+                        currentPrice: "$249",
+                        savings: "30",
+                        capacity: "150",
+                        stickerImage: "/images/locations/birmingham-academy.webp",
+                        stickerAlt: "Birmingham Wrestling Academy"
+                      };
+                    case 2: // National Champ Camp
+                      return {
+                        venue: "Roy Martin Middle School",
+                        date: "June 5-7, 2025",
+                        location: "Las Vegas, NV",
+                        description: "National Championship Training Camp",
+                        originalPrice: "$349",
+                        currentPrice: "$299",
+                        savings: "50",
+                        capacity: "200",
+                        stickerImage: "/images/locations/roy-martin-middle-school.webp",
+                        stickerAlt: "Roy Martin Middle School"
+                      };
+                    case 3: // Texas Recruiting Clinic
+                      return {
+                        venue: "Texas Wrestling Center",
+                        date: "March 8-10, 2025",
+                        location: "Austin, TX",
+                        description: "College Recruiting & Technique Clinic",
+                        originalPrice: "$199",
+                        currentPrice: "$179",
+                        savings: "20",
+                        capacity: "100",
+                        stickerImage: "/images/locations/texas-wrestling-center.webp",
+                        stickerAlt: "Texas Wrestling Center"
+                      };
+                    case 4: // Panther Train Tour
+                      return {
+                        venue: "Multiple Locations",
+                        date: "Various Dates 2025",
+                        location: "Nationwide Tour",
+                        description: "Mobile Wrestling Training Experience",
+                        originalPrice: "$159",
+                        currentPrice: "$139",
+                        savings: "20",
+                        capacity: "75",
+                        stickerImage: "/images/locations/panther-tour.webp",
+                        stickerAlt: "Panther Train Tour"
+                      };
+                    default:
+                      return null;
+                  }
+                };
 
-                  {/* Professional registration portal */}
-                  <div className="bg-white border border-gray-300 shadow-lg rounded-lg overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-6 py-3">
-                      <h3 className="text-white title-font text-lg font-semibold">Official Registration Portal</h3>
+                const regDetails = getEventRegistrationDetails(event.id);
+                if (!regDetails) return null;
+
+                return (
+                  <div className="relative mb-12">
+                    {/* Small sticker image positioned outside the main div */}
+                    <div className="absolute -top-6 -right-6 z-20 transform rotate-12">
+                      <div className="relative w-20 h-14 overflow-hidden rounded-lg shadow-lg border-2 border-white">
+                        <img 
+                          src={regDetails.stickerImage}
+                          alt={regDetails.stickerAlt}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
+                          Venue
+                        </div>
+                        {/* Sticker-style border effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+                      </div>
+                      {/* Sticker shadow */}
+                      <div className="absolute inset-0 bg-black/20 transform translate-x-1 translate-y-1 -z-10 rounded-lg"></div>
                     </div>
-                    <div className="px-6 py-4">
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        {/* Event Details */}
-                        <div className="text-center md:text-left">
-                          <h4 className="text-xl title-font text-gray-900 mb-1">Roy Martin Middle School</h4>
-                          <p className="text-gray-600 subtitle-font">June 5-7, 2025 • Las Vegas, NV</p>
-                          <p className="text-sm text-gray-500 mt-1">National Championship Training Camp</p>
-                        </div>
-                        
-                        {/* Price Display */}
-                        <div className="text-center bg-gray-50 p-4 rounded-lg border">
-                          <div className="flex items-center justify-center gap-3 mb-2">
-                            <span className="text-gray-500 line-through text-lg">$349</span>
-                            <span className="text-green-700 font-bold text-2xl">$299</span>
+
+                    {/* Professional registration portal */}
+                    <div className="bg-white border border-gray-300 shadow-lg rounded-lg overflow-hidden">
+                      <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-6 py-3">
+                        <h3 className="text-white title-font text-lg font-semibold">Official Registration Portal</h3>
+                      </div>
+                      <div className="px-6 py-4">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                          {/* Event Details */}
+                          <div className="text-center md:text-left">
+                            <h4 className="text-xl title-font text-gray-900 mb-1">{regDetails.venue}</h4>
+                            <p className="text-gray-600 subtitle-font">{regDetails.date} • {regDetails.location}</p>
+                            <p className="text-sm text-gray-500 mt-1">{regDetails.description}</p>
                           </div>
-                          <div className="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full inline-block font-medium">
-                            Save $50 • Early Bird Pricing
+                          
+                          {/* Price Display */}
+                          <div className="text-center bg-gray-50 p-3 rounded-lg border">
+                            <div className="flex items-center justify-center gap-2 mb-1">
+                              <span className="text-gray-500 line-through text-sm">{regDetails.originalPrice}</span>
+                              <span className="text-green-700 font-bold text-lg">{regDetails.currentPrice}</span>
+                            </div>
+                            <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full inline-block font-medium">
+                              Save ${regDetails.savings}
+                            </div>
                           </div>
-                        </div>
-                        
-                        {/* Register Button */}
-                        <div className="text-center">
-                          <Link href="/register/2">
-                            <span className="inline-block bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white px-8 py-3 text-base font-semibold cursor-pointer transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl border border-blue-800">
-                              Secure Registration
-                            </span>
-                          </Link>
-                          <p className="text-sm text-gray-600 mt-2 subtitle-font">Limited: 200 Athletes Only</p>
-                          <p className="text-xs text-gray-500 mt-1">SSL Encrypted • Instant Confirmation</p>
+                          
+                          {/* Register Button */}
+                          <div className="text-center">
+                            <Link href={`/register/${event.id}`}>
+                              <span className="inline-block bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white px-12 py-4 text-xl font-bold cursor-pointer transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl border border-blue-800">
+                                Secure Registration
+                              </span>
+                            </Link>
+                            <p className="text-sm text-gray-600 mt-2 subtitle-font">Limited: {regDetails.capacity} Athletes Only</p>
+                            <p className="text-xs text-gray-500 mt-1">SSL Encrypted • Instant Confirmation</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Schedule Preview */}
               <div className="mb-12">
