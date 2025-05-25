@@ -480,13 +480,17 @@ export default function EventDetail() {
                 <h2 className="text-3xl mb-6 title-font">About This Event</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                   <div>
-                    <h3 className="text-xl mb-3 title-font text-blue-900">Event Highlights</h3>
+                    <h3 className={`text-xl mb-3 title-font ${
+                      event.id === 1 ? 'text-orange-600' : 'text-blue-900'
+                    }`}>Event Highlights</h3>
                     <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
                       Join elite wrestlers and coaches for an intensive training experience designed to elevate your skills to championship level.
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-xl mb-3 title-font text-blue-900">Who Should Attend</h3>
+                    <h3 className={`text-xl mb-3 title-font ${
+                      event.id === 1 ? 'text-red-600' : 'text-blue-900'
+                    }`}>Who Should Attend</h3>
                     <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
                       Perfect for serious athletes looking to improve technique, mental toughness, and competitive performance.
                     </p>
