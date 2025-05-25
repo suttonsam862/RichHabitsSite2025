@@ -255,22 +255,22 @@ export default function EventDetail() {
               image: "/images/coaches/zahid-valencia.jpg"
             },
             {
-              name: "Coach Marcus",
-              title: "Division I Wrestling Coach",
-              bio: "Former Division I wrestler with over 15 years of coaching experience, specializing in youth development and fundamental techniques.",
-              image: "/images/coaches/coach-marcus.jpg"
+              name: "Josh Shields",
+              title: "NCAA All-American, Former ASU Captain",
+              bio: "NCAA All-American and former ASU team captain with proven leadership experience. Focuses on developing complete wrestlers through precise fundamentals, neutral position control, and defensive awareness.",
+              image: "/coach-2.jpg"
             },
             {
-              name: "Coach Rodriguez",
-              title: "Olympic Training Center Coach",
-              bio: "Elite-level coach with experience training Olympic and World Championship competitors, focusing on advanced technique and mental preparation.",
-              image: "/images/coaches/coach-rodriguez.jpg"
+              name: "Brandon Courtney",
+              title: "NCAA Finalist, 3x All-American",
+              bio: "NCAA Finalist and three-time All-American known for technical excellence and competitive consistency. Specializes in advanced positioning, scrambling techniques, and tactical decision-making for tournament success.",
+              image: "/coach-3.jpg"
             },
             {
-              name: "Coach Thompson",
-              title: "State Championship Coach",
-              bio: "Proven track record of developing state champions with expertise in conditioning, strategy, and competitive mindset development.",
-              image: "/images/coaches/coach-thompson.jpg"
+              name: "Michael McGee",
+              title: "NCAA All-American, Pac-12 Champion",
+              bio: "NCAA All-American and Pac-12 Champion with elite-level competitive experience. Emphasizes systematic skill development, position-specific techniques, and tactical awareness for modern wrestling success.",
+              image: "/coach-4.jpg"
             }
           ];
           setEvent({ ...foundEvent, coaches: realCoaches });
