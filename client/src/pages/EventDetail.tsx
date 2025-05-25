@@ -354,8 +354,8 @@ export default function EventDetail() {
                 e.currentTarget.style.display = 'none';
               }}
             >
+              <source src="/videos/national-champ-hero.webm" type="video/webm" />
               <source src="/videos/events-hero.webm" type="video/webm" />
-              <source src="/videos/events-hero.mp4" type="video/mp4" />
             </video>
             {/* Navy gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70 z-10"></div>
