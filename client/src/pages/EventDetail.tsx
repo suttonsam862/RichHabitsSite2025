@@ -603,7 +603,11 @@ export default function EventDetail() {
 
                     {/* Professional registration portal */}
                     <div className="bg-white border border-gray-300 shadow-lg rounded-lg overflow-hidden">
-                      <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-6 py-3">
+                      <div className={`px-6 py-3 ${
+                        event.id === 1 
+                          ? 'bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500' 
+                          : 'bg-gradient-to-r from-blue-900 to-blue-700'
+                      }`}>
                         <h3 className="text-white title-font text-lg font-semibold">Official Registration Portal</h3>
                       </div>
                       <div className="px-6 py-4">
@@ -619,9 +623,15 @@ export default function EventDetail() {
                           <div className="text-center bg-gray-50 p-3 rounded-lg border">
                             <div className="flex items-center justify-center gap-2 mb-1">
                               <span className="text-gray-500 line-through text-sm">{regDetails.originalPrice}</span>
-                              <span className="text-green-700 font-bold text-lg">{regDetails.currentPrice}</span>
+                              <span className={`font-bold text-lg ${
+                                event.id === 1 ? 'text-orange-600' : 'text-green-700'
+                              }`}>{regDetails.currentPrice}</span>
                             </div>
-                            <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full inline-block font-medium">
+                            <div className={`text-xs px-2 py-1 rounded-full inline-block font-medium ${
+                              event.id === 1 
+                                ? 'bg-orange-100 text-orange-800' 
+                                : 'bg-green-100 text-green-800'
+                            }`}>
                               Save ${regDetails.savings}
                             </div>
                           </div>
@@ -629,7 +639,11 @@ export default function EventDetail() {
                           {/* Register Button */}
                           <div className="text-center">
                             <Link href={`/register/${event.id}`}>
-                              <span className="inline-block bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white px-12 py-4 text-xl font-bold cursor-pointer transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl border border-blue-800">
+                              <span className={`inline-block px-12 py-4 text-xl font-bold cursor-pointer transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl text-white ${
+                                event.id === 1 
+                                  ? 'bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 hover:from-red-700 hover:via-orange-600 hover:to-yellow-600 border border-orange-600' 
+                                  : 'bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 border border-blue-800'
+                              }`}>
                                 Secure Registration
                               </span>
                             </Link>
