@@ -691,15 +691,21 @@ export default function EventDetail() {
               <div className="mb-12">
                 <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
                 <div className="space-y-4">
-                  <div className="border-l-4 border-blue-900 pl-6 py-2">
+                  <div className={`border-l-4 pl-6 py-2 ${
+                    event.id === 1 ? 'border-orange-600' : 'border-blue-900'
+                  }`}>
                     <h4 className="font-bold subtitle-font">Morning Sessions</h4>
                     <p className="text-gray-600 subtitle-font">Technique development, drill work, and fundamentals</p>
                   </div>
-                  <div className="border-l-4 border-blue-900 pl-6 py-2">
+                  <div className={`border-l-4 pl-6 py-2 ${
+                    event.id === 1 ? 'border-red-600' : 'border-blue-900'
+                  }`}>
                     <h4 className="font-bold subtitle-font">Afternoon Training</h4>
                     <p className="text-gray-600 subtitle-font">Live wrestling, situation training, and conditioning</p>
                   </div>
-                  <div className="border-l-4 border-blue-900 pl-6 py-2">
+                  <div className={`border-l-4 pl-6 py-2 ${
+                    event.id === 1 ? 'border-orange-500' : 'border-blue-900'
+                  }`}>
                     <h4 className="font-bold subtitle-font">Evening Sessions</h4>
                     <p className="text-gray-600 subtitle-font">Mental preparation, video review, and Q&A</p>
                   </div>
