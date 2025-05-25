@@ -512,6 +512,56 @@ export default function EventDetail() {
                 </>
               )}
 
+              {/* Registration CTA Section for National Champ Camp */}
+              {event.id === 2 && (
+                <div className="mb-12 bg-gradient-to-r from-blue-50 to-blue-100 p-8 rounded-lg border border-blue-200">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                    {/* Location Photo */}
+                    <div className="lg:col-span-1">
+                      <div className="aspect-[4/3] w-full rounded-lg overflow-hidden shadow-md bg-gray-200 flex items-center justify-center">
+                        <img 
+                          src="/images/locations/roy-martin-middle-school.webp" 
+                          alt="Roy Martin Middle School"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <div className="hidden text-gray-500 text-sm text-center px-4">
+                          Roy Martin Middle School
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Event Details */}
+                    <div className="lg:col-span-1 text-center lg:text-left">
+                      <h3 className="text-2xl mb-2 title-font text-blue-900">Roy Martin Middle School</h3>
+                      <p className="text-gray-700 mb-3 subtitle-font">June 5-7, 2025</p>
+                      <div className="mb-4">
+                        <div className="flex items-center justify-center lg:justify-start gap-2 mb-2">
+                          <span className="text-gray-500 line-through text-lg">$349</span>
+                          <span className="text-green-600 font-bold text-2xl">$299</span>
+                        </div>
+                        <div className="bg-red-500 text-white text-sm px-3 py-1 rounded inline-block">
+                          SAVE $50
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Register Button */}
+                    <div className="lg:col-span-1 text-center">
+                      <Link href="/register/2">
+                        <span className="inline-block bg-blue-900 hover:bg-blue-800 text-white px-8 py-4 text-lg font-semibold cursor-pointer transition-colors duration-300 rounded-lg shadow-lg">
+                          Register Now
+                        </span>
+                      </Link>
+                      <p className="text-sm text-gray-600 mt-2 subtitle-font">Limited to 200 wrestlers</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Schedule Preview */}
               <div className="mb-12">
                 <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
