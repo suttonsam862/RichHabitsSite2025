@@ -339,6 +339,24 @@ export default function EventDetail() {
           </video>
         )}
 
+        {/* Video Background for National Champ Camp with Navy Gradient */}
+        {event.id === 2 && (
+          <>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/videos/events-hero.webm" type="video/webm" />
+              <source src="/videos/events-hero.mp4" type="video/mp4" />
+            </video>
+            {/* Navy gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70"></div>
+          </>
+        )}
+
         {/* Video Background for Panther Train Tour */}
         {event.id === 4 && (
           <>
