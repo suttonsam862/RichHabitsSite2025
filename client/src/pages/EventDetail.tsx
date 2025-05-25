@@ -347,13 +347,18 @@ export default function EventDetail() {
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover"
+              preload="auto"
+              className="absolute inset-0 w-full h-full object-cover z-0"
+              onError={(e) => {
+                console.log('Video error:', e);
+                e.currentTarget.style.display = 'none';
+              }}
             >
               <source src="/videos/events-hero.webm" type="video/webm" />
               <source src="/videos/events-hero.mp4" type="video/mp4" />
             </video>
             {/* Navy gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70 z-10"></div>
           </>
         )}
 
