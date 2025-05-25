@@ -553,16 +553,16 @@ export default function EventDetail() {
                   switch(eventId) {
                     case 1: // Birmingham Slam Camp
                       return {
-                        venue: "Birmingham Wrestling Academy",
-                        date: "April 12-14, 2025",
+                        venue: "Clay Chalkville Middle School",
+                        date: "June 19-21, 2025",
                         location: "Birmingham, AL",
-                        description: "Elite Youth Wrestling Development",
+                        description: "",
                         originalPrice: "$279",
                         currentPrice: "$249",
                         savings: "30",
                         capacity: "150",
                         stickerImage: "/images/birmingham-venue.webp",
-                        stickerAlt: "Birmingham Wrestling Academy"
+                        stickerAlt: "Clay Chalkville Middle School"
                       };
                     case 2: // National Champ Camp
                       return {
