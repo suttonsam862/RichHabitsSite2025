@@ -719,35 +719,74 @@ export default function EventDetail() {
               {/* Image Gallery */}
               <div className="mt-12 mb-16">
                 <div className="aspect-video w-full overflow-hidden mb-4">
-                  <div
-                    className="w-full h-full bg-red-600"
-                    aria-label={event.title}
-                  ></div>
+                  <img
+                    src={event.id === 1 ? "/images/gallery/camp-main.webp" : selectedImage}
+                    alt={event.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                  <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                    <span className="text-gray-600">Gallery Image</span>
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4">
                   <div 
                     className="aspect-[4/3] overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedImage(event.image)}
+                    onClick={() => setSelectedImage("/images/gallery/training-session-1.webp")}
                   >
-                    <div
-                      className="w-full h-full bg-red-600 hover:scale-105 transition-transform duration-500"
-                      aria-label={event.title}
-                    ></div>
+                    <img
+                      src="/images/gallery/training-session-1.webp"
+                      alt="Training Session"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                      <span className="text-gray-600 text-sm">Training</span>
+                    </div>
                   </div>
                   
-                  {event.additionalImages.map((img: string, index: number) => (
-                    <div 
-                      key={index}
-                      className="aspect-[4/3] overflow-hidden cursor-pointer"
-                      onClick={() => setSelectedImage(img)}
-                    >
-                      <div
-                        className="w-full h-full bg-red-600 hover:scale-105 transition-transform duration-500"
-                        aria-label={`${event.title} ${index + 2}`}
-                      ></div>
+                  <div 
+                    className="aspect-[4/3] overflow-hidden cursor-pointer"
+                    onClick={() => setSelectedImage("/images/gallery/instruction-demo.webp")}
+                  >
+                    <img
+                      src="/images/gallery/instruction-demo.webp"
+                      alt="Instruction Demo"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                      <span className="text-gray-600 text-sm">Demo</span>
                     </div>
-                  ))}
+                  </div>
+
+                  <div 
+                    className="aspect-[4/3] overflow-hidden cursor-pointer"
+                    onClick={() => setSelectedImage("/images/gallery/group-photo.webp")}
+                  >
+                    <img
+                      src="/images/gallery/group-photo.webp"
+                      alt="Group Photo"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                      <span className="text-gray-600 text-sm">Group</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
