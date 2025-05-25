@@ -264,7 +264,7 @@ export default function EventDetail() {
               name: "Brandon Courtney",
               title: "NCAA Finalist, 3x All-American",
               bio: "NCAA Finalist and three-time All-American known for technical excellence and competitive consistency. Specializes in advanced positioning, scrambling techniques, and tactical decision-making for tournament success.",
-              image: "/coach-3.jpg"
+              image: "/images/coaches/brandon-courtney.webp"
             },
             {
               name: "Michael McGee",
