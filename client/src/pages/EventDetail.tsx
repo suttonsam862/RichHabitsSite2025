@@ -478,24 +478,37 @@ export default function EventDetail() {
               {/* Event Overview Section */}
               <div className="mb-12">
                 <h2 className="text-3xl mb-6 title-font">About This Event</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                  <div>
-                    <h3 className={`text-xl mb-3 title-font ${
-                      event.id === 1 ? 'text-orange-600' : 'text-blue-900'
-                    }`}>Event Highlights</h3>
-                    <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
-                      Join elite wrestlers and coaches for an intensive training experience designed to elevate your skills to championship level.
+                {event.id === 1 ? (
+                  <div className="mb-8">
+                    <p className="text-gray-700 leading-relaxed subtitle-font mb-6 text-lg">
+                      The Birmingham Slam Camp, hosted by Rich Habits, is a high-impact, three-day wrestling experience taking place June 19–21, 2025, at Clay-Chalkville Middle School in Birmingham, Alabama. This camp is built for serious athletes looking to train with the best and sharpen their skills in a fast-paced, highly focused environment.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed subtitle-font mb-6">
+                      Campers will be coached by four elite NCAA athletes — Zahid Valencia, Michael McGee, Brandon Courtney, and Josh Shields — all of whom wrestled for Arizona State University and are known nationwide for their high-level technique and gritty, championship-caliber mindset.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed subtitle-font mb-6">
+                      Each day runs from 9:00 AM to 3:00 PM, blending technical sessions, live matches, position-specific drilling, and Q&A opportunities with the clinicians. Campers will learn signature moves directly from these Division 1 stars, while also receiving insight into what it takes mentally and physically to compete at the highest levels of the sport.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed subtitle-font mb-6">
+                      This camp isn't just about wrestling — it's about leveling up. The environment will be intense, competitive, and rewarding, with an emphasis on discipline, growth, and preparation for the next level. Whether you're a rising middle schooler or a high school standout with college aspirations, the Birmingham Slam Camp is built to push you.
                     </p>
                   </div>
-                  <div>
-                    <h3 className={`text-xl mb-3 title-font ${
-                      event.id === 1 ? 'text-red-600' : 'text-blue-900'
-                    }`}>Who Should Attend</h3>
-                    <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
-                      Perfect for serious athletes looking to improve technique, mental toughness, and competitive performance.
-                    </p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                      <h3 className="text-xl mb-3 title-font text-blue-900">Event Highlights</h3>
+                      <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
+                        Join elite wrestlers and coaches for an intensive training experience designed to elevate your skills to championship level.
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-xl mb-3 title-font text-blue-900">Who Should Attend</h3>
+                      <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
+                        Perfect for serious athletes looking to improve technique, mental toughness, and competitive performance.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
 
@@ -840,6 +853,13 @@ export default function EventDetail() {
                   <h3 className="text-xl mb-2 title-font">Technical Mastery</h3>
                   <p className="text-gray-700 subtitle-font">Perfect advanced techniques with step-by-step instruction from elite athletes.</p>
                 </div>
+              </div>
+              
+              {/* Elite Clinicians Description */}
+              <div className="mb-8">
+                <p className="text-gray-700 subtitle-font leading-relaxed">
+                  Train directly with championship-level wrestlers who have competed at the highest levels of the sport.
+                </p>
               </div>
               
               {/* Elite D1 Coaches - Only show for Texas Recruiting Clinic */}
