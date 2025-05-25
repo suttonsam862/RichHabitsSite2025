@@ -998,6 +998,100 @@ export default function EventDetail() {
                   </motion.div>
                 </div>
               )}
+
+              {/* Fruit Hunters Partnership Banner */}
+              <div className="mb-16 bg-gradient-to-r from-gray-50 to-white p-8 rounded-lg border border-gray-200 shadow-sm">
+                <div className="text-center mb-8">
+                  <div className="inline-block mb-3 px-4 py-1 bg-green-100 rounded-full">
+                    <span className="text-sm font-semibold uppercase tracking-wider text-green-700">Exclusive Partnership</span>
+                  </div>
+                  <h2 className="text-3xl font-bold mb-3 title-font">
+                    Fruit Hunters × Rich Habits
+                  </h2>
+                  <p className="text-gray-600 max-w-3xl mx-auto subtitle-font">
+                    Fueling elite athletes with nature's most powerful exotic fruits. Every camp participant receives premium nutrition packs designed for peak performance and recovery.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                  {/* Inverted Layout - Text First, Images Second */}
+                  <div className="order-2 lg:order-1">
+                    <div className="flex overflow-hidden h-[200px] gap-1 rounded-lg shadow-md">
+                      <div className="flex-1 relative overflow-hidden bg-gray-100">
+                        <img 
+                          src="/images/fruits/0E28DDF2-9BF4-4256-BE3B-E3D1367A5740_1_102_o.jpeg"
+                          alt="Dragon Fruit"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                          <span className="text-gray-600 text-xs">Dragon Fruit</span>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <h3 className="text-white text-xs font-bold">Dragon Fruit</h3>
+                          <p className="text-white/80 text-[10px] mt-0.5">Rich in antioxidants</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 relative overflow-hidden bg-gray-100">
+                        <img 
+                          src="/images/fruits/10F83FC8-8626-4870-BBD7-8A2205E5ADD1_1_102_o.jpeg"
+                          alt="Mangosteen"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                          <span className="text-gray-600 text-xs">Mangosteen</span>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <h3 className="text-white text-xs font-bold">Mangosteen</h3>
+                          <p className="text-white/80 text-[10px] mt-0.5">Queen of fruits</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 relative overflow-hidden bg-gray-100">
+                        <img 
+                          src="/images/fruits/50C705BD-6E71-453B-A059-36DF8A4A5E04_1_102_o.jpeg"
+                          alt="Passion Fruit"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
+                          <span className="text-gray-600 text-xs">Passion Fruit</span>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <h3 className="text-white text-xs font-bold">Passion Fruit</h3>
+                          <p className="text-white/80 text-[10px] mt-0.5">Energy boosting</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="order-1 lg:order-2">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4 title-font">Peak Performance Nutrition</h3>
+                    <p className="text-gray-600 mb-6 subtitle-font leading-relaxed">
+                      Every athlete at our wrestling camps receives daily fresh exotic fruit packs meticulously designed for optimal nutrition, energy, and recovery. Our partnership with Fruit Hunters ensures premium quality fruits that fuel championship performance.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <button className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition duration-300">
+                        Learn About Nutrition
+                      </button>
+                      <button className="px-6 py-3 border border-green-600 text-green-600 font-medium rounded-lg hover:bg-green-50 transition duration-300">
+                        View Fruit Packs
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
               {/* Benefits */}
               <h2 
