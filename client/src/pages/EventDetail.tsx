@@ -1020,7 +1020,7 @@ export default function EventDetail() {
                       <div className="flex-1 relative overflow-hidden bg-gray-100">
                         <img 
                           src="/images/fruits/0E28DDF2-9BF4-4256-BE3B-E3D1367A5740_1_102_o.jpeg"
-                          alt="Dragon Fruit"
+                          alt="Exotic Fruit"
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -1028,18 +1028,14 @@ export default function EventDetail() {
                           }}
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xs">Dragon Fruit</span>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                          <h3 className="text-white text-xs font-bold">Dragon Fruit</h3>
-                          <p className="text-white/80 text-[10px] mt-0.5">Rich in antioxidants</p>
+                          <span className="text-gray-600 text-xs">Exotic Fruit</span>
                         </div>
                       </div>
                       
                       <div className="flex-1 relative overflow-hidden bg-gray-100">
                         <img 
                           src="/images/fruits/10F83FC8-8626-4870-BBD7-8A2205E5ADD1_1_102_o.jpeg"
-                          alt="Mangosteen"
+                          alt="Premium Nutrition"
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -1047,18 +1043,14 @@ export default function EventDetail() {
                           }}
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xs">Mangosteen</span>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                          <h3 className="text-white text-xs font-bold">Mangosteen</h3>
-                          <p className="text-white/80 text-[10px] mt-0.5">Queen of fruits</p>
+                          <span className="text-gray-600 text-xs">Premium Nutrition</span>
                         </div>
                       </div>
                       
                       <div className="flex-1 relative overflow-hidden bg-gray-100">
                         <img 
                           src="/images/fruits/50C705BD-6E71-453B-A059-36DF8A4A5E04_1_102_o.jpeg"
-                          alt="Passion Fruit"
+                          alt="Athletic Performance"
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -1066,11 +1058,7 @@ export default function EventDetail() {
                           }}
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xs">Passion Fruit</span>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                          <h3 className="text-white text-xs font-bold">Passion Fruit</h3>
-                          <p className="text-white/80 text-[10px] mt-0.5">Energy boosting</p>
+                          <span className="text-gray-600 text-xs">Athletic Performance</span>
                         </div>
                       </div>
                     </div>
@@ -1081,13 +1069,15 @@ export default function EventDetail() {
                     <p className="text-gray-600 mb-6 subtitle-font leading-relaxed">
                       Every athlete at our wrestling camps receives daily fresh exotic fruit packs meticulously designed for optimal nutrition, energy, and recovery. Our partnership with Fruit Hunters ensures premium quality fruits that fuel championship performance.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <button className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition duration-300">
+                    <div className="text-center lg:text-left">
+                      <a 
+                        href="https://fruithunters.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-block px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition duration-300"
+                      >
                         Learn About Nutrition
-                      </button>
-                      <button className="px-6 py-3 border border-green-600 text-green-600 font-medium rounded-lg hover:bg-green-50 transition duration-300">
-                        View Fruit Packs
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
