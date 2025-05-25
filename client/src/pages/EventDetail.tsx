@@ -253,6 +253,24 @@ export default function EventDetail() {
               title: "2x NCAA Champion • Olympic Bronze Medalist",
               bio: "Valencia's elite credentials as a 2x NCAA Champion at Arizona State and Olympic Bronze Medalist make him one of wrestling's premier technical instructors. His explosive style and championship mindset provide unmatched insight for developing elite-level wrestlers.",
               image: "/images/coaches/zahid-valencia.jpg"
+            },
+            {
+              name: "Coach Marcus",
+              title: "Division I Wrestling Coach",
+              bio: "Former Division I wrestler with over 15 years of coaching experience, specializing in youth development and fundamental techniques.",
+              image: "/images/coaches/coach-marcus.jpg"
+            },
+            {
+              name: "Coach Rodriguez",
+              title: "Olympic Training Center Coach",
+              bio: "Elite-level coach with experience training Olympic and World Championship competitors, focusing on advanced technique and mental preparation.",
+              image: "/images/coaches/coach-rodriguez.jpg"
+            },
+            {
+              name: "Coach Thompson",
+              title: "State Championship Coach",
+              bio: "Proven track record of developing state champions with expertise in conditioning, strategy, and competitive mindset development.",
+              image: "/images/coaches/coach-thompson.jpg"
             }
           ];
           setEvent({ ...foundEvent, coaches: realCoaches });
