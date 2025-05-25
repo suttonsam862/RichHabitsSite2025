@@ -390,10 +390,10 @@ export default function EventDetail() {
         )}
         
         {/* Fallback background for other events */}
-        {event.id !== 1 && event.id !== 4 && (
+        {event.id !== 1 && event.id !== 4 && event.id !== 2 && (
           <div className="absolute inset-0 bg-black">
             <div 
-              className="absolute inset-0 opacity-60 bg-red-600"
+              className="absolute inset-0 opacity-60 bg-blue-900"
             ></div>
           </div>
         )}
@@ -450,13 +450,13 @@ export default function EventDetail() {
                 <h2 className="text-3xl mb-6 title-font">About This Event</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                   <div>
-                    <h3 className="text-xl mb-3 title-font text-red-600">Event Highlights</h3>
+                    <h3 className="text-xl mb-3 title-font text-blue-900">Event Highlights</h3>
                     <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
                       Join elite wrestlers and coaches for an intensive training experience designed to elevate your skills to championship level.
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-xl mb-3 title-font text-red-600">Who Should Attend</h3>
+                    <h3 className="text-xl mb-3 title-font text-blue-900">Who Should Attend</h3>
                     <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
                       Perfect for serious athletes looking to improve technique, mental toughness, and competitive performance.
                     </p>
@@ -516,15 +516,15 @@ export default function EventDetail() {
               <div className="mb-12">
                 <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
                 <div className="space-y-4">
-                  <div className="border-l-4 border-red-600 pl-6 py-2">
+                  <div className="border-l-4 border-blue-900 pl-6 py-2">
                     <h4 className="font-bold subtitle-font">Morning Sessions</h4>
                     <p className="text-gray-600 subtitle-font">Technique development, drill work, and fundamentals</p>
                   </div>
-                  <div className="border-l-4 border-red-600 pl-6 py-2">
+                  <div className="border-l-4 border-blue-900 pl-6 py-2">
                     <h4 className="font-bold subtitle-font">Afternoon Training</h4>
                     <p className="text-gray-600 subtitle-font">Live wrestling, situation training, and conditioning</p>
                   </div>
-                  <div className="border-l-4 border-red-600 pl-6 py-2">
+                  <div className="border-l-4 border-blue-900 pl-6 py-2">
                     <h4 className="font-bold subtitle-font">Evening Sessions</h4>
                     <p className="text-gray-600 subtitle-font">Mental preparation, video review, and Q&A</p>
                   </div>
@@ -767,7 +767,7 @@ export default function EventDetail() {
                           </div>
                         </div>
                         <h3 className="text-xl mb-1 title-font text-center">{coach.name}</h3>
-                        <p className="text-sm text-red-600 mb-3 subtitle-font text-center font-medium">{coach.title}</p>
+                        <p className="text-sm text-blue-900 mb-3 subtitle-font text-center font-medium">{coach.title}</p>
                         <p className="text-gray-700 text-sm subtitle-font">{coach.bio}</p>
                       </motion.div>
                     ))}
@@ -862,7 +862,7 @@ export default function EventDetail() {
                       {event.originalPrice ? (
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-red-500 line-through text-sm">{event.originalPrice}</span>
+                            <span className="text-gray-500 line-through text-sm">{event.originalPrice}</span>
                             <span className="text-green-600 font-bold text-lg">{event.price}</span>
                           </div>
                           <div className="bg-red-500 text-white text-xs px-2 py-1 rounded inline-block">
