@@ -21,6 +21,7 @@ import {
   insertCoachSchema,
   insertEventCoachSchema
 } from "../shared/schema.js";
+import { registerBulletproofRoutes } from "./bulletproof-routes.js";
 import { z } from "zod";
 
 // Initialize Stripe
