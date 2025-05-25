@@ -514,49 +514,58 @@ export default function EventDetail() {
 
               {/* Registration CTA Section for National Champ Camp */}
               {event.id === 2 && (
-                <div className="mb-12 bg-gradient-to-r from-blue-50 to-blue-100 p-8 rounded-lg border border-blue-200">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-                    {/* Location Photo */}
-                    <div className="lg:col-span-1">
-                      <div className="aspect-[4/3] w-full rounded-lg overflow-hidden shadow-md bg-gray-200 flex items-center justify-center">
-                        <img 
-                          src="/images/locations/roy-martin-middle-school.webp" 
-                          alt="Roy Martin Middle School"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                          }}
-                        />
-                        <div className="hidden text-gray-500 text-sm text-center px-4">
-                          Roy Martin Middle School
-                        </div>
+                <div className="relative mb-12">
+                  {/* Small sticker image positioned outside the main div */}
+                  <div className="absolute -top-6 -left-6 z-20 transform rotate-12">
+                    <div className="relative w-24 h-16 overflow-hidden rounded-lg shadow-lg border-2 border-white">
+                      <img 
+                        src="/images/locations/roy-martin-middle-school.webp" 
+                        alt="Roy Martin Middle School"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                      <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
+                        School
                       </div>
+                      {/* Sticker-style border effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
                     </div>
-                    
-                    {/* Event Details */}
-                    <div className="lg:col-span-1 text-center lg:text-left">
-                      <h3 className="text-2xl mb-2 title-font text-blue-900">Roy Martin Middle School</h3>
-                      <p className="text-gray-700 mb-3 subtitle-font">June 5-7, 2025</p>
-                      <div className="mb-4">
-                        <div className="flex items-center justify-center lg:justify-start gap-2 mb-2">
-                          <span className="text-gray-500 line-through text-lg">$349</span>
-                          <span className="text-green-600 font-bold text-2xl">$299</span>
+                    {/* Sticker shadow */}
+                    <div className="absolute inset-0 bg-black/20 transform translate-x-1 translate-y-1 -z-10 rounded-lg"></div>
+                  </div>
+
+                  {/* Skinny horizontal div */}
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 py-4 px-8 rounded-lg border border-blue-200">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                      {/* Event Details */}
+                      <div className="text-center md:text-left">
+                        <h3 className="text-xl title-font text-blue-900 mb-1">Roy Martin Middle School</h3>
+                        <p className="text-gray-700 subtitle-font text-sm">June 5-7, 2025</p>
+                      </div>
+                      
+                      {/* Price */}
+                      <div className="text-center">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-gray-500 line-through text-sm">$349</span>
+                          <span className="text-green-600 font-bold text-lg">$299</span>
                         </div>
-                        <div className="bg-red-500 text-white text-sm px-3 py-1 rounded inline-block">
+                        <div className="bg-red-500 text-white text-xs px-2 py-1 rounded">
                           SAVE $50
                         </div>
                       </div>
-                    </div>
-                    
-                    {/* Register Button */}
-                    <div className="lg:col-span-1 text-center">
-                      <Link href="/register/2">
-                        <span className="inline-block bg-blue-900 hover:bg-blue-800 text-white px-8 py-4 text-lg font-semibold cursor-pointer transition-colors duration-300 rounded-lg shadow-lg">
-                          Register Now
-                        </span>
-                      </Link>
-                      <p className="text-sm text-gray-600 mt-2 subtitle-font">Limited to 200 wrestlers</p>
+                      
+                      {/* Register Button */}
+                      <div className="text-center">
+                        <Link href="/register/2">
+                          <span className="inline-block bg-blue-900 hover:bg-blue-800 text-white px-6 py-2 text-sm font-semibold cursor-pointer transition-colors duration-300 rounded shadow">
+                            Register Now
+                          </span>
+                        </Link>
+                        <p className="text-xs text-gray-600 mt-1 subtitle-font">Limited to 200</p>
+                      </div>
                     </div>
                   </div>
                 </div>
