@@ -249,20 +249,20 @@ export default function EventDetail() {
           const realCoaches = [
             {
               name: "Vincenzo Joseph",
-              title: "Head Coach",
-              bio: "Penn State Wrestling Coach and National Champion",
+              title: "2x NCAA Champion",
+              bio: "Joseph's success as a 2x NCAA Champion demonstrates his mastery of high-level wrestling techniques and competition strategy. He specializes in developing wrestlers for championship-level performance and mental preparation.",
               image: "/images/coaches/vincenzo-joseph.webp"
             },
             {
               name: "Mark Hall", 
-              title: "Assistant Coach",
-              bio: "Penn State Wrestling Assistant Coach and NCAA Champion",
+              title: "3x NCAA Champion",
+              bio: "Hall brings championship experience at both collegiate and international levels as an NCAA Champion and Junior World Champion. His coaching focuses on developing the technical precision and mental toughness needed for elite competition.",
               image: "/images/coaches/mark-hall.webp"
             },
             {
               name: "Jason Nolf",
-              title: "Assistant Coach", 
-              bio: "Penn State Wrestling Assistant Coach and NCAA Champion",
+              title: "3x NCAA Champion", 
+              bio: "Nolf's dominance as a 3x NCAA Champion and World Team Member makes him one of the most accomplished clinicians in wrestling. His technical expertise and competitive experience provide invaluable insights for elite-level development.",
               image: "/images/coaches/jason-nolf.webp"
             }
           ];
