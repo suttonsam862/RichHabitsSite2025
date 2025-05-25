@@ -258,7 +258,7 @@ export default function EventDetail() {
               name: "Josh Shields",
               title: "NCAA All-American, Former ASU Captain",
               bio: "NCAA All-American and former ASU team captain with proven leadership experience. Focuses on developing complete wrestlers through precise fundamentals, neutral position control, and defensive awareness.",
-              image: "/coach-2.jpg"
+              image: "/images/coaches/josh-shields.webp"
             },
             {
               name: "Brandon Courtney",
