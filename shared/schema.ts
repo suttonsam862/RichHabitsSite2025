@@ -92,6 +92,7 @@ export const insertCollectionSchema = createInsertSchema(collections).pick({
 // Events table
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
+  slug: text("slug").notNull().unique(), // Text-based identifier
   title: text("title").notNull(),
   category: text("category").notNull(),
   date: text("date").notNull(),
@@ -123,6 +124,7 @@ export const insertEventSchema = createInsertSchema(events).pick({
 export const eventRegistrations = pgTable("event_registrations", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull(),
+  eventSlug: text("event_slug").notNull(), // Text-based event identifier
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   contactName: text("contact_name").notNull(),

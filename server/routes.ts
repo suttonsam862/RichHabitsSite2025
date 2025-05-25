@@ -447,14 +447,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { createPaymentIntent, handleSuccessfulPayment } = await import('./stripe.js');
   const { updatePaymentIntent } = await import('./discounts.js');
 
-  // Add the event-specific payment intent endpoint that frontend expects
-  app.post("/api/events/:eventId/create-payment-intent", createPaymentIntent);
+  // Add the event-specific payment intent endpoint using slug-based routing
+  app.post("/api/events/:eventSlug/create-payment-intent", createPaymentIntent);
   
   // Add the payment success handler
-  app.post("/api/events/:eventId/stripe-payment-success", handleSuccessfulPayment);
+  app.post("/api/events/:eventSlug/stripe-payment-success", handleSuccessfulPayment);
   
   // Add the payment update endpoint for discounts
-  app.post("/api/events/:eventId/update-payment-intent", updatePaymentIntent);
+  app.post("/api/events/:eventSlug/update-payment-intent", updatePaymentIntent);
   
   // Get all complete registrations for admin - CONSOLIDATED PAID SIGNUPS ONLY
   app.get("/api/complete-registrations", async (req, res) => {

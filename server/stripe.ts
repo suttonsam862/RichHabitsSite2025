@@ -93,16 +93,16 @@ export const verifyPaymentIntent = async (paymentIntentId: string): Promise<bool
 export const createPaymentIntent = async (req: Request, res: Response) => {
   try {
     const { option = 'full' } = req.body;
-    const eventId = Number(req.params.eventId);
+    const eventSlug = req.params.eventSlug;
 
-    if (!eventId || isNaN(eventId)) {
-      return res.status(400).json({ error: 'Invalid event ID' });
+    if (!eventSlug || typeof eventSlug !== 'string') {
+      return res.status(400).json({ error: 'Invalid event slug' });
     }
 
-    // Get the event to retrieve its name and check if it exists
-    const event = await storage.getEvent(eventId);
+    // Get the event by slug to retrieve its name and check if it exists
+    const event = await storage.getEventBySlug(eventSlug);
     if (!event) {
-      return res.status(404).json({ error: `Event with ID ${eventId} not found` });
+      return res.status(404).json({ error: `Event with slug '${eventSlug}' not found` });
     }
 
     let amount: number;
@@ -115,7 +115,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${eventId} (${event.title})`);
 
     // Get calculated price regardless of Stripe price ID (to handle missing products in Stripe)    
-    amount = await getEventPrice(eventId, option);
+    amount = await getEventPrice(event.id, option);
     if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({
         error: 'Could not determine price for the event'
