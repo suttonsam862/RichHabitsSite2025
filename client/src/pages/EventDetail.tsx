@@ -244,8 +244,20 @@ export default function EventDetail() {
       const foundEvent = events.find(e => e.id === eventId);
       
       if (foundEvent) {
-        // Add real coach data for National Champ Camp (event ID 2)
-        if (eventId === 2) {
+        // Add real coach data for specific camps
+        if (eventId === 1) {
+          // Birmingham Slam Camp coaches
+          const realCoaches = [
+            {
+              name: "Zahid Valencia",
+              title: "2x NCAA Champion • Olympic Bronze Medalist",
+              bio: "Valencia's elite credentials as a 2x NCAA Champion at Arizona State and Olympic Bronze Medalist make him one of wrestling's premier technical instructors. His explosive style and championship mindset provide unmatched insight for developing elite-level wrestlers.",
+              image: "/images/coaches/zahid-valencia.jpg"
+            }
+          ];
+          setEvent({ ...foundEvent, coaches: realCoaches });
+        } else if (eventId === 2) {
+          // National Champ Camp coaches
           const realCoaches = [
             {
               name: "Vincenzo Joseph",
