@@ -516,8 +516,8 @@ export default function EventDetail() {
               {event.id === 2 && (
                 <div className="relative mb-12">
                   {/* Small sticker image positioned outside the main div */}
-                  <div className="absolute -top-6 -left-6 z-20 transform rotate-12">
-                    <div className="relative w-24 h-16 overflow-hidden rounded-lg shadow-lg border-2 border-white">
+                  <div className="absolute -top-6 -right-6 z-20 transform rotate-12">
+                    <div className="relative w-20 h-14 overflow-hidden rounded-lg shadow-lg border-2 border-white">
                       <img 
                         src="/images/locations/roy-martin-middle-school.webp" 
                         alt="Roy Martin Middle School"
@@ -537,34 +537,41 @@ export default function EventDetail() {
                     <div className="absolute inset-0 bg-black/20 transform translate-x-1 translate-y-1 -z-10 rounded-lg"></div>
                   </div>
 
-                  {/* Skinny horizontal div */}
-                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 py-4 px-8 rounded-lg border border-blue-200">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                      {/* Event Details */}
-                      <div className="text-center md:text-left">
-                        <h3 className="text-xl title-font text-blue-900 mb-1">Roy Martin Middle School</h3>
-                        <p className="text-gray-700 subtitle-font text-sm">June 5-7, 2025</p>
-                      </div>
-                      
-                      {/* Price */}
-                      <div className="text-center">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-gray-500 line-through text-sm">$349</span>
-                          <span className="text-green-600 font-bold text-lg">$299</span>
+                  {/* Professional registration portal */}
+                  <div className="bg-white border border-gray-300 shadow-lg rounded-lg overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-6 py-3">
+                      <h3 className="text-white title-font text-lg font-semibold">Official Registration Portal</h3>
+                    </div>
+                    <div className="px-6 py-4">
+                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        {/* Event Details */}
+                        <div className="text-center md:text-left">
+                          <h4 className="text-xl title-font text-gray-900 mb-1">Roy Martin Middle School</h4>
+                          <p className="text-gray-600 subtitle-font">June 5-7, 2025 • Las Vegas, NV</p>
+                          <p className="text-sm text-gray-500 mt-1">National Championship Training Camp</p>
                         </div>
-                        <div className="bg-red-500 text-white text-xs px-2 py-1 rounded">
-                          SAVE $50
+                        
+                        {/* Price Display */}
+                        <div className="text-center bg-gray-50 p-4 rounded-lg border">
+                          <div className="flex items-center justify-center gap-3 mb-2">
+                            <span className="text-gray-500 line-through text-lg">$349</span>
+                            <span className="text-green-700 font-bold text-2xl">$299</span>
+                          </div>
+                          <div className="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full inline-block font-medium">
+                            Save $50 • Early Bird Pricing
+                          </div>
                         </div>
-                      </div>
-                      
-                      {/* Register Button */}
-                      <div className="text-center">
-                        <Link href="/register/2">
-                          <span className="inline-block bg-blue-900 hover:bg-blue-800 text-white px-6 py-2 text-sm font-semibold cursor-pointer transition-colors duration-300 rounded shadow">
-                            Register Now
-                          </span>
-                        </Link>
-                        <p className="text-xs text-gray-600 mt-1 subtitle-font">Limited to 200</p>
+                        
+                        {/* Register Button */}
+                        <div className="text-center">
+                          <Link href="/register/2">
+                            <span className="inline-block bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-800 hover:to-blue-600 text-white px-8 py-3 text-base font-semibold cursor-pointer transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl border border-blue-800">
+                              Secure Registration
+                            </span>
+                          </Link>
+                          <p className="text-sm text-gray-600 mt-2 subtitle-font">Limited: 200 Athletes Only</p>
+                          <p className="text-xs text-gray-500 mt-1">SSL Encrypted • Instant Confirmation</p>
+                        </div>
                       </div>
                     </div>
                   </div>
