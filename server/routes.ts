@@ -707,6 +707,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
+  // API route to get event details
+  app.get('/api/events/:id', async (req: Request, res: Response) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      const result = await pool.query('SELECT * FROM events WHERE id = $1', [eventId]);
+      
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      
+      res.json(result.rows[0]);
+    } catch (error) {
+      console.error('Error fetching event:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // API route to get coaches for a specific event
+  app.get('/api/events/:id/coaches', async (req: Request, res: Response) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      const result = await pool.query(`
+        SELECT c.id, c.name, c.title, c.bio, c.image, c.school, c.school_logo
+        FROM coaches c
+        JOIN event_coaches ec ON c.id = ec.coach_id
+        WHERE ec.event_id = $1
+        ORDER BY ec.display_order
+      `, [eventId]);
+      
+      res.json(result.rows);
+    } catch (error) {
+      console.error('Error fetching coaches:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
   // Create Express HTTP server
   const httpServer = createServer(app);
   

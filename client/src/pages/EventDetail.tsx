@@ -232,27 +232,47 @@ export default function EventDetail() {
   const eventId = params?.id ? parseInt(params.id, 10) : 0;
   
   const [event, setEvent] = useState<any>(null);
+  const [coaches, setCoaches] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
   
   useEffect(() => {
-    // Simulate API call to get event details
-    const fetchEvent = () => {
+    // Fetch real event and coach data from the database
+    const fetchEventData = async () => {
       setIsLoading(true);
       
-      // Find event by ID
-      const foundEvent = events.find(e => e.id === eventId);
-      
-      setTimeout(() => {
+      try {
+        // Get event details
+        const eventResponse = await fetch(`/api/events/${eventId}`);
+        const eventData = await eventResponse.json();
+        
+        // Get coaches for this event
+        const coachResponse = await fetch(`/api/events/${eventId}/coaches`);
+        const coachData = await coachResponse.json();
+        
+        if (eventData) {
+          // Use hardcoded event data but with real coaches
+          const foundEvent = events.find(e => e.id === eventId);
+          if (foundEvent) {
+            setEvent({ ...foundEvent, coaches: coachData });
+            setCoaches(coachData);
+            setSelectedImage(foundEvent.image);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+        // Fallback to hardcoded data
+        const foundEvent = events.find(e => e.id === eventId);
         if (foundEvent) {
           setEvent(foundEvent);
           setSelectedImage(foundEvent.image);
         }
-        setIsLoading(false);
-      }, 300);
+      }
+      
+      setIsLoading(false);
     };
     
-    fetchEvent();
+    fetchEventData();
   }, [eventId]);
   
   if (isLoading) {
@@ -701,9 +721,21 @@ export default function EventDetail() {
                         variants={fadeIn}
                       >
                         <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 bg-gradient-to-br from-red-600 to-red-700">
-                          <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center">
+                          {coach.image ? (
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                // Fallback to initials if image fails to load
+                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                              }}
+                            />
+                          ) : null}
+                          <div className={`w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ${coach.image ? 'hidden' : ''}`}>
                             <span className="text-white text-3xl font-bold">
-                              {coach.name.split(' ').map(n => n[0]).join('')}
+                              {coach.name.split(' ').map((n: string) => n[0]).join('')}
                             </span>
                           </div>
                         </div>
