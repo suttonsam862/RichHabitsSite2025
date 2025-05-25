@@ -237,42 +237,46 @@ export default function EventDetail() {
   const [selectedImage, setSelectedImage] = useState("");
   
   useEffect(() => {
-    // Fetch real event and coach data from the database
-    const fetchEventData = async () => {
+    // Load event data with real coaches for National Champ Camp
+    const loadEventData = () => {
       setIsLoading(true);
       
-      try {
-        // Get event details
-        const eventResponse = await fetch(`/api/events/${eventId}`);
-        const eventData = await eventResponse.json();
-        
-        // Get coaches for this event
-        const coachResponse = await fetch(`/api/events/${eventId}/coaches`);
-        const coachData = await coachResponse.json();
-        
-        if (eventData) {
-          // Use hardcoded event data but with real coaches
-          const foundEvent = events.find(e => e.id === eventId);
-          if (foundEvent) {
-            setEvent({ ...foundEvent, coaches: coachData });
-            setCoaches(coachData);
-            setSelectedImage(foundEvent.image);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching event data:', error);
-        // Fallback to hardcoded data
-        const foundEvent = events.find(e => e.id === eventId);
-        if (foundEvent) {
+      const foundEvent = events.find(e => e.id === eventId);
+      
+      if (foundEvent) {
+        // Add real coach data for National Champ Camp (event ID 2)
+        if (eventId === 2) {
+          const realCoaches = [
+            {
+              name: "Vincenzo Joseph",
+              title: "Head Coach",
+              bio: "Penn State Wrestling Coach and National Champion",
+              image: "/images/coaches/vincenzo-joseph.webp"
+            },
+            {
+              name: "Mark Hall", 
+              title: "Assistant Coach",
+              bio: "Penn State Wrestling Assistant Coach and NCAA Champion",
+              image: "/images/coaches/mark-hall.webp"
+            },
+            {
+              name: "Jason Nolf",
+              title: "Assistant Coach", 
+              bio: "Penn State Wrestling Assistant Coach and NCAA Champion",
+              image: "/images/coaches/jason-nolf.webp"
+            }
+          ];
+          setEvent({ ...foundEvent, coaches: realCoaches });
+        } else {
           setEvent(foundEvent);
-          setSelectedImage(foundEvent.image);
         }
+        setSelectedImage(foundEvent.image);
       }
       
       setIsLoading(false);
     };
     
-    fetchEventData();
+    loadEventData();
   }, [eventId]);
   
   if (isLoading) {
