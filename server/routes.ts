@@ -541,7 +541,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const amount = option === 'single' ? pricing.single : pricing.full;
       
-      // Create PaymentIntent with Stripe
+      // Handle free registrations (when amount is $0 due to 100% discount)
+      if (amount === 0) {
+        // For free registrations, return a special response without creating a Stripe payment intent
+        res.json({
+          clientSecret: 'free_registration', // Special flag for free registration
+          amount: 0,
+          isFree: true
+        });
+        return;
+      }
+      
+      // Create PaymentIntent with Stripe for paid registrations
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
@@ -567,6 +578,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Add the event-specific payment intent endpoint using slug-based routing
   app.post("/api/events/:eventSlug/create-payment-intent", createPaymentIntent);
+
+  // Handle free registrations when 100% discount codes are applied
+  app.post('/api/process-free-registration', async (req: Request, res: Response) => {
+    try {
+      const { eventId, option, firstName, lastName, email, contactName, phone, tShirtSize, grade, schoolName, clubName, experience, medicalReleaseAccepted, day1, day2, day3 } = req.body;
+
+      // Validate required fields
+      if (!firstName || !lastName || !email) {
+        return res.status(400).json({ error: 'Missing required fields: firstName, lastName, email' });
+      }
+
+      // Get event details
+      const event = await storage.getEventById(eventId);
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+
+      // Create a free registration directly in the database
+      const registrationData = {
+        eventId,
+        eventSlug: event.slug,
+        firstName,
+        lastName,
+        contactName: contactName || `${firstName} ${lastName}`,
+        email,
+        phone: phone || null,
+        tShirtSize: tShirtSize || null,
+        grade: grade || null,
+        schoolName: schoolName || null,
+        clubName: clubName || null,
+        experience: experience || null,
+        medicalReleaseAccepted: medicalReleaseAccepted || false,
+        registrationType: 'individual',
+        paymentStatus: 'completed', // Free registration is automatically completed
+        paymentIntentId: `free_${Date.now()}`, // Generate unique ID for free registration
+        gender: null,
+        day1: day1 || false,
+        day2: day2 || false,
+        day3: day3 || false
+      };
+
+      // Store the registration
+      const registration = await storage.createEventRegistration(registrationData);
+
+      // Send confirmation email for free registration
+      if (process.env.SENDGRID_API_KEY) {
+        try {
+          await sendConfirmationEmailForPayment({
+            id: `free_${Date.now()}`,
+            metadata: {
+              eventId: eventId.toString(),
+              option
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send confirmation email for free registration:', emailError);
+          // Don't fail the registration if email fails
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        registrationId: registration.id,
+        message: 'Free registration completed successfully'
+      });
+
+    } catch (error) {
+      console.error('Error processing free registration:', error);
+      res.status(500).json({ error: 'Failed to process free registration' });
+    }
+  });
   
   // Add the payment success handler
   app.post("/api/events/:eventSlug/stripe-payment-success", handleSuccessfulPayment);

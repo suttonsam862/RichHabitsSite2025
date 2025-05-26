@@ -471,7 +471,12 @@ export default function StripeCheckout() {
 
         const data = await response.json();
         
-        if (data.clientSecret) {
+        // Handle free registrations (100% discount codes)
+        if (data.isFree && data.clientSecret === 'free_registration') {
+          setClientSecret('free_registration');
+          setAmount(0);
+          // Free registration is ready to process without Stripe
+        } else if (data.clientSecret) {
           setClientSecret(data.clientSecret);
           // Set the amount for display on the button
           if (data.amount) {
@@ -619,7 +624,16 @@ export default function StripeCheckout() {
                   </div>
                 </div>
               )}
-              {clientSecret && (
+              {clientSecret && clientSecret === 'free_registration' ? (
+                // Handle free registrations (100% discount codes)
+                <FreeRegistrationForm 
+                  eventId={eventId} 
+                  eventName={decodeURIComponent(eventName)}
+                  onSuccess={handlePaymentSuccess}
+                  amount={amount}
+                  onDiscountApplied={handleDiscountApplied}
+                />
+              ) : clientSecret && (
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
                   <CheckoutForm 
                     clientSecret={clientSecret} 
