@@ -597,27 +597,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       const option = req.query.option as string || 'full';
       
-      // Get event details to determine pricing
-      const event = await storage.getEvent(eventId);
-      if (!event) {
+      // Use correct authentic pricing for each event
+      const eventPricing: Record<number, { full: number; single: number }> = {
+        1: { full: 249, single: 149 }, // Birmingham Slam Camp
+        2: { full: 299, single: 175 }, // National Champ Camp  
+        3: { full: 249, single: 149 }, // Texas Recruiting Clinic
+        4: { full: 200, single: 99 }   // Panther Train Tour
+      };
+      
+      const pricing = eventPricing[eventId];
+      if (!pricing) {
         return res.status(404).json({ error: 'Event not found' });
       }
       
-      // Calculate price based on option
-      let price = 0;
-      if (option === 'full') {
-        price = parseInt(event.price) || 299; // Default full price
-      } else if (option === 'single') {
-        price = Math.round((parseInt(event.price) || 299) * 0.6); // 60% of full price for single day
-      }
+      const price = option === 'single' ? pricing.single : pricing.full;
       
-      // Return product details
+      // Return product details with correct pricing
       res.json({
         eventId,
         option,
         price,
-        priceId: `price_${eventId}_${option}`, // Mock price ID
-        productId: `prod_${eventId}` // Mock product ID
+        priceId: `price_${eventId}_${option}`,
+        productId: `prod_${eventId}`
       });
     } catch (error) {
       console.error('Error fetching Stripe product:', error);
