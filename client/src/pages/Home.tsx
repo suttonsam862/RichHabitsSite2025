@@ -230,7 +230,7 @@ export default function Home() {
                 <h3 className="text-2xl font-bold mb-4">Team Registration</h3>
                 <p className="mb-6">Bring your entire team and save big with our exclusive team discounts</p>
                 <Link 
-                  href="/events" 
+                  href="/team-register/1" 
                   className="w-full bg-white text-orange-500 py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-block text-center font-semibold"
                 >
                   Get Team Discount

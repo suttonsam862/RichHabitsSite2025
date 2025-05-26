@@ -555,6 +555,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Team Registration API - $149 per athlete with individual payment intents
+  app.post("/api/team-registration", async (req, res) => {
+    try {
+      const { eventId, coachInfo, athletes, pricePerAthlete, totalAmount } = req.body;
+      
+      if (!eventId || !coachInfo || !athletes || athletes.length === 0) {
+        return res.status(400).json({ error: "Missing required team registration data" });
+      }
+      
+      if (pricePerAthlete !== 149) {
+        return res.status(400).json({ error: "Invalid team price - must be $149 per athlete" });
+      }
+      
+      // Create individual payment intents for each athlete at $149
+      const athletePaymentIntents = [];
+      
+      for (const athlete of athletes) {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: 14900, // $149.00 in cents
+          currency: "usd",
+          metadata: {
+            eventId: eventId.toString(),
+            registrationType: "team",
+            athleteName: `${athlete.firstName} ${athlete.lastName}`,
+            athleteEmail: athlete.email,
+            coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
+            coachEmail: coachInfo.email,
+            teamName: coachInfo.teamName || "Team Registration",
+            schoolName: coachInfo.schoolName || ""
+          },
+        });
+        
+        // Store each athlete as individual registration with bulletproof correlation
+        await storage.createEventRegistration({
+          eventId,
+          firstName: athlete.firstName,
+          lastName: athlete.lastName,
+          email: athlete.email,
+          phone: coachInfo.phone, // Use coach phone as contact
+          registrationType: "team",
+          stripePaymentIntentId: paymentIntent.id,
+          contactName: `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
+          medicalReleaseAccepted: true,
+          tShirtSize: "L", // Default
+          grade: "N/A",
+          schoolName: coachInfo.schoolName || "Team Registration",
+          age: athlete.age ? parseInt(athlete.age) : null,
+          experience: null
+        });
+        
+        athletePaymentIntents.push({
+          athleteId: athlete.id,
+          athleteName: `${athlete.firstName} ${athlete.lastName}`,
+          paymentIntentId: paymentIntent.id,
+          amount: 149
+        });
+      }
+      
+      // Create a combined Stripe checkout session for all athletes
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `Team Registration - ${athletes.length} Athletes`,
+              description: `${athletes.length} athletes at $149 each (Team Discount Applied)`
+            },
+            unit_amount: totalAmount * 100, // Total in cents
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        success_url: `${req.headers.origin}/registration-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.headers.origin}/team-register/${eventId}`,
+        metadata: {
+          eventId: eventId.toString(),
+          registrationType: "team",
+          athleteCount: athletes.length.toString(),
+          coachEmail: coachInfo.email,
+          paymentIntentIds: athletePaymentIntents.map(pi => pi.paymentIntentId).join(',')
+        }
+      });
+      
+      res.json({
+        success: true,
+        sessionId: session.id,
+        athleteCount: athletes.length,
+        totalAmount,
+        pricePerAthlete,
+        paymentIntents: athletePaymentIntents
+      });
+      
+    } catch (error: any) {
+      console.error("Team registration error:", error);
+      res.status(500).json({ 
+        success: false,
+        error: error.message || "Failed to process team registration" 
+      });
+    }
+  });
+
   // Stripe API endpoints for event registrations
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
