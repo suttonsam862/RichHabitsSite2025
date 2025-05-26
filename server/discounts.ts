@@ -113,11 +113,32 @@ export const validateDiscountCode = async (req: Request, res: Response) => {
       }
     }
     
-    // Here you would check against other discount codes in your database
-    // For now, we'll just reject all other codes
-    return res.status(400).json({
-      valid: false,
-      message: 'Invalid discount code'
+    // Check against the unified discount codes system
+    const { validateDiscountCode: validateCode, applyDiscount } = await import('./discountCodes.js');
+    
+    const validation = validateCode(code);
+    
+    if (!validation.valid) {
+      return res.status(400).json({
+        valid: false,
+        message: validation.error || 'Invalid discount code'
+      });
+    }
+    
+    // Apply the discount using the unified system
+    const discountResult = applyDiscount(amount, code);
+    
+    if (!discountResult.success) {
+      return res.status(400).json({
+        valid: false,
+        message: discountResult.error || 'Failed to apply discount'
+      });
+    }
+    
+    return res.json({
+      valid: true,
+      discountAmount: discountResult.discountAmount,
+      message: `${discountResult.discountDescription} applied successfully`
     });
   } catch (error) {
     console.error('Error validating discount code:', error);
