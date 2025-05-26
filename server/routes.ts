@@ -621,6 +621,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Store the registration
       const registration = await storage.createEventRegistration(registrationData);
+      console.log(`Free registration created successfully: ID ${registration.id} for ${firstName} ${lastName}`);
 
       // Send confirmation email for free registration
       if (process.env.SENDGRID_API_KEY) {

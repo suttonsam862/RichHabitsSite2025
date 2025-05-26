@@ -329,9 +329,32 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       notes: 'Registration completed via website'
     };
 
-    // Create the COMPLETE registration - this is the master record
-    const completeRegistration = await storage.createCompleteRegistration(completeRegistrationData);
-    console.log(`Complete registration created: ${completeRegistration.id} for ${completeRegistration.camperName}`);
+    // Create the registration record in the event_registrations table
+    const eventRegistrationData = {
+      eventId: event.id,
+      eventSlug: event.slug,
+      firstName: registrationData.firstName,
+      lastName: registrationData.lastName,
+      contactName: registrationData.contactName || `${registrationData.firstName} ${registrationData.lastName}`,
+      email: registrationData.email,
+      phone: registrationData.phone || null,
+      tShirtSize: registrationData.tShirtSize || null,
+      grade: registrationData.grade || null,
+      schoolName: registrationData.schoolName || null,
+      clubName: registrationData.clubName || null,
+      experience: registrationData.experience || null,
+      medicalReleaseAccepted: registrationData.medicalReleaseAccepted || true,
+      registrationType: registrationData.registrationType || 'individual',
+      paymentStatus: 'paid',
+      paymentIntentId: paymentIntent.id,
+      gender: registrationData.gender || null,
+      day1: registrationData.day1 || false,
+      day2: registrationData.day2 || false,
+      day3: registrationData.day3 || false
+    };
+
+    const completeRegistration = await storage.createEventRegistration(eventRegistrationData);
+    console.log(`Registration created successfully: ID ${completeRegistration.id} for ${registrationData.firstName} ${registrationData.lastName}`);
 
     // Send the registration confirmation email
     await sendRegistrationConfirmationEmail({
@@ -351,7 +374,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Payment processed successfully',
-      registration,
+      registration: completeRegistration,
       shopifyOrderId: shopifyOrder?.id || null
     });
     
