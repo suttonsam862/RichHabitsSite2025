@@ -847,6 +847,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid amount" });
       }
       
+      if (!attendee || !attendee.firstName || !attendee.lastName || !attendee.email) {
+        return res.status(400).json({ 
+          error: "Missing required attendee information",
+          details: "First name, last name, and email are required"
+        });
+      }
+      
       // Create a payment intent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // convert to cents
@@ -868,7 +875,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone: attendee.phone,
         registrationType,
         stripePaymentIntentId: paymentIntent.id,
-        contactName: `${attendee.emergencyContact.name}`,
+        contactName: attendee.emergencyContact?.name || `${attendee.firstName} ${attendee.lastName}`,
         medicalReleaseAccepted: true,
         tShirtSize: "L", // Default value
         grade: "N/A", // Default value
