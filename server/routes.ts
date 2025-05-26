@@ -591,6 +591,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add the payment intent endpoint that frontend expects
+  app.post("/api/events/:eventId/create-payment-intent", async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+      const { option = 'full', priceId } = req.body;
+      
+      // Use correct authentic pricing for each event
+      const eventPricing: Record<number, { full: number; single: number }> = {
+        1: { full: 24900, single: 14900 }, // Birmingham Slam Camp (in cents)
+        2: { full: 29900, single: 17500 }, // National Champ Camp (in cents)
+        3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic (in cents)
+        4: { full: 20000, single: 9900 }   // Panther Train Tour (in cents)
+      };
+      
+      const pricing = eventPricing[eventId];
+      if (!pricing) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      
+      const amount = option === 'single' ? pricing.single : pricing.full;
+      
+      // Create PaymentIntent with Stripe
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'usd',
+        metadata: {
+          eventId: eventId.toString(),
+          option
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+      
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        amount: amount / 100 // Convert back to dollars for display
+      });
+      
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      res.status(500).json({ error: 'Failed to create payment intent' });
+    }
+  });
+
   // Add the Stripe product endpoint that frontend expects
   app.get("/api/events/:eventId/stripe-product", async (req, res) => {
     try {
