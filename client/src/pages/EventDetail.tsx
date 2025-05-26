@@ -792,7 +792,7 @@ export default function EventDetail() {
               <div className="mt-12 mb-16">
                 <div className="aspect-video w-full overflow-hidden mb-4">
                   <img
-                    src={event.id === 1 ? "/images/gallery/birmingham-team.jpg" : selectedImage}
+                    src={event.id === 1 ? "@assets/C7QSGoxXUAEZ06-.webp" : selectedImage}
                     alt={event.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
