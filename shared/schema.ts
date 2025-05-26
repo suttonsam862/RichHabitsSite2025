@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, index, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -149,6 +149,65 @@ export const eventRegistrations = pgTable("event_registrations", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Event Registration Log - Single source of truth for ALL registration attempts
+export const eventRegistrationLog = pgTable("event_registration_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  formSessionId: text("form_session_id").notNull(), // Generated at page load
+  stripePaymentIntentId: text("stripe_payment_intent_id"), // Added when checkout created
+  
+  // Form Data - captured immediately on submission
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  eventSlug: text("event_slug").notNull(),
+  eventId: integer("event_id"),
+  campDate: text("camp_date"),
+  teamName: text("team_name"), // For team registrations
+  
+  // Additional form fields
+  grade: text("grade"),
+  schoolName: text("school_name"),
+  clubName: text("club_name"),
+  tShirtSize: text("t_shirt_size"),
+  gender: text("gender"),
+  experience: text("experience"),
+  registrationType: text("registration_type").notNull().default("individual"), // individual, team
+  
+  // Days selection
+  day1: boolean("day1").default(false),
+  day2: boolean("day2").default(false),
+  day3: boolean("day3").default(false),
+  
+  // Gear and pricing
+  gearSelection: jsonb("gear_selection"), // Store selected gear items
+  basePrice: integer("base_price").notNull(), // Price in cents before discount
+  discountCode: text("discount_code"),
+  discountAmount: integer("discount_amount").default(0), // Discount in cents
+  finalPrice: integer("final_price").notNull(), // Final price in cents
+  
+  // Payment tracking
+  paymentStatus: text("payment_status").notNull().default("pending"), // pending, paid, failed, cancelled
+  paymentMethod: text("payment_method"), // card, etc.
+  
+  // Session and device tracking
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  deviceType: text("device_type"), // mobile, tablet, desktop
+  
+  // Recovery and integrity
+  recovered: boolean("recovered").default(false), // Used if filled via webhook repair
+  dataSource: text("data_source").notNull().default("form_submission"), // form_submission, webhook_recovery, manual
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  
+  // Validation flags
+  medicalReleaseAccepted: boolean("medical_release_accepted").default(true),
+  termsAccepted: boolean("terms_accepted").default(true)
+});
+
 // Consolidated complete registrations table - ONLY for paid, complete signups
 export const completeRegistrations = pgTable("complete_registrations", {
   id: serial("id").primaryKey(),
@@ -218,6 +277,40 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   experience: true
 });
 
+// Event Registration Log schema - Single source of truth for all attempts
+export const insertEventRegistrationLogSchema = createInsertSchema(eventRegistrationLog).pick({
+  formSessionId: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phone: true,
+  eventSlug: true,
+  eventId: true,
+  campDate: true,
+  teamName: true,
+  grade: true,
+  schoolName: true,
+  clubName: true,
+  tShirtSize: true,
+  gender: true,
+  experience: true,
+  registrationType: true,
+  day1: true,
+  day2: true,
+  day3: true,
+  gearSelection: true,
+  basePrice: true,
+  discountCode: true,
+  discountAmount: true,
+  finalPrice: true,
+  paymentStatus: true,
+  ipAddress: true,
+  userAgent: true,
+  deviceType: true,
+  medicalReleaseAccepted: true,
+  termsAccepted: true
+});
+
 // Complete registrations schema - for consolidated paid signups only
 export const insertCompleteRegistrationSchema = createInsertSchema(completeRegistrations).pick({
   eventId: true,
@@ -248,6 +341,10 @@ export const insertCompleteRegistrationSchema = createInsertSchema(completeRegis
   source: true,
   notes: true
 });
+
+// Type definitions
+export type EventRegistrationLog = typeof eventRegistrationLog.$inferSelect;
+export type EventRegistrationLogInsert = z.infer<typeof insertEventRegistrationLogSchema>;
 
 export type CompleteRegistration = typeof completeRegistrations.$inferSelect;
 export type CompleteRegistrationInsert = z.infer<typeof insertCompleteRegistrationSchema>;

@@ -4,6 +4,7 @@ import {
   collections, type Collection, type InsertCollection,
   events, type Event, type InsertEvent,
   eventRegistrations, type EventRegistration, type InsertEventRegistration,
+  eventRegistrationLog, type EventRegistrationLog, type EventRegistrationLogInsert,
   completeRegistrations, type CompleteRegistration, type CompleteRegistrationInsert,
   customApparelInquiries, type CustomApparelInquiry, type InsertCustomApparelInquiry,
   contactSubmissions, type ContactSubmission, type InsertContactSubmission,
