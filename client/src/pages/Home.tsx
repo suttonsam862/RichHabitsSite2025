@@ -1,12 +1,30 @@
-import React from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import { ChevronDown, Users, User } from "lucide-react";
 
 export default function Home() {
+  const scrollToSignup = () => {
+    document.getElementById('signup-portal')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - Inspired by Kourtney Roy aesthetic */}
-      <section className="w-full min-h-[95vh] flex items-center justify-center relative overflow-hidden">
+      {/* TOP-LEVEL TEAM DISCOUNT BANNER */}
+      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 sticky top-0 z-50 shadow-lg">
+        <div className="container mx-auto text-center">
+          <button 
+            onClick={scrollToSignup}
+            className="w-full hover:bg-black/10 transition-colors rounded p-2"
+          >
+            <span className="text-lg font-bold tracking-wide">
+              👉 NEW: HUGE TEAM DISCOUNT NOW AVAILABLE – CLICK TO REGISTER AS A TEAM
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* COMPRESSED MOBILE-FOCUSED HERO */}
+      <section className="w-full h-[70vh] md:h-[80vh] flex items-center justify-center relative overflow-hidden">
         {/* Hero background image */}
         <div className="absolute inset-0 w-full h-full">
           <img 
@@ -18,38 +36,57 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
         </div>
         
-        {/* Content Overlay */}
+        {/* Content Overlay with Split CTA */}
         <div className="container mx-auto px-4 z-10 text-white relative flex items-center">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            className="max-w-3xl"
+            className="max-w-4xl mx-auto text-center"
           >
-            <h1 className="text-6xl md:text-8xl mb-6 leading-none tracking-tighter title-font">
-              Rich Habits
+            <h1 className="text-4xl md:text-6xl mb-4 leading-tight tracking-tighter title-font">
+              Train with NCAA Champions
             </h1>
-            <p className="text-xl md:text-2xl mb-10 tracking-wide text-gray-200 subtitle-font">
-              Premium athletic apparel for high-performing athletes who demand quality in every detail.
+            <p className="text-lg md:text-xl mb-8 tracking-wide text-gray-200 subtitle-font">
+              Camps Nationwide This Summer
             </p>
             
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-8">
-              <Link href="/shop" className="bg-white text-gray-900 py-3 px-10 tracking-wide hover:bg-gray-200 transition-colors inline-block border border-transparent">
-                <span className="subtitle-font">View Collection</span>
-              </Link>
-              <Link href="/custom-apparel" className="border border-white text-white py-3 px-10 tracking-wide hover:bg-white hover:text-gray-900 transition-colors inline-block">
-                <span className="subtitle-font">Custom Team Gear</span>
-              </Link>
+            {/* SPLIT CTA SECTION */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <button
+                onClick={scrollToSignup}
+                className="bg-white text-gray-900 py-4 px-8 text-lg font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
+              >
+                <User size={20} />
+                <span>Register as Individual</span>
+              </button>
+              <button
+                onClick={scrollToSignup}
+                className="bg-orange-500 text-white py-4 px-8 text-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
+              >
+                <Users size={20} />
+                <span>Register as Team</span>
+              </button>
             </div>
           </motion.div>
+        </div>
+        
+        {/* FLOATING SCROLL ARROW */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+          <button
+            onClick={scrollToSignup}
+            className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 animate-bounce"
+          >
+            <ChevronDown size={24} />
+          </button>
         </div>
         
         {/* Subtle sky accent line */}
         <div className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-30"></div>
       </section>
       
-      {/* Featured Events Section */}
-      <section className="py-24 bg-white">
+      {/* MOBILE-SCROLLABLE CAMP SCHEDULE PREVIEW */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -57,197 +94,155 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl mb-16 text-center title-font">
-              Upcoming Events
+            <h2 className="text-3xl mb-8 text-center title-font">
+              Summer 2025 Camps
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {/* Birmingham Slam Camp */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white shadow-md overflow-hidden"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src="/images/birmingham-slam-camp.webp" 
-                    alt="Birmingham Slam Camp - Premium Wrestling Training"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => {
-                      console.log('Image load error:', e.currentTarget.src);
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                    }}
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="mb-4 h-1 w-16 bg-gray-900"></div>
-                  <h3 className="text-2xl mb-4 title-font">
-                    Birmingham Slam Camp
-                  </h3>
-                  <div className="mb-6 space-y-1">
-                    <p className="text-gray-600 subtitle-font">June 19-21, 2025</p>
-                    <p className="text-gray-600 subtitle-font">Clay-Chalkville Middle School</p>
-                    <p className="text-gray-600 subtitle-font">$249</p>
+            {/* Mobile-scrollable horizontal slider */}
+            <div className="overflow-x-auto pb-4">
+              <div className="flex space-x-6 w-max md:grid md:grid-cols-3 md:gap-8 md:w-full">
+                {/* Birmingham Slam Camp */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
+                >
+                  <div className="h-32 overflow-hidden">
+                    <img 
+                      src="/images/birmingham-slam-camp.webp" 
+                      alt="Birmingham Slam Camp"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <p className="text-gray-700 mb-8 subtitle-font">
-                    A high-energy wrestling camp featuring top coaches and intensive training.
-                  </p>
-                  <Link href="/events/1" className="text-gray-900 border-b border-gray-900 pb-1 hover:text-sky-800 hover:border-sky-800 transition-colors inline-block">
-                    <span className="subtitle-font">View Details</span>
-                  </Link>
-                </div>
-              </motion.div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold mb-2">Birmingham Slam Camp</h3>
+                    <p className="text-sm text-gray-600 mb-1">June 19-21, 2025</p>
+                    <p className="text-sm text-gray-600 mb-2">$249</p>
+                    <button 
+                      onClick={scrollToSignup}
+                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
+                    >
+                      Register Now
+                    </button>
+                  </div>
+                </motion.div>
               
-              {/* National Champ Camp */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="bg-white shadow-md overflow-hidden"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src="/images/national-champ-camp.webp" 
-                    alt="National Champ Camp - Elite Wrestling Training in Las Vegas"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => {
-                      console.log('Image load error:', e.currentTarget.src);
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                    }}
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="mb-4 h-1 w-16 bg-gray-900"></div>
-                  <h3 className="text-2xl mb-4 title-font">
-                    National Champ Camp
-                  </h3>
-                  <div className="mb-6 space-y-1">
-                    <p className="text-gray-600 subtitle-font">June 5-7, 2025</p>
-                    <p className="text-gray-600 subtitle-font">Roy Martin Middle School</p>
-                    <p className="text-gray-600 subtitle-font">$349</p>
+                {/* National Champ Camp */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
+                >
+                  <div className="h-32 overflow-hidden">
+                    <img 
+                      src="/images/national-champ-camp.webp" 
+                      alt="National Champ Camp"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <p className="text-gray-700 mb-8 subtitle-font">
-                    Train with NCAA champions and Olympic athletes in this intensive camp.
-                  </p>
-                  <Link href="/events/2" className="text-gray-900 border-b border-gray-900 pb-1 hover:text-sky-800 hover:border-sky-800 transition-colors inline-block">
-                    <span className="subtitle-font">View Details</span>
-                  </Link>
-                </div>
-              </motion.div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold mb-2">National Champ Camp</h3>
+                    <p className="text-sm text-gray-600 mb-1">June 5-7, 2025</p>
+                    <p className="text-sm text-gray-600 mb-2">$349</p>
+                    <button 
+                      onClick={scrollToSignup}
+                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
+                    >
+                      Register Now
+                    </button>
+                  </div>
+                </motion.div>
               
-              {/* Texas Recruiting Clinic */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="bg-white shadow-md overflow-hidden"
-              >
-                <div className="h-40 overflow-hidden">
-                  <img 
-                    src="/images/texas-recruiting-clinic.webp" 
-                    alt="Texas Recruiting Clinic - Elite Wrestling Training in Arlington"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => {
-                      console.log('Image load error:', e.currentTarget.src);
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                    }}
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="mb-4 h-1 w-16 bg-gray-900"></div>
-                  <h3 className="text-2xl mb-4 title-font">
-                    Texas Recruiting Clinic
-                  </h3>
-                  <div className="mb-6 space-y-1">
-                    <p className="text-gray-600 subtitle-font">June 12-13, 2025</p>
-                    <p className="text-gray-600 subtitle-font">Arlington Martin High School</p>
-                    <p className="text-gray-600 subtitle-font">$249</p>
+                {/* Texas Recruiting Clinic */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
+                >
+                  <div className="h-32 overflow-hidden">
+                    <img 
+                      src="/images/texas-recruiting-clinic.webp" 
+                      alt="Texas Recruiting Clinic"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <p className="text-gray-700 mb-8 subtitle-font">
-                    Designed specifically for high school wrestlers seeking collegiate opportunities.
-                  </p>
-                  <Link href="/events/3" className="text-gray-900 border-b border-gray-900 pb-1 hover:text-sky-800 hover:border-sky-800 transition-colors inline-block">
-                    <span className="subtitle-font">View Details</span>
-                  </Link>
-                </div>
-              </motion.div>
-            </div>
-            
-            <div className="mt-16 text-center">
-              <Link href="/events" className="inline-block border border-gray-900 py-3 px-10 text-gray-900 tracking-wide hover:bg-gray-900 hover:text-white transition-colors">
-                <span className="subtitle-font">View All Events</span>
-              </Link>
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold mb-2">Texas Recruiting Clinic</h3>
+                    <p className="text-sm text-gray-600 mb-1">June 12-13, 2025</p>
+                    <p className="text-sm text-gray-600 mb-2">$249</p>
+                    <button 
+                      onClick={scrollToSignup}
+                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
+                    >
+                      Register Now
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
       
-      
-      {/* Fruit Hunters Partnership - Minimalist Approach */}
-      <section className="py-24 bg-gray-100 relative">
-        {/* Fruit Hunters branded background */}
-        <div className="absolute inset-0 opacity-15">
-          <img 
-            src="/images/fruit-hunters-box.webp" 
-            alt="Fruit Hunters premium nutrition partnership"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+      {/* SIGNUP PORTAL ANCHOR SECTION */}
+      <section id="signup-portal" className="py-20 bg-gray-100">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
+            className="max-w-4xl mx-auto text-center"
           >
-            <div className="text-center mb-16">
-              <h2 className="text-4xl mb-8 title-font">
-                Exclusive Partnership
-              </h2>
-              <h3 className="text-2xl mb-10 text-gray-600 subtitle-font italic">
-                Birmingham Slam Camp × Fruit Hunters
-              </h3>
-            </div>
+            <h2 className="text-4xl mb-8 title-font">Choose Your Registration</h2>
+            <p className="text-xl mb-12 text-gray-600">Join thousands of wrestlers training with NCAA champions</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="flex justify-center">
-                <img 
-                  src="/images/fruit-hunters-partnership.webp" 
-                  alt="Fruit Hunters Partnership - Athletes enjoying exotic fruits for premium nutrition"
-                  className="w-full h-60 object-cover shadow-lg rounded-sm"
-                />
-              </div>
-              <div>
-                <p className="text-xl mb-8 leading-relaxed text-gray-700 subtitle-font">
-                  Elevating athlete performance through premium nutrition. Fruit Hunters provides our athletes with exotic, nutrient-rich fruits for optimal recovery and results.
-                </p>
-                <div className="text-left">
-                  <Link href="/events/1" className="inline-block py-3 px-10 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors">
-                    <span className="subtitle-font">Discover Partnership Details</span>
-                  </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+              {/* Individual Registration */}
+              <div className="bg-white p-8 rounded-lg shadow-lg">
+                <div className="flex items-center justify-center mb-6">
+                  <User size={48} className="text-gray-600" />
                 </div>
+                <h3 className="text-2xl font-bold mb-4">Individual Registration</h3>
+                <p className="text-gray-600 mb-6">Perfect for individual athletes looking to train with the best</p>
+                <Link 
+                  href="/events" 
+                  className="w-full bg-gray-900 text-white py-4 px-8 rounded-lg hover:bg-gray-800 transition-colors inline-block text-center"
+                >
+                  Browse Individual Camps
+                </Link>
+              </div>
+              
+              {/* Team Registration */}
+              <div className="bg-orange-500 p-8 rounded-lg shadow-lg text-white relative">
+                <div className="absolute top-4 right-4">
+                  <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">HUGE DISCOUNT!</span>
+                </div>
+                <div className="flex items-center justify-center mb-6">
+                  <Users size={48} className="text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Team Registration</h3>
+                <p className="mb-6">Bring your entire team and save big with our exclusive team discounts</p>
+                <Link 
+                  href="/events" 
+                  className="w-full bg-white text-orange-500 py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-block text-center font-semibold"
+                >
+                  Get Team Discount
+                </Link>
               </div>
             </div>
           </motion.div>
         </div>
-        {/* Subtle sky accent line */}
-        <div className="mt-24 h-px w-full bg-sky-200 opacity-30"></div>
       </section>
       
       {/* Newsletter Section - Minimalist Approach */}
       <section className="py-24 bg-white relative">
-        <div className="absolute top-0 left-0 w-1 h-24 bg-sky-200 opacity-30"></div>
-        <div className="absolute top-0 right-0 w-1 h-24 bg-sky-200 opacity-30"></div>
-        
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0 }}
