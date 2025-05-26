@@ -679,6 +679,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required team registration data" });
       }
       
+      // Minimum 5 athletes required for team registration
+      if (athletes.length < 5) {
+        return res.status(400).json({ 
+          error: "Team registration requires a minimum of 5 athletes. Please add more athletes or register individually." 
+        });
+      }
+      
       if (pricePerAthlete !== 199) {
         return res.status(400).json({ error: "Invalid team price - must be $199 per athlete" });
       }

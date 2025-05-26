@@ -15,7 +15,7 @@ export const discountCodes = {
   }
 };
 
-export function validateDiscountCode(code) {
+export function validateDiscountCode(code, options = {}) {
   const discount = discountCodes[code];
   
   if (!discount) {
@@ -33,6 +33,14 @@ export function validateDiscountCode(code) {
   
   if (discount.maxUses && discount.currentUses >= discount.maxUses) {
     return { valid: false, error: 'This discount code has reached its usage limit' };
+  }
+  
+  // Team registration minimum requirement
+  if (options.isTeamRegistration && options.teamSize < 5) {
+    return { 
+      valid: false, 
+      error: 'Team registrations must have at least 5 athletes to use this discount code' 
+    };
   }
   
   return { 

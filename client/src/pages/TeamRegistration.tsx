@@ -97,10 +97,10 @@ export default function TeamRegistration() {
       athlete.firstName && athlete.lastName && athlete.email
     );
 
-    if (validAthletes.length === 0) {
+    if (validAthletes.length < 5) {
       toast({
-        title: "Athlete Information Required",
-        description: "Please add at least one athlete with complete information.",
+        title: "Minimum Team Size Required",
+        description: "Team registration requires at least 5 athletes. Please add more athletes or register individually.",
         variant: "destructive"
       });
       return false;
@@ -179,10 +179,15 @@ export default function TeamRegistration() {
             <p className="text-gray-500">{event.description}</p>
             
             {/* Savings Banner */}
-            <div className="bg-orange-500 text-white py-3 px-6 rounded-lg inline-block mt-4">
-              <span className="text-lg font-bold">
-                Team Price: ${event.teamPrice} per athlete (Save ${event.regularPrice - event.teamPrice} each!)
-              </span>
+            <div className="bg-orange-500 text-white py-4 px-6 rounded-lg inline-block mt-4">
+              <div className="text-center">
+                <span className="text-lg font-bold block">
+                  Team Price: ${event.teamPrice} per athlete (Save ${event.regularPrice - event.teamPrice} each!)
+                </span>
+                <span className="text-sm block mt-1">
+                  Minimum 5 athletes required • Already heavily discounted!
+                </span>
+              </div>
             </div>
           </div>
 
