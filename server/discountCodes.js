@@ -4,8 +4,8 @@ export const discountCodes = {
     code: 'RH25-TKD8W-GZ1PQ-XJUM3-YBF4A',
     type: 'admin',
     discountType: 'percentage',
-    discountValue: 25, // 25% off
-    description: 'Admin 25% Discount',
+    discountValue: 100, // 100% off - FREE
+    description: 'Admin 100% Discount - FREE',
     validFrom: new Date('2025-01-01'),
     validUntil: new Date('2025-12-31'),
     maxUses: null, // Unlimited uses
