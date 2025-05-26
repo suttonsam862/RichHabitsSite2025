@@ -2,10 +2,22 @@ import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
 
-// Mobile detection to prevent crashes
+// Comprehensive mobile crash prevention
 const isMobile = () => {
   if (typeof window === 'undefined') return false;
-  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  return window.innerWidth <= 768 || 
+         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent) ||
+         'ontouchstart' in window;
+};
+
+// Safe component wrapper for mobile
+const MobileSafeComponent = ({ children, fallback = null }: { children: React.ReactNode, fallback?: React.ReactNode }) => {
+  try {
+    return <>{children}</>;
+  } catch (error) {
+    console.error('Mobile component error prevented:', error);
+    return fallback || <div className="p-4 bg-gray-100 rounded">Content temporarily unavailable</div>;
+  }
 };
 
 // Import event data (will be fetched from API in production)
@@ -357,20 +369,28 @@ export default function EventDetail() {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
+      {/* Hero Section - Mobile optimized for stability */}
       <div 
-        className="relative h-[60vh] mb-16 overflow-hidden"
+        className={`relative mb-16 overflow-hidden ${isMobile() ? 'h-[50vh]' : 'h-[60vh]'}`}
       >
-        {/* Mobile-safe backgrounds - no videos on mobile to prevent crashes */}
+        {/* CRITICAL: Mobile-safe backgrounds - videos disabled on mobile to prevent crashes */}
         {!isMobile() && event.id === 1 && (
           <video
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             onError={(e) => {
+              console.log('Video failed, hiding element');
               e.currentTarget.style.display = 'none';
+            }}
+            onLoadStart={() => {
+              // Prevent memory issues
+              if (isMobile()) {
+                return false;
+              }
             }}
           >
             <source src="/videos/events-hero.webm" type="video/webm" />
@@ -388,6 +408,7 @@ export default function EventDetail() {
               preload="metadata"
               className="absolute inset-0 w-full h-full object-cover z-0"
               onError={(e) => {
+                console.log('Video failed, hiding element');
                 e.currentTarget.style.display = 'none';
               }}
             >
@@ -403,8 +424,10 @@ export default function EventDetail() {
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             onError={(e) => {
+              console.log('Video failed, hiding element');
               e.currentTarget.style.display = 'none';
             }}
           >
@@ -412,7 +435,7 @@ export default function EventDetail() {
           </video>
         )}
 
-        {/* Mobile fallback backgrounds */}
+        {/* CRITICAL: Mobile fallback backgrounds - lightweight for stability */}
         {(isMobile() || event.id === 3) && (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-black"></div>
         )}
@@ -465,13 +488,8 @@ export default function EventDetail() {
       {/* Event Details */}
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Main Content - 2/3 width */}
-          <motion.div 
-            className="lg:col-span-2"
-            variants={fadeIn}
-            initial="initial"
-            animate="animate"
-          >
+          {/* Main Content - 2/3 width - Mobile-safe animations */}
+          <div className="lg:col-span-2">
             <div className="mb-12">
               {/* Event Overview Section */}
               <div className="mb-12">

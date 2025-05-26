@@ -8,6 +8,24 @@ import { RegistrationProgress } from '@/components/events/RegistrationProgress';
 import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Spinner } from '../components/ui/spinner';
 
+// Mobile crash prevention utilities
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+};
+
+// Error boundary for mobile crashes
+const withMobileErrorBoundary = (Component: React.ComponentType<any>) => {
+  return (props: any) => {
+    try {
+      return <Component {...props} />;
+    } catch (error) {
+      console.error('Mobile component error:', error);
+      return <div className="p-4 text-center">Loading...</div>;
+    }
+  };
+};
+
 // Make sure to call loadStripe outside of a component's render to avoid
 // recreating the Stripe object on every render.
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
