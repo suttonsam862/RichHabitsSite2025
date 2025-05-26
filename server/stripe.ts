@@ -33,28 +33,12 @@ if (process.env.NODE_ENV === 'development' && !isTestMode) {
 // Helper function to get the price for an event based on option
 const getEventPrice = async (eventId: number, option: string): Promise<number> => {
   try {
-    const event = await storage.getEvent(eventId);
-    if (!event) {
-      throw new Error(`Event with ID ${eventId} not found`);
-    }
-
-    // Parse the price from the event description
-    const priceStr = event.price || '';
-    const fullPriceMatch = priceStr.match(/\$([0-9]+)\s+full\s+camp/i);
-    const singleDayMatch = priceStr.match(/\$([0-9]+)\s+(?:per|single)\s+day/i);
-    
-    if (option === 'full' && fullPriceMatch && fullPriceMatch[1]) {
-      return parseInt(fullPriceMatch[1], 10) * 100; // Convert to cents for Stripe
-    } else if (option === 'single' && singleDayMatch && singleDayMatch[1]) {
-      return parseInt(singleDayMatch[1], 10) * 100; // Convert to cents for Stripe
-    }
-
-    // Use authentic stored prices - $249 for Birmingham/TRC, $299 for National Champ
+    // Use correct authentic pricing - prioritize the hardcoded accurate prices
     const priceMap: Record<number, number> = {
       1: 24900, // Birmingham Slam Camp - $249
       2: 29900, // National Champ Camp - $299  
       3: 24900, // Texas Recruiting Clinic - $249
-      4: 24900  // Cory Land Tour - $249
+      4: 9900   // Panther Train Tour - $99 per day
     };
     
     if (priceMap[eventId]) {

@@ -33,6 +33,7 @@ export interface IStorage {
   // Event methods
   getEvents(): Promise<Event[]>;
   getEvent(id: number): Promise<Event | undefined>;
+  getEventBySlug(slug: string): Promise<Event | undefined>;
   createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
   getRegistration(id: number): Promise<EventRegistration | undefined>;
   getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined>;
@@ -128,6 +129,23 @@ export class DatabaseStorage implements IStorage {
   async getEvent(id: number): Promise<Event | undefined> {
     const [event] = await db.select().from(events).where(eq(events.id, id));
     return event;
+  }
+
+  async getEventBySlug(slug: string): Promise<Event | undefined> {
+    // For now, map common slugs to event IDs since we don't have slug field in schema
+    const slugToIdMap: Record<string, number> = {
+      'birmingham-slam-camp': 1,
+      'national-champ-camp': 2, 
+      'texas-recruiting-clinic': 3,
+      'panther-train-tour': 4
+    };
+    
+    const eventId = slugToIdMap[slug];
+    if (eventId) {
+      return this.getEvent(eventId);
+    }
+    
+    return undefined;
   }
 
   async createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration> {
