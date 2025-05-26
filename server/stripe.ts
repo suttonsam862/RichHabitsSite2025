@@ -12,7 +12,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 // Using the latest API version and enabling live mode 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
-  apiVersion: '2025-03-31.basil'
+  apiVersion: '2025-04-30.basil'
 });
 
 // Explicitly log whether we're in live mode
@@ -108,7 +108,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       
       // Create metadata with all registration fields
       const metadata: Record<string, string> = {
-        eventId: eventId.toString(),
+        eventId: event.id.toString(),
         eventName: event.title,
         option,
         // Add all customer registration data from the request body
@@ -342,7 +342,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       grade: registrationData.grade || null,
       schoolName: registrationData.schoolName || null,
       clubName: registrationData.clubName || null,
-      experience: registrationData.experience || null,
+      // experience: registrationData.experience || null, // Field not available in current schema
       medicalReleaseAccepted: registrationData.medicalReleaseAccepted || true,
       registrationType: registrationData.registrationType || 'individual',
       paymentStatus: 'paid',
