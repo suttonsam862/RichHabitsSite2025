@@ -15,6 +15,7 @@ import EventRegistration from "./pages/EventRegistration";
 import TeamRegistration from "./pages/TeamRegistration";
 import StripeCheckout from "./pages/StripeCheckout";
 import CustomApparel from "./pages/CustomApparel";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/not-found";
 
 function Router() {
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/team-register/:id" component={TeamRegistration} />
       <Route path="/stripe-checkout" component={StripeCheckout} />
       <Route path="/custom-apparel" component={CustomApparel} />
+      <Route path="/contact" component={Contact} />
       <Route component={NotFound} />
     </Switch>
   );
