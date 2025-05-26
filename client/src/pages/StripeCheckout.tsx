@@ -475,31 +475,38 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         </div>
       )}
       
-      {/* No button needed for 100% discount cases as registration is processed automatically */}
-      {finalAmount > 0 && (
-        <button
-          type="submit"
-          disabled={!stripe || !elements || isProcessing}
-          className="w-full px-4 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isProcessing ? (
-            <span className="flex items-center justify-center">
-              <span className="mr-2">Processing</span>
-              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-            </span>
-          ) : (
-            `Pay $${finalAmount.toFixed(2)}`
-          )}
-        </button>
-      )}
-      {finalAmount <= 0 && (
-        <div className="w-full px-4 py-3 bg-green-600 text-white rounded-md text-center">
-          <span className="flex items-center justify-center">
-            <CheckCircle className="h-5 w-5 mr-2" />
-            Processing Free Registration...
-          </span>
-        </div>
-      )}
+      {/* Payment button - calculate the final amount considering discounts */}
+      {(() => {
+        const finalAmount = discount?.valid ? (amount - discount.amount) : amount;
+        
+        if (finalAmount <= 0) {
+          return (
+            <div className="w-full px-4 py-3 bg-green-600 text-white rounded-md text-center">
+              <span className="flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 mr-2" />
+                Processing Free Registration...
+              </span>
+            </div>
+          );
+        }
+        
+        return (
+          <button
+            type="submit"
+            disabled={!stripe || !elements || isProcessing}
+            className="w-full px-4 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isProcessing ? (
+              <span className="flex items-center justify-center">
+                <span className="mr-2">Processing</span>
+                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+              </span>
+            ) : (
+              `Pay $${finalAmount.toFixed(2)}`
+            )}
+          </button>
+        );
+      })()}
     </form>
   );
 };
