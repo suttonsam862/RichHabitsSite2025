@@ -24,6 +24,7 @@ import {
 import { registerBulletproofRoutes } from "./bulletproof-routes.js";
 import { z } from "zod";
 import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail } from "./emailService.js";
+import { validateDiscountCode, applyDiscount, incrementDiscountCodeUsage } from "./discountCodes.js";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -624,7 +625,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Team Registration API - $149 per athlete with individual payment intents
+  // Discount Code Validation API
+  app.post("/api/validate-discount", async (req, res) => {
+    try {
+      const { discountCode, originalPrice } = req.body;
+      
+      if (!discountCode) {
+        return res.status(400).json({ 
+          success: false, 
+          error: "Discount code is required" 
+        });
+      }
+      
+      const validation = validateDiscountCode(discountCode);
+      
+      if (!validation.valid) {
+        return res.status(400).json({
+          success: false,
+          error: validation.error
+        });
+      }
+      
+      const discountResult = applyDiscount(originalPrice, discountCode);
+      
+      res.json({
+        success: true,
+        valid: true,
+        discount: {
+          code: discountCode,
+          description: discountResult.discountDescription,
+          discountAmount: discountResult.discountAmount,
+          discountPercentage: discountResult.discountPercentage,
+          originalPrice: discountResult.originalPrice,
+          finalPrice: discountResult.finalPrice
+        }
+      });
+      
+    } catch (error) {
+      console.error("Error validating discount code:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to validate discount code" 
+      });
+    }
+  });
+
+  // Team Registration API - $199 per athlete with individual payment intents
   app.post("/api/team-registration", async (req, res) => {
     try {
       const { eventId, coachInfo, athletes, pricePerAthlete, totalAmount } = req.body;
