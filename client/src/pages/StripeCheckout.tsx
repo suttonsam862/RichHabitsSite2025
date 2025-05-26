@@ -252,17 +252,14 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       setIsApplyingDiscount(true);
       setError(null);
       
-      const response = await fetch(`/api/discount/validate`, {
+      const response = await fetch(`/api/validate-discount`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          code: discountCode,
-          eventId: eventId,
-          email: sessionStorage.getItem('registration_email') || '',
-          amount: amount,
-          schoolName: sessionStorage.getItem('registration_schoolName') || ''
+          discountCode: discountCode,
+          originalPrice: amount
         }),
       });
       
@@ -284,10 +281,10 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       
       const data = await response.json();
       
-      if (data.valid) {
+      if (data.success && data.valid && data.discount) {
         setDiscount({
           valid: true,
-          amount: data.discountAmount,
+          amount: data.discount.discountAmount,
           code: discountCode
         });
         
@@ -299,7 +296,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           },
           body: JSON.stringify({
             paymentIntentId: clientSecret?.split('_secret')[0],
-            discountAmount: data.discountAmount
+            discountAmount: data.discount.discountAmount
           }),
         });
         
@@ -320,7 +317,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         sessionStorage.setItem('registration_option', params.get('option') || 'full');
         
         // If this is a 100% discount, automatically complete the registration process
-        if (data.discountAmount === amount) {
+        if (data.discount.finalPrice === 0) {
           toast({
             title: "100% Discount Applied",
             description: "Your registration is free! Processing your registration...",
@@ -396,13 +393,13 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           // Regular partial discount
           toast({
             title: "Discount Applied",
-            description: `Discount of $${data.discountAmount.toFixed(2)} applied!`,
+            description: `Discount of $${data.discount.discountAmount.toFixed(2)} applied! New total: $${data.discount.finalPrice.toFixed(2)}`,
           });
         }
       } else {
         toast({
           title: "Invalid Discount",
-          description: data.message || 'This discount code is not valid',
+          description: data.error || 'This discount code is not valid',
           variant: "destructive"
         });
       }
