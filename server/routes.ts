@@ -779,6 +779,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test Email Endpoint - Send confirmation email test
+  app.post("/api/test-confirmation-email", async (req, res) => {
+    try {
+      const { email, type = 'individual' } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: "Email address is required" });
+      }
+
+      let emailData;
+      
+      if (type === 'team') {
+        // Test team confirmation email
+        emailData = createTeamConfirmationEmail({
+          teamContactName: "Sam Sutton",
+          teamName: "Rich Habits Wrestling Team",
+          numCampers: 6,
+          campName: "Birmingham Slam Camp",
+          campDates: "June 19-21, 2025",
+          campLocation: "Clay-Chalkville Middle School",
+          totalAmountPaid: "1194.00",
+          gearIncluded: true,
+          confirmationCode: "TEST-TEAM-12345",
+          teamContactEmail: email,
+          campersList: []
+        });
+      } else {
+        // Test individual confirmation email
+        emailData = createIndividualConfirmationEmail({
+          camperFirstName: "Alex",
+          camperLastName: "Johnson",
+          parentName: "Sam Sutton",
+          campName: "Birmingham Slam Camp",
+          campDates: "June 19-21, 2025",
+          campLocation: "Clay-Chalkville Middle School",
+          eventId: 1,
+          amountPaid: "249.00",
+          gearIncluded: true,
+          confirmationCode: "TEST-IND-67890",
+          parentEmail: email
+        });
+      }
+
+      await sendConfirmationEmail(emailData);
+      
+      res.json({
+        success: true,
+        message: `Test ${type} confirmation email sent to ${email}`
+      });
+      
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ 
+        error: "Failed to send test email",
+        details: error.message
+      });
+    }
+  });
+
   // Stripe API endpoints for event registrations
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
