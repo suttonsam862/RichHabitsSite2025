@@ -16,6 +16,103 @@ if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
+// Free registration form for 100% discount codes
+const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscountApplied }: {
+  eventId: string;
+  eventName: string;
+  onSuccess: () => void;
+  amount: number;
+  onDiscountApplied: (newAmount: number) => void;
+}) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
+
+  const handleFreeRegistration = async () => {
+    setIsProcessing(true);
+    
+    try {
+      // Get stored registration data from previous form
+      const storedData = sessionStorage.getItem('registrationFormData');
+      const registrationData = storedData ? JSON.parse(storedData) : {};
+      
+      // Process free registration directly
+      const response = await fetch('/api/process-free-registration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventId: parseInt(eventId),
+          option: sessionStorage.getItem('registration_option') || 'full',
+          ...registrationData
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process free registration');
+      }
+
+      const result = await response.json();
+      
+      toast({
+        title: "Registration Complete!",
+        description: "Your free registration has been processed successfully.",
+      });
+      
+      onSuccess();
+    } catch (error) {
+      console.error('Free registration error:', error);
+      toast({
+        title: "Registration Failed",
+        description: error instanceof Error ? error.message : "There was an error processing your free registration.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <DiscountCodeInput 
+        onDiscountApplied={onDiscountApplied}
+        originalAmount={249} // Birmingham Slam Camp price
+        eventId={eventId}
+      />
+      
+      <div className="bg-green-50 border border-green-200 rounded-md p-4">
+        <div className="flex items-center">
+          <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+          <div>
+            <h3 className="text-sm font-medium text-green-800">Free Registration</h3>
+            <p className="text-sm text-green-700 mt-1">
+              Your discount code has been applied! Registration is completely free.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button
+        onClick={handleFreeRegistration}
+        disabled={isProcessing}
+        className="w-full bg-green-600 text-white py-3 px-4 rounded-md font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {isProcessing ? (
+          <span className="flex items-center justify-center">
+            <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+            Processing Free Registration...
+          </span>
+        ) : (
+          <span className="flex items-center justify-center">
+            <CheckCircle className="h-5 w-5 mr-2" />
+            Complete Free Registration
+          </span>
+        )}
+      </button>
+    </div>
+  );
+};
+
 interface CheckoutFormProps {
   clientSecret: string;
   eventId: string;
