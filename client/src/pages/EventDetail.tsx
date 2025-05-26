@@ -2,6 +2,12 @@ import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
 
+// Mobile detection to prevent crashes
+const isMobile = () => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
 // Import event data (will be fetched from API in production)
 const events = [
   {
@@ -355,68 +361,60 @@ export default function EventDetail() {
       <div 
         className="relative h-[60vh] mb-16 overflow-hidden"
       >
-        {/* Video Background for Birmingham Slam Camp */}
-        {event.id === 1 && (
+        {/* Mobile-safe backgrounds - no videos on mobile to prevent crashes */}
+        {!isMobile() && event.id === 1 && (
           <video
             autoPlay
             loop
             muted
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
           >
             <source src="/videos/events-hero.webm" type="video/webm" />
             <source src="/videos/events-hero.mp4" type="video/mp4" />
           </video>
         )}
 
-        {/* Video Background for National Champ Camp with Navy Gradient */}
-        {event.id === 2 && (
+        {!isMobile() && event.id === 2 && (
           <>
             <video
               autoPlay
               loop
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
               className="absolute inset-0 w-full h-full object-cover z-0"
               onError={(e) => {
-                console.log('Video error:', e);
                 e.currentTarget.style.display = 'none';
               }}
             >
               <source src="/videos/national-champ-hero.webm" type="video/webm" />
-              <source src="/videos/events-hero.webm" type="video/webm" />
             </video>
-            {/* Navy gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70 z-10"></div>
           </>
         )}
 
-        {/* Video Background for Panther Train Tour */}
-        {event.id === 4 && (
-          <>
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-            >
-              <source src="/panther-train-tour.webm" type="video/webm" />
-            </video>
-            
-            {/* Video overlay with border effect */}
-            <div className="absolute inset-0">
-              {/* Top border */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
-              {/* Bottom border */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
-              {/* Left border */}
-              <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-transparent via-white to-transparent opacity-30"></div>
-              {/* Right border */}
-              <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-transparent via-white to-transparent opacity-30"></div>
-            </div>
-          </>
+        {!isMobile() && event.id === 4 && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          >
+            <source src="/panther-train-tour.webm" type="video/webm" />
+          </video>
+        )}
+
+        {/* Mobile fallback backgrounds */}
+        {(isMobile() || event.id === 3) && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-black"></div>
         )}
         
         {/* Fallback background for other events */}
