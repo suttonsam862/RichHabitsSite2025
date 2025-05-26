@@ -12,6 +12,19 @@ export const discountCodes = {
     currentUses: 0,
     active: true,
     applicableEvents: 'all' // Can be used for any event
+  },
+  'CAMP25-RH7M-XL9K-4TPQ': {
+    code: 'CAMP25-RH7M-XL9K-4TPQ',
+    type: 'promotional',
+    discountType: 'percentage',
+    discountValue: 25, // 25% off
+    description: '25% Off Wrestling Camp Registration',
+    validFrom: new Date('2025-01-01'),
+    validUntil: new Date('2025-12-31'),
+    maxUses: 100, // Limited to 100 uses
+    currentUses: 0,
+    active: true,
+    applicableEvents: 'all'
   }
 };
 
