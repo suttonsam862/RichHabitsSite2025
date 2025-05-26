@@ -564,16 +564,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required team registration data" });
       }
       
-      if (pricePerAthlete !== 149) {
-        return res.status(400).json({ error: "Invalid team price - must be $149 per athlete" });
+      if (pricePerAthlete !== 199) {
+        return res.status(400).json({ error: "Invalid team price - must be $199 per athlete" });
       }
       
-      // Create individual payment intents for each athlete at $149
+      // Create individual payment intents for each athlete at $199
       const athletePaymentIntents = [];
       
       for (const athlete of athletes) {
         const paymentIntent = await stripe.paymentIntents.create({
-          amount: 14900, // $149.00 in cents
+          amount: 19900, // $199.00 in cents
           currency: "usd",
           metadata: {
             eventId: eventId.toString(),
@@ -609,7 +609,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           athleteId: athlete.id,
           athleteName: `${athlete.firstName} ${athlete.lastName}`,
           paymentIntentId: paymentIntent.id,
-          amount: 149
+          amount: 199
         });
       }
       
@@ -621,7 +621,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             currency: 'usd',
             product_data: {
               name: `Team Registration - ${athletes.length} Athletes`,
-              description: `${athletes.length} athletes at $149 each (Team Discount Applied)`
+              description: `${athletes.length} athletes at $199 each (Team Discount Applied)`
             },
             unit_amount: totalAmount * 100, // Total in cents
           },

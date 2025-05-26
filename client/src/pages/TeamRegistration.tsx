@@ -28,9 +28,9 @@ interface Event {
 
 // Mock event data - this would come from your events API
 const events: Record<string, Event> = {
-  "1": { id: 1, name: "Birmingham Slam Camp", regularPrice: 249, teamPrice: 149, description: "June 19-21, 2025 at Clay-Chalkville Middle School" },
-  "2": { id: 2, name: "National Champ Camp", regularPrice: 349, teamPrice: 149, description: "June 5-7, 2025 at Roy Martin Middle School" },
-  "3": { id: 3, name: "Texas Recruiting Clinic", regularPrice: 249, teamPrice: 149, description: "June 12-13, 2025 at Arlington Martin High School" }
+  "1": { id: 1, name: "Birmingham Slam Camp", regularPrice: 249, teamPrice: 199, description: "June 19-21, 2025 at Clay-Chalkville Middle School" },
+  "2": { id: 2, name: "National Champ Camp", regularPrice: 349, teamPrice: 199, description: "June 5-7, 2025 at Roy Martin Middle School" },
+  "3": { id: 3, name: "Texas Recruiting Clinic", regularPrice: 249, teamPrice: 199, description: "June 12-13, 2025 at Arlington Martin High School" }
 };
 
 export default function TeamRegistration() {
