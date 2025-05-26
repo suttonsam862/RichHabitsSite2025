@@ -23,6 +23,7 @@ import {
 } from "../shared/schema.js";
 import { registerBulletproofRoutes } from "./bulletproof-routes.js";
 import { z } from "zod";
+import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail } from "./emailService.js";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -32,6 +33,74 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 // Configure multer for file uploads (store in memory)
 const multerStorage = multer.memoryStorage();
 const upload = multer({ storage: multerStorage });
+
+// Function to send confirmation emails after successful payment
+async function sendConfirmationEmailForPayment(paymentIntent) {
+  try {
+    // Get registration data for this payment intent
+    const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
+    
+    if (!registrations || registrations.length === 0) {
+      console.log(`No registration found for payment intent ${paymentIntent.id}`);
+      return;
+    }
+
+    const registration = registrations[0];
+    const event = await storage.getEvent(registration.eventId);
+    
+    if (!event) {
+      console.log(`No event found for registration ${registration.id}`);
+      return;
+    }
+
+    // Determine if this is a team or individual registration
+    const isTeamRegistration = registration.registrationType === 'team';
+    
+    if (isTeamRegistration) {
+      // Get all team members for this payment session
+      const teamMembers = await storage.getTeamMembersByPaymentIntent(paymentIntent.id);
+      
+      const teamEmailData = createTeamConfirmationEmail({
+        teamContactName: registration.contactName,
+        teamName: registration.schoolName || 'Team Registration',
+        numCampers: teamMembers.length,
+        campName: event.title,
+        campDates: event.date,
+        campLocation: event.location,
+        totalAmountPaid: (paymentIntent.amount / 100).toFixed(2),
+        gearIncluded: true, // You can adjust this based on your event setup
+        confirmationCode: paymentIntent.id,
+        teamContactEmail: registration.email,
+        campersList: teamMembers
+      });
+      
+      await sendConfirmationEmail(teamEmailData);
+      console.log(`Team confirmation email sent for payment ${paymentIntent.id}`);
+      
+    } else {
+      // Individual registration
+      const emailData = createIndividualConfirmationEmail({
+        camperFirstName: registration.firstName,
+        camperLastName: registration.lastName,
+        parentName: registration.contactName,
+        campName: event.title,
+        campDates: event.date,
+        campLocation: event.location,
+        eventId: registration.eventId,
+        amountPaid: (paymentIntent.amount / 100).toFixed(2),
+        gearIncluded: true, // You can adjust this based on your event setup
+        confirmationCode: paymentIntent.id,
+        parentEmail: registration.email
+      });
+      
+      await sendConfirmationEmail(emailData);
+      console.log(`Individual confirmation email sent for payment ${paymentIntent.id}`);
+    }
+    
+  } catch (error) {
+    console.error('Error sending confirmation email:', error);
+  }
+}
 
 // Extend SessionData to include our custom properties
 declare module 'express-session' {
@@ -745,7 +814,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.warn(`No registration found for payment ${paymentIntent.id}`);
         }
         
-        // Additional actions like sending confirmation emails could go here
+        // Send confirmation email after successful payment
+        await sendConfirmationEmailForPayment(paymentIntent);
         
         console.log(`PaymentIntent ${paymentIntent.id} was successful!`);
       } catch (error) {
