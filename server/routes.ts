@@ -25,6 +25,13 @@ import { registerBulletproofRoutes } from "./bulletproof-routes.js";
 import { z } from "zod";
 import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail } from "./emailService.js";
 import { validateDiscountCode, applyDiscount, incrementDiscountCodeUsage } from "./discountCodes.js";
+import { 
+  logRegistrationAttempt, 
+  updateLogWithPaymentIntent, 
+  markRegistrationPaid, 
+  markRegistrationFailed,
+  validateRegistrationLogged 
+} from './registrationLogger';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -522,7 +529,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/events/:eventId(\\d+)/create-payment-intent", async (req, res) => {
     try {
       const eventId = parseInt(req.params.eventId);
-      const { option = 'full', priceId } = req.body;
+      const { option = 'full', priceId, formSessionId, registrationData } = req.body;
+      
+      // STEP 1: Log registration attempt BEFORE any Stripe interaction
+      if (!registrationData || !formSessionId) {
+        return res.status(400).json({ 
+          error: 'Registration data and form session ID required for data integrity' 
+        });
+      }
+      
+      // Validate that registration was logged (security check)
+      const isLogged = await validateRegistrationLogged(formSessionId);
+      if (!isLogged) {
+        return res.status(400).json({ 
+          error: 'Registration must be logged before payment processing' 
+        });
+      }
       
       console.log(`Creating payment intent for event ${eventId}, option: ${option}`);
       

@@ -46,6 +46,13 @@ export interface IStorage {
   createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined>;
   updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
   
+  // Event Registration Log methods - Single source of truth for ALL registration attempts
+  createRegistrationLog(data: EventRegistrationLogInsert): Promise<EventRegistrationLog>;
+  updateRegistrationLog(id: string, data: Partial<EventRegistrationLogInsert>): Promise<EventRegistrationLog>;
+  getRegistrationLogByFormSession(formSessionId: string): Promise<EventRegistrationLog | undefined>;
+  getRegistrationLogByPaymentIntent(paymentIntentId: string): Promise<EventRegistrationLog | undefined>;
+  updateRegistrationLogPaymentStatus(id: string, status: string, paymentIntentId?: string): Promise<EventRegistrationLog>;
+  
   // Complete registrations - consolidated paid signups only
   createCompleteRegistration(registration: CompleteRegistrationInsert): Promise<CompleteRegistration>;
   getCompleteRegistrations(): Promise<CompleteRegistration[]>;
@@ -834,6 +841,108 @@ export class DatabaseStorage implements IStorage {
       .where(eq(eventCoaches.eventId, eventId) && eq(eventCoaches.coachId, coachId))
       .returning({ id: eventCoaches.id });
     return result.length > 0;
+  }
+
+  // Event Registration Log methods - Single source of truth for ALL registration attempts
+  async createRegistrationLog(data: EventRegistrationLogInsert): Promise<EventRegistrationLog> {
+    try {
+      console.log('Creating registration log entry:', data);
+      
+      const [logEntry] = await db
+        .insert(eventRegistrationLog)
+        .values({
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      console.log(`Registration log created: ${logEntry.id} for ${data.firstName} ${data.lastName}`);
+      return logEntry;
+    } catch (error) {
+      console.error('Error creating registration log:', error);
+      throw error;
+    }
+  }
+
+  async updateRegistrationLog(id: string, data: Partial<EventRegistrationLogInsert>): Promise<EventRegistrationLog> {
+    try {
+      const [updatedEntry] = await db
+        .update(eventRegistrationLog)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(eventRegistrationLog.id, id))
+        .returning();
+      
+      if (!updatedEntry) {
+        throw new Error(`Registration log entry not found: ${id}`);
+      }
+      
+      console.log(`Registration log updated: ${id} - status: ${data.paymentStatus || 'unchanged'}`);
+      return updatedEntry;
+    } catch (error) {
+      console.error('Error updating registration log:', error);
+      throw error;
+    }
+  }
+
+  async getRegistrationLogByFormSession(formSessionId: string): Promise<EventRegistrationLog | undefined> {
+    try {
+      const [logEntry] = await db
+        .select()
+        .from(eventRegistrationLog)
+        .where(eq(eventRegistrationLog.formSessionId, formSessionId));
+      
+      return logEntry;
+    } catch (error) {
+      console.error('Error fetching registration log by form session:', error);
+      return undefined;
+    }
+  }
+
+  async getRegistrationLogByPaymentIntent(paymentIntentId: string): Promise<EventRegistrationLog | undefined> {
+    try {
+      const [logEntry] = await db
+        .select()
+        .from(eventRegistrationLog)
+        .where(eq(eventRegistrationLog.stripePaymentIntentId, paymentIntentId));
+      
+      return logEntry;
+    } catch (error) {
+      console.error('Error fetching registration log by payment intent:', error);
+      return undefined;
+    }
+  }
+
+  async updateRegistrationLogPaymentStatus(id: string, status: string, paymentIntentId?: string): Promise<EventRegistrationLog> {
+    try {
+      const updateData: any = {
+        paymentStatus: status,
+        updatedAt: new Date()
+      };
+      
+      if (paymentIntentId) {
+        updateData.stripePaymentIntentId = paymentIntentId;
+      }
+      
+      const [updatedEntry] = await db
+        .update(eventRegistrationLog)
+        .set(updateData)
+        .where(eq(eventRegistrationLog.id, id))
+        .returning();
+      
+      if (!updatedEntry) {
+        throw new Error(`Registration log entry not found: ${id}`);
+      }
+      
+      console.log(`Payment status updated for registration log ${id}: ${status}`);
+      return updatedEntry;
+    } catch (error) {
+      console.error('Error updating registration log payment status:', error);
+      throw error;
+    }
   }
 }
 
