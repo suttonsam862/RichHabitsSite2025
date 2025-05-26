@@ -90,7 +90,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
 
     // Log Stripe mode for debugging
     const isLiveMode = !process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
-    console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${eventId} (${event.title})`);
+    console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${event.id} (${event.title})`);
 
     // Get calculated price regardless of Stripe price ID (to handle missing products in Stripe)    
     amount = await getEventPrice(event.id, option);
@@ -100,7 +100,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       });
     }
     
-    console.log(`Using calculated price of $${amount/100} for event ${eventId} (${event.title})`);
+    console.log(`Using calculated price of $${amount/100} for event ${event.id} (${event.title})`);
     
     try {
       // Include all customer registration details in the metadata
