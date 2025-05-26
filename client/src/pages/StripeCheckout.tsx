@@ -288,28 +288,8 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode
         });
         
-        // Update the payment intent with the discounted amount
-        const updatePaymentResponse = await fetch(`/api/events/${eventId}/update-payment-intent`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            paymentIntentId: clientSecret?.split('_secret')[0],
-            discountAmount: data.discount.discountAmount
-          }),
-        });
-        
-        if (!updatePaymentResponse.ok) {
-          throw new Error('Failed to update payment with discount');
-        }
-        
-        const updateData = await updatePaymentResponse.json();
-        
-        // Call the callback to update the parent component's amount state
-        if (onDiscountApplied && updateData.amount !== undefined) {
-          onDiscountApplied(updateData.amount);
-        }
+        // Update the amount directly without updating payment intent
+        onDiscountApplied(data.discount.finalPrice);
         
         // Make sure all registration data is also in sessionStorage
         // We need this to ensure full information is saved in discount code case
