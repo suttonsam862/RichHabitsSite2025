@@ -139,11 +139,9 @@ export default function Contact() {
                   <i className="icon ion-md-locate text-2xl"></i>
                 </div>
                 <h3 className="text-xl font-medium mb-3">Location</h3>
-                <p className="text-gray-700 mb-2">Headquarters:</p>
+                <p className="text-gray-700 mb-2">Mailing Address:</p>
                 <address className="text-gray-700 not-italic">
-                  123 Performance Way<br />
-                  Suite 200<br />
-                  Boston, MA 02110
+                  3101 Whitehall Rd
                 </address>
               </motion.div>
             </div>
