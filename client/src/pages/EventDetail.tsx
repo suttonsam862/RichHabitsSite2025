@@ -704,6 +704,65 @@ export default function EventDetail() {
                 );
               })()}
 
+              {/* Team Registration Section */}
+              {(() => {
+                const getTeamPricing = (eventId: number) => {
+                  switch(eventId) {
+                    case 1: // Birmingham Slam Camp
+                      return { individualPrice: 249, teamPrice: 199, savings: 50 };
+                    case 2: // National Champ Camp
+                      return { individualPrice: 299, teamPrice: 199, savings: 100 };
+                    case 3: // Texas Recruiting Clinic
+                      return { individualPrice: 179, teamPrice: 199, savings: -20 }; // Higher for team due to clinic nature
+                    case 4: // Panther Train Tour
+                      return { individualPrice: 139, teamPrice: 199, savings: -60 }; // Higher for team due to tour logistics
+                    default:
+                      return { individualPrice: 249, teamPrice: 199, savings: 50 };
+                  }
+                };
+
+                const teamPricing = getTeamPricing(event.id);
+                
+                // Only show team discount for events 1 and 2 where there are actual savings
+                if (teamPricing.savings <= 0) return null;
+
+                return (
+                  <div className="mb-12">
+                    {/* Team Registration Banner */}
+                    <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6 rounded-lg shadow-lg mb-6">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold mb-2 title-font">Team Registration Available</h3>
+                        <p className="text-green-100 mb-4 subtitle-font">Bring 5+ athletes and save big with our team pricing</p>
+                        
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                          {/* Savings Display */}
+                          <div className="text-center">
+                            <div className="text-3xl font-bold">${teamPricing.teamPrice}</div>
+                            <div className="text-sm text-green-100">per athlete</div>
+                            <div className="text-xs text-green-200 mt-1">
+                              Save ${teamPricing.savings} each • Min 5 athletes
+                            </div>
+                          </div>
+                          
+                          {/* Team Registration Button */}
+                          <div>
+                            <Link href={`/team-registration?event=${event.id}`}>
+                              <span className="inline-block bg-white text-green-700 px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-green-50 transition-colors duration-300 shadow-lg">
+                                Register Team
+                              </span>
+                            </Link>
+                          </div>
+                        </div>
+                        
+                        <div className="text-center mt-4 text-sm text-green-100">
+                          Perfect for wrestling clubs, school teams, and training groups
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Schedule Preview */}
               <div className="mb-12">
                 <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
