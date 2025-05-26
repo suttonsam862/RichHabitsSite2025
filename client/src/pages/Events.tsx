@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import EventFilters from "@/components/events/EventFilters";
 // Using a simpler approach for now to ensure functionality
 
-// Event data
+// Event data - using working images and proper error handling
 const events = [
   {
     id: 1,
@@ -13,9 +13,11 @@ const events = [
     location: "Clay-Chalkville Middle School, Birmingham, AL",
     price: "$249",
     shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
-    image: "/events/event1.jpg",
+    image: null, // Will use gradient background instead
     accent: "orange",
-    signature: "Exclusive partnership with Fruit Hunters"
+    signature: "Exclusive partnership with Fruit Hunters",
+    gradientFrom: "from-red-600",
+    gradientTo: "to-orange-500"
   },
   {
     id: 2,
@@ -24,9 +26,11 @@ const events = [
     location: "Roy Martin Middle School, Las Vegas, NV",
     price: "$349",
     shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
-    image: "/events/event2.jpg",
+    image: "/national-champ-hero.png", // Using the working image we already have
     accent: "blue",
-    signature: "Focus on championship-level techniques"
+    signature: "Focus on championship-level techniques",
+    gradientFrom: "from-blue-900",
+    gradientTo: "to-blue-700"
   },
   {
     id: 3,
@@ -35,9 +39,11 @@ const events = [
     location: "Arlington Martin High School, Arlington, TX",
     price: "$249",
     shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
-    image: "/events/event3.jpg",
+    image: null, // Will use gradient background instead
     accent: "red",
-    signature: "College coach evaluations included"
+    signature: "College coach evaluations included",
+    gradientFrom: "from-red-700",
+    gradientTo: "to-red-500"
   },
   {
     id: 4,
@@ -46,9 +52,11 @@ const events = [
     location: "Various locations",
     price: "$99 per day",
     shortDescription: "A multi-location training tour with elite coaches.",
-    image: "/events/event4.jpg",
+    image: null, // Will use gradient background instead
     accent: "black",
-    signature: "Travel across multiple training facilities"
+    signature: "Travel across multiple training facilities",
+    gradientFrom: "from-gray-900",
+    gradientTo: "to-gray-700"
   }
 ];
 
@@ -82,6 +90,7 @@ export default function Events() {
   // Simplified state to improve performance
   const [filteredEvents, setFilteredEvents] = useState(events);
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
   
   // Optimized filter handler
   const handleFilterChange = (filters: any) => {
@@ -105,10 +114,10 @@ export default function Events() {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-20">
-      {/* Hero Section */}
+    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-24 pb-20">
+      {/* Hero Section - Mobile Optimized */}
       <motion.div 
-        className="relative h-[70vh] mb-20 overflow-hidden"
+        className="relative h-[50vh] sm:h-[60vh] lg:h-[70vh] mb-12 sm:mb-20 overflow-hidden"
         variants={fadeIn}
         initial="initial"
         animate="animate"
@@ -125,15 +134,15 @@ export default function Events() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
         
-        <div className="container mx-auto px-6 h-full flex items-center relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 h-full flex items-center relative z-10">
           <div className="max-w-3xl">
             <h1 
-              className="text-5xl md:text-7xl text-white mb-8 title-font"
+              className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 sm:mb-8 title-font"
             >
               Events
             </h1>
             <p 
-              className="text-xl text-gray-200 mb-10 subtitle-font"
+              className="text-lg sm:text-xl text-gray-200 mb-8 sm:mb-10 subtitle-font"
             >
               Premium wrestling camps and clinics designed to elevate your skills, technique, and competitive edge.
             </p>
@@ -145,7 +154,7 @@ export default function Events() {
       </motion.div>
       
       {/* Event Filters */}
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <EventFilters 
           onFilterChange={handleFilterChange}
           totalEvents={events.length}
@@ -153,13 +162,13 @@ export default function Events() {
         />
       </div>
       
-      {/* Events Grid */}
-      <div className="container mx-auto px-6">
+      {/* Events Grid - Mobile Optimized */}
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           variants={stagger}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
         >
           {filteredEvents.map((event) => (
             <motion.div 
@@ -170,17 +179,58 @@ export default function Events() {
               onMouseLeave={() => setHoveredEvent(null)}
             >
               <Link href={`/events/${event.id}`}>
-                {/* Image Section */}
-                <div className="relative overflow-hidden h-60">
+                {/* Image Section with Crash-Proof Error Handling - Mobile Optimized */}
+                <div className="relative overflow-hidden h-48 sm:h-56 lg:h-60">
                   <motion.div
                     variants={imageReveal}
                     className="w-full h-full"
                   >
-                    <div 
-                      className="w-full h-full bg-red-600 transform transition-transform duration-700 group-hover:scale-105 flex items-center justify-center"
-                    >
-                      <h3 className="text-xl font-medium text-white">{event.title}</h3>
-                    </div>
+                    {event.image ? (
+                      <div className="w-full h-full relative">
+                        <img
+                          src={event.image}
+                          alt={event.title}
+                          className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                          loading="lazy"
+                          onError={(e) => {
+                            // Prevent infinite reloading loops and browser crashes
+                            const target = e.currentTarget;
+                            if (!target.dataset.errorHandled) {
+                              target.dataset.errorHandled = "true";
+                              target.style.display = "none";
+                              const fallback = target.nextElementSibling as HTMLElement;
+                              if (fallback) {
+                                fallback.style.display = "flex";
+                              }
+                              // Track failed images to prevent retry attempts
+                              setImageErrors(prev => new Set(prev).add(event.id));
+                            }
+                          }}
+                          onLoad={(e) => {
+                            // Ensure fallback is hidden when image loads successfully
+                            const target = e.currentTarget;
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) {
+                              fallback.style.display = "none";
+                            }
+                          }}
+                        />
+                        {/* Gradient Fallback */}
+                        <div 
+                          className={`w-full h-full bg-gradient-to-br ${event.gradientFrom} ${event.gradientTo} transform transition-transform duration-700 group-hover:scale-105 flex items-center justify-center absolute inset-0`}
+                          style={{ display: "none" }}
+                        >
+                          <h3 className="text-xl font-medium text-white text-center px-4">{event.title}</h3>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Pure Gradient Background for Events Without Images */
+                      <div 
+                        className={`w-full h-full bg-gradient-to-br ${event.gradientFrom} ${event.gradientTo} transform transition-transform duration-700 group-hover:scale-105 flex items-center justify-center`}
+                      >
+                        <h3 className="text-xl font-medium text-white text-center px-4">{event.title}</h3>
+                      </div>
+                    )}
                   </motion.div>
                   
                   {/* Hover effect */}
