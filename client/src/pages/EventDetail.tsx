@@ -1201,7 +1201,7 @@ export default function EventDetail() {
                 ))}
               </ul>
             </div>
-          </motion.div>
+          </div>
           
           {/* Sidebar - 1/3 width */}
           <motion.div 
