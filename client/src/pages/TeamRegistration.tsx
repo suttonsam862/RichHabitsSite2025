@@ -43,8 +43,7 @@ export default function TeamRegistration() {
     lastName: "",
     email: "",
     phone: "",
-    teamName: "",
-    schoolName: ""
+    teamName: ""
   });
 
   const [athletes, setAthletes] = useState<Athlete[]>([
@@ -108,8 +107,16 @@ export default function TeamRegistration() {
   };
 
   const processTeamRegistration = async () => {
-    if (!validateForm()) return;
+    console.log('🔄 Team registration button clicked');
+    console.log('Coach info:', coachInfo);
+    console.log('Athletes:', athletes);
+    
+    if (!validateForm()) {
+      console.log('❌ Form validation failed');
+      return;
+    }
 
+    console.log('✅ Form validation passed, processing...');
     setIsProcessing(true);
 
     try {
@@ -266,15 +273,7 @@ export default function TeamRegistration() {
                     placeholder="Team or club name"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="schoolName">School Name</Label>
-                  <Input
-                    id="schoolName"
-                    value={coachInfo.schoolName}
-                    onChange={(e) => updateCoachInfo("schoolName", e.target.value)}
-                    placeholder="School name"
-                  />
-                </div>
+
               </div>
             </CardContent>
           </Card>
