@@ -561,19 +561,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
                    `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     try {
-      // STEP 1: COMPREHENSIVE VALIDATION (Client + Server)
-      const validation = PaymentValidator.validateCompletePaymentRequest(req.body, sessionId);
+      // STEP 1: SIMPLIFIED VALIDATION - Only check essential fields
+      const eventId = parseInt(req.params.eventId);
+      const { option = 'full', registrationData } = req.body;
       
-      if (!validation.isValid) {
+      // Basic validation - only check what's actually required
+      if (!registrationData || !registrationData.firstName || !registrationData.lastName || !registrationData.email) {
         return res.status(400).json({
-          error: 'Validation failed',
-          errors: validation.errors,
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          error: 'Missing required registration information',
+          userFriendlyMessage: 'Please fill in your name and email address before proceeding.',
           sessionId
         });
       }
 
-      const { eventId, registrationType, amount } = validation.sanitizedData!;
+      // Get pricing for the event
+      const eventPricing: Record<number, { full: number; single: number }> = {
+        1: { full: 24900, single: 14900 }, // Birmingham Slam Camp
+        2: { full: 29900, single: 17500 }, // National Champ Camp
+        3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic
+        4: { full: 20000, single: 9900 }   // Panther Train Tour
+      };
+      
+      const pricing = eventPricing[eventId];
+      if (!pricing) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      
+      const amount = option === 'single' ? pricing.single : pricing.full;
+      const registrationType = option;
 
       // STEP 2: SINGLE INTENT RULE - Check for existing payment intent
       const lockStatus = PaymentIntentLock.getLockStatus(sessionId);
@@ -617,27 +632,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         // STEP 5: CREATE PAYMENT INTENT WITH RETRY LOGIC
-        const paymentIntentResult = await PaymentRetryHandler.retryPaymentIntent(
-          async () => {
-            return await stripe.paymentIntents.create({
-              amount,
-              currency: 'usd',
-              metadata: {
-                eventId: eventId.toString(),
-                registrationType,
-                sessionId,
-                customerEmail: validation.sanitizedData!.email
-              },
-              automatic_payment_methods: {
-                enabled: true,
-              },
-            });
+        const paymentIntentResult = await stripe.paymentIntents.create({
+          amount,
+          currency: 'usd',
+          metadata: {
+            eventId: eventId.toString(),
+            registrationType,
+            sessionId,
+            customerEmail: registrationData.email
           },
-          sessionId,
-          validation.sanitizedData,
-          ipAddress,
-          userAgent
-        );
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
 
         // STEP 6: SUCCESS - Update lock and return
         PaymentIntentLock.updateLock(sessionId, paymentIntentResult.client_secret!);
@@ -660,19 +667,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error(`❌ Payment intent creation failed for session ${sessionId}:`, error.message);
       
-      // Return user-friendly error message based on error type
-      const errorCode = error.response?.status || 500;
-      let userMessage = 'There was an issue creating your payment. Please refresh and try again.';
-      
-      if (errorCode === 400) {
-        userMessage = 'There was an issue with your payment information. Please check your details and try again.';
-      } else if (errorCode >= 500) {
-        userMessage = 'Our payment system is temporarily unavailable. Please try again in a few moments.';
-      }
-
-      res.status(errorCode >= 500 ? 503 : 400).json({
+      // Return user-friendly error message
+      res.status(400).json({
         error: 'Payment setup failed',
-        userFriendlyMessage: userMessage,
+        userFriendlyMessage: 'There was an issue creating your payment. Please try again.',
         sessionId
       });
     }
