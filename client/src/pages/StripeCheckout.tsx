@@ -547,7 +547,11 @@ export default function StripeCheckout() {
           },
           body: JSON.stringify({
             option: option,
-            registrationData: registrationData,
+            registrationData: {
+              ...registrationData,
+              eventId: parseInt(eventId),
+              registrationType: option
+            },
             formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
           }),
         });
