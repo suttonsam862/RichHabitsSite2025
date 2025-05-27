@@ -525,6 +525,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { createPaymentIntent, handleSuccessfulPayment } = await import('./stripe.js');
   const { updatePaymentIntent } = await import('./discounts.js');
   const { PaymentErrorLogger } = await import('./error-logger.js');
+  
+  // Import native analytics system (independent add-on)
+  const { 
+    initializeAnalytics, 
+    logVisit, 
+    logRegistrationStart, 
+    logRegistrationComplete, 
+    logPaymentComplete,
+    getAnalyticsDashboard,
+    triggerAggregation 
+  } = await import('./analytics/analytics-routes.js');
+  
+  // Initialize analytics system if Shopify credentials are available
+  initializeAnalytics(
+    process.env.SHOPIFY_DOMAIN, 
+    process.env.SHOPIFY_ACCESS_TOKEN
+  );
 
   // Bulletproof payment intent endpoint with comprehensive error logging
   app.post("/api/events/:eventId(\\d+)/create-payment-intent", async (req, res) => {
