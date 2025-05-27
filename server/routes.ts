@@ -565,11 +565,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       const { option = 'full', registrationData } = req.body;
       
-      // Basic validation - only check what's actually required
-      if (!registrationData || !registrationData.firstName || !registrationData.lastName || !registrationData.email) {
+      // Validate all required registration fields
+      const requiredFields = {
+        firstName: 'First name',
+        lastName: 'Last name', 
+        email: 'Email address',
+        contactName: 'Parent/Guardian name',
+        phone: 'Contact phone number',
+        tShirtSize: 'T-shirt size'
+      };
+      
+      const missingFields = [];
+      for (const [field, label] of Object.entries(requiredFields)) {
+        if (!registrationData || !registrationData[field] || registrationData[field].trim() === '') {
+          missingFields.push(label);
+        }
+      }
+      
+      // Check medical waiver acceptance
+      if (!registrationData || !registrationData.medicalReleaseAccepted) {
+        missingFields.push('Medical waiver agreement');
+      }
+      
+      if (missingFields.length > 0) {
         return res.status(400).json({
-          error: 'Missing required registration information',
-          userFriendlyMessage: 'Please fill in your name and email address before proceeding.',
+          error: 'Missing required fields',
+          missingFields,
+          userFriendlyMessage: `Please complete these required fields: ${missingFields.join(', ')}`,
           sessionId
         });
       }
