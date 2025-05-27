@@ -155,6 +155,7 @@ export default function TeamRegistration() {
       }
 
       const data = await response.json();
+      console.log("✅ Team registration response:", data);
 
       if (data.clientSecret) {
         toast({
@@ -166,14 +167,16 @@ export default function TeamRegistration() {
         sessionStorage.setItem('team_registration_data', JSON.stringify({
           eventId: parseInt(eventId),
           coachInfo,
-          athletes: validAthletes,
+          athletes: mappedAthletes,
           totalAmount: data.amount,
           athleteCount: validAthletes.length
         }));
         
+        console.log("🚀 Redirecting to payment page...");
         // Redirect to same StripeCheckout page that works for individual registrations
         window.location.href = `/stripe-checkout?eventId=${eventId}&eventName=${encodeURIComponent(event.name)}&option=team&clientSecret=${data.clientSecret}&amount=${data.amount}`;
       } else {
+        console.error("❌ No clientSecret in response:", data);
         throw new Error("No payment session created");
       }
     } catch (error: any) {
