@@ -1264,6 +1264,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== NATIVE ANALYTICS SYSTEM ENDPOINTS =====
+  // These endpoints are completely independent and don't affect existing functionality
+  
+  // Main visitor tracking endpoint
+  app.post('/api/analytics/log-visit', logVisit);
+  
+  // Registration tracking endpoints
+  app.post('/api/analytics/registration-start', logRegistrationStart);
+  app.post('/api/analytics/registration-complete', logRegistrationComplete);
+  app.post('/api/analytics/payment-complete', logPaymentComplete);
+  
+  // Admin analytics endpoints
+  app.get('/api/analytics/dashboard', getAnalyticsDashboard);
+  app.post('/api/analytics/trigger-aggregation', triggerAggregation);
+
   // Create Express HTTP server
   const httpServer = createServer(app);
   
