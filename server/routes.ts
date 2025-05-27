@@ -625,9 +625,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         amount: amount / 100 // Convert back to dollars for display
       });
       
-    } catch (error) {
-      console.error('Error creating payment intent:', error);
-      res.status(500).json({ error: 'Failed to create payment intent' });
+    } catch (error: any) {
+      // Comprehensive error logging for payment intent failures
+      await PaymentErrorLogger.logPaymentIntentFailure(
+        error.message || 'Unknown payment intent creation error',
+        {
+          sessionId,
+          eventId: parseInt(req.params.eventId),
+          userAgent,
+          deviceType,
+          registrationData: req.body.registrationData,
+          requestPayload: req.body,
+          errorStack: error.stack
+        }
+      );
+      
+      console.error(`[${deviceType.toUpperCase()}] Payment intent creation failed:`, {
+        sessionId,
+        eventId: req.params.eventId,
+        error: error.message,
+        stack: error.stack
+      });
+      
+      res.status(500).json({ 
+        error: 'Failed to create payment intent',
+        sessionId,
+        userFriendlyMessage: 'We encountered an issue setting up your payment. Please try again or contact support if the problem persists.'
+      });
     }
   });
   

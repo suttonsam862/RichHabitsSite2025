@@ -535,7 +535,17 @@ export default function StripeCheckout() {
         });
 
         if (!response.ok) {
-          throw new Error(`Error creating payment intent: ${response.status} ${response.statusText}`);
+          const errorData = await response.json();
+          const errorMessage = errorData.userFriendlyMessage || errorData.error || `Payment setup failed (${response.status})`;
+          
+          // Show user-friendly error message
+          toast({
+            title: 'Payment Setup Error',
+            description: errorMessage,
+            variant: 'destructive',
+          });
+          
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();

@@ -1,6 +1,7 @@
 // Comprehensive error logging system for payment intent failures
 import { db } from './db';
 import { errorLogs } from '@shared/schema';
+import { eq, desc } from 'drizzle-orm';
 
 export interface PaymentErrorContext {
   sessionId: string;
@@ -51,7 +52,7 @@ export class PaymentErrorLogger {
     context: PaymentErrorContext
   ) {
     try {
-      await storage.db.insert(storage.schema.errorLogs).values({
+      await db.insert(errorLogs).values({
         errorType: 'mobile_crash',
         sessionId: context.sessionId,
         eventId: context.eventId,
@@ -73,7 +74,7 @@ export class PaymentErrorLogger {
     context: PaymentErrorContext
   ) {
     try {
-      await storage.db.insert(storage.schema.errorLogs).values({
+      await db.insert(errorLogs).values({
         errorType: 'validation_error',
         sessionId: context.sessionId,
         eventId: context.eventId,
@@ -103,11 +104,11 @@ export class PaymentErrorLogger {
   // Get recent payment errors for debugging
   static async getRecentPaymentErrors(limit: number = 50) {
     try {
-      return await storage.db
+      return await db
         .select()
-        .from(storage.schema.errorLogs)
-        .where(storage.schema.errorLogs.errorType.eq('payment_intent_failure'))
-        .orderBy(storage.schema.errorLogs.timestamp.desc())
+        .from(errorLogs)
+        .where(eq(errorLogs.errorType, 'payment_intent_failure'))
+        .orderBy(desc(errorLogs.timestamp))
         .limit(limit);
     } catch (error) {
       console.error('Failed to fetch recent payment errors:', error);
