@@ -684,8 +684,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Add the event-specific payment intent endpoint using slug-based routing
-  app.post("/api/events/:eventSlug/create-payment-intent", createPaymentIntent);
+  // Add the event-specific payment intent endpoint using ID-based routing
+  app.post("/api/events/:eventId/create-payment-intent", createPaymentIntent);
 
   // Handle free registrations when 100% discount codes are applied
   app.post('/api/process-free-registration', async (req: Request, res: Response) => {
