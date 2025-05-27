@@ -13,9 +13,8 @@ interface Athlete {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
-  age: string;
-  weight: string;
+  contactFullName: string;
+  contactEmail: string;
 }
 
 interface Event {
@@ -49,8 +48,8 @@ export default function TeamRegistration() {
   });
 
   const [athletes, setAthletes] = useState<Athlete[]>([
-    { id: "1", firstName: "", lastName: "", email: "", age: "", weight: "" },
-    { id: "2", firstName: "", lastName: "", email: "", age: "", weight: "" }
+    { id: "1", firstName: "", lastName: "", contactFullName: "", contactEmail: "" },
+    { id: "2", firstName: "", lastName: "", contactFullName: "", contactEmail: "" }
   ]);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -61,9 +60,8 @@ export default function TeamRegistration() {
       id: newId, 
       firstName: "", 
       lastName: "", 
-      email: "", 
-      age: "", 
-      weight: "" 
+      contactFullName: "", 
+      contactEmail: "" 
     }]);
   };
 
@@ -94,7 +92,7 @@ export default function TeamRegistration() {
     }
 
     const validAthletes = athletes.filter(athlete => 
-      athlete.firstName && athlete.lastName && athlete.email
+      athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
     );
 
     if (validAthletes.length < 5) {
@@ -117,7 +115,7 @@ export default function TeamRegistration() {
     try {
       // Filter out incomplete athlete entries
       const validAthletes = athletes.filter(athlete => 
-        athlete.firstName && athlete.lastName && athlete.email
+        athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
       );
 
       const teamRegistrationData = {
@@ -176,7 +174,7 @@ export default function TeamRegistration() {
   };
 
   const validAthleteCount = athletes.filter(athlete => 
-    athlete.firstName && athlete.lastName && athlete.email
+    athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
   ).length;
 
   const totalCost = validAthleteCount * event.teamPrice;
@@ -330,28 +328,20 @@ export default function TeamRegistration() {
                         />
                       </div>
                       <div>
-                        <Label>Email *</Label>
+                        <Label>Contact Full Name *</Label>
+                        <Input
+                          value={athlete.contactFullName}
+                          onChange={(e) => updateAthlete(athlete.id, "contactFullName", e.target.value)}
+                          placeholder="Parent/Guardian Full Name"
+                        />
+                      </div>
+                      <div>
+                        <Label>Contact Email *</Label>
                         <Input
                           type="email"
-                          value={athlete.email}
-                          onChange={(e) => updateAthlete(athlete.id, "email", e.target.value)}
-                          placeholder="athlete@email.com"
-                        />
-                      </div>
-                      <div>
-                        <Label>Age</Label>
-                        <Input
-                          value={athlete.age}
-                          onChange={(e) => updateAthlete(athlete.id, "age", e.target.value)}
-                          placeholder="Age"
-                        />
-                      </div>
-                      <div>
-                        <Label>Weight (lbs)</Label>
-                        <Input
-                          value={athlete.weight}
-                          onChange={(e) => updateAthlete(athlete.id, "weight", e.target.value)}
-                          placeholder="Weight"
+                          value={athlete.contactEmail}
+                          onChange={(e) => updateAthlete(athlete.id, "contactEmail", e.target.value)}
+                          placeholder="parent@email.com"
                         />
                       </div>
                     </div>
