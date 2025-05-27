@@ -141,6 +141,8 @@ export default function TeamRegistration() {
       };
 
       // Call the team registration API - same format as individual registration
+      console.log("🚀 Sending team registration for payment...");
+      
       const response = await fetch("/api/team-registration", {
         method: "POST",
         headers: {
@@ -149,13 +151,17 @@ export default function TeamRegistration() {
         body: JSON.stringify(teamRegistrationData)
       });
 
+      console.log("📡 Response received:", response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("❌ Registration failed:", errorData);
         throw new Error(errorData.userFriendlyMessage || errorData.error || "Registration failed");
       }
 
       const data = await response.json();
       console.log("✅ Team registration response:", data);
+      console.log("💳 Client secret:", data.clientSecret ? "✓ Present" : "✗ Missing");
 
       if (data.clientSecret) {
         toast({
