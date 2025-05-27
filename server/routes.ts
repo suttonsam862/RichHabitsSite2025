@@ -521,31 +521,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Import stripe functions from stripe.ts
+  // Import stripe functions and error logger
   const { createPaymentIntent, handleSuccessfulPayment } = await import('./stripe.js');
   const { updatePaymentIntent } = await import('./discounts.js');
+  const { PaymentErrorLogger } = await import('./error-logger.js');
 
-  // Add the payment intent endpoint that frontend expects (using eventId) - Must be first to avoid slug conflicts
+  // Bulletproof payment intent endpoint with comprehensive error logging
   app.post("/api/events/:eventId(\\d+)/create-payment-intent", async (req, res) => {
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const userAgent = req.headers['user-agent'] || '';
+    const deviceType = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) ? 'mobile' : 'desktop';
+    
     try {
       const eventId = parseInt(req.params.eventId);
       const { option = 'full', priceId, formSessionId, registrationData } = req.body;
       
-      // Validate required registration data
+      // STEP 1: Comprehensive validation with error logging
       if (!registrationData) {
+        await PaymentErrorLogger.logValidationError(
+          'Missing registration data in payment intent request',
+          { sessionId, eventId, userAgent, deviceType, requestPayload: req.body }
+        );
         return res.status(400).json({ 
-          error: 'Registration data required for payment processing' 
+          error: 'Registration data required for payment processing',
+          sessionId,
+          userFriendlyMessage: 'Please complete the registration form before proceeding to payment.'
         });
       }
       
-      // Validate essential customer information
-      if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
+      // STEP 2: Validate essential customer information
+      const requiredFields = ['firstName', 'lastName', 'email'];
+      const missingFields = requiredFields.filter(field => !registrationData[field] || registrationData[field].trim() === '');
+      
+      if (missingFields.length > 0) {
+        await PaymentErrorLogger.logValidationError(
+          `Missing required registration fields: ${missingFields.join(', ')}`,
+          { sessionId, eventId, userAgent, deviceType, requestPayload: req.body, registrationData }
+        );
         return res.status(400).json({ 
-          error: 'Customer name and email are required for payment processing' 
+          error: `Missing required fields: ${missingFields.join(', ')}`,
+          sessionId,
+          userFriendlyMessage: 'Please fill in all required registration fields before proceeding to payment.'
         });
       }
       
-      console.log(`Creating payment intent for event ${eventId}, option: ${option}`);
+      // STEP 3: Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(registrationData.email)) {
+        await PaymentErrorLogger.logValidationError(
+          `Invalid email format: ${registrationData.email}`,
+          { sessionId, eventId, userAgent, deviceType, requestPayload: req.body, registrationData }
+        );
+        return res.status(400).json({ 
+          error: 'Invalid email address format',
+          sessionId,
+          userFriendlyMessage: 'Please enter a valid email address.'
+        });
+      }
+      
+      console.log(`[${deviceType.toUpperCase()}] Creating payment intent for event ${eventId}, option: ${option}, session: ${sessionId}`);
       
       // Use correct authentic pricing for each event
       const eventPricing: Record<number, { full: number; single: number }> = {

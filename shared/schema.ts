@@ -467,6 +467,42 @@ export type EventRegistration = typeof eventRegistrations.$inferSelect;
 export type InsertCustomApparelInquiry = z.infer<typeof insertCustomApparelInquirySchema>;
 export type CustomApparelInquiry = typeof customApparelInquiries.$inferSelect;
 
+// Error logging table for payment intent failures and mobile issues
+export const errorLogs = pgTable('error_logs', {
+  id: serial('id').primaryKey(),
+  errorType: text('error_type').notNull(), // 'payment_intent_failure', 'mobile_crash', 'validation_error'
+  sessionId: text('session_id').notNull(),
+  userId: text('user_id'),
+  eventId: integer('event_id'),
+  userAgent: text('user_agent'),
+  deviceType: text('device_type'), // 'mobile', 'desktop', 'tablet'
+  errorMessage: text('error_message').notNull(),
+  errorStack: text('error_stack'),
+  requestPayload: jsonb('request_payload'), // Full request data for debugging
+  registrationData: jsonb('registration_data'), // Form data at time of error
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  resolved: boolean('resolved').default(false),
+  notes: text('notes')
+});
+
+export const insertErrorLogSchema = createInsertSchema(errorLogs).pick({
+  errorType: true,
+  sessionId: true,
+  userId: true,
+  eventId: true,
+  userAgent: true,
+  deviceType: true,
+  errorMessage: true,
+  errorStack: true,
+  requestPayload: true,
+  registrationData: true,
+  resolved: true,
+  notes: true
+});
+
+export type ErrorLog = typeof errorLogs.$inferSelect;
+export type InsertErrorLog = z.infer<typeof insertErrorLogSchema>;
+
 export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 
