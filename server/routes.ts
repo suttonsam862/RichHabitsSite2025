@@ -1029,19 +1029,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`✅ Team payment intent created successfully for session ${sessionId}, event ${eventId}, ${validAthletes.length} athletes`);
 
-      // Store team registration data for later processing (same pattern as individual)
-      const teamRegistrationData = {
-        eventId,
-        coachInfo,
-        athletes: validAthletes,
-        paymentIntentId: paymentIntent.id,
-        sessionId,
-        totalAmount: totalAmountInCents,
-        pricePerAthlete: 19900
-      };
+      // Create team registrations in database - same as individual registration pattern
+      for (const athlete of validAthletes) {
+        await storage.createEventRegistration({
+          eventId,
+          firstName: athlete.firstName,
+          lastName: athlete.lastName,
+          email: athlete.email,
+          phone: coachInfo.phone,
+          registrationType: 'team',
+          stripePaymentIntentId: paymentIntent.id, // Use the SAME payment intent ID for all athletes
+          contactName: `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
+          medicalReleaseAccepted: true,
+          tShirtSize: "L", // Default value
+          grade: "N/A", // Default value
+          schoolName: "Team Registration",
+          age: null,
+          experience: null,
+          paymentStatus: 'pending',
+          day1: false,
+          day2: false,
+          day3: false
+        });
+      }
 
-      // You can store this in your database or session storage as needed
-      console.log('Team registration data prepared:', teamRegistrationData);
+      console.log(`✅ Team registration completed: ${validAthletes.length} athletes with single payment intent ${paymentIntent.id}`);
 
       res.json({
         clientSecret: paymentIntent.client_secret,
