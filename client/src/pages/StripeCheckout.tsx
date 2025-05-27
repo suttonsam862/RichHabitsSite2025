@@ -507,20 +507,36 @@ export default function StripeCheckout() {
       try {
         setLoading(true);
         
-        // Get all stored registration data to validate we have required info
+        // Comprehensive registration data collection from sessionStorage
         const registrationData = {
           firstName: sessionStorage.getItem('registration_firstName') || '',
           lastName: sessionStorage.getItem('registration_lastName') || '',
           email: sessionStorage.getItem('registration_email') || '',
           phone: sessionStorage.getItem('registration_phone') || '',
-          contactName: sessionStorage.getItem('registration_emergencyContactName') || '',
+          contactName: sessionStorage.getItem('registration_contactName') || sessionStorage.getItem('registration_emergencyContactName') || '',
           tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
+          grade: sessionStorage.getItem('registration_grade') || '',
+          gender: sessionStorage.getItem('registration_gender') || '',
+          schoolName: sessionStorage.getItem('registration_schoolName') || '',
+          clubName: sessionStorage.getItem('registration_clubName') || '',
           medicalReleaseAccepted: sessionStorage.getItem('registration_agrees') === 'true',
+          day1: sessionStorage.getItem('registration_day1') === 'true',
+          day2: sessionStorage.getItem('registration_day2') === 'true',
+          day3: sessionStorage.getItem('registration_day3') === 'true',
         };
         
-        // Basic validation - just check if we have essential registration info
-        if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
-          throw new Error('Please complete the registration form before proceeding.');
+        console.log('Collected registration data:', registrationData);
+        
+        // Enhanced validation - check for essential fields
+        const missingFields = [];
+        if (!registrationData.firstName) missingFields.push('First Name');
+        if (!registrationData.lastName) missingFields.push('Last Name');
+        if (!registrationData.email) missingFields.push('Email');
+        
+        if (missingFields.length > 0) {
+          const errorMessage = `Please complete all required fields: ${missingFields.join(', ')}`;
+          console.error('Validation failed:', errorMessage);
+          throw new Error(errorMessage);
         }
         
         // Single optimized API call for payment intent creation

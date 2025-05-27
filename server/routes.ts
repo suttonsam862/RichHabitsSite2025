@@ -572,15 +572,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Option:', option);
       console.log('Registration data received:', registrationData);
       
-      // Simple validation - just check if we have the basic data
+      // Enhanced validation - check if we have the basic registration data
       if (!registrationData) {
         console.log('❌ No registration data provided');
         return res.status(400).json({
           error: 'No registration data provided',
-          userFriendlyMessage: 'Please complete the registration form before proceeding.',
+          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
           sessionId
         });
       }
+
+      // Validate essential fields are present
+      const requiredFields = ['firstName', 'lastName', 'email'];
+      const missingFields = requiredFields.filter(field => !registrationData[field] || registrationData[field].trim() === '');
+      
+      if (missingFields.length > 0) {
+        console.log('❌ Missing required fields:', missingFields);
+        return res.status(400).json({
+          error: `Missing required fields: ${missingFields.join(', ')}`,
+          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          missingFields,
+          sessionId
+        });
+      }
+
+      console.log('✅ Registration data validation passed:', {
+        firstName: registrationData.firstName,
+        lastName: registrationData.lastName,
+        email: registrationData.email,
+        hasPhone: !!registrationData.phone,
+        hasTShirtSize: !!registrationData.tShirtSize
+      });
 
       // Get pricing for the event
       const eventPricing: Record<number, { full: number; single: number }> = {
