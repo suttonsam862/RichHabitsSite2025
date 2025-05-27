@@ -526,6 +526,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { updatePaymentIntent } = await import('./discounts.js');
   const { PaymentErrorLogger } = await import('./error-logger.js');
   
+  // Import payment hardening system
+  const { PaymentIntentLock } = await import('./payment-hardening/payment-lock.js');
+  const { PaymentValidator } = await import('./payment-hardening/payment-validator.js');
+  const { PaymentErrorLogger: HardenedErrorLogger, PaymentRetryHandler } = await import('./payment-hardening/payment-errors.js');
+  
   // Import native analytics system (independent add-on)
   const { 
     initializeAnalytics, 
