@@ -128,20 +128,41 @@ export default function TeamRegistration() {
         totalAmount: validAthletes.length * event.teamPrice
       };
 
-      // Call the team registration API
-      const response = await apiRequest("POST", "/api/team-registration", teamRegistrationData);
+      // Call the team registration API - same format as individual registration
+      const response = await fetch("/api/team-registration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(teamRegistrationData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.userFriendlyMessage || errorData.error || "Registration failed");
+      }
+
       const data = await response.json();
 
-      if (data.success) {
+      if (data.clientSecret) {
         toast({
-          title: "Team Registration Successful!",
-          description: `${validAthletes.length} athletes registered at $${event.teamPrice} each.`
+          title: "Team Registration Ready!",
+          description: `${validAthletes.length} athletes ready for payment at $${event.teamPrice} each.`
         });
         
-        // Redirect to payment
-        window.location.href = `/stripe-checkout?session=${data.sessionId}`;
+        // Store team data in sessionStorage for payment processing (same as individual)
+        sessionStorage.setItem('team_registration_data', JSON.stringify({
+          eventId: parseInt(eventId),
+          coachInfo,
+          athletes: validAthletes,
+          totalAmount: data.amount,
+          athleteCount: validAthletes.length
+        }));
+        
+        // Redirect to same StripeCheckout page that works for individual registrations
+        window.location.href = `/stripe-checkout?eventId=${eventId}&eventName=${encodeURIComponent(event.name)}&option=team&clientSecret=${data.clientSecret}&amount=${data.amount}`;
       } else {
-        throw new Error(data.error || "Registration failed");
+        throw new Error("No payment session created");
       }
     } catch (error: any) {
       toast({

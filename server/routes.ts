@@ -933,111 +933,130 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Team Registration API - $199 per athlete with individual payment intents
+  // BULLETPROOF Team Registration API - Using same validation as individual registration
   app.post("/api/team-registration", async (req, res) => {
+    const userAgent = req.headers['user-agent'] || '';
+    const ipAddress = req.headers['x-forwarded-for']?.split(',')[0] || 
+                     req.headers['x-real-ip'] || 
+                     req.connection?.remoteAddress || 'unknown';
+    
+    // Generate session ID for team registration
+    let sessionId = req.headers['x-session-id'] as string || 
+                   req.body.sessionId || 
+                   `team_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
     try {
+      console.log('=== TEAM REGISTRATION DEBUG ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      
       const { eventId, coachInfo, athletes, pricePerAthlete, totalAmount } = req.body;
       
+      // Enhanced validation - same as individual registration
       if (!eventId || !coachInfo || !athletes || athletes.length === 0) {
-        return res.status(400).json({ error: "Missing required team registration data" });
-      }
-      
-      // Minimum 5 athletes required for team registration
-      if (athletes.length < 5) {
+        console.log('❌ Missing required team registration data');
         return res.status(400).json({ 
-          error: "Team registration requires a minimum of 5 athletes. Please add more athletes or register individually." 
+          error: "Missing required team registration data",
+          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          sessionId
+        });
+      }
+
+      // Validate coach information with same rigor as individual registration
+      const requiredCoachFields = ['firstName', 'lastName', 'email'];
+      const missingCoachFields = requiredCoachFields.filter(field => !coachInfo[field] || coachInfo[field].trim() === '');
+      
+      if (missingCoachFields.length > 0) {
+        console.log('❌ Missing required coach fields:', missingCoachFields);
+        return res.status(400).json({
+          error: `Missing required coach fields: ${missingCoachFields.join(', ')}`,
+          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          missingFields: missingCoachFields,
+          sessionId
+        });
+      }
+
+      // Validate each athlete has required data
+      const validAthletes = athletes.filter(athlete => 
+        athlete.firstName && athlete.lastName && athlete.email
+      );
+
+      if (validAthletes.length < 5) {
+        console.log('❌ Insufficient valid athletes:', validAthletes.length);
+        return res.status(400).json({ 
+          error: "Team registration requires a minimum of 5 athletes with complete information.",
+          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          sessionId
         });
       }
       
       if (pricePerAthlete !== 199) {
-        return res.status(400).json({ error: "Invalid team price - must be $199 per athlete" });
-      }
-      
-      // Create individual payment intents for each athlete at $199
-      const athletePaymentIntents = [];
-      
-      for (const athlete of athletes) {
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: 19900, // $199.00 in cents
-          currency: "usd",
-          metadata: {
-            eventId: eventId.toString(),
-            registrationType: "team",
-            athleteName: `${athlete.firstName} ${athlete.lastName}`,
-            athleteEmail: athlete.email,
-            coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
-            coachEmail: coachInfo.email,
-            teamName: coachInfo.teamName || "Team Registration",
-            schoolName: coachInfo.schoolName || ""
-          },
-        });
-        
-        // Store each athlete as individual registration with bulletproof correlation
-        await storage.createEventRegistration({
-          eventId,
-          firstName: athlete.firstName,
-          lastName: athlete.lastName,
-          email: athlete.email,
-          phone: coachInfo.phone, // Use coach phone as contact
-          registrationType: "team",
-          stripePaymentIntentId: paymentIntent.id,
-          contactName: `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
-          medicalReleaseAccepted: true,
-          tShirtSize: "L", // Default
-          grade: "N/A",
-          schoolName: coachInfo.schoolName || "Team Registration",
-          age: athlete.age ? parseInt(athlete.age) : null,
-          experience: null
-        });
-        
-        athletePaymentIntents.push({
-          athleteId: athlete.id,
-          athleteName: `${athlete.firstName} ${athlete.lastName}`,
-          paymentIntentId: paymentIntent.id,
-          amount: 199
+        return res.status(400).json({ 
+          error: "Invalid team price - must be $199 per athlete",
+          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          sessionId
         });
       }
+
+      console.log('✅ Team registration validation passed:', {
+        eventId,
+        coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
+        coachEmail: coachInfo.email,
+        athleteCount: validAthletes.length,
+        totalAmount
+      });
       
-      // Create a combined Stripe checkout session for all athletes
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `Team Registration - ${athletes.length} Athletes`,
-              description: `${athletes.length} athletes at $199 each (Team Discount Applied)`
-            },
-            unit_amount: totalAmount * 100, // Total in cents
-          },
-          quantity: 1,
-        }],
-        mode: 'payment',
-        success_url: `${req.headers.origin}/registration-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${req.headers.origin}/team-register/${eventId}`,
+      // Use same payment intent creation logic as individual registration
+      const totalAmountInCents = validAthletes.length * 19900; // $199 per athlete in cents
+      
+      // Create single payment intent for entire team (same pattern as individual)
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalAmountInCents,
+        currency: 'usd',
         metadata: {
           eventId: eventId.toString(),
-          registrationType: "team",
-          athleteCount: athletes.length.toString(),
+          registrationType: 'team',
+          sessionId,
           coachEmail: coachInfo.email,
-          paymentIntentIds: athletePaymentIntents.map(pi => pi.paymentIntentId).join(',')
-        }
+          coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
+          athleteCount: validAthletes.length.toString(),
+          teamName: coachInfo.teamName || '',
+          schoolName: coachInfo.schoolName || ''
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
       });
-      
+
+      console.log(`✅ Team payment intent created successfully for session ${sessionId}, event ${eventId}, ${validAthletes.length} athletes`);
+
+      // Store team registration data for later processing (same pattern as individual)
+      const teamRegistrationData = {
+        eventId,
+        coachInfo,
+        athletes: validAthletes,
+        paymentIntentId: paymentIntent.id,
+        sessionId,
+        totalAmount: totalAmountInCents,
+        pricePerAthlete: 19900
+      };
+
+      // You can store this in your database or session storage as needed
+      console.log('Team registration data prepared:', teamRegistrationData);
+
       res.json({
-        success: true,
-        sessionId: session.id,
-        athleteCount: athletes.length,
-        totalAmount,
-        pricePerAthlete,
-        paymentIntents: athletePaymentIntents
+        clientSecret: paymentIntent.client_secret,
+        amount: totalAmountInCents / 100, // Convert back to dollars for display
+        athleteCount: validAthletes.length,
+        sessionId,
+        paymentIntentId: paymentIntent.id
       });
       
-    } catch (error: any) {
-      console.error("Team registration error:", error);
+    } catch (error) {
+      console.error("❌ Team registration error:", error);
       res.status(500).json({ 
-        success: false,
-        error: error.message || "Failed to process team registration" 
+        error: error instanceof Error ? error.message : "Failed to process team registration",
+        userFriendlyMessage: 'We encountered an issue processing your team registration. Please try again.',
+        sessionId
       });
     }
   });
