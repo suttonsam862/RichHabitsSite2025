@@ -514,11 +514,26 @@ export default function StripeCheckout() {
           email: sessionStorage.getItem('registration_email') || '',
           phone: sessionStorage.getItem('registration_phone') || '',
           contactName: sessionStorage.getItem('registration_contactName') || '',
+          tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
+          medicalReleaseAccepted: sessionStorage.getItem('registration_medicalReleaseAccepted') === 'true',
         };
         
         // Validate required fields before making payment intent
-        if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
-          throw new Error('Missing required registration information. Please go back and complete the registration form.');
+        const requiredFields = [
+          { field: 'firstName', name: 'First name' },
+          { field: 'lastName', name: 'Last name' },
+          { field: 'email', name: 'Email' },
+          { field: 'phone', name: 'Phone number' },
+          { field: 'contactName', name: 'Parent/Guardian name' },
+          { field: 'tShirtSize', name: 'T-shirt size' }
+        ];
+        
+        const missingFields = requiredFields.filter(({field}) => !registrationData[field as keyof typeof registrationData]);
+        
+        if (missingFields.length > 0 || !registrationData.medicalReleaseAccepted) {
+          const missing = missingFields.map(f => f.name);
+          if (!registrationData.medicalReleaseAccepted) missing.push('Medical waiver agreement');
+          throw new Error(`Please complete all required fields correctly before proceeding.`);
         }
         
         // Single optimized API call for payment intent creation
