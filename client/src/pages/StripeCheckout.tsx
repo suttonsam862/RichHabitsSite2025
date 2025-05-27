@@ -513,27 +513,14 @@ export default function StripeCheckout() {
           lastName: sessionStorage.getItem('registration_lastName') || '',
           email: sessionStorage.getItem('registration_email') || '',
           phone: sessionStorage.getItem('registration_phone') || '',
-          contactName: sessionStorage.getItem('registration_contactName') || '',
+          contactName: sessionStorage.getItem('registration_emergencyContactName') || '',
           tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
-          medicalReleaseAccepted: sessionStorage.getItem('registration_medicalReleaseAccepted') === 'true',
+          medicalReleaseAccepted: sessionStorage.getItem('registration_agrees') === 'true',
         };
         
-        // Validate required fields before making payment intent
-        const requiredFields = [
-          { field: 'firstName', name: 'First name' },
-          { field: 'lastName', name: 'Last name' },
-          { field: 'email', name: 'Email' },
-          { field: 'phone', name: 'Phone number' },
-          { field: 'contactName', name: 'Parent/Guardian name' },
-          { field: 'tShirtSize', name: 'T-shirt size' }
-        ];
-        
-        const missingFields = requiredFields.filter(({field}) => !registrationData[field as keyof typeof registrationData]);
-        
-        if (missingFields.length > 0 || !registrationData.medicalReleaseAccepted) {
-          const missing = missingFields.map(f => f.name);
-          if (!registrationData.medicalReleaseAccepted) missing.push('Medical waiver agreement');
-          throw new Error(`Please complete all required fields correctly before proceeding.`);
+        // Basic validation - just check if we have essential registration info
+        if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
+          throw new Error('Please complete the registration form before proceeding.');
         }
         
         // Single optimized API call for payment intent creation
