@@ -977,7 +977,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate each athlete has required data
       const validAthletes = athletes.filter(athlete => 
-        athlete.firstName && athlete.lastName && athlete.email
+        athlete.firstName && athlete.lastName && (athlete.email || athlete.contactEmail)
       );
 
       if (validAthletes.length < 5) {

@@ -125,10 +125,17 @@ export default function TeamRegistration() {
         athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
       );
 
+      // Map athlete data to match backend expectations
+      const mappedAthletes = validAthletes.map(athlete => ({
+        ...athlete,
+        email: athlete.contactEmail, // Map contactEmail to email for backend compatibility
+        contactName: athlete.contactFullName
+      }));
+
       const teamRegistrationData = {
         eventId: parseInt(eventId),
         coachInfo,
-        athletes: validAthletes,
+        athletes: mappedAthletes,
         pricePerAthlete: event.teamPrice,
         totalAmount: validAthletes.length * event.teamPrice
       };
