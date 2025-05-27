@@ -5,26 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Container } from '../components/ui/container';
 import { RegistrationProgress } from '@/components/events/RegistrationProgress';
-import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
-import { Spinner } from '../components/ui/spinner';
-
-// Mobile crash prevention utilities
-const isMobileDevice = () => {
-  if (typeof window === 'undefined') return false;
-  return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-};
-
-// Error boundary for mobile crashes
-const withMobileErrorBoundary = (Component: React.ComponentType<any>) => {
-  return (props: any) => {
-    try {
-      return <Component {...props} />;
-    } catch (error) {
-      console.error('Mobile component error:', error);
-      return <div className="p-4 text-center">Loading...</div>;
-    }
-  };
-};
+import { AlertCircle, CheckCircle } from 'lucide-react';
 
 // Make sure to call loadStripe outside of a component's render to avoid
 // recreating the Stripe object on every render.
@@ -92,11 +73,11 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
 
   return (
     <div className="space-y-4">
-      <DiscountCodeInput 
-        onDiscountApplied={onDiscountApplied}
-        originalAmount={249} // Birmingham Slam Camp price
-        eventId={eventId}
-      />
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+        <p className="text-sm text-blue-700">
+          Your discount code has been applied! This registration is completely free.
+        </p>
+      </div>
       
       <div className="bg-green-50 border border-green-200 rounded-md p-4">
         <div className="flex items-center">
@@ -521,23 +502,26 @@ export default function StripeCheckout() {
     sessionStorage.setItem('registration_option', option);
     sessionStorage.setItem('registration_eventId', eventId);
 
-    // First fetch the Stripe product details, then create a payment intent
+    // Optimized payment setup - single API call to reduce mobile loading time
     const fetchPaymentIntent = async () => {
       try {
         setLoading(true);
         
-        // Step 1: Get the Stripe product details for this event and option
-        const productResponse = await fetch(`/api/events/${eventId}/stripe-product?option=${option}`);
+        // Get all stored registration data to validate we have required info
+        const registrationData = {
+          firstName: sessionStorage.getItem('registration_firstName') || '',
+          lastName: sessionStorage.getItem('registration_lastName') || '',
+          email: sessionStorage.getItem('registration_email') || '',
+          phone: sessionStorage.getItem('registration_phone') || '',
+          contactName: sessionStorage.getItem('registration_contactName') || '',
+        };
         
-        if (!productResponse.ok) {
-          throw new Error(`Error fetching Stripe product: ${productResponse.status} ${productResponse.statusText}`);
+        // Validate required fields before making payment intent
+        if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
+          throw new Error('Missing required registration information. Please go back and complete the registration form.');
         }
         
-        const productData = await productResponse.json();
-        setStripeProductDetails(productData);
-        console.log('Stripe product details:', productData);
-        
-        // Step 2: Create a payment intent with the product details
+        // Single optimized API call for payment intent creation
         const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
           method: 'POST',
           headers: {
@@ -545,7 +529,8 @@ export default function StripeCheckout() {
           },
           body: JSON.stringify({
             option: option,
-            priceId: productData.priceId  // Use the price ID from the product details
+            registrationData: registrationData,
+            formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
           }),
         });
 

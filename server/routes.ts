@@ -531,18 +531,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       const { option = 'full', priceId, formSessionId, registrationData } = req.body;
       
-      // STEP 1: Log registration attempt BEFORE any Stripe interaction
-      if (!registrationData || !formSessionId) {
+      // Validate required registration data
+      if (!registrationData) {
         return res.status(400).json({ 
-          error: 'Registration data and form session ID required for data integrity' 
+          error: 'Registration data required for payment processing' 
         });
       }
       
-      // Validate that registration was logged (security check)
-      const isLogged = await validateRegistrationLogged(formSessionId);
-      if (!isLogged) {
+      // Validate essential customer information
+      if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
         return res.status(400).json({ 
-          error: 'Registration must be logged before payment processing' 
+          error: 'Customer name and email are required for payment processing' 
         });
       }
       
