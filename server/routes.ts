@@ -561,37 +561,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
                    `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     try {
-      // STEP 1: SIMPLIFIED VALIDATION - Only check essential fields
+      console.log('=== PAYMENT REQUEST DEBUG ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      console.log('Event ID:', req.params.eventId);
+      
       const eventId = parseInt(req.params.eventId);
       const { option = 'full', registrationData } = req.body;
       
-      // Validate all required registration fields
-      const requiredFields = {
-        firstName: 'First name',
-        lastName: 'Last name', 
-        email: 'Email address',
-        contactName: 'Parent/Guardian name',
-        phone: 'Contact phone number',
-        tShirtSize: 'T-shirt size'
-      };
+      console.log('Parsed eventId:', eventId);
+      console.log('Option:', option);
+      console.log('Registration data received:', registrationData);
       
-      const missingFields = [];
-      for (const [field, label] of Object.entries(requiredFields)) {
-        if (!registrationData || !registrationData[field] || registrationData[field].trim() === '') {
-          missingFields.push(label);
-        }
-      }
-      
-      // Check medical waiver acceptance
-      if (!registrationData || !registrationData.medicalReleaseAccepted) {
-        missingFields.push('Medical waiver agreement');
-      }
-      
-      if (missingFields.length > 0) {
+      // Simple validation - just check if we have the basic data
+      if (!registrationData) {
+        console.log('❌ No registration data provided');
         return res.status(400).json({
-          error: 'Missing required fields',
-          missingFields,
-          userFriendlyMessage: `Please complete these required fields: ${missingFields.join(', ')}`,
+          error: 'No registration data provided',
+          userFriendlyMessage: 'Please complete the registration form before proceeding.',
           sessionId
         });
       }
