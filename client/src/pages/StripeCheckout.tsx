@@ -287,6 +287,15 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode
         });
         
+        // Store discount data in sessionStorage for payment intent creation
+        sessionStorage.setItem('applied_discount', JSON.stringify({
+          code: discountCode,
+          originalPrice: data.discount.originalPrice,
+          discountAmount: data.discount.discountAmount,
+          finalPrice: data.discount.finalPrice,
+          description: data.discount.description
+        }));
+        
         // Update the amount directly without updating payment intent
         onDiscountApplied(data.discount.finalPrice);
         
@@ -539,6 +548,10 @@ export default function StripeCheckout() {
           throw new Error(errorMessage);
         }
         
+        // Check if there's a discount applied
+        const discountData = sessionStorage.getItem('applied_discount');
+        const appliedDiscount = discountData ? JSON.parse(discountData) : null;
+
         // Single optimized API call for payment intent creation
         const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
           method: 'POST',
@@ -552,6 +565,8 @@ export default function StripeCheckout() {
               eventId: parseInt(eventId),
               registrationType: option
             },
+            discountedAmount: appliedDiscount?.finalPrice || null,
+            discountCode: appliedDiscount?.code || null,
             formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
           }),
         });

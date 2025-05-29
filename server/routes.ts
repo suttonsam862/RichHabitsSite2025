@@ -566,7 +566,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Event ID:', req.params.eventId);
       
       const eventId = parseInt(req.params.eventId);
-      const { option = 'full', registrationData } = req.body;
+      const { option = 'full', registrationData, discountedAmount } = req.body;
       
       console.log('Parsed eventId:', eventId);
       console.log('Option:', option);
@@ -617,7 +617,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: 'Event not found' });
       }
       
-      const amount = option === 'single' ? pricing.single : pricing.full;
+      // Use discounted amount if provided, otherwise use original pricing
+      let amount = option === 'single' ? pricing.single : pricing.full;
+      
+      // If a discount has been applied, use the discounted amount
+      if (discountedAmount !== undefined && discountedAmount !== null) {
+        amount = Math.round(discountedAmount * 100); // Convert to cents
+        console.log(`✅ Using discounted amount: $${discountedAmount} (${amount} cents)`);
+      }
+      
       const registrationType = option;
 
       // STEP 2: SINGLE INTENT RULE - Check for existing payment intent
