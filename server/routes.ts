@@ -604,12 +604,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         hasTShirtSize: !!registrationData.tShirtSize
       });
 
-      // Get pricing for the event
+      // Get pricing for the event (in cents to match Stripe)
       const eventPricing: Record<number, { full: number; single: number }> = {
-        1: { full: 24900, single: 14900 }, // Birmingham Slam Camp
-        2: { full: 29900, single: 17500 }, // National Champ Camp
-        3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic
-        4: { full: 20000, single: 9900 }   // Panther Train Tour
+        1: { full: 24900, single: 14900 }, // Birmingham Slam Camp - $249/$149
+        2: { full: 29900, single: 17500 }, // National Champ Camp - $299/$175
+        3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic - $249/$149
+        4: { full: 20000, single: 9900 }   // Panther Train Tour - $200/$99
       };
       
       const pricing = eventPricing[eventId];

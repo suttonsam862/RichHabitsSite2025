@@ -731,7 +731,7 @@ export default function EventDetail() {
                     case 3: // Texas Recruiting Clinic
                       return { individualPrice: 249, teamPrice: 199, savings: 50 };
                     case 4: // Panther Train Tour
-                      return { individualPrice: 139, teamPrice: 199, savings: -60 }; // Higher for team due to tour logistics
+                      return { individualPrice: 200, teamPrice: 199, savings: 1 }; // Minimal team savings
                     default:
                       return { individualPrice: 249, teamPrice: 199, savings: 50 };
                   }

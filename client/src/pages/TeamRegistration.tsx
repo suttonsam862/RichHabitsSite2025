@@ -25,16 +25,25 @@ interface Event {
   description: string;
 }
 
-// Mock event data - this would come from your events API
+// Event data matching backend pricing
 const events: Record<string, Event> = {
   "1": { id: 1, name: "Birmingham Slam Camp", regularPrice: 249, teamPrice: 199, description: "June 19-21, 2025 at Clay-Chalkville Middle School" },
-  "2": { id: 2, name: "National Champ Camp", regularPrice: 349, teamPrice: 199, description: "June 5-7, 2025 at Roy Martin Middle School" },
-  "3": { id: 3, name: "Texas Recruiting Clinic", regularPrice: 249, teamPrice: 199, description: "June 12-13, 2025 at Arlington Martin High School" }
+  "2": { id: 2, name: "National Champ Camp", regularPrice: 299, teamPrice: 199, description: "June 5-7, 2025 at Roy Martin Middle School" },
+  "3": { id: 3, name: "Texas Recruiting Clinic", regularPrice: 249, teamPrice: 199, description: "June 12-13, 2025 at Arlington Martin High School" },
+  "4": { id: 4, name: "Panther Train Tour", regularPrice: 200, teamPrice: 199, description: "Multi-day wrestling tour experience" }
 };
 
 export default function TeamRegistration() {
-  const [, params] = useRoute("/team-register/:id");
-  const eventId = params?.id || "1";
+  // Handle both URL patterns for team registration
+  const [, paramsWithId] = useRoute("/team-register/:id");
+  const [, paramsWithEvent] = useRoute("/team-registration");
+  
+  // Get event ID from URL params or query string
+  const eventIdFromPath = paramsWithId?.id;
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventIdFromQuery = urlParams.get('event');
+  
+  const eventId = eventIdFromPath || eventIdFromQuery || "1";
   const event = events[eventId];
   const { toast } = useToast();
 

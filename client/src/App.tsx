@@ -27,6 +27,7 @@ function Router() {
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/register/:id" component={EventRegistration} />
       <Route path="/team-register/:id" component={TeamRegistration} />
+      <Route path="/team-registration" component={TeamRegistration} />
       <Route path="/stripe-checkout" component={StripeCheckout} />
       <Route path="/custom-apparel" component={CustomApparel} />
       <Route path="/contact" component={Contact} />
