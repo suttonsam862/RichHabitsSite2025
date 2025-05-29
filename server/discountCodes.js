@@ -25,6 +25,19 @@ export const discountCodes = {
     currentUses: 0,
     active: true,
     applicableEvents: 'all'
+  },
+  'TEAM199-PRICE-MATCH-INDIVIDUAL': {
+    code: 'TEAM199-PRICE-MATCH-INDIVIDUAL',
+    type: 'pricing',
+    discountType: 'fixed_price',
+    discountValue: 199, // Set price to exactly $199
+    description: 'Team Price Match - Individual Registration at $199',
+    validFrom: new Date('2025-01-01'),
+    validUntil: new Date('2025-12-31'),
+    maxUses: null, // Unlimited uses
+    currentUses: 0,
+    active: true,
+    applicableEvents: 'all'
   }
 };
 
@@ -83,6 +96,10 @@ export function applyDiscount(originalPrice, discountCode) {
   } else if (discount.discountType === 'fixed') {
     discountAmount = discount.discountValue;
     finalPrice = Math.max(0, originalPrice - discountAmount);
+  } else if (discount.discountType === 'fixed_price') {
+    // Set to exact price regardless of original price
+    finalPrice = discount.discountValue;
+    discountAmount = originalPrice - finalPrice;
   }
   
   return {
