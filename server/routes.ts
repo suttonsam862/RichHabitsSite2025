@@ -983,10 +983,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Validate each athlete has required data
-      const validAthletes = athletes.filter(athlete => 
-        athlete.firstName && athlete.lastName && (athlete.email || athlete.contactEmail)
-      );
+      // Validate each athlete has required data - handle both email field formats
+      const validAthletes = athletes.filter(athlete => {
+        const hasName = athlete.firstName && athlete.lastName && athlete.firstName.trim() && athlete.lastName.trim();
+        const hasEmail = (athlete.email && athlete.email.trim()) || (athlete.contactEmail && athlete.contactEmail.trim());
+        const hasContact = (athlete.contactName && athlete.contactName.trim()) || (athlete.contactFullName && athlete.contactFullName.trim());
+        
+        console.log(`Athlete validation: ${athlete.firstName} ${athlete.lastName}`, {
+          hasName,
+          hasEmail: !!hasEmail,
+          hasContact: !!hasContact,
+          email: athlete.email || athlete.contactEmail,
+          contact: athlete.contactName || athlete.contactFullName
+        });
+        
+        return hasName && hasEmail && hasContact;
+      });
 
       if (validAthletes.length < 5) {
         console.log('❌ Insufficient valid athletes:', validAthletes.length);
@@ -1039,19 +1051,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create team registrations in database - same as individual registration pattern
       for (const athlete of validAthletes) {
+        // Ensure we use the correct email field (handle both formats)
+        const athleteEmail = athlete.email || athlete.contactEmail;
+        const athleteContactName = athlete.contactName || athlete.contactFullName;
+        
         await storage.createEventRegistration({
           eventId,
           firstName: athlete.firstName,
           lastName: athlete.lastName,
-          email: athlete.email,
+          email: athleteEmail,
           phone: coachInfo.phone,
           registrationType: 'team',
           stripePaymentIntentId: paymentIntent.id, // Use the SAME payment intent ID for all athletes
-          contactName: `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
+          contactName: athleteContactName || `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
           medicalReleaseAccepted: true,
           tShirtSize: "L", // Default value
           grade: "N/A", // Default value
-          schoolName: "Team Registration",
+          schoolName: coachInfo.teamName || "Team Registration",
           age: null,
           experience: null,
           paymentStatus: 'pending',

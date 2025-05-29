@@ -88,26 +88,63 @@ export default function TeamRegistration() {
   };
 
   const validateForm = () => {
-    if (!coachInfo.firstName || !coachInfo.lastName || !coachInfo.email || !coachInfo.phone) {
+    // Check coach information with detailed feedback
+    const missingCoachFields = [];
+    if (!coachInfo.firstName || !coachInfo.firstName.trim()) missingCoachFields.push("First Name");
+    if (!coachInfo.lastName || !coachInfo.lastName.trim()) missingCoachFields.push("Last Name");
+    if (!coachInfo.email || !coachInfo.email.trim()) missingCoachFields.push("Email");
+    if (!coachInfo.phone || !coachInfo.phone.trim()) missingCoachFields.push("Phone");
+
+    if (missingCoachFields.length > 0) {
       toast({
         title: "Coach Information Required",
-        description: "Please fill in all coach information fields.",
+        description: `Please fill in: ${missingCoachFields.join(", ")}`,
         variant: "destructive"
       });
       return false;
     }
 
-    const validAthletes = athletes.filter(athlete => 
-      athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
-    );
-
-    if (validAthletes.length < 5) {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(coachInfo.email.trim())) {
       toast({
-        title: "Minimum Team Size Required",
-        description: "Team registration requires at least 5 athletes. Please add more athletes or register individually.",
+        title: "Invalid Email",
+        description: "Please enter a valid email address for the coach.",
         variant: "destructive"
       });
       return false;
+    }
+
+    // Check athletes with detailed feedback
+    const validAthletes = athletes.filter(athlete => 
+      athlete.firstName && athlete.firstName.trim() &&
+      athlete.lastName && athlete.lastName.trim() &&
+      athlete.contactFullName && athlete.contactFullName.trim() &&
+      athlete.contactEmail && athlete.contactEmail.trim()
+    );
+
+    const incompleteAthletes = athletes.length - validAthletes.length;
+    
+    if (validAthletes.length < 5) {
+      toast({
+        title: "Minimum Team Size Required",
+        description: `You have ${validAthletes.length} complete athletes. Need at least 5. ${incompleteAthletes > 0 ? `${incompleteAthletes} athletes have missing information.` : "Please add more athletes."}`,
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    // Validate athlete emails
+    for (let i = 0; i < validAthletes.length; i++) {
+      const athlete = validAthletes[i];
+      if (!emailRegex.test(athlete.contactEmail.trim())) {
+        toast({
+          title: "Invalid Email",
+          description: `Please enter a valid email address for ${athlete.firstName} ${athlete.lastName}.`,
+          variant: "destructive"
+        });
+        return false;
+      }
     }
 
     return true;
@@ -118,6 +155,12 @@ export default function TeamRegistration() {
     console.log('Coach info:', coachInfo);
     console.log('Athletes:', athletes);
     
+    // Prevent form submission if already processing
+    if (isProcessing) {
+      console.log('⏳ Already processing, ignoring duplicate submission');
+      return;
+    }
+    
     if (!validateForm()) {
       console.log('❌ Form validation failed');
       return;
@@ -127,21 +170,50 @@ export default function TeamRegistration() {
     setIsProcessing(true);
 
     try {
-      // Filter out incomplete athlete entries
-      const validAthletes = athletes.filter(athlete => 
-        athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
-      );
+      // Filter out incomplete athlete entries with detailed logging
+      const validAthletes = athletes.filter(athlete => {
+        const isValid = athlete.firstName && athlete.firstName.trim() &&
+                       athlete.lastName && athlete.lastName.trim() &&
+                       athlete.contactFullName && athlete.contactFullName.trim() &&
+                       athlete.contactEmail && athlete.contactEmail.trim();
+        
+        if (!isValid) {
+          console.log('Invalid athlete:', athlete);
+        }
+        return isValid;
+      });
 
-      // Map athlete data to match backend expectations
+      console.log(`Valid athletes: ${validAthletes.length}/${athletes.length}`);
+
+      if (validAthletes.length < 5) {
+        toast({
+          title: "Minimum Team Size Required",
+          description: `Only ${validAthletes.length} athletes have complete information. Please ensure at least 5 athletes have all required fields filled.`,
+          variant: "destructive"
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      // Map athlete data to match backend expectations with both email formats
       const mappedAthletes = validAthletes.map(athlete => ({
-        ...athlete,
-        email: athlete.contactEmail, // Map contactEmail to email for backend compatibility
-        contactName: athlete.contactFullName
+        firstName: athlete.firstName.trim(),
+        lastName: athlete.lastName.trim(),
+        email: athlete.contactEmail.trim(), // Primary email field for backend
+        contactEmail: athlete.contactEmail.trim(), // Keep both for compatibility
+        contactName: athlete.contactFullName.trim(),
+        contactFullName: athlete.contactFullName.trim()
       }));
 
       const teamRegistrationData = {
         eventId: parseInt(eventId),
-        coachInfo,
+        coachInfo: {
+          ...coachInfo,
+          firstName: coachInfo.firstName.trim(),
+          lastName: coachInfo.lastName.trim(),
+          email: coachInfo.email.trim(),
+          phone: coachInfo.phone.trim()
+        },
         athletes: mappedAthletes,
         pricePerAthlete: event.teamPrice,
         totalAmount: validAthletes.length * event.teamPrice
@@ -161,9 +233,26 @@ export default function TeamRegistration() {
       console.log("📡 Response received:", response.status);
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
         console.error("❌ Registration failed:", errorData);
-        throw new Error(errorData.userFriendlyMessage || errorData.error || "Registration failed");
+        
+        // Show specific error feedback without redirecting
+        toast({
+          title: "Registration Error",
+          description: errorData.userFriendlyMessage || errorData.error || "Please check all fields and try again.",
+          variant: "destructive"
+        });
+        
+        // Log detailed error information for debugging
+        console.error("Backend validation failed:", {
+          status: response.status,
+          errorData,
+          coachInfo,
+          athleteCount: validAthletes.length
+        });
+        
+        setIsProcessing(false);
+        return; // Don't throw error, just stop processing
       }
 
       const data = await response.json();
@@ -179,7 +268,7 @@ export default function TeamRegistration() {
         // Store team data in sessionStorage for payment processing (same as individual)
         sessionStorage.setItem('team_registration_data', JSON.stringify({
           eventId: parseInt(eventId),
-          coachInfo,
+          coachInfo: teamRegistrationData.coachInfo,
           athletes: mappedAthletes,
           totalAmount: data.amount,
           athleteCount: validAthletes.length
@@ -190,15 +279,20 @@ export default function TeamRegistration() {
         window.location.href = `/stripe-checkout?eventId=${eventId}&eventName=${encodeURIComponent(event.name)}&option=team&clientSecret=${data.clientSecret}&amount=${data.amount}`;
       } else {
         console.error("❌ No clientSecret in response:", data);
-        throw new Error("No payment session created");
+        toast({
+          title: "Payment Setup Error",
+          description: "Unable to set up payment. Please try again.",
+          variant: "destructive"
+        });
+        setIsProcessing(false);
       }
     } catch (error: any) {
+      console.error("❌ Unexpected error:", error);
       toast({
         title: "Registration Error",
-        description: error.message || "Something went wrong. Please try again.",
+        description: "An unexpected error occurred. Please check your information and try again.",
         variant: "destructive"
       });
-    } finally {
       setIsProcessing(false);
     }
   };
