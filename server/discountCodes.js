@@ -38,6 +38,19 @@ export const discountCodes = {
     currentUses: 0,
     active: true,
     applicableEvents: 'all'
+  },
+  'SAVE99-PERCENT-OFF-CODE': {
+    code: 'SAVE99-PERCENT-OFF-CODE',
+    type: 'promotional',
+    discountType: 'percentage',
+    discountValue: 99, // 99% off
+    description: '99% Off Wrestling Camp Registration',
+    validFrom: new Date('2025-01-01'),
+    validUntil: new Date('2025-12-31'),
+    maxUses: null, // Unlimited uses
+    currentUses: 0,
+    active: true,
+    applicableEvents: 'all'
   }
 };
 
@@ -99,7 +112,10 @@ export function applyDiscount(originalPrice, discountCode) {
   } else if (discount.discountType === 'fixed_price') {
     // Set to exact price regardless of original price
     finalPrice = discount.discountValue;
-    discountAmount = originalPrice - finalPrice;
+    discountAmount = Math.max(0, originalPrice - finalPrice);
+    
+    // Debug logging for fixed price discounts
+    console.log(`Fixed price discount applied: Original: $${originalPrice}, Final: $${finalPrice}, Discount: $${discountAmount}`);
   }
   
   return {
