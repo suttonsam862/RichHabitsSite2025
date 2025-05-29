@@ -92,12 +92,21 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     const isLiveMode = !process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
     console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${event.id} (${event.title})`);
 
-    // Get calculated price regardless of Stripe price ID (to handle missing products in Stripe)    
-    amount = await getEventPrice(event.id, option);
-    if (!amount || isNaN(amount) || amount <= 0) {
-      return res.status(400).json({
-        error: 'Could not determine price for the event'
-      });
+    // Check if there's a discount code applied with a final price override
+    const discountedAmount = req.body.discountedAmount;
+    
+    if (discountedAmount !== null && discountedAmount !== undefined) {
+      // Use the final discounted price directly (already validated by discount system)
+      amount = Math.round(discountedAmount * 100); // Convert to cents
+      console.log(`Using discounted price: $${discountedAmount} for discount code: ${req.body.discountCode}`);
+    } else {
+      // Get calculated price regardless of Stripe price ID (to handle missing products in Stripe)    
+      amount = await getEventPrice(event.id, option);
+      if (!amount || isNaN(amount) || amount <= 0) {
+        return res.status(400).json({
+          error: 'Could not determine price for the event'
+        });
+      }
     }
     
     console.log(`Using calculated price of $${amount/100} for event ${event.id} (${event.title})`);
