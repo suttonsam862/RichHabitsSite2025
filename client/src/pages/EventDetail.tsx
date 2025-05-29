@@ -729,7 +729,7 @@ export default function EventDetail() {
                     case 2: // National Champ Camp
                       return { individualPrice: 299, teamPrice: 199, savings: 100 };
                     case 3: // Texas Recruiting Clinic
-                      return { individualPrice: 179, teamPrice: 199, savings: -20 }; // Higher for team due to clinic nature
+                      return { individualPrice: 249, teamPrice: 199, savings: 50 };
                     case 4: // Panther Train Tour
                       return { individualPrice: 139, teamPrice: 199, savings: -60 }; // Higher for team due to tour logistics
                     default:
