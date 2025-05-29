@@ -132,7 +132,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   const [error, setError] = useState<string | null>(null);
   const [discountCode, setDiscountCode] = useState<string>('');
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
-  const [discount, setDiscount] = useState<{ valid: boolean; amount: number; code: string } | null>(null);
+  const [discount, setDiscount] = useState<{ valid: boolean; amount: number; finalPrice?: number; code: string } | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -284,6 +284,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         setDiscount({
           valid: true,
           amount: data.discount.discountAmount,
+          finalPrice: data.discount.finalPrice,
           code: discountCode
         });
         
@@ -405,7 +406,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   
   // Calculate the final amount based on any applied discount
   const finalAmount = discount?.valid ? 
-    Math.max(0, amount - discount.amount) : 
+    (discount.finalPrice !== undefined ? discount.finalPrice : Math.max(0, amount - discount.amount)) : 
     amount;
   
   return (
@@ -440,9 +441,11 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         {discount?.valid && (
           <div className="mt-2 text-sm text-green-600 flex items-center">
             <span className="mr-1">✓</span> 
-            {discount.amount === amount 
+            {discount.finalPrice === 0 
               ? "100% discount applied. Your registration is free!" 
-              : `$${discount.amount.toFixed(2)} discount applied!`
+              : discount.finalPrice !== undefined
+                ? `Price set to $${discount.finalPrice.toFixed(2)}!`
+                : `$${discount.amount.toFixed(2)} discount applied!`
             }
           </div>
         )}
@@ -473,7 +476,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           </span>
         ) : (
           <span className="flex items-center justify-center">
-            🔒 Complete Payment - ${discount?.valid ? (amount - discount.amount).toFixed(2) : amount.toFixed(2)}
+            🔒 Complete Payment - ${discount?.valid ? 
+              (discount.finalPrice !== undefined ? discount.finalPrice.toFixed(2) : (amount - discount.amount).toFixed(2)) : 
+              amount.toFixed(2)}
           </span>
         )}
       </button>
