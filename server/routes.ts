@@ -566,7 +566,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Event ID:', req.params.eventId);
       
       const eventId = parseInt(req.params.eventId);
-      const { option = 'full', registrationData, discountedAmount } = req.body;
+      const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
       
       console.log('Parsed eventId:', eventId);
       console.log('Option:', option);
@@ -617,14 +617,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: 'Event not found' });
       }
       
-      // Use discounted amount if provided, otherwise use original pricing
-      let amount = option === 'single' ? pricing.single : pricing.full;
+      // Get original pricing
+      let originalAmount = option === 'single' ? pricing.single : pricing.full;
+      let finalAmount = originalAmount;
+      let appliedDiscountCode = discountCode || null;
+      let discountAmount = 0;
       
-      // If a discount has been applied, use the discounted amount
+      // Apply discount if provided
       if (discountedAmount !== undefined && discountedAmount !== null) {
-        amount = Math.round(discountedAmount * 100); // Convert to cents
-        console.log(`✅ Using discounted amount: $${discountedAmount} (${amount} cents)`);
+        // Validate the discounted amount is reasonable (between $0 and $1000)
+        const discountedAmountCents = Math.round(discountedAmount * 100);
+        
+        if (discountedAmountCents < 0 || discountedAmountCents > 100000) {
+          console.log('❌ Invalid discounted amount:', discountedAmount);
+          return res.status(400).json({
+            error: 'Invalid discount amount',
+            userFriendlyMessage: 'Invalid discount applied. Please try again.',
+            sessionId
+          });
+        }
+        
+        finalAmount = discountedAmountCents;
+        discountAmount = originalAmount - finalAmount;
+        
+        console.log(`✅ Discount applied: Original $${originalAmount/100}, Final $${finalAmount/100}, Saved $${discountAmount/100}, Code: ${appliedDiscountCode || 'N/A'}`);
+        
+        // Validate discount code if provided
+        if (appliedDiscountCode) {
+          const { validateDiscountCode, applyDiscount } = await import('./discountCodes.js');
+          const validation = validateDiscountCode(appliedDiscountCode);
+          
+          if (!validation.valid) {
+            console.log('❌ Invalid discount code:', appliedDiscountCode);
+            return res.status(400).json({
+              error: 'Invalid discount code',
+              userFriendlyMessage: 'The discount code is not valid.',
+              sessionId
+            });
+          }
+          
+          // Verify the discount calculation matches our expectation
+          const discountResult = applyDiscount(originalAmount / 100, appliedDiscountCode);
+          const expectedFinalAmount = Math.round(discountResult.finalPrice * 100);
+          
+          if (Math.abs(finalAmount - expectedFinalAmount) > 1) { // Allow 1 cent difference for rounding
+            console.log('❌ Discount amount mismatch:', { finalAmount, expectedFinalAmount });
+            return res.status(400).json({
+              error: 'Discount calculation error',
+              userFriendlyMessage: 'There was an issue with the discount calculation. Please try again.',
+              sessionId
+            });
+          }
+        }
       }
+      
+      const amount = finalAmount;
       
       const registrationType = option;
 
@@ -677,17 +724,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
             eventId: eventId.toString(),
             registrationType,
             sessionId,
-            customerEmail: registrationData.email
+            customerEmail: registrationData.email,
+            originalAmount: (originalAmount / 100).toString(),
+            finalAmount: (finalAmount / 100).toString(),
+            discountCode: appliedDiscountCode || '',
+            discountAmount: (discountAmount / 100).toString(),
+            firstName: registrationData.firstName,
+            lastName: registrationData.lastName
           },
           automatic_payment_methods: {
             enabled: true,
           },
         });
 
-        // STEP 6: SUCCESS - Update lock and return
+        // STEP 6: LOG PAYMENT INTENT CREATION
+        try {
+          await storage.logEventRegistration({
+            email: registrationData.email,
+            eventSlug: `event-${eventId}`,
+            finalAmount: finalAmount / 100,
+            discountCode: appliedDiscountCode,
+            stripeIntentId: paymentIntentResult.id,
+            sessionId: sessionId,
+            registrationType: registrationType,
+            originalAmount: originalAmount / 100,
+            discountAmount: discountAmount / 100
+          });
+          console.log(`✅ Payment intent logged: ${paymentIntentResult.id} for ${registrationData.email}`);
+        } catch (logError) {
+          console.error('Failed to log payment intent:', logError);
+          // Don't fail the request if logging fails
+        }
+
+        // STEP 7: SUCCESS - Update lock and return
         PaymentIntentLock.updateLock(sessionId, paymentIntentResult.client_secret!);
         
-        console.log(`✅ Payment intent created successfully for session ${sessionId}, event ${eventId}`);
+        console.log(`✅ Payment intent created successfully for session ${sessionId}, event ${eventId}, amount: $${finalAmount/100}, discount: ${appliedDiscountCode || 'none'}`);
 
         res.json({
           clientSecret: paymentIntentResult.client_secret,
