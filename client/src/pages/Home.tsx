@@ -1,10 +1,48 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ChevronDown, Users, User } from "lucide-react";
+import { ChevronDown, Users, User, X } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
+  const [showEventSelector, setShowEventSelector] = useState(false);
+
   const scrollToSignup = () => {
     document.getElementById('signup-portal')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const events = [
+    {
+      id: 1,
+      title: "Birmingham Slam Camp",
+      date: "June 19-21, 2025",
+      location: "Clay-Chalkville Middle School, Alabama",
+      price: 249,
+      teamPrice: 199,
+      savings: 50
+    },
+    {
+      id: 2,
+      title: "National Champ Camp",
+      date: "July 8-10, 2025", 
+      location: "Legacy Sports Complex, Arizona",
+      price: 299,
+      teamPrice: 199,
+      savings: 100
+    },
+    {
+      id: 3,
+      title: "Texas Recruiting Clinic",
+      date: "August 15-17, 2025",
+      location: "Dallas Sports Center, Texas", 
+      price: 249,
+      teamPrice: 199,
+      savings: 50
+    }
+  ];
+
+  const handleEventSelect = (eventId: number) => {
+    setShowEventSelector(false);
+    window.location.href = `/team-registration?eventId=${eventId}`;
   };
 
   return (
@@ -229,12 +267,12 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold mb-4">Team Registration</h3>
                 <p className="mb-6">Bring your entire team and save big with our exclusive team discounts</p>
-                <Link 
-                  href="/team-register/1" 
-                  className="w-full bg-white text-orange-500 py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors inline-block text-center font-semibold"
+                <button 
+                  onClick={() => setShowEventSelector(true)}
+                  className="w-full bg-white text-orange-500 py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
                 >
                   Get Team Discount
-                </Link>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -288,6 +326,74 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Event Selection Popup */}
+      {showEventSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Select Your Event</h2>
+                <button 
+                  onClick={() => setShowEventSelector(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              
+              <p className="text-gray-600 mb-6">
+                Choose which wrestling camp you'd like to register your team for. All events offer significant team discounts!
+              </p>
+              
+              <div className="space-y-4">
+                {events.map((event) => (
+                  <div 
+                    key={event.id}
+                    onClick={() => handleEventSelect(event.id)}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-orange-500 hover:bg-orange-50 cursor-pointer transition-all"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                          {event.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {event.date} • {event.location}
+                        </p>
+                        <div className="flex items-center gap-4">
+                          <div className="text-sm">
+                            <span className="text-gray-500 line-through">${event.price}</span>
+                            <span className="text-green-600 font-semibold ml-2">${event.teamPrice} per athlete</span>
+                          </div>
+                          <div className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
+                            Save ${event.savings} each
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-orange-500 font-semibold text-sm">
+                        Select →
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Team Requirements:</strong> Minimum 5 athletes required for team pricing. 
+                  All team members will be registered under one payment with the team coach as the primary contact.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
