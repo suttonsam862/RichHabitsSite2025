@@ -955,6 +955,53 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+
+  // Log payment intent creation with discount information
+  async logEventRegistration(data: {
+    email: string;
+    eventSlug: string;
+    finalAmount: number;
+    discountCode: string | null;
+    stripeIntentId: string;
+    sessionId: string;
+    registrationType: string;
+    originalAmount: number;
+    discountAmount: number;
+  }): Promise<EventRegistrationLog> {
+    try {
+      const logData: EventRegistrationLogInsert = {
+        id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        firstName: 'Payment Intent',
+        lastName: 'Created',
+        email: data.email,
+        eventSlug: data.eventSlug,
+        eventId: parseInt(data.eventSlug.replace('event-', '')),
+        registrationType: data.registrationType,
+        formSessionId: data.sessionId,
+        paymentIntentId: data.stripeIntentId,
+        paymentStatus: 'payment_intent_created',
+        originalAmount: data.originalAmount,
+        finalAmount: data.finalAmount,
+        discountCode: data.discountCode,
+        discountAmount: data.discountAmount,
+        ipAddress: 'server',
+        userAgent: 'payment-system',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      const [logEntry] = await db
+        .insert(eventRegistrationLog)
+        .values(logData)
+        .returning();
+
+      console.log(`Payment intent logged: ${data.stripeIntentId} for ${data.email}, amount: $${data.finalAmount}, discount: ${data.discountCode || 'none'}`);
+      return logEntry;
+    } catch (error) {
+      console.error('Error logging payment intent:', error);
+      throw error;
+    }
+  }
 }
 
 // Initialize database storage
