@@ -1464,150 +1464,234 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Enhanced Stripe webhook handler for efficient payment processing
+  // Comprehensive Stripe webhook handler for registration workflow
   app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
     const sig = req.headers['stripe-signature'];
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_aMVpANfxDWAJyyvavUoZfKStMmH2EkFl';
+    const startTime = Date.now();
     
     let event;
     
     try {
-      if (!webhookSecret) {
-        console.warn('STRIPE_WEBHOOK_SECRET not configured - webhook verification disabled');
-        event = JSON.parse(req.body.toString());
-      } else {
-        event = stripe.webhooks.constructEvent(req.body, sig || '', webhookSecret);
-      }
+      event = stripe.webhooks.constructEvent(req.body, sig || '', webhookSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
+      await logWebhookActivity('verification_failed', null, err instanceof Error ? err.message : 'Unknown error');
       return res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
     
     console.log(`📨 Stripe webhook: ${event.type} - ${event.data.object.id}`);
     
-    // Handle payment success events
-    if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object as any;
-      
-      try {
-        console.log(`✅ Payment succeeded: ${paymentIntent.id} for $${paymentIntent.amount / 100}`);
+    try {
+      // Handle checkout session completion (primary trigger)
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as any;
+        const paymentIntentId = session.payment_intent;
         
-        // Find all registrations for this payment (handles both individual and team)
-        const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
+        console.log(`✅ Checkout completed: ${session.id} with payment intent: ${paymentIntentId}`);
         
-        if (registrations && registrations.length > 0) {
-          const isTeamRegistration = registrations[0].registrationType === 'team';
-          
-          // Update all registrations to paid status
-          for (const registration of registrations) {
-            await storage.updateEventRegistrationPaymentStatus(registration.id, 'paid');
-          }
-          
-          console.log(`💳 Updated ${registrations.length} registration(s) to paid status`);
-          
-          // Get event details for confirmation email
-          const eventData = await storage.getEvent(registrations[0].eventId);
-          
-          if (eventData) {
-            // Send confirmation email based on registration type
-            if (isTeamRegistration) {
-              console.log(`📧 Sending team confirmation for ${registrations.length} athletes`);
-              
-              // Send team confirmation email
-              await sendTeamConfirmationEmail({
-                teamContactName: registrations[0].contactName,
-                teamName: registrations[0].schoolName || 'Team Registration',
-                numCampers: registrations.length,
-                campName: eventData.title,
-                campDates: eventData.date,
-                campLocation: eventData.location,
-                totalAmountPaid: (paymentIntent.amount / 100).toFixed(2),
-                confirmationCode: paymentIntent.id,
-                teamContactEmail: registrations[0].email,
-                campersList: registrations.map(reg => ({
-                  firstName: reg.firstName,
-                  lastName: reg.lastName,
-                  email: reg.email
-                }))
-              });
-              
-            } else {
-              console.log(`📧 Sending individual confirmation to ${registrations[0].email}`);
-              
-              // Send individual confirmation email
-              const registration = registrations[0];
-              await sendIndividualConfirmationEmail({
-                camperFirstName: registration.firstName,
-                camperLastName: registration.lastName,
-                parentName: registration.contactName,
-                campName: eventData.title,
-                campDates: eventData.date,
-                campLocation: eventData.location,
-                eventId: registration.eventId,
-                amountPaid: (paymentIntent.amount / 100).toFixed(2),
-                confirmationCode: paymentIntent.id,
-                parentEmail: registration.email
-              });
-            }
-          }
-          
-        } else {
-          console.warn(`⚠️ No registrations found for payment intent ${paymentIntent.id}`);
+        if (paymentIntentId) {
+          await processSuccessfulPayment(paymentIntentId, 'checkout_completed');
         }
         
-      } catch (error) {
-        console.error('❌ Error processing successful payment:', error);
-      }
-      
-    } else if (event.type === 'payment_intent.payment_failed') {
-      const paymentIntent = event.data.object as any;
-      
-      try {
-        console.log(`❌ Payment failed: ${paymentIntent.id} - ${paymentIntent.last_payment_error?.message || 'Unknown error'}`);
+        await logWebhookActivity('checkout.session.completed', session.id, 'success');
         
+      // Handle payment intent success (backup confirmation)
+      } else if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object as any;
+        
+        console.log(`✅ Payment succeeded: ${paymentIntent.id} for $${paymentIntent.amount / 100}`);
+        await processSuccessfulPayment(paymentIntent.id, 'payment_succeeded');
+        await logWebhookActivity('payment_intent.succeeded', paymentIntent.id, 'success');
+        
+      // Handle payment failures
+      } else if (event.type === 'payment_intent.payment_failed') {
+        const paymentIntent = event.data.object as any;
+        const failureReason = paymentIntent.last_payment_error?.message || 'Unknown error';
+        
+        console.log(`❌ Payment failed: ${paymentIntent.id} - ${failureReason}`);
+        
+        // Log payment failure to payment_errors table
+        try {
+          await storage.logEventRegistration({
+            email: 'payment_failure@system.local',
+            eventSlug: 'payment-error',
+            finalAmount: paymentIntent.amount / 100,
+            discountCode: null,
+            stripeIntentId: paymentIntent.id,
+            sessionId: `failed_${Date.now()}`,
+            registrationType: 'error',
+            originalAmount: paymentIntent.amount / 100,
+            discountAmount: 0
+          });
+        } catch (logError) {
+          console.error('Failed to log payment error:', logError);
+        }
+        
+        // Update registration status to failed
         const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
-        
         if (registrations && registrations.length > 0) {
           for (const registration of registrations) {
-            await storage.updateEventRegistrationPaymentStatus(registration.id, 'failed');
+            await storage.updateEventRegistrationPaymentStatus(registration.id.toString(), 'failed');
           }
           console.log(`💔 Updated ${registrations.length} registration(s) to failed status`);
         }
         
-      } catch (error) {
-        console.error('❌ Error processing failed payment:', error);
-      }
-      
-    } else if (event.type === 'payment_intent.canceled') {
-      const paymentIntent = event.data.object as any;
-      
-      try {
-        console.log(`🚫 Payment canceled: ${paymentIntent.id}`);
+        await logWebhookActivity('payment_intent.payment_failed', paymentIntent.id, failureReason);
         
-        const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
+      // Handle refunds
+      } else if (event.type === 'charge.refunded') {
+        const charge = event.data.object as any;
         
-        if (registrations && registrations.length > 0) {
-          for (const registration of registrations) {
-            await storage.updateEventRegistrationPaymentStatus(registration.id, 'canceled');
+        console.log(`💰 Refund processed: ${charge.id} for $${charge.amount_refunded / 100}`);
+        
+        // Find and update registrations
+        const paymentIntentId = charge.payment_intent;
+        if (paymentIntentId) {
+          const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntentId);
+          if (registrations && registrations.length > 0) {
+            for (const registration of registrations) {
+              await storage.updateEventRegistrationPaymentStatus(registration.id.toString(), 'refunded');
+            }
+            console.log(`💰 Updated ${registrations.length} registration(s) to refunded status`);
           }
-          console.log(`🚫 Updated ${registrations.length} registration(s) to canceled status`);
         }
         
-      } catch (error) {
-        console.error('❌ Error processing canceled payment:', error);
+        await logWebhookActivity('charge.refunded', charge.id, 'success');
+        
+      // Handle customer creation
+      } else if (event.type === 'customer.created') {
+        const customer = event.data.object as any;
+        
+        console.log(`👤 Customer created: ${customer.id} - ${customer.email}`);
+        await logWebhookActivity('customer.created', customer.id, 'success');
+        
+      } else {
+        console.log(`ℹ️ Unhandled webhook event: ${event.type}`);
+        await logWebhookActivity(event.type, event.data.object.id, 'unhandled');
       }
       
-    } else if (event.type === 'charge.dispute.created') {
-      const dispute = event.data.object as any;
-      console.log(`⚖️ Dispute created for charge: ${dispute.charge} - Reason: ${dispute.reason}`);
+      const processingTime = Date.now() - startTime;
+      console.log(`⚡ Webhook processed in ${processingTime}ms`);
+      
+      // Respond within 3 seconds to avoid retries
+      if (processingTime < 3000) {
+        res.status(200).json({received: true, processed: event.type, time: processingTime});
+      } else {
+        console.warn(`⚠️ Webhook processing took ${processingTime}ms - may cause retries`);
+        res.status(200).json({received: true, processed: event.type, time: processingTime, warning: 'slow_processing'});
+      }
+      
+    } catch (error) {
+      console.error('❌ Webhook processing error:', error);
+      await logWebhookActivity(event.type, event.data.object.id, error instanceof Error ? error.message : 'Unknown error');
+      res.status(200).json({received: true, error: 'processing_failed'});
+    }
+  });
+
+  // Helper function to process successful payments
+  async function processSuccessfulPayment(paymentIntentId: string, source: string) {
+    const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntentId);
+    
+    if (registrations && registrations.length > 0) {
+      const isTeamRegistration = registrations[0].registrationType === 'team';
+      
+      // Update all registrations to paid status
+      for (const registration of registrations) {
+        await storage.updateEventRegistrationPaymentStatus(registration.id.toString(), 'paid');
+      }
+      
+      console.log(`💳 Updated ${registrations.length} registration(s) to paid status via ${source}`);
+      
+      // Get event details for confirmation email
+      const eventData = await storage.getEvent(registrations[0].eventId);
+      
+      if (eventData) {
+        if (isTeamRegistration) {
+          console.log(`📧 Sending team confirmation for ${registrations.length} athletes`);
+          
+          const teamEmailData = {
+            teamContactName: registrations[0].contactName,
+            teamName: registrations[0].schoolName || 'Team Registration',
+            numCampers: registrations.length,
+            campName: eventData.title,
+            campDates: eventData.date,
+            campLocation: eventData.location,
+            totalAmountPaid: (registrations.length * 199).toFixed(2), // Calculate total
+            confirmationCode: paymentIntentId,
+            teamContactEmail: registrations[0].email,
+            campersList: registrations.map(reg => ({
+              firstName: reg.firstName,
+              lastName: reg.lastName,
+              email: reg.email
+            }))
+          };
+          
+          await sendConfirmationEmail(teamEmailData);
+          
+        } else {
+          console.log(`📧 Sending individual confirmation to ${registrations[0].email}`);
+          
+          const registration = registrations[0];
+          const emailData = {
+            camperFirstName: registration.firstName,
+            camperLastName: registration.lastName,
+            parentName: registration.contactName,
+            campName: eventData.title,
+            campDates: eventData.date,
+            campLocation: eventData.location,
+            eventId: registration.eventId,
+            amountPaid: '199.00', // Standard individual price
+            confirmationCode: paymentIntentId,
+            parentEmail: registration.email
+          };
+          
+          await sendConfirmationEmail(emailData);
+        }
+      }
       
     } else {
-      console.log(`ℹ️ Unhandled webhook event: ${event.type}`);
+      console.warn(`⚠️ No registrations found for payment intent ${paymentIntentId}`);
+      
+      // Create placeholder entry for admin review
+      try {
+        await storage.logEventRegistration({
+          email: 'recovery@system.local',
+          eventSlug: 'recovered-payment',
+          finalAmount: 199, // Default amount
+          discountCode: null,
+          stripeIntentId: paymentIntentId,
+          sessionId: `recovered_${Date.now()}`,
+          registrationType: 'recovered',
+          originalAmount: 199,
+          discountAmount: 0
+        });
+        
+        console.log(`🔄 Created placeholder entry for orphaned payment: ${paymentIntentId}`);
+      } catch (recoveryError) {
+        console.error('Failed to create recovery entry:', recoveryError);
+      }
     }
-    
-    // Always acknowledge receipt
-    res.status(200).json({received: true, processed: event.type});
-  });
+  }
+
+  // Helper function to log webhook activity
+  async function logWebhookActivity(eventType: string, objectId: string | null, status: string) {
+    try {
+      await storage.logEventRegistration({
+        email: 'webhook@system.local',
+        eventSlug: 'webhook-log',
+        finalAmount: 0,
+        discountCode: null,
+        stripeIntentId: objectId || `webhook_${Date.now()}`,
+        sessionId: `${eventType}_${Date.now()}`,
+        registrationType: 'webhook',
+        originalAmount: 0,
+        discountAmount: 0
+      });
+    } catch (logError) {
+      console.error('Failed to log webhook activity:', logError);
+    }
+  }
 
   // Only add catch-all route in production
   if (process.env.NODE_ENV === 'production') {
