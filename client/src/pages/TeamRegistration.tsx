@@ -12,8 +12,11 @@ interface Athlete {
   id: string;
   firstName: string;
   lastName: string;
-  contactFullName: string;
-  contactEmail: string;
+  age: string;
+  tShirtSize: string;
+  contactName: string;
+  contactPhone: string;
+  email: string;
 }
 
 interface Event {
@@ -54,8 +57,8 @@ export default function TeamRegistration() {
   });
 
   const [athletes, setAthletes] = useState<Athlete[]>([
-    { id: "1", firstName: "", lastName: "", contactFullName: "", contactEmail: "" },
-    { id: "2", firstName: "", lastName: "", contactFullName: "", contactEmail: "" }
+    { id: "1", firstName: "", lastName: "", age: "", tShirtSize: "", contactName: "", contactPhone: "", email: "" },
+    { id: "2", firstName: "", lastName: "", age: "", tShirtSize: "", contactName: "", contactPhone: "", email: "" }
   ]);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -66,8 +69,11 @@ export default function TeamRegistration() {
       id: newId, 
       firstName: "", 
       lastName: "", 
-      contactFullName: "", 
-      contactEmail: "" 
+      age: "", 
+      tShirtSize: "", 
+      contactName: "", 
+      contactPhone: "", 
+      email: "" 
     }]);
   };
 
@@ -119,8 +125,11 @@ export default function TeamRegistration() {
     const validAthletes = athletes.filter(athlete => 
       athlete.firstName && athlete.firstName.trim() &&
       athlete.lastName && athlete.lastName.trim() &&
-      athlete.contactFullName && athlete.contactFullName.trim() &&
-      athlete.contactEmail && athlete.contactEmail.trim()
+      athlete.age && athlete.age.trim() &&
+      athlete.tShirtSize && athlete.tShirtSize.trim() &&
+      athlete.contactName && athlete.contactName.trim() &&
+      athlete.contactPhone && athlete.contactPhone.trim() &&
+      athlete.email && athlete.email.trim()
     );
 
     const incompleteAthletes = athletes.length - validAthletes.length;
@@ -137,7 +146,7 @@ export default function TeamRegistration() {
     // Validate athlete emails
     for (let i = 0; i < validAthletes.length; i++) {
       const athlete = validAthletes[i];
-      if (!emailRegex.test(athlete.contactEmail.trim())) {
+      if (!emailRegex.test(athlete.email.trim())) {
         toast({
           title: "Invalid Email",
           description: `Please enter a valid email address for ${athlete.firstName} ${athlete.lastName}.`,
@@ -174,8 +183,11 @@ export default function TeamRegistration() {
       const validAthletes = athletes.filter(athlete => {
         const isValid = athlete.firstName && athlete.firstName.trim() &&
                        athlete.lastName && athlete.lastName.trim() &&
-                       athlete.contactFullName && athlete.contactFullName.trim() &&
-                       athlete.contactEmail && athlete.contactEmail.trim();
+                       athlete.age && athlete.age.trim() &&
+                       athlete.tShirtSize && athlete.tShirtSize.trim() &&
+                       athlete.contactName && athlete.contactName.trim() &&
+                       athlete.contactPhone && athlete.contactPhone.trim() &&
+                       athlete.email && athlete.email.trim();
         
         if (!isValid) {
           console.log('Invalid athlete:', athlete);
@@ -195,14 +207,15 @@ export default function TeamRegistration() {
         return;
       }
 
-      // Map athlete data to match backend expectations with both email formats
+      // Map athlete data to match backend expectations
       const mappedAthletes = validAthletes.map(athlete => ({
         firstName: athlete.firstName.trim(),
         lastName: athlete.lastName.trim(),
-        email: athlete.contactEmail.trim(), // Primary email field for backend
-        contactEmail: athlete.contactEmail.trim(), // Keep both for compatibility
-        contactName: athlete.contactFullName.trim(),
-        contactFullName: athlete.contactFullName.trim()
+        age: athlete.age.trim(),
+        tShirtSize: athlete.tShirtSize.trim(),
+        contactName: athlete.contactName.trim(),
+        contactPhone: athlete.contactPhone.trim(),
+        email: athlete.email.trim()
       }));
 
       // Check if there's a discount applied
@@ -308,7 +321,8 @@ export default function TeamRegistration() {
   };
 
   const validAthleteCount = athletes.filter(athlete => 
-    athlete.firstName && athlete.lastName && athlete.contactFullName && athlete.contactEmail
+    athlete.firstName && athlete.lastName && athlete.age && athlete.tShirtSize && 
+    athlete.contactName && athlete.contactPhone && athlete.email
   ).length;
 
   const totalCost = validAthleteCount * event.teamPrice;
