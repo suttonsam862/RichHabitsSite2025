@@ -10,6 +10,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 // Validate Stripe keys configuration
 const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY || 'pk_live_51RK25mBIRPjPy7BLnnfk9W4NLtkhEARrXCYY7yn2lAryA1jBPSkK7pU9ILCf1sJL0YVbrdd1mTcsYTot04uuIVav00HVWDloOE';
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_aMVpANfxDWAJyyvavUoZfKStMmH2EkFl';
 
 // Ensure keys match (both live or both test)
 const secretIsLive = !process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
