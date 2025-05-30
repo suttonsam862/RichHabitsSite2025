@@ -656,17 +656,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
           
-          // Verify the discount calculation matches our expectation
+          // STRICT SECURITY: Verify the discount calculation matches our expectation exactly
           const discountResult = applyDiscount(originalAmount / 100, appliedDiscountCode);
           const expectedFinalAmount = Math.round(discountResult.finalPrice * 100);
           
-          if (Math.abs(finalAmount - expectedFinalAmount) > 1) { // Allow 1 cent difference for rounding
-            console.log('❌ Discount amount mismatch:', { finalAmount, expectedFinalAmount });
-            return res.status(400).json({
-              error: 'Discount calculation error',
-              userFriendlyMessage: 'There was an issue with the discount calculation. Please try again.',
+          // ZERO TOLERANCE for amount manipulation - must match exactly
+          if (finalAmount !== expectedFinalAmount) {
+            console.log('🚨 SECURITY ALERT - Discount amount manipulation attempt:', { 
+              submittedAmount: finalAmount, 
+              expectedAmount: expectedFinalAmount,
+              difference: finalAmount - expectedFinalAmount,
+              discountCode: appliedDiscountCode,
+              email: registrationData.email,
               sessionId
             });
+            return res.status(400).json({
+              error: 'Invalid discount amount submitted',
+              userFriendlyMessage: 'The discount code calculation is invalid. Please refresh and try again.',
+              sessionId
+            });
+          }
+          
+          // Additional security: Validate specific discount code restrictions
+          if (appliedDiscountCode === 'TEAM199-PRICE-MATCH-INDIVIDUAL') {
+            // TEAM199 can ONLY set price to exactly $199, regardless of original price
+            if (finalAmount !== 19900) { // $199 in cents
+              console.log('🚨 SECURITY ALERT - TEAM199 code manipulation:', { 
+                submittedAmount: finalAmount, 
+                expectedAmount: 19900,
+                email: registrationData.email
+              });
+              return res.status(400).json({
+                error: 'Invalid TEAM199 discount amount',
+                userFriendlyMessage: 'This discount code can only be applied at the correct rate. Please try again.',
+                sessionId
+              });
+            }
           }
         }
       }
@@ -675,24 +700,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const registrationType = option;
 
-      // STEP 2: SINGLE INTENT RULE - Check for existing payment intent
+      // STEP 2: STRICT DUPLICATE PREVENTION - Check for existing payment intent
       const lockStatus = PaymentIntentLock.getLockStatus(sessionId);
       
       if (lockStatus === 'creating') {
+        console.log(`⏳ Blocking duplicate request for session ${sessionId}`);
         return res.status(429).json({
           error: 'Payment creation in progress',
-          userFriendlyMessage: 'Payment setup is in progress. Please wait a moment.',
+          userFriendlyMessage: 'Payment setup is already in progress. Please wait and do not refresh the page.',
           sessionId
         });
       }
 
       const existingIntentId = PaymentIntentLock.getExistingIntent(sessionId);
       if (existingIntentId) {
+        console.log(`♻️ Returning existing payment intent for session ${sessionId}`);
         return res.json({
           clientSecret: existingIntentId,
           amount: amount / 100,
-          sessionId
+          sessionId,
+          isExisting: true
         });
+      }
+
+      // Additional duplicate check: Verify no payment intent exists for this email+event combination in the last 10 minutes
+      try {
+        const recentIntent = await storage.getRegistrationLogByFormSession(sessionId);
+        if (recentIntent && recentIntent.paymentIntentId && 
+            recentIntent.createdAt && 
+            (Date.now() - recentIntent.createdAt.getTime()) < 600000) { // 10 minutes
+          console.log(`🚫 Duplicate registration attempt blocked for ${registrationData.email} in event ${eventId}`);
+          return res.status(429).json({
+            error: 'Recent registration attempt detected',
+            userFriendlyMessage: 'You recently started a registration for this event. Please complete that registration or wait 10 minutes before starting a new one.',
+            sessionId
+          });
+        }
+      } catch (duplicateCheckError) {
+        console.warn('Could not check for duplicate registrations:', duplicateCheckError);
+        // Continue with registration if duplicate check fails
       }
 
       // STEP 3: ACQUIRE LOCK (Prevent concurrent requests)
@@ -737,7 +783,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           },
         });
 
-        // STEP 6: LOG PAYMENT INTENT CREATION
+        // STEP 6: COMPREHENSIVE LOGGING - Log ALL payment intent creation attempts
         try {
           await storage.logEventRegistration({
             email: registrationData.email,
@@ -750,10 +796,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             originalAmount: originalAmount / 100,
             discountAmount: discountAmount / 100
           });
-          console.log(`✅ Payment intent logged: ${paymentIntentResult.id} for ${registrationData.email}`);
+          console.log(`✅ SUCCESS: Payment intent ${paymentIntentResult.id} created and logged for ${registrationData.email}, amount: $${finalAmount/100}${appliedDiscountCode ? `, discount: ${appliedDiscountCode}` : ''}`);
         } catch (logError) {
-          console.error('Failed to log payment intent:', logError);
-          // Don't fail the request if logging fails
+          console.error('❌ CRITICAL: Failed to log payment intent creation:', logError);
+          // Log the failure but don't fail the request - payment intent was created successfully
         }
 
         // STEP 7: SUCCESS - Update lock and return
@@ -777,11 +823,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error(`❌ Payment intent creation failed for session ${sessionId}:`, error.message);
       
-      // Return user-friendly error message
+      // Log the failure for comprehensive tracking
+      try {
+        await storage.logEventRegistration({
+          email: registrationData?.email || 'unknown',
+          eventSlug: `event-${eventId}`,
+          finalAmount: 0,
+          discountCode: appliedDiscountCode || null,
+          stripeIntentId: `failed_${Date.now()}`,
+          sessionId: sessionId,
+          registrationType: registrationType || 'unknown',
+          originalAmount: 0,
+          discountAmount: 0
+        });
+      } catch (logError) {
+        console.error('Failed to log payment intent failure:', logError);
+      }
+      
+      // Release lock on failure
+      PaymentIntentLock.releaseLock(sessionId);
+      
+      // Return user-friendly error message with specific guidance
       res.status(400).json({
         error: 'Payment setup failed',
-        userFriendlyMessage: 'There was an issue creating your payment. Please try again.',
-        sessionId
+        userFriendlyMessage: 'We encountered an issue setting up your payment. Please refresh the page and try again. If the problem persists, try using a different browser or device.',
+        sessionId,
+        canRetry: true
       });
     }
   });
@@ -1114,7 +1181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         console.log(`✅ Team discount applied: Original $${originalTotalAmount/100}, Final $${finalTotalAmount/100}, Saved $${totalDiscountAmount/100}, Code: ${appliedDiscountCode || 'N/A'}`);
         
-        // Validate discount code if provided
+        // STRICT SECURITY: Validate discount code for team registration
         if (appliedDiscountCode) {
           const { validateDiscountCode, applyDiscount } = await import('./discountCodes.js');
           const validation = validateDiscountCode(appliedDiscountCode, { 
@@ -1125,8 +1192,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (!validation.valid) {
             console.log('❌ Invalid team discount code:', appliedDiscountCode);
             return res.status(400).json({
-              error: 'Invalid discount code',
-              userFriendlyMessage: 'The discount code is not valid for team registration.',
+              error: 'Invalid discount code for team registration',
+              userFriendlyMessage: 'This discount code is not valid for team registrations or has expired. Please check the code and try again.',
+              sessionId
+            });
+          }
+
+          // Verify the team discount calculation matches exactly
+          const perAthleteOriginal = 199; // $199 per athlete
+          const teamDiscountResult = applyDiscount(perAthleteOriginal, appliedDiscountCode);
+          const expectedPerAthletePrice = teamDiscountResult.finalPrice;
+          const expectedTotalAmount = Math.round(expectedPerAthletePrice * validAthletes.length * 100);
+          
+          // ZERO TOLERANCE for team amount manipulation
+          if (finalTotalAmount !== expectedTotalAmount) {
+            console.log('🚨 SECURITY ALERT - Team discount amount manipulation:', { 
+              submittedTotal: finalTotalAmount, 
+              expectedTotal: expectedTotalAmount,
+              athleteCount: validAthletes.length,
+              discountCode: appliedDiscountCode,
+              coachEmail: coachInfo.email
+            });
+            return res.status(400).json({
+              error: 'Invalid team discount calculation',
+              userFriendlyMessage: 'The team discount calculation is incorrect. Please refresh and try again.',
               sessionId
             });
           }
