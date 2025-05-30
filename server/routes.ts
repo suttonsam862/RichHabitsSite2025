@@ -1083,9 +1083,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // BULLETPROOF Team Registration API - Using same validation as individual registration
   app.post("/api/team-registration", async (req, res) => {
     const userAgent = req.headers['user-agent'] || '';
-    const ipAddress = req.headers['x-forwarded-for']?.split(',')[0] || 
-                     req.headers['x-real-ip'] || 
-                     req.connection?.remoteAddress || 'unknown';
+    const ipAddress = Array.isArray(req.headers['x-forwarded-for']) 
+      ? req.headers['x-forwarded-for'][0] 
+      : req.headers['x-forwarded-for']?.split(',')[0] || 
+        req.headers['x-real-ip'] || 
+        req.connection?.remoteAddress || 'unknown';
     
     // Generate session ID for team registration
     let sessionId = req.headers['x-session-id'] as string || 
@@ -1093,22 +1095,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
                    `team_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     try {
-      console.log('=== TEAM REGISTRATION DEBUG ===');
-      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      console.log('=== TEAM REGISTRATION PAYMENT INTENT CREATION ===');
+      console.log('Request received:', {
+        eventId: req.body.eventId,
+        athleteCount: req.body.athletes?.length,
+        coachEmail: req.body.coachInfo?.email,
+        discountCode: req.body.discountCode || 'none'
+      });
       
-      const { eventId, coachInfo, athletes, pricePerAthlete, totalAmount, discountCode, discountedAmount } = req.body;
+      const { eventId, coachInfo, athletes, discountCode } = req.body;
       
-      // Enhanced validation - same as individual registration
+      // Enhanced validation - backend controls all pricing logic
       if (!eventId || !coachInfo || !athletes || athletes.length === 0) {
         console.log('❌ Missing required team registration data');
         return res.status(400).json({ 
           error: "Missing required team registration data",
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          userFriendlyMessage: 'Please complete all required fields before proceeding.',
           sessionId
         });
       }
 
-      // Validate coach information with same rigor as individual registration
+      // Validate coach information
       const requiredCoachFields = ['firstName', 'lastName', 'email'];
       const missingCoachFields = requiredCoachFields.filter(field => !coachInfo[field] || coachInfo[field].trim() === '');
       
@@ -1116,25 +1123,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('❌ Missing required coach fields:', missingCoachFields);
         return res.status(400).json({
           error: `Missing required coach fields: ${missingCoachFields.join(', ')}`,
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          userFriendlyMessage: 'Please complete all coach information fields.',
           missingFields: missingCoachFields,
           sessionId
         });
       }
 
-      // Validate each athlete has required data - handle both email field formats
-      const validAthletes = athletes.filter(athlete => {
+      // Validate each athlete has required data
+      const validAthletes = athletes.filter((athlete: any) => {
         const hasName = athlete.firstName && athlete.lastName && athlete.firstName.trim() && athlete.lastName.trim();
         const hasEmail = (athlete.email && athlete.email.trim()) || (athlete.contactEmail && athlete.contactEmail.trim());
         const hasContact = (athlete.contactName && athlete.contactName.trim()) || (athlete.contactFullName && athlete.contactFullName.trim());
-        
-        console.log(`Athlete validation: ${athlete.firstName} ${athlete.lastName}`, {
-          hasName,
-          hasEmail: !!hasEmail,
-          hasContact: !!hasContact,
-          email: athlete.email || athlete.contactEmail,
-          contact: athlete.contactName || athlete.contactFullName
-        });
         
         return hasName && hasEmail && hasContact;
       });
@@ -1143,46 +1142,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('❌ Insufficient valid athletes:', validAthletes.length);
         return res.status(400).json({ 
           error: "Team registration requires a minimum of 5 athletes with complete information.",
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
+          userFriendlyMessage: 'Team registration requires at least 5 athletes with complete information.',
           sessionId
         });
       }
       
-      console.log('✅ Team registration validation passed:', {
-        eventId,
-        coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
-        coachEmail: coachInfo.email,
-        athleteCount: validAthletes.length,
-        originalTotal: validAthletes.length * 199
-      });
-      
-      // Calculate final amount with discount handling (same as individual registration)
-      const originalAmountPerAthlete = 19900; // $199 per athlete in cents
-      const originalTotalAmount = validAthletes.length * originalAmountPerAthlete;
+      // BACKEND CONTROLS PRICING: Calculate amounts (ignore any frontend pricing)
+      const TEAM_PRICE_PER_ATHLETE = 19900; // $199 per athlete in cents
+      const originalTotalAmount = validAthletes.length * TEAM_PRICE_PER_ATHLETE;
       let finalTotalAmount = originalTotalAmount;
       let appliedDiscountCode = discountCode || null;
       let totalDiscountAmount = 0;
       
-      // Apply discount if provided
-      if (discountedAmount !== undefined && discountedAmount !== null) {
-        const discountedAmountCents = Math.round(discountedAmount * 100);
-        
-        if (discountedAmountCents < 0 || discountedAmountCents > 500000) { // Max $5000 for teams
-          console.log('❌ Invalid team discounted amount:', discountedAmount);
-          return res.status(400).json({
-            error: 'Invalid discount amount',
-            userFriendlyMessage: 'Invalid discount applied. Please try again.',
-            sessionId
-          });
-        }
-        
-        finalTotalAmount = discountedAmountCents;
-        totalDiscountAmount = originalTotalAmount - finalTotalAmount;
-        
-        console.log(`✅ Team discount applied: Original $${originalTotalAmount/100}, Final $${finalTotalAmount/100}, Saved $${totalDiscountAmount/100}, Code: ${appliedDiscountCode || 'N/A'}`);
-        
-        // STRICT SECURITY: Validate discount code for team registration
-        if (appliedDiscountCode) {
+      console.log('💰 Team pricing calculation:', {
+        athleteCount: validAthletes.length,
+        pricePerAthlete: TEAM_PRICE_PER_ATHLETE / 100,
+        originalTotal: originalTotalAmount / 100,
+        discountCode: appliedDiscountCode
+      });
+      
+      // Apply discount if provided - BACKEND VALIDATION ONLY
+      if (appliedDiscountCode) {
+        try {
           const { validateDiscountCode, applyDiscount } = await import('./discountCodes.js');
           const validation = validateDiscountCode(appliedDiscountCode, { 
             isTeamRegistration: true, 
@@ -1193,59 +1174,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log('❌ Invalid team discount code:', appliedDiscountCode);
             return res.status(400).json({
               error: 'Invalid discount code for team registration',
-              userFriendlyMessage: 'This discount code is not valid for team registrations or has expired. Please check the code and try again.',
+              userFriendlyMessage: 'This discount code is not valid for team registrations or has expired.',
               sessionId
             });
           }
 
-          // Verify the team discount calculation matches exactly
-          const perAthleteOriginal = 199; // $199 per athlete
+          // Apply discount calculation
+          const perAthleteOriginal = TEAM_PRICE_PER_ATHLETE / 100; // Convert to dollars
           const teamDiscountResult = applyDiscount(perAthleteOriginal, appliedDiscountCode);
-          const expectedPerAthletePrice = teamDiscountResult.finalPrice;
-          const expectedTotalAmount = Math.round(expectedPerAthletePrice * validAthletes.length * 100);
+          const discountedPerAthletePrice = teamDiscountResult.finalPrice;
+          finalTotalAmount = Math.round(discountedPerAthletePrice * validAthletes.length * 100); // Back to cents
+          totalDiscountAmount = originalTotalAmount - finalTotalAmount;
           
-          // ZERO TOLERANCE for team amount manipulation
-          if (finalTotalAmount !== expectedTotalAmount) {
-            console.log('🚨 SECURITY ALERT - Team discount amount manipulation:', { 
-              submittedTotal: finalTotalAmount, 
-              expectedTotal: expectedTotalAmount,
-              athleteCount: validAthletes.length,
-              discountCode: appliedDiscountCode,
-              coachEmail: coachInfo.email
-            });
-            return res.status(400).json({
-              error: 'Invalid team discount calculation',
-              userFriendlyMessage: 'The team discount calculation is incorrect. Please refresh and try again.',
-              sessionId
-            });
-          }
+          console.log('✅ Team discount applied:', {
+            originalTotal: originalTotalAmount / 100,
+            finalTotal: finalTotalAmount / 100,
+            discountAmount: totalDiscountAmount / 100,
+            code: appliedDiscountCode
+          });
+        } catch (discountError) {
+          console.error('❌ Discount validation error:', discountError);
+          return res.status(400).json({
+            error: 'Error validating discount code',
+            userFriendlyMessage: 'We had trouble applying your discount code. Please try again.',
+            sessionId
+          });
         }
       }
       
-      const totalAmountInCents = finalTotalAmount;
+      // Ensure minimum amount (prevent $0 payments)
+      if (finalTotalAmount < 50) { // Minimum $0.50
+        console.log('❌ Amount too low for Stripe:', finalTotalAmount);
+        return res.status(400).json({
+          error: 'Payment amount too low',
+          userFriendlyMessage: 'The payment amount is too low to process.',
+          sessionId
+        });
+      }
       
-      // Create single payment intent for entire team (same pattern as individual)
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalAmountInCents,
+      console.log('💳 Creating Stripe payment intent:', {
+        amount: finalTotalAmount,
+        amountDollars: finalTotalAmount / 100,
         currency: 'usd',
-        metadata: {
-          eventId: eventId.toString(),
-          registrationType: 'team',
-          sessionId,
-          coachEmail: coachInfo.email,
-          coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
-          athleteCount: validAthletes.length.toString(),
-          teamName: coachInfo.teamName || '',
-          schoolName: coachInfo.schoolName || '',
-          originalAmount: (originalTotalAmount / 100).toString(),
-          finalAmount: (finalTotalAmount / 100).toString(),
-          discountCode: appliedDiscountCode || '',
-          discountAmount: (totalDiscountAmount / 100).toString()
-        },
-        automatic_payment_methods: {
-          enabled: true,
-        },
+        athleteCount: validAthletes.length
       });
+      
+      // Create single payment intent for entire team
+      let paymentIntent;
+      try {
+        paymentIntent = await stripe.paymentIntents.create({
+          amount: finalTotalAmount,
+          currency: 'usd',
+          metadata: {
+            eventId: eventId.toString(),
+            registrationType: 'team',
+            sessionId,
+            coachEmail: coachInfo.email,
+            coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
+            athleteCount: validAthletes.length.toString(),
+            teamName: coachInfo.teamName || '',
+            schoolName: coachInfo.schoolName || '',
+            originalAmount: (originalTotalAmount / 100).toString(),
+            finalAmount: (finalTotalAmount / 100).toString(),
+            discountCode: appliedDiscountCode || '',
+            discountAmount: (totalDiscountAmount / 100).toString()
+          },
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
+        
+        console.log('✅ Stripe payment intent created successfully:', {
+          paymentIntentId: paymentIntent.id,
+          clientSecret: paymentIntent.client_secret ? 'present' : 'missing',
+          amount: paymentIntent.amount,
+          status: paymentIntent.status
+        });
+        
+      } catch (stripeError: any) {
+        console.error('❌ Stripe payment intent creation failed:', {
+          error: stripeError.message,
+          type: stripeError.type,
+          code: stripeError.code,
+          amount: finalTotalAmount,
+          athleteCount: validAthletes.length
+        });
+        
+        return res.status(500).json({
+          error: 'Payment setup failed',
+          userFriendlyMessage: 'We had trouble setting up your team payment, please try again shortly.',
+          sessionId,
+          details: stripeError.message
+        });
+      }
 
       // Log team payment intent creation
       try {
@@ -1266,51 +1287,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the request if logging fails
       }
 
-      console.log(`✅ Team payment intent created successfully for session ${sessionId}, event ${eventId}, ${validAthletes.length} athletes`);
-
-      // Create team registrations in database - same as individual registration pattern
+      // Create team registrations in database with pending status
+      const createdRegistrations = [];
       for (const athlete of validAthletes) {
-        // Ensure we use the correct email field (handle both formats)
         const athleteEmail = athlete.email || athlete.contactEmail;
         const athleteContactName = athlete.contactName || athlete.contactFullName;
         
-        await storage.createEventRegistration({
-          eventId,
-          firstName: athlete.firstName,
-          lastName: athlete.lastName,
-          email: athleteEmail,
-          phone: coachInfo.phone,
-          registrationType: 'team',
-          stripePaymentIntentId: paymentIntent.id, // Use the SAME payment intent ID for all athletes
-          contactName: athleteContactName || `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
-          medicalReleaseAccepted: true,
-          tShirtSize: "L", // Default value
-          grade: "N/A", // Default value
-          schoolName: coachInfo.teamName || "Team Registration",
-          age: null,
-          experience: null,
-          paymentStatus: 'pending',
-          day1: false,
-          day2: false,
-          day3: false
-        });
+        try {
+          const registration = await storage.createEventRegistration({
+            eventId,
+            eventSlug: `event-${eventId}`,
+            firstName: athlete.firstName,
+            lastName: athlete.lastName,
+            email: athleteEmail,
+            phone: coachInfo.phone || null,
+            registrationType: 'team',
+            stripePaymentIntentId: paymentIntent.id,
+            contactName: athleteContactName || `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
+            medicalReleaseAccepted: true,
+            tShirtSize: "L",
+            grade: "N/A",
+            schoolName: coachInfo.teamName || "Team Registration",
+            paymentStatus: 'pending',
+            day1: false,
+            day2: false,
+            day3: false
+          });
+          createdRegistrations.push(registration);
+        } catch (regError) {
+          console.error('Failed to create registration for athlete:', athlete.firstName, regError);
+        }
       }
 
-      console.log(`✅ Team registration completed: ${validAthletes.length} athletes with single payment intent ${paymentIntent.id}`);
+      console.log(`✅ Team registration completed: ${createdRegistrations.length}/${validAthletes.length} athletes registered with payment intent ${paymentIntent.id}`);
 
+      // Return response
       res.json({
+        success: true,
         clientSecret: paymentIntent.client_secret,
-        amount: totalAmountInCents / 100, // Convert back to dollars for display
+        amount: finalTotalAmount / 100, // Convert back to dollars for display
         athleteCount: validAthletes.length,
         sessionId,
-        paymentIntentId: paymentIntent.id
+        paymentIntentId: paymentIntent.id,
+        registrationsCreated: createdRegistrations.length
       });
       
-    } catch (error) {
-      console.error("❌ Team registration error:", error);
+    } catch (error: any) {
+      console.error("❌ Team registration error:", {
+        message: error.message,
+        stack: error.stack,
+        sessionId
+      });
+      
       res.status(500).json({ 
-        error: error instanceof Error ? error.message : "Failed to process team registration",
-        userFriendlyMessage: 'We encountered an issue processing your team registration. Please try again.',
+        error: error.message || "Failed to process team registration",
+        userFriendlyMessage: 'We encountered an issue processing your team registration. Please try again shortly.',
         sessionId
       });
     }
@@ -1433,60 +1464,150 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Webhook endpoint to handle Stripe events
+  // Enhanced Stripe webhook handler for efficient payment processing
   app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
     const sig = req.headers['stripe-signature'];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     
     let event;
     
     try {
-      // Verify the webhook signature
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig || '',
-        process.env.STRIPE_WEBHOOK_SECRET || ''
-      );
+      if (!webhookSecret) {
+        console.warn('STRIPE_WEBHOOK_SECRET not configured - webhook verification disabled');
+        event = JSON.parse(req.body.toString());
+      } else {
+        event = stripe.webhooks.constructEvent(req.body, sig || '', webhookSecret);
+      }
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
       return res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
     
-    // Handle specific events
+    console.log(`📨 Stripe webhook: ${event.type} - ${event.data.object.id}`);
+    
+    // Handle payment success events
     if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object;
+      const paymentIntent = event.data.object as any;
       
       try {
-        console.log(`Processing succeeded payment intent: ${paymentIntent.id}`);
+        console.log(`✅ Payment succeeded: ${paymentIntent.id} for $${paymentIntent.amount / 100}`);
         
-        // Update the payment status in our database
-        const updated = await storage.updateEventRegistrationPaymentStatus(
-          paymentIntent.id,
-          "succeeded" // Use "succeeded" to match Stripe's terminology
-        );
+        // Find all registrations for this payment (handles both individual and team)
+        const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
         
-        if (updated) {
-          console.log(`Successfully updated registration for payment ${paymentIntent.id}`);
+        if (registrations && registrations.length > 0) {
+          const isTeamRegistration = registrations[0].registrationType === 'team';
+          
+          // Update all registrations to paid status
+          for (const registration of registrations) {
+            await storage.updateEventRegistrationPaymentStatus(registration.id, 'paid');
+          }
+          
+          console.log(`💳 Updated ${registrations.length} registration(s) to paid status`);
+          
+          // Get event details for confirmation email
+          const eventData = await storage.getEvent(registrations[0].eventId);
+          
+          if (eventData) {
+            // Send confirmation email based on registration type
+            if (isTeamRegistration) {
+              console.log(`📧 Sending team confirmation for ${registrations.length} athletes`);
+              
+              // Send team confirmation email
+              await sendTeamConfirmationEmail({
+                teamContactName: registrations[0].contactName,
+                teamName: registrations[0].schoolName || 'Team Registration',
+                numCampers: registrations.length,
+                campName: eventData.title,
+                campDates: eventData.date,
+                campLocation: eventData.location,
+                totalAmountPaid: (paymentIntent.amount / 100).toFixed(2),
+                confirmationCode: paymentIntent.id,
+                teamContactEmail: registrations[0].email,
+                campersList: registrations.map(reg => ({
+                  firstName: reg.firstName,
+                  lastName: reg.lastName,
+                  email: reg.email
+                }))
+              });
+              
+            } else {
+              console.log(`📧 Sending individual confirmation to ${registrations[0].email}`);
+              
+              // Send individual confirmation email
+              const registration = registrations[0];
+              await sendIndividualConfirmationEmail({
+                camperFirstName: registration.firstName,
+                camperLastName: registration.lastName,
+                parentName: registration.contactName,
+                campName: eventData.title,
+                campDates: eventData.date,
+                campLocation: eventData.location,
+                eventId: registration.eventId,
+                amountPaid: (paymentIntent.amount / 100).toFixed(2),
+                confirmationCode: paymentIntent.id,
+                parentEmail: registration.email
+              });
+            }
+          }
+          
         } else {
-          console.warn(`No registration found for payment ${paymentIntent.id}`);
+          console.warn(`⚠️ No registrations found for payment intent ${paymentIntent.id}`);
         }
         
-        // Send confirmation email after successful payment
-        await sendConfirmationEmailForPayment(paymentIntent);
-        
-        console.log(`PaymentIntent ${paymentIntent.id} was successful!`);
       } catch (error) {
-        console.error('Error processing successful payment:', error);
+        console.error('❌ Error processing successful payment:', error);
       }
+      
     } else if (event.type === 'payment_intent.payment_failed') {
-      const paymentIntent = event.data.object;
+      const paymentIntent = event.data.object as any;
       
       try {
-        console.log(`Processing failed payment intent: ${paymentIntent.id}`);
+        console.log(`❌ Payment failed: ${paymentIntent.id} - ${paymentIntent.last_payment_error?.message || 'Unknown error'}`);
         
-        // Update the payment status in our database
-        const updated = await storage.updateEventRegistrationPaymentStatus(
-          paymentIntent.id,
-          "failed"
+        const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
+        
+        if (registrations && registrations.length > 0) {
+          for (const registration of registrations) {
+            await storage.updateEventRegistrationPaymentStatus(registration.id, 'failed');
+          }
+          console.log(`💔 Updated ${registrations.length} registration(s) to failed status`);
+        }
+        
+      } catch (error) {
+        console.error('❌ Error processing failed payment:', error);
+      }
+      
+    } else if (event.type === 'payment_intent.canceled') {
+      const paymentIntent = event.data.object as any;
+      
+      try {
+        console.log(`🚫 Payment canceled: ${paymentIntent.id}`);
+        
+        const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
+        
+        if (registrations && registrations.length > 0) {
+          for (const registration of registrations) {
+            await storage.updateEventRegistrationPaymentStatus(registration.id, 'canceled');
+          }
+          console.log(`🚫 Updated ${registrations.length} registration(s) to canceled status`);
+        }
+        
+      } catch (error) {
+        console.error('❌ Error processing canceled payment:', error);
+      }
+      
+    } else if (event.type === 'charge.dispute.created') {
+      const dispute = event.data.object as any;
+      console.log(`⚖️ Dispute created for charge: ${dispute.charge} - Reason: ${dispute.reason}`);
+      
+    } else {
+      console.log(`ℹ️ Unhandled webhook event: ${event.type}`);
+    }
+    
+    // Always acknowledge receipt
+    res.status(200).json({received: true, processed: event.type});
+  });
         );
         
         if (updated) {

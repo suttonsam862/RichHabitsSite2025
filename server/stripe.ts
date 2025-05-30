@@ -8,6 +8,17 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe key: STRIPE_SECRET_KEY');
 }
 
+// Validate Stripe keys configuration
+const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY || 'pk_live_51RK25mBIRPjPy7BLnnfk9W4NLtkhEARrXCYY7yn2lAryA1jBPSkK7pU9ILCf1sJL0YVbrdd1mTcsYTot04uuIVav00HVWDloOE';
+
+// Ensure keys match (both live or both test)
+const secretIsLive = !process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
+const publishableIsLive = !STRIPE_PUBLISHABLE_KEY.startsWith('pk_test_');
+
+if (secretIsLive !== publishableIsLive) {
+  throw new Error('Stripe key mismatch: secret and publishable keys must both be live or both be test keys');
+}
+
 // Initialize Stripe with the secret key
 // Using the latest API version and enabling live mode 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
