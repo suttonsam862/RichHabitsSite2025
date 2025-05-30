@@ -205,6 +205,14 @@ export default function TeamRegistration() {
         contactFullName: athlete.contactFullName.trim()
       }));
 
+      // Check if there's a discount applied
+      const discountData = sessionStorage.getItem('applied_discount');
+      const appliedDiscount = discountData ? JSON.parse(discountData) : null;
+      
+      // Calculate final amount with discount
+      const originalTotal = validAthletes.length * event.teamPrice;
+      const finalTotal = appliedDiscount?.finalPrice || originalTotal;
+
       const teamRegistrationData = {
         eventId: parseInt(eventId),
         coachInfo: {
@@ -216,7 +224,9 @@ export default function TeamRegistration() {
         },
         athletes: mappedAthletes,
         pricePerAthlete: event.teamPrice,
-        totalAmount: validAthletes.length * event.teamPrice
+        totalAmount: originalTotal,
+        discountedAmount: finalTotal,
+        discountCode: appliedDiscount?.code || null
       };
 
       // Call the team registration API - same format as individual registration

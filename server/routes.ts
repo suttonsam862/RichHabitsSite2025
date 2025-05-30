@@ -1029,7 +1029,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('=== TEAM REGISTRATION DEBUG ===');
       console.log('Request body:', JSON.stringify(req.body, null, 2));
       
-      const { eventId, coachInfo, athletes, pricePerAthlete, totalAmount } = req.body;
+      const { eventId, coachInfo, athletes, pricePerAthlete, totalAmount, discountCode, discountedAmount } = req.body;
       
       // Enhanced validation - same as individual registration
       if (!eventId || !coachInfo || !athletes || athletes.length === 0) {
@@ -1081,24 +1081,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      if (pricePerAthlete !== 199) {
-        return res.status(400).json({ 
-          error: "Invalid team price - must be $199 per athlete",
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
-          sessionId
-        });
-      }
-
       console.log('✅ Team registration validation passed:', {
         eventId,
         coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
         coachEmail: coachInfo.email,
         athleteCount: validAthletes.length,
-        totalAmount
+        originalTotal: validAthletes.length * 199
       });
       
-      // Use same payment intent creation logic as individual registration
-      const totalAmountInCents = validAthletes.length * 19900; // $199 per athlete in cents
+      // Calculate final amount with discount handling (same as individual registration)
+      const originalAmountPerAthlete = 19900; // $199 per athlete in cents
+      const originalTotalAmount = validAthletes.length * originalAmountPerAthlete;
+      let finalTotalAmount = originalTotalAmount;
+      let appliedDiscountCode = discountCode || null;
+      let totalDiscountAmount = 0;
+      
+      // Apply discount if provided
+      if (discountedAmount !== undefined && discountedAmount !== null) {
+        const discountedAmountCents = Math.round(discountedAmount * 100);
+        
+        if (discountedAmountCents < 0 || discountedAmountCents > 500000) { // Max $5000 for teams
+          console.log('❌ Invalid team discounted amount:', discountedAmount);
+          return res.status(400).json({
+            error: 'Invalid discount amount',
+            userFriendlyMessage: 'Invalid discount applied. Please try again.',
+            sessionId
+          });
+        }
+        
+        finalTotalAmount = discountedAmountCents;
+        totalDiscountAmount = originalTotalAmount - finalTotalAmount;
+        
+        console.log(`✅ Team discount applied: Original $${originalTotalAmount/100}, Final $${finalTotalAmount/100}, Saved $${totalDiscountAmount/100}, Code: ${appliedDiscountCode || 'N/A'}`);
+        
+        // Validate discount code if provided
+        if (appliedDiscountCode) {
+          const { validateDiscountCode, applyDiscount } = await import('./discountCodes.js');
+          const validation = validateDiscountCode(appliedDiscountCode, { 
+            isTeamRegistration: true, 
+            teamSize: validAthletes.length 
+          });
+          
+          if (!validation.valid) {
+            console.log('❌ Invalid team discount code:', appliedDiscountCode);
+            return res.status(400).json({
+              error: 'Invalid discount code',
+              userFriendlyMessage: 'The discount code is not valid for team registration.',
+              sessionId
+            });
+          }
+        }
+      }
+      
+      const totalAmountInCents = finalTotalAmount;
       
       // Create single payment intent for entire team (same pattern as individual)
       const paymentIntent = await stripe.paymentIntents.create({
@@ -1112,12 +1147,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
           coachName: `${coachInfo.firstName} ${coachInfo.lastName}`,
           athleteCount: validAthletes.length.toString(),
           teamName: coachInfo.teamName || '',
-          schoolName: coachInfo.schoolName || ''
+          schoolName: coachInfo.schoolName || '',
+          originalAmount: (originalTotalAmount / 100).toString(),
+          finalAmount: (finalTotalAmount / 100).toString(),
+          discountCode: appliedDiscountCode || '',
+          discountAmount: (totalDiscountAmount / 100).toString()
         },
         automatic_payment_methods: {
           enabled: true,
         },
       });
+
+      // Log team payment intent creation
+      try {
+        await storage.logEventRegistration({
+          email: coachInfo.email,
+          eventSlug: `event-${eventId}`,
+          finalAmount: finalTotalAmount / 100,
+          discountCode: appliedDiscountCode,
+          stripeIntentId: paymentIntent.id,
+          sessionId: sessionId,
+          registrationType: 'team',
+          originalAmount: originalTotalAmount / 100,
+          discountAmount: totalDiscountAmount / 100
+        });
+        console.log(`✅ Team payment intent logged: ${paymentIntent.id} for ${coachInfo.email}`);
+      } catch (logError) {
+        console.error('Failed to log team payment intent:', logError);
+        // Don't fail the request if logging fails
+      }
 
       console.log(`✅ Team payment intent created successfully for session ${sessionId}, event ${eventId}, ${validAthletes.length} athletes`);
 

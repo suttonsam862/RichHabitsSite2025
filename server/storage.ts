@@ -52,6 +52,17 @@ export interface IStorage {
   getRegistrationLogByFormSession(formSessionId: string): Promise<EventRegistrationLog | undefined>;
   getRegistrationLogByPaymentIntent(paymentIntentId: string): Promise<EventRegistrationLog | undefined>;
   updateRegistrationLogPaymentStatus(id: string, status: string, paymentIntentId?: string): Promise<EventRegistrationLog>;
+  logEventRegistration(data: {
+    email: string;
+    eventSlug: string;
+    finalAmount: number;
+    discountCode: string | null;
+    stripeIntentId: string;
+    sessionId: string;
+    registrationType: string;
+    originalAmount: number;
+    discountAmount: number;
+  }): Promise<EventRegistrationLog>;
   
   // Complete registrations - consolidated paid signups only
   createCompleteRegistration(registration: CompleteRegistrationInsert): Promise<CompleteRegistration>;
