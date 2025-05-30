@@ -1608,33 +1608,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Always acknowledge receipt
     res.status(200).json({received: true, processed: event.type});
   });
-        );
-        
-        if (updated) {
-          console.log(`Updated registration status to failed for payment ${paymentIntent.id}`);
-          
-          // Get registration info to notify customer about the failure
-          const registrations = await storage.getEventRegistrationsByPaymentIntent(paymentIntent.id);
-          
-          if (registrations && registrations.length > 0) {
-            console.log(`Found ${registrations.length} registrations for failed payment, notifying customers`);
-            
-            // Here you could add logic to send notification emails to customers
-            // about their failed payment and how to retry
-          }
-        } else {
-          console.warn(`No registration found for failed payment ${paymentIntent.id}`);
-        }
-        
-        console.log(`PaymentIntent ${paymentIntent.id} failed.`);
-      } catch (error) {
-        console.error('Error processing failed payment:', error);
-      }
-    }
-    
-    // Return a 200 response to acknowledge receipt of the event
-    res.status(200).json({received: true});
-  });
 
   // Only add catch-all route in production
   if (process.env.NODE_ENV === 'production') {
