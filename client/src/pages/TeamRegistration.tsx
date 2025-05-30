@@ -450,7 +450,7 @@ export default function TeamRegistration() {
                         </Button>
                       )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label>First Name *</Label>
                         <Input
@@ -468,20 +468,54 @@ export default function TeamRegistration() {
                         />
                       </div>
                       <div>
-                        <Label>Contact Full Name *</Label>
+                        <Label>Age *</Label>
                         <Input
-                          value={athlete.contactFullName}
-                          onChange={(e) => updateAthlete(athlete.id, "contactFullName", e.target.value)}
-                          placeholder="Parent/Guardian Full Name"
+                          value={athlete.age}
+                          onChange={(e) => updateAthlete(athlete.id, "age", e.target.value)}
+                          placeholder="Age"
+                          type="number"
                         />
                       </div>
                       <div>
-                        <Label>Contact Email *</Label>
+                        <Label>T-Shirt Size *</Label>
+                        <select
+                          value={athlete.tShirtSize}
+                          onChange={(e) => updateAthlete(athlete.id, "tShirtSize", e.target.value)}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <option value="">Select Size</option>
+                          <option value="XS">XS</option>
+                          <option value="S">S</option>
+                          <option value="M">M</option>
+                          <option value="L">L</option>
+                          <option value="XL">XL</option>
+                          <option value="XXL">XXL</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Contact Name *</Label>
+                        <Input
+                          value={athlete.contactName}
+                          onChange={(e) => updateAthlete(athlete.id, "contactName", e.target.value)}
+                          placeholder="Parent/Guardian Name"
+                        />
+                      </div>
+                      <div>
+                        <Label>Contact Phone *</Label>
+                        <Input
+                          value={athlete.contactPhone}
+                          onChange={(e) => updateAthlete(athlete.id, "contactPhone", e.target.value)}
+                          placeholder="(555) 123-4567"
+                          type="tel"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <Label>Email *</Label>
                         <Input
                           type="email"
-                          value={athlete.contactEmail}
-                          onChange={(e) => updateAthlete(athlete.id, "contactEmail", e.target.value)}
-                          placeholder="parent@email.com"
+                          value={athlete.email}
+                          onChange={(e) => updateAthlete(athlete.id, "email", e.target.value)}
+                          placeholder="athlete@email.com"
                         />
                       </div>
                     </div>
