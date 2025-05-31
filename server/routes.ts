@@ -1259,10 +1259,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             firstName: athlete.firstName,
             lastName: athlete.lastName,
             email: athlete.email,
-            phone: athlete.contactPhone || coachInfo.phone || null,
+            phone: athlete.parentPhoneNumber || coachInfo.phone || null,
             registrationType: 'team',
             stripePaymentIntentId: paymentIntent.id,
-            contactName: athlete.contactName,
+            contactName: athlete.parentName,
             medicalReleaseAccepted: true,
             tShirtSize: athlete.tShirtSize,
             grade: athlete.age, // Use age as grade for team registrations
