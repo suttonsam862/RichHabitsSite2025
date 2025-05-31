@@ -1095,10 +1095,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate each athlete has required data
       const validAthletes = athletes.filter((athlete: any) => {
         const hasName = athlete.firstName && athlete.lastName && athlete.firstName.trim() && athlete.lastName.trim();
-        const hasEmail = (athlete.email && athlete.email.trim()) || (athlete.contactEmail && athlete.contactEmail.trim());
-        const hasContact = (athlete.contactName && athlete.contactName.trim()) || (athlete.contactFullName && athlete.contactFullName.trim());
+        const hasEmail = athlete.email && athlete.email.trim();
+        const hasParentInfo = athlete.parentName && athlete.parentName.trim() && athlete.parentPhoneNumber && athlete.parentPhoneNumber.trim();
+        const hasShirtSize = athlete.shirtSize && athlete.shirtSize.trim();
+        const hasAge = athlete.age && athlete.age.trim();
         
-        return hasName && hasEmail && hasContact;
+        console.log(`Athlete ${athlete.firstName} validation:`, {
+          hasName,
+          hasEmail,
+          hasParentInfo,
+          hasShirtSize,
+          hasAge,
+          valid: hasName && hasEmail && hasParentInfo && hasShirtSize && hasAge
+        });
+        
+        return hasName && hasEmail && hasParentInfo && hasShirtSize && hasAge;
       });
 
       if (validAthletes.length < 5) {
