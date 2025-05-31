@@ -591,6 +591,7 @@ export default function StripeCheckout() {
         }
         
         // Check if there's a discount applied
+        const discountCode = sessionStorage.getItem('applied_discount_code');
         const discountData = sessionStorage.getItem('applied_discount');
         const appliedDiscount = discountData ? JSON.parse(discountData) : null;
 
