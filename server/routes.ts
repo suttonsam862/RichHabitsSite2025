@@ -1264,7 +1264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             stripePaymentIntentId: paymentIntent.id,
             contactName: athlete.parentName,
             medicalReleaseAccepted: true,
-            tShirtSize: athlete.tShirtSize,
+            tShirtSize: athlete.shirtSize, // Map shirtSize to tShirtSize for database compatibility
             grade: athlete.age, // Use age as grade for team registrations
             schoolName: coachInfo.teamName || "Team Registration",
             paymentStatus: 'pending',

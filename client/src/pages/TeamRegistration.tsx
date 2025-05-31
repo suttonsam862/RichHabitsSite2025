@@ -13,7 +13,6 @@ interface Athlete {
   firstName: string;
   lastName: string;
   age: string;
-  tShirtSize: string;
   email: string;
   shirtSize: string;
   parentName: string;
@@ -58,8 +57,8 @@ export default function TeamRegistration() {
   });
 
   const [athletes, setAthletes] = useState<Athlete[]>([
-    { id: "1", firstName: "", lastName: "", age: "", tShirtSize: "", email: "", shirtSize: "", parentName: "", parentPhoneNumber: "" },
-    { id: "2", firstName: "", lastName: "", age: "", tShirtSize: "", email: "", shirtSize: "", parentName: "", parentPhoneNumber: "" }
+    { id: "1", firstName: "", lastName: "", age: "", email: "", shirtSize: "", parentName: "", parentPhoneNumber: "" },
+    { id: "2", firstName: "", lastName: "", age: "", email: "", shirtSize: "", parentName: "", parentPhoneNumber: "" }
   ]);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -71,7 +70,6 @@ export default function TeamRegistration() {
       firstName: "", 
       lastName: "", 
       age: "", 
-      tShirtSize: "", 
       email: "",
       shirtSize: "",
       parentName: "",
@@ -128,7 +126,6 @@ export default function TeamRegistration() {
       athlete.firstName && athlete.firstName.trim() &&
       athlete.lastName && athlete.lastName.trim() &&
       athlete.age && athlete.age.trim() &&
-      athlete.tShirtSize && athlete.tShirtSize.trim() &&
       athlete.email && athlete.email.trim() &&
       athlete.shirtSize && athlete.shirtSize.trim() &&
       athlete.parentName && athlete.parentName.trim() &&
@@ -187,7 +184,6 @@ export default function TeamRegistration() {
         const isValid = athlete.firstName && athlete.firstName.trim() &&
                        athlete.lastName && athlete.lastName.trim() &&
                        athlete.age && athlete.age.trim() &&
-                       athlete.tShirtSize && athlete.tShirtSize.trim() &&
                        athlete.email && athlete.email.trim() &&
                        athlete.shirtSize && athlete.shirtSize.trim() &&
                        athlete.parentName && athlete.parentName.trim() &&
@@ -216,7 +212,6 @@ export default function TeamRegistration() {
         firstName: athlete.firstName.trim(),
         lastName: athlete.lastName.trim(),
         age: athlete.age.trim(),
-        tShirtSize: athlete.tShirtSize.trim(),
         email: athlete.email.trim(),
         shirtSize: athlete.shirtSize.trim(),
         parentName: athlete.parentName.trim(),
@@ -326,7 +321,7 @@ export default function TeamRegistration() {
   };
 
   const validAthleteCount = athletes.filter(athlete => 
-    athlete.firstName && athlete.lastName && athlete.age && athlete.tShirtSize && 
+    athlete.firstName && athlete.lastName && athlete.age && 
     athlete.email && athlete.shirtSize && athlete.parentName && athlete.parentPhoneNumber
   ).length;
 
@@ -481,22 +476,7 @@ export default function TeamRegistration() {
                           type="number"
                         />
                       </div>
-                      <div>
-                        <Label>T-Shirt Size *</Label>
-                        <select
-                          value={athlete.tShirtSize}
-                          onChange={(e) => updateAthlete(athlete.id, "tShirtSize", e.target.value)}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option value="">Select Size</option>
-                          <option value="XS">XS</option>
-                          <option value="S">S</option>
-                          <option value="M">M</option>
-                          <option value="L">L</option>
-                          <option value="XL">XL</option>
-                          <option value="XXL">XXL</option>
-                        </select>
-                      </div>
+
 
                       <div>
                         <Label>Shirt Size *</Label>
