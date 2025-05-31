@@ -1271,7 +1271,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             day1: true,
             day2: true,
             day3: true,
-            shirtSize: athlete.shirtSize,
             parentName: athlete.parentName,
             parentPhoneNumber: athlete.parentPhoneNumber
           });
