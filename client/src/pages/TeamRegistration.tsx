@@ -17,6 +17,9 @@ interface Athlete {
   contactName: string;
   contactPhone: string;
   email: string;
+  shirtSize: string;
+  parentName: string;
+  parentPhoneNumber: string;
 }
 
 interface Event {
@@ -57,8 +60,8 @@ export default function TeamRegistration() {
   });
 
   const [athletes, setAthletes] = useState<Athlete[]>([
-    { id: "1", firstName: "", lastName: "", age: "", tShirtSize: "", contactName: "", contactPhone: "", email: "" },
-    { id: "2", firstName: "", lastName: "", age: "", tShirtSize: "", contactName: "", contactPhone: "", email: "" }
+    { id: "1", firstName: "", lastName: "", age: "", tShirtSize: "", contactName: "", contactPhone: "", email: "", shirtSize: "", parentName: "", parentPhoneNumber: "" },
+    { id: "2", firstName: "", lastName: "", age: "", tShirtSize: "", contactName: "", contactPhone: "", email: "", shirtSize: "", parentName: "", parentPhoneNumber: "" }
   ]);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -73,7 +76,10 @@ export default function TeamRegistration() {
       tShirtSize: "", 
       contactName: "", 
       contactPhone: "", 
-      email: "" 
+      email: "",
+      shirtSize: "",
+      parentName: "",
+      parentPhoneNumber: ""
     }]);
   };
 
@@ -129,7 +135,10 @@ export default function TeamRegistration() {
       athlete.tShirtSize && athlete.tShirtSize.trim() &&
       athlete.contactName && athlete.contactName.trim() &&
       athlete.contactPhone && athlete.contactPhone.trim() &&
-      athlete.email && athlete.email.trim()
+      athlete.email && athlete.email.trim() &&
+      athlete.shirtSize && athlete.shirtSize.trim() &&
+      athlete.parentName && athlete.parentName.trim() &&
+      athlete.parentPhoneNumber && athlete.parentPhoneNumber.trim()
     );
 
     const incompleteAthletes = athletes.length - validAthletes.length;
@@ -322,7 +331,8 @@ export default function TeamRegistration() {
 
   const validAthleteCount = athletes.filter(athlete => 
     athlete.firstName && athlete.lastName && athlete.age && athlete.tShirtSize && 
-    athlete.contactName && athlete.contactPhone && athlete.email
+    athlete.contactName && athlete.contactPhone && athlete.email &&
+    athlete.shirtSize && athlete.parentName && athlete.parentPhoneNumber
   ).length;
 
   const totalCost = validAthleteCount * event.teamPrice;
@@ -505,6 +515,41 @@ export default function TeamRegistration() {
                         <Input
                           value={athlete.contactPhone}
                           onChange={(e) => updateAthlete(athlete.id, "contactPhone", e.target.value)}
+                          placeholder="(555) 123-4567"
+                          type="tel"
+                        />
+                      </div>
+                      <div>
+                        <Label>Shirt Size *</Label>
+                        <select
+                          value={athlete.shirtSize}
+                          onChange={(e) => updateAthlete(athlete.id, "shirtSize", e.target.value)}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <option value="">Select Size</option>
+                          <option value="Youth S">Youth S</option>
+                          <option value="Youth M">Youth M</option>
+                          <option value="Youth L">Youth L</option>
+                          <option value="Adult S">Adult S</option>
+                          <option value="Adult M">Adult M</option>
+                          <option value="Adult L">Adult L</option>
+                          <option value="Adult XL">Adult XL</option>
+                          <option value="Adult XXL">Adult XXL</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Parent Name *</Label>
+                        <Input
+                          value={athlete.parentName}
+                          onChange={(e) => updateAthlete(athlete.id, "parentName", e.target.value)}
+                          placeholder="Parent/Guardian Full Name"
+                        />
+                      </div>
+                      <div>
+                        <Label>Parent Phone Number *</Label>
+                        <Input
+                          value={athlete.parentPhoneNumber}
+                          onChange={(e) => updateAthlete(athlete.id, "parentPhoneNumber", e.target.value)}
                           placeholder="(555) 123-4567"
                           type="tel"
                         />
