@@ -591,9 +591,15 @@ export default function StripeCheckout() {
         }
         
         // Check if there's a discount applied
-        const discountCode = sessionStorage.getItem('applied_discount_code');
+        const appliedDiscountCode = sessionStorage.getItem('applied_discount_code');
         const discountData = sessionStorage.getItem('applied_discount');
         const appliedDiscount = discountData ? JSON.parse(discountData) : null;
+        
+        console.log('Debug discount retrieval:', {
+          appliedDiscountCode,
+          discountData,
+          appliedDiscount
+        });
 
         // Single optimized API call for payment intent creation
         const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
@@ -609,7 +615,7 @@ export default function StripeCheckout() {
               registrationType: option
             },
             discountedAmount: appliedDiscount?.finalPrice || null,
-            discountCode: appliedDiscount?.code || null,
+            discountCode: discountCode || appliedDiscount?.code || null,
             formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
           }),
         });
