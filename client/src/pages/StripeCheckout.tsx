@@ -510,7 +510,50 @@ export default function StripeCheckout() {
     sessionStorage.setItem('registration_option', option);
     sessionStorage.setItem('registration_eventId', eventId);
 
-    // Optimized payment setup - single API call to reduce mobile loading time
+    // Handle team registrations differently - use existing payment intent
+    if (option === 'team') {
+      const handleTeamPayment = async () => {
+        try {
+          setLoading(true);
+          
+          // Get client secret and amount from URL parameters (passed from team registration)
+          const urlClientSecret = params.get('clientSecret');
+          const urlAmount = params.get('amount');
+          
+          if (urlClientSecret && urlAmount) {
+            console.log('Using team registration payment intent:', {
+              clientSecret: urlClientSecret ? 'present' : 'missing',
+              amount: urlAmount
+            });
+            
+            setClientSecret(urlClientSecret);
+            setAmount(parseFloat(urlAmount));
+            setLoading(false);
+            return;
+          }
+          
+          // Fallback: check sessionStorage for team data
+          const teamData = sessionStorage.getItem('team_registration_data');
+          if (teamData) {
+            const parsedTeamData = JSON.parse(teamData);
+            console.log('Found team registration data in session:', parsedTeamData);
+            setAmount(parsedTeamData.totalAmount || 0);
+          }
+          
+          setError('Team registration data not found. Please restart the registration process.');
+          setLoading(false);
+        } catch (error) {
+          console.error('Error handling team payment:', error);
+          setError('Failed to load team payment information.');
+          setLoading(false);
+        }
+      };
+      
+      handleTeamPayment();
+      return;
+    }
+
+    // Optimized payment setup for individual registrations - single API call to reduce mobile loading time
     const fetchPaymentIntent = async () => {
       try {
         setLoading(true);
