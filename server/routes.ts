@@ -973,12 +973,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       const option = req.query.option as string || 'full';
       
-      // Use correct authentic pricing for each event
+      // Use correct authentic pricing for each event (in cents to match Stripe)
       const eventPricing: Record<number, { full: number; single: number }> = {
-        1: { full: 249, single: 149 }, // Birmingham Slam Camp
-        2: { full: 299, single: 175 }, // National Champ Camp  
-        3: { full: 249, single: 149 }, // Texas Recruiting Clinic
-        4: { full: 200, single: 99 }   // Panther Train Tour
+        1: { full: 24900, single: 14900 }, // Birmingham Slam Camp - $249/$149
+        2: { full: 29900, single: 17500 }, // National Champ Camp - $299/$175
+        3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic - $249/$149
+        4: { full: 20000, single: 9900 }   // Panther Train Tour - $200/$99
       };
       
       const pricing = eventPricing[eventId];
@@ -986,7 +986,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: 'Event not found' });
       }
       
-      const price = option === 'single' ? pricing.single : pricing.full;
+      const priceInCents = option === 'single' ? pricing.single : pricing.full;
+      const price = priceInCents / 100; // Convert cents to dollars for display
       
       // Return product details with correct pricing
       res.json({
