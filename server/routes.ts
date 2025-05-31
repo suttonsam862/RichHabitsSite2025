@@ -644,10 +644,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           discountAmount = originalAmount - finalAmount;
           
           console.log('✅ Backend discount calculation:', {
-            originalAmount: originalAmount / 100,
-            finalAmount: finalAmount / 100,
-            discountAmount: discountAmount / 100,
-            code: appliedDiscountCode
+            originalAmountCents: originalAmount,
+            originalAmountDollars: originalAmount / 100,
+            finalAmountCents: finalAmount,
+            finalAmountDollars: finalAmount / 100,
+            discountAmountCents: discountAmount,
+            discountAmountDollars: discountAmount / 100,
+            code: appliedDiscountCode,
+            discountResult: discountResult
           });
         } catch (discountError) {
           console.error('❌ Discount validation error:', discountError);
