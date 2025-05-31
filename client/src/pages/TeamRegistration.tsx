@@ -489,14 +489,13 @@ export default function TeamRegistration() {
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <option value="">Select Size</option>
-                          <option value="Youth S">Youth S</option>
-                          <option value="Youth M">Youth M</option>
-                          <option value="Youth L">Youth L</option>
-                          <option value="Adult S">Adult S</option>
-                          <option value="Adult M">Adult M</option>
-                          <option value="Adult L">Adult L</option>
-                          <option value="Adult XL">Adult XL</option>
-                          <option value="Adult XXL">Adult XXL</option>
+                          <option value="Small">Small</option>
+                          <option value="Medium">Medium</option>
+                          <option value="Large">Large</option>
+                          <option value="XL">XL</option>
+                          <option value="XXL">XXL</option>
+                          <option value="3XL">3XL</option>
+                          <option value="4XL">4XL</option>
                         </select>
                       </div>
                       <div>
