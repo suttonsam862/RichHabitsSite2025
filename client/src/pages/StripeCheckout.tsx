@@ -615,7 +615,7 @@ export default function StripeCheckout() {
               registrationType: option
             },
             discountedAmount: appliedDiscount?.finalPrice || null,
-            discountCode: discountCode || appliedDiscount?.code || null,
+            discountCode: appliedDiscountCode || appliedDiscount?.code || null,
             formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
           }),
         });
