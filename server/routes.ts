@@ -1168,6 +1168,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log('✅ Team discount applied:', {
             originalTotal: originalTotalAmount / 100,
             finalTotal: finalTotalAmount / 100,
+            originalTotalCents: originalTotalAmount,
+            finalTotalCents: finalTotalAmount,
             discountAmount: totalDiscountAmount / 100,
             code: appliedDiscountCode
           });
