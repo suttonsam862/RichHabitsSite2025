@@ -1270,7 +1270,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             paymentStatus: 'pending',
             day1: true,
             day2: true,
-            day3: true
+            day3: true,
+            shirtSize: athlete.shirtSize,
+            parentName: athlete.parentName,
+            parentPhoneNumber: athlete.parentPhoneNumber
           });
           createdRegistrations.push(registration);
         } catch (regError) {

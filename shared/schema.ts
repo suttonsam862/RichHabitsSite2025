@@ -145,6 +145,9 @@ export const eventRegistrations = pgTable("event_registrations", {
   day3: boolean("day3").default(false), // For multi-day events to track day selection
   age: text("age"), // Adding this to match existing database column
   experience: text("experience"), // Adding this to match existing database column
+  shirtSize: text("shirt_size"), // New field for shirt size selection
+  parentName: text("parent_name"), // New field for parent/guardian name
+  parentPhoneNumber: text("parent_phone_number"), // New field for parent phone
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
