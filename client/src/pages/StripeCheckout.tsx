@@ -636,6 +636,8 @@ export default function StripeCheckout() {
 
         const data = await response.json();
         
+        console.log('Payment intent response data:', data);
+        
         // Handle free registrations (100% discount codes)
         if (data.isFree && data.clientSecret === 'free_registration') {
           setClientSecret('free_registration');
