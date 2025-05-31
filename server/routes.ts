@@ -1262,7 +1262,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             phone: athlete.parentPhoneNumber || coachInfo.phone || null,
             registrationType: 'team',
             stripePaymentIntentId: paymentIntent.id,
-            contactName: athlete.parentName,
+            contactName: athlete.parentName, // Map parentName to contactName for database compatibility
             medicalReleaseAccepted: true,
             tShirtSize: athlete.shirtSize, // Map shirtSize to tShirtSize for database compatibility
             grade: athlete.age, // Use age as grade for team registrations
@@ -1270,9 +1270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             paymentStatus: 'pending',
             day1: true,
             day2: true,
-            day3: true,
-            parentName: athlete.parentName,
-            parentPhoneNumber: athlete.parentPhoneNumber
+            day3: true
           });
           createdRegistrations.push(registration);
         } catch (regError) {

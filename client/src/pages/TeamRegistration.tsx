@@ -244,6 +244,7 @@ export default function TeamRegistration() {
 
       // Call the team registration API - same format as individual registration
       console.log("🚀 Sending team registration for payment...");
+      console.log("📦 Request payload:", teamRegistrationData);
       
       const response = await fetch("/api/team-registration", {
         method: "POST",
@@ -254,6 +255,8 @@ export default function TeamRegistration() {
       });
 
       console.log("📡 Response received:", response.status);
+      console.log("📄 Response headers:", response.headers);
+      console.log("🔍 Response OK?", response.ok);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
