@@ -772,7 +772,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         res.json({
           clientSecret: paymentIntentResult.client_secret,
-          amount: amount / 100,
+          amount: finalAmount / 100,
           sessionId
         });
 
