@@ -892,10 +892,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Add the payment success handler
-  app.post("/api/events/:eventSlug/stripe-payment-success", handleSuccessfulPayment);
+  app.post("/api/events/:eventId/stripe-payment-success", handleSuccessfulPayment);
   
   // Add the payment update endpoint for discounts
-  app.post("/api/events/:eventSlug/update-payment-intent", updatePaymentIntent);
+  app.post("/api/events/:eventId/update-payment-intent", updatePaymentIntent);
   
   // Get all complete registrations for admin - CONSOLIDATED PAID SIGNUPS ONLY
   app.get("/api/complete-registrations", async (req, res) => {
