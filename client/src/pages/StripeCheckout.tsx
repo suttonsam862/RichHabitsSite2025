@@ -288,16 +288,10 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode
         });
         
-        // Store discount data in sessionStorage for payment intent creation
-        sessionStorage.setItem('applied_discount', JSON.stringify({
-          code: discountCode,
-          originalPrice: data.discount.originalPrice,
-          discountAmount: data.discount.discountAmount,
-          finalPrice: data.discount.finalPrice,
-          description: data.discount.description
-        }));
+        // Store only discount code - backend will handle all pricing calculations
+        sessionStorage.setItem('applied_discount_code', discountCode);
         
-        // Update the amount directly without updating payment intent
+        // Display discount info to user but don't trust these amounts for payment
         onDiscountApplied(data.discount.finalPrice);
         
         // Make sure all registration data is also in sessionStorage

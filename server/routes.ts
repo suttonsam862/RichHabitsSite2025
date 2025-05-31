@@ -623,27 +623,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let appliedDiscountCode = discountCode || null;
       let discountAmount = 0;
       
-      // Apply discount if provided
-      if (discountedAmount !== undefined && discountedAmount !== null) {
-        // Validate the discounted amount is reasonable (between $0 and $1000)
-        const discountedAmountCents = Math.round(discountedAmount * 100);
-        
-        if (discountedAmountCents < 0 || discountedAmountCents > 100000) {
-          console.log('❌ Invalid discounted amount:', discountedAmount);
-          return res.status(400).json({
-            error: 'Invalid discount amount',
-            userFriendlyMessage: 'Invalid discount applied. Please try again.',
-            sessionId
-          });
-        }
-        
-        finalAmount = discountedAmountCents;
-        discountAmount = originalAmount - finalAmount;
-        
-        console.log(`✅ Discount applied: Original $${originalAmount/100}, Final $${finalAmount/100}, Saved $${discountAmount/100}, Code: ${appliedDiscountCode || 'N/A'}`);
-        
-        // Validate discount code if provided
-        if (appliedDiscountCode) {
+      // BACKEND-ONLY DISCOUNT CALCULATION - Never trust frontend amounts
+      if (appliedDiscountCode) {
+        try {
           const { validateDiscountCode, applyDiscount } = await import('./discountCodes.js');
           const validation = validateDiscountCode(appliedDiscountCode);
           
@@ -656,43 +638,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
           
-          // STRICT SECURITY: Verify the discount calculation matches our expectation exactly
+          // Calculate discount entirely on backend
           const discountResult = applyDiscount(originalAmount / 100, appliedDiscountCode);
-          const expectedFinalAmount = Math.round(discountResult.finalPrice * 100);
+          finalAmount = Math.round(discountResult.finalPrice * 100);
+          discountAmount = originalAmount - finalAmount;
           
-          // ZERO TOLERANCE for amount manipulation - must match exactly
-          if (finalAmount !== expectedFinalAmount) {
-            console.log('🚨 SECURITY ALERT - Discount amount manipulation attempt:', { 
-              submittedAmount: finalAmount, 
-              expectedAmount: expectedFinalAmount,
-              difference: finalAmount - expectedFinalAmount,
-              discountCode: appliedDiscountCode,
-              email: registrationData.email,
-              sessionId
-            });
-            return res.status(400).json({
-              error: 'Invalid discount amount submitted',
-              userFriendlyMessage: 'The discount code calculation is invalid. Please refresh and try again.',
-              sessionId
-            });
-          }
-          
-          // Additional security: Validate specific discount code restrictions
-          if (appliedDiscountCode === 'TEAM199-PRICE-MATCH-INDIVIDUAL') {
-            // TEAM199 can ONLY set price to exactly $199, regardless of original price
-            if (finalAmount !== 19900) { // $199 in cents
-              console.log('🚨 SECURITY ALERT - TEAM199 code manipulation:', { 
-                submittedAmount: finalAmount, 
-                expectedAmount: 19900,
-                email: registrationData.email
-              });
-              return res.status(400).json({
-                error: 'Invalid TEAM199 discount amount',
-                userFriendlyMessage: 'This discount code can only be applied at the correct rate. Please try again.',
-                sessionId
-              });
-            }
-          }
+          console.log('✅ Backend discount calculation:', {
+            originalAmount: originalAmount / 100,
+            finalAmount: finalAmount / 100,
+            discountAmount: discountAmount / 100,
+            code: appliedDiscountCode
+          });
+        } catch (discountError) {
+          console.error('❌ Discount validation error:', discountError);
+          return res.status(400).json({
+            error: 'Error validating discount code',
+            userFriendlyMessage: 'We had trouble applying your discount code. Please try again.',
+            sessionId
+          });
         }
       }
       
@@ -1290,28 +1253,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create team registrations in database with pending status
       const createdRegistrations = [];
       for (const athlete of validAthletes) {
-        const athleteEmail = athlete.email || athlete.contactEmail;
-        const athleteContactName = athlete.contactName || athlete.contactFullName;
-        
         try {
           const registration = await storage.createEventRegistration({
             eventId,
-            eventSlug: `event-${eventId}`,
             firstName: athlete.firstName,
             lastName: athlete.lastName,
-            email: athleteEmail,
-            phone: coachInfo.phone || null,
+            email: athlete.email,
+            phone: athlete.contactPhone || coachInfo.phone || null,
             registrationType: 'team',
             stripePaymentIntentId: paymentIntent.id,
-            contactName: athleteContactName || `${coachInfo.firstName} ${coachInfo.lastName} (Coach)`,
+            contactName: athlete.contactName,
             medicalReleaseAccepted: true,
-            tShirtSize: "L",
-            grade: "N/A",
+            tShirtSize: athlete.tShirtSize,
+            grade: athlete.age, // Use age as grade for team registrations
             schoolName: coachInfo.teamName || "Team Registration",
             paymentStatus: 'pending',
-            day1: false,
-            day2: false,
-            day3: false
+            day1: true,
+            day2: true,
+            day3: true
           });
           createdRegistrations.push(registration);
         } catch (regError) {
