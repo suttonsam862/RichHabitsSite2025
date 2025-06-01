@@ -1197,7 +1197,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         amount: finalTotalAmount,
         amountDollars: finalTotalAmount / 100,
         currency: 'usd',
-        athleteCount: validAthletes.length
+        athleteCount: validAthletes.length,
+        discountCodeApplied: appliedDiscountCode || 'none'
+      });
+      
+      // CRITICAL: Confirm exact amount being sent to Stripe
+      console.log('🔍 STRIPE PAYMENT INTENT DEBUG:', {
+        finalTotalAmountBeforeStripe: finalTotalAmount,
+        finalTotalDollarsBeforeStripe: finalTotalAmount / 100
       });
       
       // Create single payment intent for entire team
