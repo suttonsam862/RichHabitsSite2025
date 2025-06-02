@@ -185,7 +185,11 @@ export default function Home() {
                   <div className="p-4">
                     <h3 className="text-lg font-bold mb-2">National Champ Camp</h3>
                     <p className="text-sm text-gray-600 mb-1">June 5-7, 2025</p>
-                    <p className="text-sm text-gray-600 mb-2">$349</p>
+                    <div className="text-sm text-gray-600 mb-2">
+                      <span className="text-gray-500 line-through">$349</span>
+                      <span className="text-green-600 font-bold ml-2">$299</span>
+                      <span className="bg-red-500 text-white text-xs px-1 ml-1 rounded">SAVE $50</span>
+                    </div>
                     <button 
                       onClick={scrollToSignup}
                       className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
