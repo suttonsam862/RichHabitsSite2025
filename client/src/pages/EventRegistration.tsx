@@ -230,6 +230,18 @@ export default function EventRegistration() {
       }
     }
     
+    // Birmingham Slam Camp and Texas Recruiting Clinic flexible pricing
+    if (event.id === 1 || event.id === 3) {
+      switch (registrationType) {
+        case "1day":
+          return 149;
+        case "full":
+          return 249;
+        default:
+          return 249;
+      }
+    }
+    
     // Other events - standard pricing
     return registrationType === "full" 
       ? event.fullPrice 
@@ -527,11 +539,14 @@ export default function EventRegistration() {
                   Registration Options
                 </h2>
                 
-                {/* National Champ Camp Flexible Options */}
-                {event.id === 2 && (
+                {/* Flexible Options Banner */}
+                {(event.id === 2 || event.id === 1 || event.id === 3) && (
                   <div className="bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200 rounded-lg p-4 mb-6">
                     <div className="text-center text-orange-800 font-medium">
-                      🔥 Now offering 1-Day and 2-Day Options – Flex your schedule, train like a champ! Only $119/day.
+                      {event.id === 2 
+                        ? "🔥 Now offering 1-Day and 2-Day Options – Flex your schedule, train like a champ! Only $119/day."
+                        : "🔥 Now offering 1-Day Option – Flex your schedule, train like a champ! Only $149/day."
+                      }
                     </div>
                   </div>
                 )}
@@ -597,6 +612,47 @@ export default function EventRegistration() {
                         </label>
                       </div>
                     </>
+                  ) : (event.id === 1 || event.id === 3) ? (
+                    <>
+                      {/* Birmingham Slam Camp and Texas Recruiting Clinic Flexible Options */}
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          id="1day"
+                          name="registrationType"
+                          value="1day"
+                          checked={registrationType === "1day"}
+                          onChange={() => setRegistrationType("1day")}
+                          className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                        />
+                        <label 
+                          htmlFor="1day" 
+                          className="text-gray-800"
+                          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                        >
+                          1 Day Option - $149 (Select any one day)
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          id="full"
+                          name="registrationType"
+                          value="full"
+                          checked={registrationType === "full"}
+                          onChange={() => setRegistrationType("full")}
+                          className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                        />
+                        <label 
+                          htmlFor="full" 
+                          className="text-gray-800"
+                          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                        >
+                          {event.id === 1 ? "Full 3 Day Event - $249 (All three days)" : "Full 2 Day Event - $249 (Both days)"}
+                        </label>
+                      </div>
+                    </>
                   ) : (
                     <>
                       {/* Other Events - Standard Options */}
@@ -643,8 +699,9 @@ export default function EventRegistration() {
                   )}
                 </div>
                 
-                {/* Date Selection for National Champ Camp Flexible Options */}
-                {event.id === 2 && (registrationType === "1day" || registrationType === "2day") && (
+                {/* Date Selection for Flexible Options */}
+                {((event.id === 2 && (registrationType === "1day" || registrationType === "2day")) || 
+                  ((event.id === 1 || event.id === 3) && registrationType === "1day")) && (
                   <div className="space-y-4 border rounded-md p-6 bg-blue-50 mb-8">
                     <h3 className="font-bold text-lg text-blue-900">
                       Select Your {registrationType === "1day" ? "Day" : "Days"} 
@@ -655,44 +712,120 @@ export default function EventRegistration() {
                     </p>
                     
                     <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          id="june5"
-                          name="selectedDates"
-                          value="June 5"
-                          className="h-5 w-5 text-blue-600"
-                        />
-                        <label htmlFor="june5" className="text-gray-800">
-                          June 5, 2025 - Day 1
-                        </label>
-                      </div>
-                      
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          id="june6"
-                          name="selectedDates"
-                          value="June 6"
-                          className="h-5 w-5 text-blue-600"
-                        />
-                        <label htmlFor="june6" className="text-gray-800">
-                          June 6, 2025 - Day 2
-                        </label>
-                      </div>
-                      
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          id="june7"
-                          name="selectedDates"
-                          value="June 7"
-                          className="h-5 w-5 text-blue-600"
-                        />
-                        <label htmlFor="june7" className="text-gray-800">
-                          June 7, 2025 - Day 3
-                        </label>
-                      </div>
+                      {event.id === 2 ? (
+                        <>
+                          {/* National Champ Camp dates */}
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june5"
+                              name="selectedDates"
+                              value="June 5"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june5" className="text-gray-800">
+                              June 5, 2025 - Day 1
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june6"
+                              name="selectedDates"
+                              value="June 6"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june6" className="text-gray-800">
+                              June 6, 2025 - Day 2
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june7"
+                              name="selectedDates"
+                              value="June 7"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june7" className="text-gray-800">
+                              June 7, 2025 - Day 3
+                            </label>
+                          </div>
+                        </>
+                      ) : event.id === 1 ? (
+                        <>
+                          {/* Birmingham Slam Camp dates */}
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june19"
+                              name="selectedDates"
+                              value="June 19"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june19" className="text-gray-800">
+                              June 19, 2025 - Day 1
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june20"
+                              name="selectedDates"
+                              value="June 20"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june20" className="text-gray-800">
+                              June 20, 2025 - Day 2
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june21"
+                              name="selectedDates"
+                              value="June 21"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june21" className="text-gray-800">
+                              June 21, 2025 - Day 3
+                            </label>
+                          </div>
+                        </>
+                      ) : event.id === 3 ? (
+                        <>
+                          {/* Texas Recruiting Clinic dates */}
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june12"
+                              name="selectedDates"
+                              value="June 12"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june12" className="text-gray-800">
+                              June 12, 2025 - Day 1
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="june13"
+                              name="selectedDates"
+                              value="June 13"
+                              className="h-5 w-5 text-blue-600"
+                            />
+                            <label htmlFor="june13" className="text-gray-800">
+                              June 13, 2025 - Day 2
+                            </label>
+                          </div>
+                        </>
+                      ) : null}
                     </div>
                     
                     <div className="mt-4 p-3 bg-blue-100 rounded">
