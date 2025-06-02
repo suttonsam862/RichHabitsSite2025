@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipProvider } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
 
-// Define the registration form data structure for type safety
+// STRUCTURE: Enhanced type safety for registration form data
 export interface RegistrationFormData {
   firstName: string;
   lastName: string;
@@ -27,9 +27,17 @@ export interface RegistrationFormData {
   day1: boolean;
   day2: boolean;
   day3: boolean;
-  // New fields for National Champ Camp flexible options
+  // National Champ Camp flexible options - required for validation
   numberOfDays?: number;
   selectedDates?: string[];
+}
+
+// FIX: Add validation helper specifically for National Champ Camp
+interface NationalChampCampValidation {
+  isValidOption: boolean;
+  requiredDays: number;
+  hasCorrectDayCount: boolean;
+  errors: string[];
 }
 
 // Define the props for the component
@@ -180,16 +188,32 @@ export function EventRegistrationForm({
       }
     }
     
-    // Date selection validation for National Champ Camp (event ID 2)
+    // FIX: Enhanced National Champ Camp validation
     if (event.id === 2) {
       if (registrationForm.option === '1day' || registrationForm.option === '2day') {
         const requiredDays = registrationForm.numberOfDays || 1;
         const selectedDays = registrationForm.selectedDates?.length || 0;
         
+        // Validate numberOfDays matches option
+        const expectedDays = registrationForm.option === '1day' ? 1 : 2;
+        if (registrationForm.numberOfDays !== expectedDays) {
+          validationErrors.push(`Invalid configuration: ${registrationForm.option} requires ${expectedDays} days`);
+        }
+        
         if (selectedDays === 0) {
           validationErrors.push(`Please select ${requiredDays === 1 ? 'a day' : `${requiredDays} days`} for your registration`);
         } else if (selectedDays !== requiredDays) {
           validationErrors.push(`Please select exactly ${requiredDays} ${requiredDays === 1 ? 'day' : 'days'} for your ${registrationForm.option} option`);
+        }
+        
+        // Validate selected dates are valid camp dates
+        const validDates = ['June 5', 'June 6', 'June 7'];
+        if (registrationForm.selectedDates) {
+          for (const date of registrationForm.selectedDates) {
+            if (!validDates.includes(date)) {
+              validationErrors.push(`Invalid date selected: ${date}`);
+            }
+          }
         }
       }
     } 

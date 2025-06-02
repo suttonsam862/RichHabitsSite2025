@@ -32,6 +32,11 @@ import {
   markRegistrationFailed,
   validateRegistrationLogged 
 } from './registrationLogger';
+import { 
+  calculateRegistrationAmount, 
+  validateNationalChampCampRegistration,
+  getEventPricing 
+} from './pricingUtils.js';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -604,28 +609,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         hasTShirtSize: !!registrationData.tShirtSize
       });
 
-      // Get pricing for the event (in cents to match Stripe)
-      const eventPricing: Record<number, { full: number; single: number; '1day'?: number; '2day'?: number }> = {
-        1: { full: 24900, single: 14900 }, // Birmingham Slam Camp - $249/$149
-        2: { full: 29900, single: 17500, '1day': 11900, '2day': 23800 }, // National Champ Camp - $299/$175/$119/$238
-        3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic - $249/$149
-        4: { full: 20000, single: 9900 }   // Panther Train Tour - $200/$99
-      };
-      
-      const pricing = eventPricing[eventId];
-      if (!pricing) {
-        return res.status(404).json({ error: 'Event not found' });
-      }
-      
-      // Get original pricing based on option
+      // STRUCTURE: Use centralized pricing utility
       let originalAmount: number;
-      if (eventId === 2 && (option === '1day' || option === '2day')) {
-        // National Champ Camp flexible options
-        originalAmount = pricing[option as '1day' | '2day'] || pricing.full;
-        console.log(`National Champ Camp ${option} option: $${originalAmount / 100}`);
-      } else {
-        // Standard pricing for other events
-        originalAmount = option === 'single' ? pricing.single : pricing.full;
+      
+      try {
+        // FIX: Validate National Champ Camp flexible registration data
+        if (eventId === 2 && (option === '1day' || option === '2day')) {
+          const validation = validateNationalChampCampRegistration(
+            option, 
+            registrationData.numberOfDays, 
+            registrationData.selectedDates
+          );
+          
+          if (!validation.valid) {
+            console.log('❌ Invalid National Champ Camp registration:', validation.errors);
+            return res.status(400).json({
+              error: 'Invalid registration data',
+              userFriendlyMessage: validation.errors.join('. '),
+              validationErrors: validation.errors,
+              sessionId
+            });
+          }
+        }
+        
+        // Calculate amount using centralized utility
+        originalAmount = calculateRegistrationAmount(
+          eventId, 
+          option, 
+          registrationData.numberOfDays,
+          registrationData.selectedDates
+        );
+        
+        console.log(`Event ${eventId} ${option} option: $${originalAmount / 100}`);
+        
+      } catch (error) {
+        console.log('❌ Pricing calculation error:', error);
+        return res.status(400).json({
+          error: 'Invalid pricing configuration',
+          userFriendlyMessage: 'Unable to calculate pricing for this registration option.',
+          sessionId
+        });
       }
       let finalAmount = originalAmount;
       let appliedDiscountCode = discountCode || null;
