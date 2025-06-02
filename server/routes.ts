@@ -760,22 +760,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
 
-        // STEP 5: CREATE PAYMENT INTENT WITH RETRY LOGIC
+        // STEP 5: CREATE PAYMENT INTENT WITH ENHANCED METADATA
+        const metadata: Record<string, string> = {
+          eventId: eventId.toString(),
+          registrationType: option,
+          sessionId,
+          customerEmail: registrationData.email,
+          originalAmount: (originalAmount / 100).toString(),
+          finalAmount: (finalAmount / 100).toString(),
+          discountCode: appliedDiscountCode || '',
+          discountAmount: (discountAmount / 100).toString(),
+          firstName: registrationData.firstName,
+          lastName: registrationData.lastName
+        };
+
+        // FIX: Add National Champ Camp flexible options to metadata
+        if (eventId === 2 && (option === '1day' || option === '2day')) {
+          metadata.numberOfDays = (registrationData.numberOfDays || 0).toString();
+          metadata.selectedDates = (registrationData.selectedDates || []).join(',');
+          metadata.campOption = option;
+        }
+
         const paymentIntentResult = await stripe.paymentIntents.create({
           amount,
           currency: 'usd',
-          metadata: {
-            eventId: eventId.toString(),
-            registrationType,
-            sessionId,
-            customerEmail: registrationData.email,
-            originalAmount: (originalAmount / 100).toString(),
-            finalAmount: (finalAmount / 100).toString(),
-            discountCode: appliedDiscountCode || '',
-            discountAmount: (discountAmount / 100).toString(),
-            firstName: registrationData.firstName,
-            lastName: registrationData.lastName
-          },
+          metadata,
           automatic_payment_methods: {
             enabled: true,
           },
