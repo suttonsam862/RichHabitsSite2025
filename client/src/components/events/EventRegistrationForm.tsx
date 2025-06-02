@@ -21,10 +21,13 @@ export interface RegistrationFormData {
   schoolName: string;
   clubName: string;
   medicalReleaseAccepted: boolean;
-  option: 'full' | 'single';
+  option: 'full' | 'single' | '1day' | '2day';
   day1: boolean;
   day2: boolean;
   day3: boolean;
+  // New fields for National Champ Camp flexible options
+  numberOfDays?: number;
+  selectedDates?: string[];
 }
 
 // Define the props for the component
@@ -58,6 +61,8 @@ export function EventRegistrationForm({
     day1: false,
     day2: false,
     day3: false,
+    numberOfDays: 3,
+    selectedDates: [],
   });
 
   // Attempt to recover from previously interrupted registration
@@ -170,6 +175,20 @@ export function EventRegistrationForm({
       if (registrationForm.option === 'single' && 
           !registrationForm.day1 && !registrationForm.day2 && !registrationForm.day3) {
         validationErrors.push('Please select at least one day for the Cory Land Tour');
+      }
+    }
+    
+    // Date selection validation for National Champ Camp (event ID 2)
+    if (event.id === 2) {
+      if (registrationForm.option === '1day' || registrationForm.option === '2day') {
+        const requiredDays = registrationForm.numberOfDays || 1;
+        const selectedDays = registrationForm.selectedDates?.length || 0;
+        
+        if (selectedDays === 0) {
+          validationErrors.push(`Please select ${requiredDays === 1 ? 'a day' : `${requiredDays} days`} for your registration`);
+        } else if (selectedDays !== requiredDays) {
+          validationErrors.push(`Please select exactly ${requiredDays} ${requiredDays === 1 ? 'day' : 'days'} for your ${registrationForm.option} option`);
+        }
       }
     } 
     
@@ -377,44 +396,216 @@ export function EventRegistrationForm({
       <div className="space-y-6">
         <h2 className="text-xl font-semibold">Registration Options</h2>
         
+        {/* National Champ Camp Flexible Options Advertisement */}
+        {event.id === 2 && (
+          <div className="bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200 rounded-lg p-4 mb-6">
+            <div className="text-center text-orange-800 font-medium">
+              🔥 Now offering 1-Day and 2-Day Options – Flex your schedule, train like a champ! Only $119/day. Choose your days below.
+            </div>
+          </div>
+        )}
+        
         <div className="space-y-4">
           <Label>Registration Type</Label>
           <RadioGroup 
             value={registrationForm.option}
-            onValueChange={(value) => setRegistrationForm({...registrationForm, option: value as 'full' | 'single'})}
+            onValueChange={(value) => {
+              let updatedForm = {...registrationForm, option: value as 'full' | 'single' | '1day' | '2day'};
+              
+              // Handle National Champ Camp flexible options
+              if (event.id === 2) {
+                if (value === '1day') {
+                  updatedForm.numberOfDays = 1;
+                  updatedForm.selectedDates = [];
+                } else if (value === '2day') {
+                  updatedForm.numberOfDays = 2;
+                  updatedForm.selectedDates = [];
+                } else if (value === 'full') {
+                  updatedForm.numberOfDays = 3;
+                  updatedForm.selectedDates = ['June 5', 'June 6', 'June 7'];
+                }
+              }
+              
+              setRegistrationForm(updatedForm);
+            }}
             className="space-y-3"
           >
-            <div className="flex items-start space-x-3">
-              <RadioGroupItem value="full" id="option-full" />
-              <div className="grid gap-1.5">
-                <Label htmlFor="option-full" className="font-medium">
-                  {event.id === 4 ? 'Full Tour - All Days' : 'Full Camp/Clinic'}
-                </Label>
-                <p className="text-sm text-gray-500">
-                  {event.id === 1 && 'All three days for $249'}
-                  {event.id === 2 && 'All four days for $349'}
-                  {event.id === 3 && 'Both days for $249'}
-                  {event.id === 4 && 'All three locations for $200 (save $97)'}
-                </p>
+            {/* National Champ Camp has different options */}
+            {event.id === 2 ? (
+              <>
+                <div className="flex items-start space-x-3">
+                  <RadioGroupItem value="1day" id="option-1day" />
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="option-1day" className="font-medium">
+                      1 Day Option
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      Single day for $119
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <RadioGroupItem value="2day" id="option-2day" />
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="option-2day" className="font-medium">
+                      2 Day Option
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      Choose any 2 days for $238
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <RadioGroupItem value="full" id="option-full" />
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="option-full" className="font-medium">
+                      Full 3-Day Camp
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      All three days for $299
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-start space-x-3">
+                  <RadioGroupItem value="full" id="option-full" />
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="option-full" className="font-medium">
+                      {event.id === 4 ? 'Full Tour - All Days' : 'Full Camp/Clinic'}
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      {event.id === 1 && 'All three days for $249'}
+                      {event.id === 3 && 'Both days for $249'}
+                      {event.id === 4 && 'All three locations for $200 (save $97)'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <RadioGroupItem value="single" id="option-single" />
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="option-single" className="font-medium">
+                      {event.id === 4 ? 'Individual Days' : 'Single Day'}
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      {event.id === 1 && 'One day only for $149'}
+                      {event.id === 3 && 'One day only for $149'}
+                      {event.id === 4 && 'Select specific locations for $99 per day'}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+          </RadioGroup>
+        </div>
+        
+        {/* Date selection for National Champ Camp flexible options */}
+        {event.id === 2 && (registrationForm.option === '1day' || registrationForm.option === '2day') && (
+          <div className="space-y-4 border rounded-md p-4 bg-blue-50">
+            <Label className="font-medium">
+              Select Your {registrationForm.option === '1day' ? 'Day' : 'Days'} 
+              ({registrationForm.numberOfDays} {registrationForm.numberOfDays === 1 ? 'day' : 'days'})
+            </Label>
+            <p className="text-sm text-blue-700 mb-2">
+              Choose which {registrationForm.numberOfDays === 1 ? 'day you\'ll' : 'days you\'ll'} attend:
+            </p>
+            
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="june5" 
+                  checked={registrationForm.selectedDates?.includes('June 5') || false}
+                  onCheckedChange={(checked) => {
+                    let newSelectedDates = registrationForm.selectedDates || [];
+                    if (checked) {
+                      if (newSelectedDates.length < (registrationForm.numberOfDays || 1)) {
+                        newSelectedDates = [...newSelectedDates, 'June 5'];
+                      }
+                    } else {
+                      newSelectedDates = newSelectedDates.filter(date => date !== 'June 5');
+                    }
+                    setRegistrationForm({
+                      ...registrationForm, 
+                      selectedDates: newSelectedDates
+                    });
+                  }}
+                  disabled={
+                    !registrationForm.selectedDates?.includes('June 5') && 
+                    (registrationForm.selectedDates?.length || 0) >= (registrationForm.numberOfDays || 1)
+                  }
+                />
+                <Label htmlFor="june5" className="cursor-pointer">June 5, 2025 - Day 1</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="june6" 
+                  checked={registrationForm.selectedDates?.includes('June 6') || false}
+                  onCheckedChange={(checked) => {
+                    let newSelectedDates = registrationForm.selectedDates || [];
+                    if (checked) {
+                      if (newSelectedDates.length < (registrationForm.numberOfDays || 1)) {
+                        newSelectedDates = [...newSelectedDates, 'June 6'];
+                      }
+                    } else {
+                      newSelectedDates = newSelectedDates.filter(date => date !== 'June 6');
+                    }
+                    setRegistrationForm({
+                      ...registrationForm, 
+                      selectedDates: newSelectedDates
+                    });
+                  }}
+                  disabled={
+                    !registrationForm.selectedDates?.includes('June 6') && 
+                    (registrationForm.selectedDates?.length || 0) >= (registrationForm.numberOfDays || 1)
+                  }
+                />
+                <Label htmlFor="june6" className="cursor-pointer">June 6, 2025 - Day 2</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="june7" 
+                  checked={registrationForm.selectedDates?.includes('June 7') || false}
+                  onCheckedChange={(checked) => {
+                    let newSelectedDates = registrationForm.selectedDates || [];
+                    if (checked) {
+                      if (newSelectedDates.length < (registrationForm.numberOfDays || 1)) {
+                        newSelectedDates = [...newSelectedDates, 'June 7'];
+                      }
+                    } else {
+                      newSelectedDates = newSelectedDates.filter(date => date !== 'June 7');
+                    }
+                    setRegistrationForm({
+                      ...registrationForm, 
+                      selectedDates: newSelectedDates
+                    });
+                  }}
+                  disabled={
+                    !registrationForm.selectedDates?.includes('June 7') && 
+                    (registrationForm.selectedDates?.length || 0) >= (registrationForm.numberOfDays || 1)
+                  }
+                />
+                <Label htmlFor="june7" className="cursor-pointer">June 7, 2025 - Day 3</Label>
               </div>
             </div>
             
-            <div className="flex items-start space-x-3">
-              <RadioGroupItem value="single" id="option-single" />
-              <div className="grid gap-1.5">
-                <Label htmlFor="option-single" className="font-medium">
-                  {event.id === 4 ? 'Individual Days' : 'Single Day'}
-                </Label>
-                <p className="text-sm text-gray-500">
-                  {event.id === 1 && 'One day only for $149'}
-                  {event.id === 2 && 'Individual days for $175 per day'}
-                  {event.id === 3 && 'One day only for $149'}
-                  {event.id === 4 && 'Select specific locations for $99 per day'}
+            {registrationForm.selectedDates && registrationForm.selectedDates.length > 0 && (
+              <div className="mt-3 p-3 bg-blue-100 rounded-md">
+                <p className="text-sm text-blue-800">
+                  <strong>Selected:</strong> {registrationForm.selectedDates.join(', ')}
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Total: ${registrationForm.numberOfDays === 1 ? '119' : '238'}
                 </p>
               </div>
-            </div>
-          </RadioGroup>
-        </div>
+            )}
+          </div>
+        )}
         
         {/* Day selection for Cory Land Tour */}
         {event.id === 4 && registrationForm.option === 'single' && (
