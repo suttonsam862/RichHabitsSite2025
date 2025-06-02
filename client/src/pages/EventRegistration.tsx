@@ -463,8 +463,8 @@ export default function EventRegistration() {
               {event.date} • {event.location}
             </p>
             
-            {/* College Coach Registration Button - Only for National Champ Camp */}
-            {event.id === 2 && (
+            {/* College Coach Registration Button - Only for Texas Recruiting Clinic */}
+            {event.id === 3 && (
               <div className="mt-6">
                 <motion.button
                   onClick={() => setIsCoachFormOpen(true)}

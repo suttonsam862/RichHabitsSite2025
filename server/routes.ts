@@ -1791,7 +1791,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         areasOfInterest,
         daysAttending,
         notes,
-        eventId = 2
+        eventId = 3
       } = req.body;
 
       // Validate required fields
