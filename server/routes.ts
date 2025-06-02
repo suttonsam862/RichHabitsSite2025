@@ -22,6 +22,7 @@ import {
   insertEventCoachSchema
 } from "../shared/schema.js";
 import { registerBulletproofRoutes } from "./bulletproof-routes.js";
+import { paymentService } from "./paymentService.js";
 import { z } from "zod";
 import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail } from "./emailService.js";
 import { validateDiscountCode, applyDiscount, incrementDiscountCodeUsage } from "./discountCodes.js";
@@ -553,60 +554,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     process.env.SHOPIFY_ACCESS_TOKEN
   );
 
-  // BULLETPROOF Payment Intent Creation - NO 400/500/502 ERRORS POSSIBLE
+  // BULLETPROOF Payment Intent Creation - Prevents Multiple Charges
   app.post("/api/events/:eventId(\\d+)/create-payment-intent", async (req, res) => {
-    const userAgent = req.headers['user-agent'] || '';
-    const ipAddress = req.headers['x-forwarded-for']?.split(',')[0] || 
-                     req.headers['x-real-ip'] || 
-                     req.connection?.remoteAddress || 'unknown';
-    
-    // Generate or get existing session ID
-    let sessionId = req.headers['x-session-id'] as string || 
-                   req.body.sessionId || 
-                   `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const startTime = Date.now();
     
     try {
-      console.log('=== PAYMENT REQUEST DEBUG ===');
+      console.log('=== BULLETPROOF PAYMENT REQUEST ===');
       console.log('Request body:', JSON.stringify(req.body, null, 2));
       console.log('Event ID:', req.params.eventId);
       
       const eventId = parseInt(req.params.eventId);
       const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
       
-      console.log('Parsed eventId:', eventId);
-      console.log('Option:', option);
-      console.log('Registration data received:', registrationData);
+      // Use bulletproof payment service to prevent duplicate charges
+      console.log('Using bulletproof payment service for registration...');
       
-      // Enhanced validation - check if we have the basic registration data
-      if (!registrationData) {
-        console.log('❌ No registration data provided');
+      const paymentResult = await paymentService.createOrRetrievePaymentIntent({
+        eventId,
+        option,
+        registrationData,
+        discountCode,
+        discountedAmount
+      });
+
+      console.log('Payment service result:', {
+        success: paymentResult.success,
+        amount: paymentResult.amount,
+        hasClientSecret: !!paymentResult.clientSecret
+      });
+
+      if (!paymentResult.success) {
         return res.status(400).json({
-          error: 'No registration data provided',
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
-          sessionId
+          error: paymentResult.error,
+          userFriendlyMessage: paymentResult.userFriendlyMessage || 'Unable to process payment. Please try again.',
+          canRetry: true
         });
       }
 
-      // Validate essential fields are present
-      const requiredFields = ['firstName', 'lastName', 'email'];
-      const missingFields = requiredFields.filter(field => !registrationData[field] || registrationData[field].trim() === '');
-      
-      if (missingFields.length > 0) {
-        console.log('❌ Missing required fields:', missingFields);
-        return res.status(400).json({
-          error: `Missing required fields: ${missingFields.join(', ')}`,
-          userFriendlyMessage: 'Please complete all required fields correctly before proceeding.',
-          missingFields,
-          sessionId
-        });
-      }
-
-      console.log('✅ Registration data validation passed:', {
-        firstName: registrationData.firstName,
-        lastName: registrationData.lastName,
-        email: registrationData.email,
-        hasPhone: !!registrationData.phone,
-        hasTShirtSize: !!registrationData.tShirtSize
+      res.json({
+        clientSecret: paymentResult.clientSecret,
+        amount: paymentResult.amount,
+        sessionId: paymentResult.sessionId,
+        isExisting: paymentResult.isExisting || false
       });
 
       // STRUCTURE: Use centralized pricing utility
