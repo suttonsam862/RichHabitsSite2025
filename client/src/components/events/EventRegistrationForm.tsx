@@ -7,6 +7,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipProvider } from '@/components/ui/tooltip';
+import { Info } from 'lucide-react';
 
 // Define the registration form data structure for type safety
 export interface RegistrationFormData {
@@ -261,7 +263,8 @@ export function EventRegistrationForm({
   };
 
   return (
-    <form className="space-y-8" onSubmit={handleSubmit}>
+    <TooltipProvider>
+      <form className="space-y-8" onSubmit={handleSubmit}>
       <div className="space-y-6">
         <h2 className="text-xl font-semibold">Participant Information</h2>
         
@@ -435,10 +438,15 @@ export function EventRegistrationForm({
               <>
                 <div className="flex items-start space-x-3">
                   <RadioGroupItem value="1day" id="option-1day" />
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="option-1day" className="font-medium">
-                      1 Day Option
-                    </Label>
+                  <div className="grid gap-1.5 flex-1">
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="option-1day" className="font-medium">
+                        1 Day Option
+                      </Label>
+                      <Tooltip content="Select any one day of the camp (June 5, 6, or 7). Perfect for trying out the camp or fitting around your schedule.">
+                        <Info className="h-4 w-4 text-blue-500 cursor-help" />
+                      </Tooltip>
+                    </div>
                     <p className="text-sm text-gray-500">
                       Single day for $119
                     </p>
@@ -447,10 +455,15 @@ export function EventRegistrationForm({
                 
                 <div className="flex items-start space-x-3">
                   <RadioGroupItem value="2day" id="option-2day" />
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="option-2day" className="font-medium">
-                      2 Day Option
-                    </Label>
+                  <div className="grid gap-1.5 flex-1">
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="option-2day" className="font-medium">
+                        2 Day Option
+                      </Label>
+                      <Tooltip content="Select any two days to attend. Great value for wrestlers who want more training but can't commit to all three days.">
+                        <Info className="h-4 w-4 text-blue-500 cursor-help" />
+                      </Tooltip>
+                    </div>
                     <p className="text-sm text-gray-500">
                       Choose any 2 days for $238
                     </p>
@@ -459,10 +472,15 @@ export function EventRegistrationForm({
                 
                 <div className="flex items-start space-x-3">
                   <RadioGroupItem value="full" id="option-full" />
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="option-full" className="font-medium">
-                      Full 3-Day Camp
-                    </Label>
+                  <div className="grid gap-1.5 flex-1">
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="option-full" className="font-medium">
+                        Full 3-Day Camp
+                      </Label>
+                      <Tooltip content="Full camp access with all three days included. Best value and complete training experience - no date selection needed.">
+                        <Info className="h-4 w-4 text-blue-500 cursor-help" />
+                      </Tooltip>
+                    </div>
                     <p className="text-sm text-gray-500">
                       All three days for $299
                     </p>
@@ -506,10 +524,15 @@ export function EventRegistrationForm({
         {/* Date selection for National Champ Camp flexible options */}
         {event.id === 2 && (registrationForm.option === '1day' || registrationForm.option === '2day') && (
           <div className="space-y-4 border rounded-md p-4 bg-blue-50">
-            <Label className="font-medium">
-              Select Your {registrationForm.option === '1day' ? 'Day' : 'Days'} 
-              ({registrationForm.numberOfDays} {registrationForm.numberOfDays === 1 ? 'day' : 'days'})
-            </Label>
+            <div className="flex items-center space-x-2">
+              <Label className="font-medium">
+                Select Your {registrationForm.option === '1day' ? 'Day' : 'Days'} 
+                ({registrationForm.numberOfDays} {registrationForm.numberOfDays === 1 ? 'day' : 'days'})
+              </Label>
+              <Tooltip content="Choose the specific day(s) you'll attend. You must select the number of days that matches your package.">
+                <Info className="h-4 w-4 text-blue-500 cursor-help" />
+              </Tooltip>
+            </div>
             <p className="text-sm text-blue-700 mb-2">
               Choose which {registrationForm.numberOfDays === 1 ? 'day you\'ll' : 'days you\'ll'} attend:
             </p>
@@ -724,6 +747,7 @@ export function EventRegistrationForm({
           'Continue to Checkout'
         )}
       </Button>
-    </form>
+      </form>
+    </TooltipProvider>
   );
 }
