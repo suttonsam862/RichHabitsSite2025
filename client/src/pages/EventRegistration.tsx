@@ -214,6 +214,21 @@ export default function EventRegistration() {
   const calculatePrice = () => {
     if (!event) return 0;
     
+    // National Champ Camp flexible pricing
+    if (event.id === 2) {
+      switch (registrationType) {
+        case "1day":
+          return 119;
+        case "2day":
+          return 238;
+        case "full":
+          return 299;
+        default:
+          return 299;
+      }
+    }
+    
+    // Other events - standard pricing
     return registrationType === "full" 
       ? event.fullPrice 
       : (event.singleDayPrice || event.fullPrice);
@@ -492,47 +507,181 @@ export default function EventRegistration() {
                   Registration Options
                 </h2>
                 
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      id="full"
-                      name="registrationType"
-                      value="full"
-                      checked={registrationType === "full"}
-                      onChange={() => setRegistrationType("full")}
-                      className="h-5 w-5 text-gray-900 focus:ring-gray-500"
-                    />
-                    <label 
-                      htmlFor="full" 
-                      className="text-gray-800"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                    >
-                      Full Event (${event.fullPrice})
-                    </label>
-                  </div>
-                  
-                  {event.singleDayPrice && (
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="radio"
-                        id="singleDay"
-                        name="registrationType"
-                        value="singleDay"
-                        checked={registrationType === "singleDay"}
-                        onChange={() => setRegistrationType("singleDay")}
-                        className="h-5 w-5 text-gray-900 focus:ring-gray-500"
-                      />
-                      <label 
-                        htmlFor="singleDay" 
-                        className="text-gray-800"
-                        style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                      >
-                        Single Day (${event.singleDayPrice})
-                      </label>
+                {/* National Champ Camp Flexible Options */}
+                {event.id === 2 && (
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200 rounded-lg p-4 mb-6">
+                    <div className="text-center text-orange-800 font-medium">
+                      🔥 Now offering 1-Day and 2-Day Options – Flex your schedule, train like a champ! Only $119/day.
                     </div>
+                  </div>
+                )}
+                
+                <div className="space-y-4 mb-8">
+                  {event.id === 2 ? (
+                    <>
+                      {/* National Champ Camp Flexible Options */}
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          id="1day"
+                          name="registrationType"
+                          value="1day"
+                          checked={registrationType === "1day"}
+                          onChange={() => setRegistrationType("1day")}
+                          className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                        />
+                        <label 
+                          htmlFor="1day" 
+                          className="text-gray-800"
+                          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                        >
+                          1 Day Option - $119 (Select any one day)
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          id="2day"
+                          name="registrationType"
+                          value="2day"
+                          checked={registrationType === "2day"}
+                          onChange={() => setRegistrationType("2day")}
+                          className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                        />
+                        <label 
+                          htmlFor="2day" 
+                          className="text-gray-800"
+                          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                        >
+                          2 Day Option - $238 (Choose any two days)
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          id="full"
+                          name="registrationType"
+                          value="full"
+                          checked={registrationType === "full"}
+                          onChange={() => setRegistrationType("full")}
+                          className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                        />
+                        <label 
+                          htmlFor="full" 
+                          className="text-gray-800"
+                          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                        >
+                          Full 3-Day Camp - $299 (All three days included)
+                        </label>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Other Events - Standard Options */}
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          id="full"
+                          name="registrationType"
+                          value="full"
+                          checked={registrationType === "full"}
+                          onChange={() => setRegistrationType("full")}
+                          className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                        />
+                        <label 
+                          htmlFor="full" 
+                          className="text-gray-800"
+                          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                        >
+                          Full Event (${event.fullPrice})
+                        </label>
+                      </div>
+                      
+                      {event.singleDayPrice && (
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="radio"
+                            id="singleDay"
+                            name="registrationType"
+                            value="singleDay"
+                            checked={registrationType === "singleDay"}
+                            onChange={() => setRegistrationType("singleDay")}
+                            className="h-5 w-5 text-gray-900 focus:ring-gray-500"
+                          />
+                          <label 
+                            htmlFor="singleDay" 
+                            className="text-gray-800"
+                            style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+                          >
+                            Single Day (${event.singleDayPrice})
+                          </label>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
+                
+                {/* Date Selection for National Champ Camp Flexible Options */}
+                {event.id === 2 && (registrationType === "1day" || registrationType === "2day") && (
+                  <div className="space-y-4 border rounded-md p-6 bg-blue-50 mb-8">
+                    <h3 className="font-bold text-lg text-blue-900">
+                      Select Your {registrationType === "1day" ? "Day" : "Days"} 
+                      ({registrationType === "1day" ? "1 day" : "2 days"})
+                    </h3>
+                    <p className="text-sm text-blue-700 mb-4">
+                      Choose which {registrationType === "1day" ? "day you'll" : "days you'll"} attend:
+                    </p>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="june5"
+                          name="selectedDates"
+                          value="June 5"
+                          className="h-5 w-5 text-blue-600"
+                        />
+                        <label htmlFor="june5" className="text-gray-800">
+                          June 5, 2025 - Day 1
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="june6"
+                          name="selectedDates"
+                          value="June 6"
+                          className="h-5 w-5 text-blue-600"
+                        />
+                        <label htmlFor="june6" className="text-gray-800">
+                          June 6, 2025 - Day 2
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="june7"
+                          name="selectedDates"
+                          value="June 7"
+                          className="h-5 w-5 text-blue-600"
+                        />
+                        <label htmlFor="june7" className="text-gray-800">
+                          June 7, 2025 - Day 3
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 p-3 bg-blue-100 rounded">
+                      <p className="text-sm text-blue-800">
+                        💡 <strong>Tip:</strong> You must select exactly {registrationType === "1day" ? "1 day" : "2 days"} to match your chosen package.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 
                 <hr className="my-8" />
                 
