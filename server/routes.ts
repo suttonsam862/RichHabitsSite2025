@@ -1774,6 +1774,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // College Coach Registration endpoint
+  app.post('/api/clinician-request', async (req: Request, res: Response) => {
+    try {
+      const {
+        fullName,
+        title,
+        collegeName,
+        email,
+        cellPhone,
+        schoolPhone,
+        schoolWebsite,
+        divisionLevel,
+        conference,
+        numberOfAthletes,
+        areasOfInterest,
+        daysAttending,
+        notes,
+        eventId = 2
+      } = req.body;
+
+      // Validate required fields
+      if (!fullName || !title || !collegeName || !email || !cellPhone || !divisionLevel || !conference || !daysAttending || daysAttending.length === 0) {
+        return res.status(400).json({
+          error: 'Missing required fields',
+          userFriendlyMessage: 'Please fill in all required fields'
+        });
+      }
+
+      // Check for duplicate email for the same event
+      try {
+        const existingRequest = await storage.getRecruitingClinicRequestByEmail(email, eventId);
+        if (existingRequest) {
+          console.log(`Duplicate coach registration attempt: ${email} for event ${eventId}`);
+          return res.status(409).json({
+            error: 'Duplicate registration',
+            userFriendlyMessage: 'A registration with this email already exists for this event.'
+          });
+        }
+      } catch (duplicateCheckError) {
+        console.warn('Could not check for duplicate coach registrations:', duplicateCheckError);
+        // Continue with registration if duplicate check fails
+      }
+
+      // Create the coach registration request
+      const requestData = {
+        fullName,
+        title,
+        collegeName,
+        email: email.toLowerCase().trim(),
+        cellPhone,
+        schoolPhone: schoolPhone || null,
+        schoolWebsite: schoolWebsite || null,
+        divisionLevel,
+        conference,
+        numberOfAthletes: numberOfAthletes || null,
+        areasOfInterest: areasOfInterest || [],
+        eventId,
+        daysAttending,
+        notes: notes || null,
+        schoolLogoUrl: null // Will be implemented with file upload later
+      };
+
+      const savedRequest = await storage.createRecruitingClinicRequest(requestData);
+
+      console.log(`✅ Coach registration created: ${fullName} from ${collegeName} (${divisionLevel})`);
+
+      res.status(201).json({
+        success: true,
+        message: 'Registration submitted successfully',
+        requestId: savedRequest.id
+      });
+
+    } catch (error) {
+      console.error('Coach registration error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        userFriendlyMessage: 'Unable to process registration. Please try again or contact support.'
+      });
+    }
+  });
+
   // ===== NATIVE ANALYTICS SYSTEM ENDPOINTS =====
   // These endpoints are completely independent and don't affect existing functionality
   

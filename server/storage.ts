@@ -12,10 +12,11 @@ import {
   collaborations, type Collaboration, type InsertCollaboration,
   coaches, type Coach, type InsertCoach,
   eventCoaches, type EventCoach, type InsertEventCoach,
-  completedEventRegistrations, type CompletedEventRegistration, type InsertCompletedEventRegistration
+  completedEventRegistrations, type CompletedEventRegistration, type InsertCompletedEventRegistration,
+  recruitingClinicRequests, type RecruitingClinicRequest, type RecruitingClinicRequestInsert
 } from "@shared/schema";
 import { db, pool } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -99,6 +100,11 @@ export interface IStorage {
   createCollaboration(data: InsertCollaboration): Promise<Collaboration>;
   updateCollaboration(id: number, data: Partial<InsertCollaboration>): Promise<Collaboration>;
   deleteCollaboration(id: number): Promise<boolean>;
+  
+  // Recruiting clinic request methods
+  createRecruitingClinicRequest(data: RecruitingClinicRequestInsert): Promise<RecruitingClinicRequest>;
+  getRecruitingClinicRequestByEmail(email: string, eventId: number): Promise<RecruitingClinicRequest | undefined>;
+  getRecruitingClinicRequests(eventId?: number): Promise<RecruitingClinicRequest[]>;
 }
 
 // Database-backed storage implementation
@@ -1000,6 +1006,54 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error logging payment intent:', error);
       throw error;
+    }
+  }
+
+  // Recruiting clinic request methods
+  async createRecruitingClinicRequest(data: RecruitingClinicRequestInsert): Promise<RecruitingClinicRequest> {
+    try {
+      const [request] = await db
+        .insert(recruitingClinicRequests)
+        .values(data)
+        .returning();
+      
+      console.log(`Coach registration created: ${data.fullName} from ${data.collegeName}`);
+      return request;
+    } catch (error) {
+      console.error('Error creating coach registration:', error);
+      throw error;
+    }
+  }
+
+  async getRecruitingClinicRequestByEmail(email: string, eventId: number): Promise<RecruitingClinicRequest | undefined> {
+    try {
+      const [request] = await db
+        .select()
+        .from(recruitingClinicRequests)
+        .where(and(
+          eq(recruitingClinicRequests.email, email.toLowerCase()),
+          eq(recruitingClinicRequests.eventId, eventId)
+        ));
+      
+      return request;
+    } catch (error) {
+      console.error('Error fetching coach registration by email:', error);
+      return undefined;
+    }
+  }
+
+  async getRecruitingClinicRequests(eventId?: number): Promise<RecruitingClinicRequest[]> {
+    try {
+      const query = db.select().from(recruitingClinicRequests);
+      
+      if (eventId) {
+        return await query.where(eq(recruitingClinicRequests.eventId, eventId));
+      }
+      
+      return await query;
+    } catch (error) {
+      console.error('Error fetching coach registrations:', error);
+      return [];
     }
   }
 }
