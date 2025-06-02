@@ -3,6 +3,7 @@ import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { CollegeCoachRegistrationForm } from "../components/forms/CollegeCoachRegistrationForm";
 
 // Event data (in production this would be fetched from API)
 const events = [
@@ -190,6 +191,7 @@ export default function EventRegistration() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState(1);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isCoachFormOpen, setIsCoachFormOpen] = useState(false);
   
   useEffect(() => {
     // Simulate API call to get event details
@@ -460,6 +462,24 @@ export default function EventRegistration() {
             >
               {event.date} • {event.location}
             </p>
+            
+            {/* College Coach Registration Button - Only for National Champ Camp */}
+            {event.id === 2 && (
+              <div className="mt-6">
+                <motion.button
+                  onClick={() => setIsCoachFormOpen(true)}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ fontFamily: "'Sanchez', serif" }}
+                >
+                  College Coach Registration
+                </motion.button>
+                <p className="text-sm text-gray-500 mt-2">
+                  Are you a college coach? Register for our recruiting clinic
+                </p>
+              </div>
+            )}
           </motion.div>
           
           {/* Steps */}
@@ -1112,6 +1132,12 @@ export default function EventRegistration() {
           )}
         </div>
       </div>
+      
+      {/* College Coach Registration Form */}
+      <CollegeCoachRegistrationForm 
+        isOpen={isCoachFormOpen} 
+        onClose={() => setIsCoachFormOpen(false)} 
+      />
     </div>
   );
 }
