@@ -54,6 +54,9 @@ export function EventRegistrationForm({
 }: EventRegistrationFormProps) {
   const { toast } = useToast();
   
+  // Debug: Log event data to understand the structure
+  console.log('EventRegistrationForm received event:', event);
+  
   // Initialize form state with default values
   const [registrationForm, setRegistrationForm] = useState<RegistrationFormData>({
     firstName: '',
