@@ -605,9 +605,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Get pricing for the event (in cents to match Stripe)
-      const eventPricing: Record<number, { full: number; single: number }> = {
+      const eventPricing: Record<number, { full: number; single: number; '1day'?: number; '2day'?: number }> = {
         1: { full: 24900, single: 14900 }, // Birmingham Slam Camp - $249/$149
-        2: { full: 29900, single: 17500 }, // National Champ Camp - $299/$175
+        2: { full: 29900, single: 17500, '1day': 11900, '2day': 23800 }, // National Champ Camp - $299/$175/$119/$238
         3: { full: 24900, single: 14900 }, // Texas Recruiting Clinic - $249/$149
         4: { full: 20000, single: 9900 }   // Panther Train Tour - $200/$99
       };
@@ -617,8 +617,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: 'Event not found' });
       }
       
-      // Get original pricing
-      let originalAmount = option === 'single' ? pricing.single : pricing.full;
+      // Get original pricing based on option
+      let originalAmount: number;
+      if (eventId === 2 && (option === '1day' || option === '2day')) {
+        // National Champ Camp flexible options
+        originalAmount = pricing[option as '1day' | '2day'] || pricing.full;
+        console.log(`National Champ Camp ${option} option: $${originalAmount / 100}`);
+      } else {
+        // Standard pricing for other events
+        originalAmount = option === 'single' ? pricing.single : pricing.full;
+      }
       let finalAmount = originalAmount;
       let appliedDiscountCode = discountCode || null;
       let discountAmount = 0;

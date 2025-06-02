@@ -143,6 +143,8 @@ export const eventRegistrations = pgTable("event_registrations", {
   day1: boolean("day1").default(false), // For multi-day events to track day selection
   day2: boolean("day2").default(false), // For multi-day events to track day selection
   day3: boolean("day3").default(false), // For multi-day events to track day selection
+  numberOfDays: integer("number_of_days"), // For National Champ Camp flexible options
+  selectedDates: text("selected_dates").array(), // For National Champ Camp flexible date selection
   age: text("age"), // Adding this to match existing database column
   experience: text("experience"), // Adding this to match existing database column
   shirtSize: text("shirt_size"), // New field for shirt size selection
@@ -276,6 +278,8 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   day1: true,
   day2: true,
   day3: true,
+  numberOfDays: true,
+  selectedDates: true,
   age: true,
   experience: true
 });
