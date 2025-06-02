@@ -609,72 +609,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Process successful payment endpoint
-  app.post('/api/process-payment-success', async (req: Request, res: Response) => {
-    try {
-      const { paymentIntentId, source = 'webhook' } = req.body;
-      
-      if (!paymentIntentId) {
-        return res.status(400).json({ error: 'Payment intent ID required' });
+  // Add the event-specific payment intent endpoint using ID-based routing  
+  app.post("/api/events/:eventId/create-payment-intent", async (req: Request, res: Response) => {
+        if (recentIntent && recentIntent.paymentIntentId && 
+            recentIntent.createdAt && 
+            (Date.now() - recentIntent.createdAt.getTime()) < 600000) { // 10 minutes
+          console.log(`🚫 Duplicate registration attempt blocked for ${registrationData.email} in event ${eventId}`);
+          return res.status(429).json({
+            error: 'Recent registration attempt detected',
+            userFriendlyMessage: 'You recently started a registration for this event. Please complete that registration or wait 10 minutes before starting a new one.',
+            sessionId
+          });
+        }
+      } catch (duplicateCheckError) {
+        console.warn('Could not check for duplicate registrations:', duplicateCheckError);
+        // Continue with registration if duplicate check fails
       }
 
-      await processSuccessfulPayment(paymentIntentId, source);
-      res.json({ success: true });
-    } catch (error: any) {
-      console.error('Error processing payment success:', error);
-      res.status(500).json({ error: 'Failed to process payment success' });
-    }
-  });
-
-  // Process free registration endpoint
-  app.post('/api/process-free-registration', async (req: Request, res: Response) => {
-    try {
-      const { registrationData, eventId, option = 'full' } = req.body;
-      
-      if (!registrationData || !eventId) {
-        return res.status(400).json({ 
-          error: 'Missing required registration data or event ID' 
+      // STEP 3: ACQUIRE LOCK (Prevent concurrent requests)
+      if (!PaymentIntentLock.acquireLock(sessionId)) {
+        return res.status(429).json({
+          error: 'Another payment creation is in progress',
+          userFriendlyMessage: 'Please wait a moment before trying again.',
+          sessionId
         });
       }
 
-      // Process the free registration directly
-      const registration = await storage.addEventRegistration({
-        ...registrationData,
-        eventId: parseInt(eventId),
-        registrationOption: option,
-        paymentStatus: 'completed',
-        finalAmount: 0,
-        registrationType: option
-      });
-
-      res.json({ 
-        success: true, 
-        registrationId: registration.id 
-      });
-    } catch (error: any) {
-      console.error('Error processing free registration:', error);
-      res.status(500).json({ 
-        error: 'Failed to process free registration' 
-      });
-    }
-  });
-
-  // Get event information
-  app.get('/api/events/:id', async (req: Request, res: Response) => {
-    try {
-      const eventId = parseInt(req.params.id);
-      const event = await storage.getEvent(eventId);
-      
-      if (!event) {
-        return res.status(404).json({ error: 'Event not found' });
-      }
-      
-      res.json(event);
-    } catch (error: any) {
-      console.error('Error fetching event:', error);
-      res.status(500).json({ error: 'Failed to fetch event' });
-    }
-  });
+      try {
+        // STEP 4: HANDLE FREE REGISTRATIONS
+        if (amount === 0) {
+          PaymentIntentLock.updateLock(sessionId, 'free_registration');
+          return res.json({
+            clientSecret: 'free_registration',
             amount: 0,
             isFree: true,
             sessionId
