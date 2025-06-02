@@ -258,6 +258,39 @@ export const completeRegistrations = pgTable("complete_registrations", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Recruiting clinic requests table for college coaches
+export const recruitingClinicRequests = pgTable("recruiting_clinic_requests", {
+  id: serial("id").primaryKey(),
+  
+  // Coach Information
+  fullName: text("full_name").notNull(),
+  title: text("title").notNull(), // Head Coach, Assistant Coach, etc.
+  collegeName: text("college_name").notNull(),
+  email: text("email").notNull(),
+  cellPhone: text("cell_phone").notNull(),
+  schoolPhone: text("school_phone"),
+  schoolWebsite: text("school_website"),
+  
+  // Program Details
+  divisionLevel: text("division_level").notNull(), // D1, D2, D3, NAIA, JUCO, Other
+  conference: text("conference").notNull(),
+  numberOfAthletes: integer("number_of_athletes"),
+  areasOfInterest: text("areas_of_interest").array(), // Lightweight, Middleweight, etc.
+  
+  // Event Attendance
+  eventId: integer("event_id").notNull().default(2), // National Champ Camp
+  daysAttending: text("days_attending").array(), // June 5, June 6, June 7
+  
+  // Additional Information
+  notes: text("notes"),
+  schoolLogoUrl: text("school_logo_url"),
+  
+  // Administrative
+  status: text("status").notNull().default("pending"), // pending, approved, declined
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Create the base schema first
 export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
   eventId: true,
@@ -355,6 +388,41 @@ export type EventRegistrationLogInsert = z.infer<typeof insertEventRegistrationL
 
 export type CompleteRegistration = typeof completeRegistrations.$inferSelect;
 export type CompleteRegistrationInsert = z.infer<typeof insertCompleteRegistrationSchema>;
+
+// Recruiting clinic requests schema and types
+export const insertRecruitingClinicRequestSchema = createInsertSchema(recruitingClinicRequests).pick({
+  fullName: true,
+  title: true,
+  collegeName: true,
+  email: true,
+  cellPhone: true,
+  schoolPhone: true,
+  schoolWebsite: true,
+  divisionLevel: true,
+  conference: true,
+  numberOfAthletes: true,
+  areasOfInterest: true,
+  eventId: true,
+  daysAttending: true,
+  notes: true,
+  schoolLogoUrl: true
+});
+
+export type RecruitingClinicRequest = typeof recruitingClinicRequests.$inferSelect;
+export type RecruitingClinicRequestInsert = z.infer<typeof insertRecruitingClinicRequestSchema>;
+
+// Strict validation schema for recruiting clinic requests
+export const strictRecruitingClinicRequestSchema = insertRecruitingClinicRequestSchema.extend({
+  fullName: z.string().min(1, "Full name is required"),
+  title: z.string().min(1, "Title/Position is required"),
+  collegeName: z.string().min(1, "College/University name is required"),
+  email: z.string().email("Valid email is required"),
+  cellPhone: z.string().min(1, "Cell phone is required"),
+  divisionLevel: z.string().min(1, "Division level is required"),
+  conference: z.string().min(1, "Conference is required"),
+  daysAttending: z.array(z.string()).min(1, "At least one day must be selected"),
+  areasOfInterest: z.array(z.string()).optional()
+});
 
 // Now extend the original schema with stricter validation
 export const strictEventRegistrationSchema = insertEventRegistrationSchema.extend({

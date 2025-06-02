@@ -1,0 +1,25 @@
+Add a new form to the site for college coaches to submit their information to attend our National Champ Camp Recruiting Clinic. This form will serve as a clean intake portal for interested coaches and will store them as a “requested clinician” in our local database.
+
+Start by building a new standalone page or modal component titled “College Coach Registration” or “Recruiting Clinic Coach Form”. The form must collect all relevant and potentially useful information from a college coach, including but not limited to:
+	•	Full Name
+	•	Title/Position (e.g., Head Coach, Assistant Coach, Volunteer)
+	•	College/University Name
+	•	Email
+	•	Cell Phone
+	•	School Phone (optional)
+	•	School Website
+	•	Division Level (dropdown: D1, D2, D3, NAIA, JUCO, Other)
+	•	Conference
+	•	Number of Athletes Looking to Scout
+	•	Areas of Interest (multi-select: Lightweight, Middleweight, Heavyweight, Open to All)
+	•	Days Attending (checkboxes: June 5, June 6, June 7)
+	•	Notes or Comments (long text input)
+	•	Upload School Logo (optional image upload)
+
+Add a submit button that triggers a clean POST request to the backend, where the coach data should be validated and saved into a new database table called recruiting_clinic_requests. Ensure this table includes timestamps and a status field (e.g., “pending”, “approved”, “declined”). Add backend validation to ensure key fields (name, email, college, division) are required and that days attending includes at least one selection.
+
+On the backend, use a separate controller or endpoint (POST /api/clinician-request) to handle submissions. Return a success message to the frontend on completion. You may also want to implement duplicate detection based on email + event ID and log any duplicates for review.
+
+This form must be incorporated as a visible call-to-action on both the homepage and the National Champ Camp event page. On the homepage, place a button or banner section titled “College Coaches: Register to Scout Our Clinic” with a short description and link to open the form. On the National Champ Camp event page, embed the form or a direct link prominently under the main camp information and near the registration CTA.
+
+The form must be mobile-responsive, ADA-accessible, and styled consistently with the rest of the Rich Habits UI. Once the form is created, test submitting multiple entries and confirm data is accurately saved and retrievable from the local database. Let me know when it’s live and ready to collect entries.
