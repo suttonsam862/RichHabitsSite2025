@@ -357,12 +357,14 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
                 description: `Your registration has been processed successfully! You're now registered for ${eventName}.`,
               });
               onSuccess();
+              return; // CRITICAL: Stop execution here for free registrations
             } else {
               toast({
                 title: "Registration Error",
                 description: "We encountered an issue completing your registration. Please contact support.",
                 variant: "destructive",
               });
+              return; // CRITICAL: Stop execution here on error
             }
           } catch (err) {
             console.error('Free registration error:', err);
@@ -371,6 +373,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
               description: "An unexpected error occurred. Please try contacting support directly.",
               variant: "destructive",
             });
+            return; // CRITICAL: Stop execution here on error
           }
         } else {
           // Regular partial discount
