@@ -115,7 +115,7 @@ export class PaymentService {
       
       // Create new payment intent with idempotency protection
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
+        amount: Math.round(finalAmount * 100), // Convert to cents
         currency: 'usd',
         automatic_payment_methods: {
           enabled: true,
@@ -125,7 +125,7 @@ export class PaymentService {
           email: email,
           eventId: eventId.toString(),
           registrationType: registrationType,
-          originalAmount: amount.toString()
+          originalAmount: finalAmount.toString()
         }
       }, {
         idempotencyKey: idempotencyKey
@@ -141,6 +141,7 @@ export class PaymentService {
         clientSecret: paymentIntent.client_secret,
         paymentIntentId: paymentIntent.id,
         sessionId: sessionId,
+        amount: finalAmount,
         message: 'Created new payment intent'
       };
       
