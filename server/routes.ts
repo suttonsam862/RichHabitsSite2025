@@ -165,6 +165,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Handle free registrations
+      if (paymentResult.isFreeRegistration) {
+        console.log('Processing free registration directly');
+        
+        // Process the registration immediately without any payment
+        try {
+          const registration = await storage.logEventRegistration({
+            ...registrationData,
+            eventId: eventId,
+            registrationOption: option,
+            finalAmount: 0,
+            registrationType: option,
+            paymentStatus: 'completed',
+            stripeIntentId: 'FREE_REGISTRATION'
+          });
+
+          return res.json({
+            success: true,
+            isFreeRegistration: true,
+            registrationId: registration.id,
+            message: 'Free registration completed successfully'
+          });
+        } catch (error) {
+          console.error('Error processing free registration:', error);
+          return res.status(500).json({
+            error: 'Failed to process free registration',
+            userFriendlyMessage: 'Unable to complete registration. Please try again.'
+          });
+        }
+      }
+
       res.json({
         clientSecret: paymentResult.clientSecret,
         amount: paymentResult.amount,

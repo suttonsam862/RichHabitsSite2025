@@ -639,10 +639,15 @@ export default function StripeCheckout() {
         console.log('Payment intent response data:', data);
         
         // Handle free registrations (100% discount codes)
-        if (data.isFree && data.clientSecret === 'free_registration') {
-          setClientSecret('free_registration');
-          setAmount(0);
-          // Free registration is ready to process without Stripe
+        if (data.isFreeRegistration || data.success && data.registrationId) {
+          console.log('Free registration completed successfully');
+          setSuccess(true);
+          toast({
+            title: 'Registration Successful!',
+            description: 'Your free registration has been completed successfully.',
+            variant: 'default',
+          });
+          return;
         } else if (data.clientSecret) {
           setClientSecret(data.clientSecret);
           // Set the amount for display on the button

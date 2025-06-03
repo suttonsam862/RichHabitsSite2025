@@ -11,13 +11,40 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export class PaymentService {
   // Create or retrieve payment intent with full duplicate protection
-  async createOrRetrievePaymentIntent(registrationData) {
-    const { email, eventId, registrationType = 'full', amount } = registrationData;
+  async createOrRetrievePaymentIntent(requestData) {
+    const { eventId, option, registrationData, discountCode, discountedAmount } = requestData;
+    const { email } = registrationData;
+    const registrationType = option || 'full';
+    
+    // Calculate the final amount (either discounted amount or original amount)
+    let finalAmount = discountedAmount;
+    
+    // If no discounted amount provided, calculate base amount from event pricing
+    if (finalAmount === null || finalAmount === undefined) {
+      // Import pricing utilities to calculate base amount
+      const { calculateRegistrationAmount } = await import('./pricingUtils.js');
+      finalAmount = calculateRegistrationAmount(eventId, registrationType) / 100; // Convert cents to dollars
+    }
     
     // Generate session ID
     const sessionId = sessionManager.generateSessionId(email, eventId, registrationType);
     
-    console.log(`🎯 Processing payment request - Session: ${sessionId}, Email: ${email}, Amount: $${amount}`);
+    console.log(`🎯 Processing payment request - Session: ${sessionId}, Email: ${email}, Amount: $${finalAmount}, DiscountCode: ${discountCode}`);
+    
+    // CRITICAL FIX: Handle free registrations - NEVER create payment intents for $0 amounts
+    if (finalAmount === 0 || finalAmount === null || finalAmount === undefined) {
+      console.log(`✅ FREE REGISTRATION DETECTED - Processing without payment for session: ${sessionId}`);
+      
+      // Process free registration directly without any payment intent
+      return {
+        success: true,
+        isFreeRegistration: true,
+        clientSecret: 'FREE_REGISTRATION',
+        sessionId: sessionId,
+        amount: 0,
+        message: 'Free registration - no payment required'
+      };
+    }
     
     // Check if session is already locked (payment in progress)
     if (sessionManager.isSessionLocked(sessionId)) {
@@ -53,7 +80,7 @@ export class PaymentService {
     }
     
     // Lock the session
-    sessionManager.lockSession(sessionId, email, eventId, registrationType, amount);
+    sessionManager.lockSession(sessionId, email, eventId, registrationType, finalAmount);
     
     try {
       // Check if we already have a payment intent for this exact session
