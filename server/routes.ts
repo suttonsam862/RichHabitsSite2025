@@ -8,6 +8,7 @@ import multer from "multer";
 import { pool, getDatabaseHealthStatus } from "./db.js";
 import { db } from "./db.js";
 import { sql } from "drizzle-orm";
+import { eventRegistrations } from "../shared/schema.js";
 import Stripe from "stripe";
 import { approveRegistrations } from "./registrationApproval.js";
 import { storage } from "./storage.js";
