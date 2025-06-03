@@ -491,6 +491,7 @@ export default function StripeCheckout() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [stripeProductDetails, setStripeProductDetails] = useState<any>(null);
+  const [isSetupInProgress, setIsSetupInProgress] = useState(false);
   const { toast } = useToast();
 
   // Get URL parameters
@@ -558,7 +559,14 @@ export default function StripeCheckout() {
 
     // Optimized payment setup for individual registrations - single API call to reduce mobile loading time
     const fetchPaymentIntent = async () => {
+      // Prevent duplicate calls
+      if (isSetupInProgress) {
+        console.log('Payment setup already in progress, skipping duplicate call');
+        return;
+      }
+      
       try {
+        setIsSetupInProgress(true);
         setLoading(true);
         
         // Comprehensive registration data collection from sessionStorage
@@ -653,12 +661,12 @@ export default function StripeCheckout() {
           return;
         } else if (data.clientSecret) {
           setClientSecret(data.clientSecret);
-          // Set the amount for display on the button
-          if (data.amount) {
-            setAmount(data.amount);
-          }
+          // Set the amount for display on the button - use amount from response or calculate from event
+          const responseAmount = data.amount || 249; // Default to $249 for full event
+          setAmount(responseAmount);
+          console.log('Payment setup successful:', { clientSecret: data.clientSecret, amount: responseAmount });
         } else {
-          throw new Error('No client secret returned');
+          throw new Error('No client secret returned from payment setup');
         }
       } catch (err) {
         console.error('Failed to set up payment:', err);
@@ -670,6 +678,7 @@ export default function StripeCheckout() {
         });
       } finally {
         setLoading(false);
+        setIsSetupInProgress(false);
       }
     };
 
