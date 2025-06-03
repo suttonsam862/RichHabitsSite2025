@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useRoute, Link } from "wouter";
+import { useRoute, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -168,6 +168,7 @@ const fadeIn = {
 
 export default function EventRegistration() {
   const [, params] = useRoute("/register/:id");
+  const [, navigate] = useLocation();
   const eventId = params?.id ? parseInt(params.id, 10) : 0;
   
   const [event, setEvent] = useState<any>(null);
@@ -345,9 +346,9 @@ export default function EventRegistration() {
       sessionStorage.setItem(`registration_${key}`, value || '');
     });
     
-    // Route directly to Stripe checkout page with event details
+    // Navigate to Stripe checkout page with event details using React router
     const checkoutUrl = `/stripe-checkout?eventId=${event.id}&eventName=${encodeURIComponent(event.title)}&option=${registrationType}`;
-    window.location.href = checkoutUrl;
+    navigate(checkoutUrl);
   };
   
   const handleSubmitRegistration = () => {
