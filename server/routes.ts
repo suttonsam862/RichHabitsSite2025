@@ -172,13 +172,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Process the registration immediately without any payment
         try {
           const registration = await storage.logEventRegistration({
-            ...registrationData,
-            eventId: eventId,
-            registrationOption: option,
+            email: registrationData.email,
+            eventSlug: `event-${eventId}`,
             finalAmount: 0,
+            discountCode: discountCode || null,
+            stripeIntentId: 'FREE_REGISTRATION',
+            sessionId: paymentResult.sessionId,
             registrationType: option,
-            paymentStatus: 'completed',
-            stripeIntentId: 'FREE_REGISTRATION'
+            originalAmount: 0,
+            discountAmount: 0
           });
 
           return res.json({
