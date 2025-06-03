@@ -660,22 +660,37 @@ export default function StripeCheckout() {
           });
           return;
         } else if (data.clientSecret) {
-          setClientSecret(data.clientSecret);
-          // Set the amount for display on the button - use amount from response or calculate from event
-          const responseAmount = data.amount || 249; // Default to $249 for full event
-          setAmount(responseAmount);
-          console.log('Payment setup successful:', { clientSecret: data.clientSecret, amount: responseAmount });
+          try {
+            setClientSecret(data.clientSecret);
+            // Set the amount for display on the button - use amount from response or calculate from event
+            const responseAmount = data.amount || 249; // Default to $249 for full event
+            setAmount(responseAmount);
+            console.log('Payment setup successful:', { clientSecret: data.clientSecret, amount: responseAmount });
+            
+            // Clear any existing errors since payment setup was successful
+            setError(null);
+          } catch (setupError) {
+            console.error('Error during payment setup state updates:', setupError);
+            throw setupError;
+          }
         } else {
           throw new Error('No client secret returned from payment setup');
         }
       } catch (err) {
-        console.error('Failed to set up payment:', err);
-        setError(err instanceof Error ? err.message : 'Failed to set up payment');
-        toast({
-          title: 'Payment Setup Failed',
-          description: err instanceof Error ? err.message : 'We had trouble setting up your payment. Please try again.',
-          variant: 'destructive',
-        });
+        // Only show error if we don't have a valid client secret
+        if (!clientSecret) {
+          console.error('Failed to set up payment:', err);
+          setError(err instanceof Error ? err.message : 'Failed to set up payment');
+          toast({
+            title: 'Payment Setup Failed',
+            description: err instanceof Error ? err.message : 'We had trouble setting up your payment. Please try again.',
+            variant: 'destructive',
+          });
+        } else {
+          // We have a valid client secret, so ignore this error
+          console.log('Ignoring error since payment setup was successful:', err);
+          setError(null);
+        }
       } finally {
         setLoading(false);
         setIsSetupInProgress(false);
