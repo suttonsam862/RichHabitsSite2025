@@ -966,6 +966,7 @@ export class DatabaseStorage implements IStorage {
   async logEventRegistration(data: {
     email: string;
     eventSlug: string;
+    eventId: number;
     finalAmount: number;
     discountCode: string | null;
     stripeIntentId: string;
@@ -976,7 +977,7 @@ export class DatabaseStorage implements IStorage {
   }): Promise<EventRegistrationLog> {
     try {
       const logData: EventRegistrationLogInsert = {
-        id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        // Remove the custom id generation to let the database auto-generate the UUID
         firstName: 'Payment Intent',
         lastName: 'Created',
         email: data.email,

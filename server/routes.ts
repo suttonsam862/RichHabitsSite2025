@@ -171,23 +171,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Process the registration immediately without any payment
         try {
-          const registration = await storage.logEventRegistration({
+          // Create the registration record directly
+          const registrationRecord = await storage.createEventRegistration({
+            firstName: registrationData.firstName,
+            lastName: registrationData.lastName,
             email: registrationData.email,
+            phone: registrationData.phone || null,
+            eventId: eventId,
             eventSlug: `event-${eventId}`,
-            finalAmount: 0,
-            discountCode: discountCode || null,
-            stripeIntentId: 'FREE_REGISTRATION',
-            sessionId: paymentResult.sessionId,
+            contactName: registrationData.firstName + ' ' + registrationData.lastName,
+            tShirtSize: registrationData.tShirtSize || null,
+            grade: registrationData.grade || null,
+            schoolName: registrationData.schoolName || null,
+            clubName: registrationData.clubName || null,
+            medicalReleaseAccepted: true,
             registrationType: option,
-            originalAmount: 0,
-            discountAmount: 0
+            paymentStatus: 'completed',
+            stripePaymentIntentId: 'FREE_REGISTRATION',
+            discountCode: discountCode || null,
+            finalAmount: 0,
+            day1: option === 'full' || option === 'day1',
+            day2: option === 'full' || option === 'day2',
+            day3: option === 'full' || option === 'day3'
           });
 
           return res.json({
             success: true,
             isFreeRegistration: true,
-            registrationId: registration.id,
-            message: 'Free registration completed successfully'
+            registrationId: registrationRecord.id,
+            message: 'Registration completed successfully at no cost'
           });
         } catch (error) {
           console.error('Error processing free registration:', error);
