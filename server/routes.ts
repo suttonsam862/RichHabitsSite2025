@@ -29,6 +29,7 @@ import { paymentService } from "./paymentService.js";
 import { z } from "zod";
 import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail } from "./emailService.js";
 import { validateDiscountCode, applyDiscount, incrementDiscountCodeUsage } from "./discountCodes.js";
+import { validateDiscountCode as validateDiscountHandler } from "./discounts.js";
 import { 
   logRegistrationAttempt, 
   updateLogWithPaymentIntent, 
@@ -348,6 +349,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
   async function logWebhookActivity(eventType: string, objectId: string | null, status: string) {
     console.log(`Webhook: ${eventType} - ${objectId} - ${status}`);
   }
+
+  // Validate discount code endpoint - CRITICAL FIX for JSON parsing errors
+  app.post('/api/validate-discount', async (req: Request, res: Response) => {
+    try {
+      const { discountCode, originalPrice } = req.body;
+      
+      if (!discountCode) {
+        return res.status(400).json({
+          valid: false,
+          message: 'Discount code is required'
+        });
+      }
+
+      // Use the unified discount code validation system
+      const validation = validateDiscountCode(discountCode);
+      
+      if (!validation.valid) {
+        return res.status(400).json({
+          valid: false,
+          message: validation.error || 'Invalid discount code'
+        });
+      }
+
+      // Apply the discount
+      const discountResult = applyDiscount(originalPrice, discountCode);
+      
+      if (!discountResult.success) {
+        return res.status(400).json({
+          valid: false,
+          message: discountResult.error || 'Failed to apply discount'
+        });
+      }
+
+      return res.json({
+        success: true,
+        valid: true,
+        discount: {
+          discountAmount: discountResult.discountAmount,
+          finalPrice: discountResult.finalPrice,
+          discountDescription: discountResult.discountDescription
+        },
+        message: `${discountResult.discountDescription} applied successfully`
+      });
+    } catch (error) {
+      console.error('Error validating discount code:', error);
+      res.status(500).json({
+        valid: false,
+        error: error instanceof Error ? error.message : 'An unknown error occurred'
+      });
+    }
+  });
 
   // Serve static files in production
   if (process.env.NODE_ENV === 'production') {
