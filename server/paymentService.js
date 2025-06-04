@@ -35,15 +35,27 @@ export class PaymentService {
     if (finalAmount === 0 || finalAmount === null || finalAmount === undefined) {
       console.log(`✅ FREE REGISTRATION DETECTED - Processing without payment for session: ${sessionId}`);
       
-      // Process free registration directly without any payment intent
-      return {
-        success: true,
-        isFreeRegistration: true,
-        clientSecret: 'FREE_REGISTRATION',
-        sessionId: sessionId,
-        amount: 0,
-        message: 'Free registration - no payment required'
-      };
+      // For 100% discount codes, process registration directly and return consistent JSON
+      try {
+        // Process free registration directly without any payment intent
+        return {
+          success: true,
+          isFreeRegistration: true,
+          clientSecret: null,
+          sessionId: sessionId,
+          amount: 0,
+          paymentIntentId: `free_reg_${Date.now()}`,
+          registrationData: registrationData,
+          message: 'Free registration - no payment required'
+        };
+      } catch (error) {
+        console.error('Error processing free registration in payment service:', error);
+        return {
+          success: false,
+          error: 'Failed to process free registration',
+          userFriendlyMessage: 'Unable to process free registration. Please contact support with discount code: ' + discountCode
+        };
+      }
     }
     
     // Check if session is already locked (payment in progress)

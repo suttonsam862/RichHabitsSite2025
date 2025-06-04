@@ -631,8 +631,23 @@ export default function StripeCheckout() {
           }),
         });
 
+        // Enhanced error handling for discount code JSON parsing issues
         if (!response.ok) {
-          const errorData = await response.json();
+          let errorData;
+          try {
+            const responseText = await response.text();
+            if (responseText.trim().startsWith('{')) {
+              errorData = JSON.parse(responseText);
+            } else {
+              // Handle HTML error responses (common cause of JSON parsing errors)
+              console.error('Non-JSON response received:', responseText);
+              throw new Error('Server returned invalid response format. Please try again or contact support.');
+            }
+          } catch (parseError) {
+            console.error('JSON parsing error:', parseError);
+            throw new Error('Unable to process server response. Please try again or contact support with discount code: ' + (appliedDiscountCode || 'none'));
+          }
+          
           const errorMessage = errorData.userFriendlyMessage || errorData.error || `Payment setup failed (${response.status})`;
           
           // Show user-friendly error message
@@ -645,13 +660,42 @@ export default function StripeCheckout() {
           throw new Error(errorMessage);
         }
 
-        const data = await response.json();
+        let data;
+        try {
+          const responseText = await response.text();
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('JSON parsing error on success response:', parseError);
+          throw new Error('Unable to process payment response. Please contact support with discount code: ' + (appliedDiscountCode || 'none'));
+        }
         
         console.log('Payment intent response data:', data);
         
         // Handle free registrations (100% discount codes)
-        if (data.isFreeRegistration || data.success && data.registrationId) {
+        if (data.isFreeRegistration || (data.success && data.registrationId)) {
           console.log('Free registration completed successfully');
+          
+          // Clear all session storage data for successful free registration
+          const fields = [
+            'firstName', 'lastName', 'contactName', 'email', 
+            'phone', 'tShirtSize', 'grade', 'schoolName', 
+            'clubName', 'registrationType', 'option',
+            'day1', 'day2', 'day3', 'applied_discount_code'
+          ];
+          fields.forEach(field => {
+            sessionStorage.removeItem(`registration_${field}`);
+          });
+          sessionStorage.removeItem('applied_discount_code');
+          
+          // Show success message and redirect
+          toast({
+            title: "Registration Complete",
+            description: `Your free registration has been processed successfully! You're now registered for ${eventName}.`,
+          });
+          
+          // Redirect to success page
+          window.location.href = `/event-registration/${eventId}?paymentSuccess=true&freeRegistration=true`;
+          return;
           setSuccess(true);
           toast({
             title: 'Registration Successful!',
