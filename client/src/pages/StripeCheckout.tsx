@@ -30,19 +30,38 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
     setIsProcessing(true);
     
     try {
-      // Get stored registration data from previous form
-      const storedData = sessionStorage.getItem('registrationFormData');
-      const registrationData = storedData ? JSON.parse(storedData) : {};
+      // Get comprehensive registration data from sessionStorage
+      const registrationData = {
+        firstName: sessionStorage.getItem('registration_firstName') || '',
+        lastName: sessionStorage.getItem('registration_lastName') || '',
+        email: sessionStorage.getItem('registration_email') || '',
+        phone: sessionStorage.getItem('registration_phone') || '',
+        contactName: sessionStorage.getItem('registration_contactName') || '',
+        tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
+        grade: sessionStorage.getItem('registration_grade') || '',
+        gender: sessionStorage.getItem('registration_gender') || '',
+        schoolName: sessionStorage.getItem('registration_schoolName') || '',
+        clubName: sessionStorage.getItem('registration_clubName') || '',
+        day1: sessionStorage.getItem('registration_day1') === 'true',
+        day2: sessionStorage.getItem('registration_day2') === 'true',
+        day3: sessionStorage.getItem('registration_day3') === 'true',
+      };
+
+      const appliedDiscountCode = sessionStorage.getItem('applied_discount_code');
+      const option = sessionStorage.getItem('registration_option') || 'full';
       
-      // Process free registration directly
-      const response = await fetch('/api/process-free-registration', {
+      // Process free registration using the stripe payment success endpoint
+      const response = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          eventId: parseInt(eventId),
-          option: sessionStorage.getItem('registration_option') || 'full',
+          freeRegistration: true,
+          discountCode: appliedDiscountCode,
+          eventId: eventId,
+          amount: 0,
+          paymentIntentId: `free_reg_${Date.now()}`,
           ...registrationData
         }),
       });
@@ -51,14 +70,26 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
         throw new Error('Failed to process free registration');
       }
 
-      const result = await response.json();
+      // Clear session data after successful registration
+      const fields = [
+        'firstName', 'lastName', 'contactName', 'email', 
+        'phone', 'tShirtSize', 'grade', 'schoolName', 
+        'clubName', 'registrationType', 'option',
+        'day1', 'day2', 'day3'
+      ];
+      fields.forEach(field => {
+        sessionStorage.removeItem(`registration_${field}`);
+      });
+      sessionStorage.removeItem('applied_discount_code');
       
       toast({
         title: "Registration Complete!",
-        description: "Your free registration has been processed successfully.",
+        description: `Your free registration has been processed successfully! You're now registered for ${eventName}.`,
       });
       
-      onSuccess();
+      // Redirect to success page
+      window.location.href = `/event-registration/${eventId}?paymentSuccess=true&freeRegistration=true`;
+      
     } catch (error) {
       console.error('Free registration error:', error);
       toast({
@@ -299,82 +330,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         const params = new URLSearchParams(window.location.search);
         sessionStorage.setItem('registration_option', params.get('option') || 'full');
         
-        // If this is a 100% discount, automatically complete the registration process
+        // Show success message for discount application but don't auto-process
         if (data.discount.finalPrice === 0) {
           toast({
             title: "100% Discount Applied",
-            description: "Your registration is free! Processing your registration...",
+            description: "Your registration is free! Click 'Complete Registration' to finish.",
           });
-          
-          // Automatically process the free registration
-          try {
-            // Get registration data from sessionStorage
-            const registrationData: Record<string, string> = {};
-            
-            // Common registration fields that might be in session storage
-            const fields = [
-              'firstName', 'lastName', 'contactName', 'email', 
-              'phone', 'tShirtSize', 'grade', 'schoolName', 
-              'clubName', 'registrationType', 'option',
-              'day1', 'day2', 'day3'
-            ];
-            
-            // Gather all available registration data from session storage
-            fields.forEach(field => {
-              const value = sessionStorage.getItem(`registration_${field}`);
-              if (value) {
-                registrationData[field] = value;
-              }
-            });
-            
-            // Ensure we at least have an email
-            if (!registrationData.email) {
-              registrationData.email = sessionStorage.getItem('registration_email') || '';
-            }
-            
-            // For debugging
-            console.log('Registration data gathered from sessionStorage:', registrationData);
-            console.log('Using admin email for registration:', registrationData.email);
-            
-            // Call our API to record the registration without payment
-            const registrationResponse = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                freeRegistration: true,
-                discountCode: discountCode,
-                eventId: eventId,
-                amount: 0,
-                ...registrationData
-              }),
-            });
-        
-            if (registrationResponse.ok) {
-              toast({
-                title: "Registration Complete",
-                description: `Your registration has been processed successfully! You're now registered for ${eventName}.`,
-              });
-              onSuccess();
-              return; // CRITICAL: Stop execution here for free registrations
-            } else {
-              toast({
-                title: "Registration Error",
-                description: "We encountered an issue completing your registration. Please contact support.",
-                variant: "destructive",
-              });
-              return; // CRITICAL: Stop execution here on error
-            }
-          } catch (err) {
-            console.error('Free registration error:', err);
-            toast({
-              title: "Registration Error",
-              description: "An unexpected error occurred. Please try contacting support directly.",
-              variant: "destructive",
-            });
-            return; // CRITICAL: Stop execution here on error
-          }
         } else {
           // Regular partial discount
           toast({
@@ -671,37 +632,13 @@ export default function StripeCheckout() {
         
         console.log('Payment intent response data:', data);
         
-        // Handle free registrations (100% discount codes)
+        // Handle free registrations (100% discount codes) - don't auto-process, show button
         if (data.isFreeRegistration || (data.success && data.registrationId)) {
-          console.log('Free registration completed successfully');
+          console.log('Free registration ready - setting up completion button');
           
-          // Clear all session storage data for successful free registration
-          const fields = [
-            'firstName', 'lastName', 'contactName', 'email', 
-            'phone', 'tShirtSize', 'grade', 'schoolName', 
-            'clubName', 'registrationType', 'option',
-            'day1', 'day2', 'day3', 'applied_discount_code'
-          ];
-          fields.forEach(field => {
-            sessionStorage.removeItem(`registration_${field}`);
-          });
-          sessionStorage.removeItem('applied_discount_code');
-          
-          // Show success message and redirect
-          toast({
-            title: "Registration Complete",
-            description: `Your free registration has been processed successfully! You're now registered for ${eventName}.`,
-          });
-          
-          // Redirect to success page
-          window.location.href = `/event-registration/${eventId}?paymentSuccess=true&freeRegistration=true`;
-          return;
-          setSuccess(true);
-          toast({
-            title: 'Registration Successful!',
-            description: 'Your free registration has been completed successfully.',
-            variant: 'default',
-          });
+          // Set special clientSecret to trigger free registration UI
+          setClientSecret('free_registration');
+          setAmount(0);
           return;
         } else if (data.clientSecret) {
           try {
