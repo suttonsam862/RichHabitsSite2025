@@ -80,7 +80,7 @@ const events = [
     id: 2,
     title: "National Champ Camp",
     date: "June 5-7, 2025",
-    location: "Las Vegas, NV (exact location TBA)",
+    location: "200 N 28th St, Las Vegas, NV 89101",
     price: "$299",
     originalPrice: "$349",
     fullPrice: 299,
@@ -123,7 +123,31 @@ const events = [
       "Professional nutrition plan and guidance",
       "Premium camp gear package",
       "Scholarship opportunity evaluation"
-    ]
+    ],
+    logistics: {
+      location: {
+        address: "200 N 28th St, Las Vegas, NV 89101",
+        note: "We will be in the main gym – Find the balloons"
+      },
+      checkin: {
+        time: "Please arrive 15 minutes early for registration",
+        requirement: "A parent or guardian must be present at check-in if the waiver was not completed during the application process. We'll have printed copies available on-site if needed."
+      },
+      schedule: [
+        { time: "9:00 AM – 11:00 AM", activity: "Session 1" },
+        { time: "11:00 AM – 12:30 PM", activity: "Lunch Break (please bring a packed lunch)" },
+        { time: "12:30 PM – 3:00 PM", activity: "Session 2" },
+        { time: "3:00 PM – 3:30 PM", activity: "Q&A / Wrap-Up" }
+      ],
+      toBring: [
+        "Refillable water bottle",
+        "Wrestling shoes",
+        "Packed lunch/snacks",
+        "Extra clothes/towel (optional but recommended)"
+      ],
+      parents: "Parents are welcome to stay and observe camp sessions throughout the day. We encourage parents to arrive at 3:00 PM to attend the Q&A. It's a great opportunity to hear directly from our clinicians and get insight into what your athlete has been learning.",
+      gear: "Each wrestler will receive a National Champ Camp t-shirt and hat. More clothing will be available for purchase."
+    }
   },
   {
     id: 3,
@@ -1200,6 +1224,111 @@ export default function EventDetail() {
                   </motion.li>
                 ))}
               </ul>
+              
+              {/* National Champ Camp Logistics Section */}
+              {event.id === 2 && event.logistics && (
+                <div className="mb-12">
+                  <h2 
+                    className="text-3xl mb-6"
+                    style={{ fontFamily: "'Bodoni FLF', serif" }}
+                  >
+                    Camp Logistics
+                  </h2>
+                  
+                  {/* Location */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
+                      Camp Location
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded border-l-4 border-blue-500">
+                      <p className="font-medium mb-1" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                        {event.logistics.location.address}
+                      </p>
+                      <p className="text-gray-600 text-sm" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                        {event.logistics.location.note}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Check-In */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
+                      Check-In & Registration
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded">
+                      <p className="mb-2" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                        {event.logistics.checkin.time}
+                      </p>
+                      <p className="text-gray-600 text-sm" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                        {event.logistics.checkin.requirement}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Daily Schedule */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
+                      Daily Schedule
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded">
+                      {event.logistics.schedule.map((item, index) => (
+                        <div key={index} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
+                          <span className="font-medium" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                            {item.time}
+                          </span>
+                          <span className="text-gray-600" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                            {item.activity}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                      {event.logistics.parents}
+                    </p>
+                  </div>
+                  
+                  {/* What to Bring */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
+                      What to Bring
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded">
+                      <ul className="list-none space-y-2">
+                        {event.logistics.toBring.map((item, index) => (
+                          <li key={index} className="flex items-center" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                            <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  {/* Parents Welcome */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
+                      Parents Welcome
+                    </h3>
+                    <div className="bg-blue-50 p-4 rounded border-l-4 border-blue-500">
+                      <p style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                        {event.logistics.parents}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Camp Gear */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
+                      Camp Gear
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded">
+                      <p style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
+                        {event.logistics.gear}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           
