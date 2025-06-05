@@ -42,6 +42,7 @@ import {
   validateNationalChampCampRegistration,
   getEventPricing 
 } from './pricingUtils.js';
+import { handleStripeWebhook } from './stripe.js';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
