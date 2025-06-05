@@ -608,16 +608,16 @@ export default function EventDetail() {
                       };
                     case 3: // Texas Recruiting Clinic
                       return {
-                        venue: "Texas Wrestling Center",
-                        date: "March 8-10, 2025",
-                        location: "Austin, TX",
+                        venue: "Arlington Martin High School",
+                        date: "June 12-13, 2025",
+                        location: "Arlington, TX",
                         description: "College Recruiting & Technique Clinic",
-                        originalPrice: "$199",
-                        currentPrice: "$179",
-                        savings: "20",
-                        capacity: "100",
+                        originalPrice: "$249",
+                        currentPrice: "$249",
+                        savings: "0",
+                        capacity: "150",
                         stickerImage: "/images/locations/texas-wrestling-center.webp",
-                        stickerAlt: "Texas Wrestling Center"
+                        stickerAlt: "Arlington Martin High School"
                       };
                     case 4: // Panther Train Tour
                       return {
