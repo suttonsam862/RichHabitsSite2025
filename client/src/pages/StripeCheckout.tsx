@@ -322,7 +322,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
     }
   };
 
-  // Handler for applying discount code
+  // Handler for applying discount code with race condition prevention
   const handleApplyDiscount = async () => {
     if (!discountCode.trim()) {
       toast({
@@ -333,9 +333,20 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       return;
     }
     
+    // Prevent multiple simultaneous discount applications
+    if (isApplyingDiscount) {
+      console.log('Discount application already in progress, ignoring duplicate request');
+      return;
+    }
+    
     try {
       setIsApplyingDiscount(true);
       setError(null);
+      
+      // Clear any existing discount state to prevent conflicts
+      setDiscount(null);
+      sessionStorage.removeItem('applied_discount_code');
+      sessionStorage.removeItem('discounted_amount');
       
       const response = await fetch(`/api/validate-discount`, {
         method: 'POST',
@@ -558,9 +569,16 @@ export default function StripeCheckout() {
           // Fallback: check sessionStorage for team data
           const teamData = sessionStorage.getItem('team_registration_data');
           if (teamData) {
-            const parsedTeamData = JSON.parse(teamData);
-            console.log('Found team registration data in session:', parsedTeamData);
-            setAmount(parsedTeamData.totalAmount || 0);
+            try {
+              const parsedTeamData = JSON.parse(teamData);
+              console.log('Found team registration data in session:', parsedTeamData);
+              setAmount(parsedTeamData.totalAmount || 0);
+            } catch (parseError) {
+              console.error('Failed to parse team registration data from sessionStorage:', parseError);
+              setError('Invalid team registration data. Please restart the registration process.');
+              setLoading(false);
+              return;
+            }
           }
           
           setError('Team registration data not found. Please restart the registration process.');

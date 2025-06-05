@@ -72,26 +72,33 @@ export class PaymentService {
       }
     }
     
-    // Check if session is already locked (payment in progress)
+    // RACE CONDITION FIX: Check if session is already locked (payment in progress)
     if (sessionManager.isSessionLocked(sessionId)) {
       const existingIntent = sessionManager.getPaymentIntent(sessionId);
       
       if (existingIntent) {
-        console.log(`🔄 Returning existing payment intent for session: ${sessionId}`);
-        return {
-          success: true,
-          clientSecret: existingIntent.clientSecret,
-          paymentIntentId: existingIntent.paymentIntentId,
-          sessionId: sessionId,
-          message: 'Retrieved existing payment intent'
-        };
+        console.log(`🔄 Session locked with existing intent, returning: ${sessionId}`);
+        
+        // Verify the existing intent matches the current discount amount
+        const existingAmount = existingIntent.amount || 0;
+        if (Math.abs(existingAmount - finalAmount) > 0.01) {
+          console.log(`💰 Amount mismatch detected: existing $${existingAmount} vs new $${finalAmount}, creating new intent`);
+          
+          // Unlock session to allow new intent creation with correct amount
+          sessionManager.unlockSession(sessionId);
+        } else {
+          return {
+            success: true,
+            clientSecret: existingIntent.clientSecret,
+            paymentIntentId: existingIntent.paymentIntentId,
+            sessionId: sessionId,
+            amount: finalAmount,
+            message: 'Retrieved existing payment intent with matching amount'
+          };
+        }
       } else {
         console.warn(`⚠️ Session locked but no payment intent found: ${sessionId}`);
-        return {
-          success: false,
-          error: 'Payment session is locked. Please wait and try again.',
-          code: 'SESSION_LOCKED'
-        };
+        sessionManager.unlockSession(sessionId); // Unlock orphaned session
       }
     }
     
@@ -157,8 +164,8 @@ export class PaymentService {
         idempotencyKey: idempotencyKey
       });
       
-      // Store the payment intent
-      sessionManager.storePaymentIntent(sessionId, paymentIntent.id, paymentIntent.client_secret);
+      // Store the payment intent with amount for race condition checking
+      sessionManager.storePaymentIntent(sessionId, paymentIntent.id, paymentIntent.client_secret, finalAmount);
       
       console.log(`✅ Created payment intent: ${paymentIntent.id} for session: ${sessionId}`);
       
