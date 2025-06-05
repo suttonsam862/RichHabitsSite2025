@@ -48,8 +48,8 @@ const events = [
   {
     id: 4,
     title: "Panther Train Tour",
-    date: "July 23-25, 2025",
-    location: "Various locations",
+    date: "June 15-17, 2025",
+    location: "Multiple Locations, Alabama",
     price: "$99 per day",
     shortDescription: "A multi-location training tour with elite coaches.",
     image: null, // Will use gradient background instead

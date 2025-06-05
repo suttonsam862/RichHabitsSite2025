@@ -673,7 +673,7 @@ export function EventRegistrationForm({
                     day1: checked === true
                   })}
                 />
-                <Label htmlFor="day1" className="cursor-pointer">Day 1 - East Hamilton High School (July 23)</Label>
+                <Label htmlFor="day1" className="cursor-pointer">Day 1 - East Hamilton High School (June 15)</Label>
               </div>
               
               <div className="flex items-center space-x-2">
@@ -685,7 +685,7 @@ export function EventRegistrationForm({
                     day2: checked === true
                   })}
                 />
-                <Label htmlFor="day2" className="cursor-pointer">Day 2 - Ironclad Wrestling Club (July 24)</Label>
+                <Label htmlFor="day2" className="cursor-pointer">Day 2 - Ironclad Wrestling Club (June 16)</Label>
               </div>
               
               <div className="flex items-center space-x-2">
@@ -697,7 +697,7 @@ export function EventRegistrationForm({
                     day3: checked === true
                   })}
                 />
-                <Label htmlFor="day3" className="cursor-pointer">Day 3 - Southside High School (July 25)</Label>
+                <Label htmlFor="day3" className="cursor-pointer">Day 3 - Southside High School (June 17)</Label>
               </div>
             </div>
           </div>

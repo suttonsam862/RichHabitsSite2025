@@ -85,7 +85,7 @@ export function EventDetails() {
       title: "Panther Train Tour",
       shortDescription: "Elite training brought directly to regions across the country",
       location: "Multiple locations nationwide",
-      date: "July 23-25, 2025",
+      date: "June 15-17, 2025",
       primaryColor: "#6a0dad", // Deep purple
       secondaryColor: "#ffd700", // Gold
       longDescription: 

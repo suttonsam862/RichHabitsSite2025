@@ -176,8 +176,8 @@ const events = [
   {
     id: 4,
     title: "Panther Train Tour Camp",
-    date: "July (TBA), 2025",
-    location: "Chicago, IL (exact location TBA)",
+    date: "June 15-17, 2025",
+    location: "Multiple Locations, Alabama",
     price: "$99 per day",
     fullPrice: 200,
     singleDayPrice: 99,

@@ -23,8 +23,8 @@ export default function Home() {
     {
       id: 2,
       title: "National Champ Camp",
-      date: "July 8-10, 2025", 
-      location: "Legacy Sports Complex, Arizona",
+      date: "June 5-7, 2025", 
+      location: "Roy Martin Middle School, Las Vegas",
       price: 299,
       teamPrice: 199,
       savings: 100
@@ -32,8 +32,8 @@ export default function Home() {
     {
       id: 3,
       title: "Texas Recruiting Clinic",
-      date: "August 15-17, 2025",
-      location: "Dallas Sports Center, Texas", 
+      date: "June 12-13, 2025",
+      location: "Arlington Martin High School, Arlington, TX", 
       price: 249,
       teamPrice: 199,
       savings: 50
