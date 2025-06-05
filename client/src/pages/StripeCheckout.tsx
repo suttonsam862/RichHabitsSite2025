@@ -267,6 +267,61 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
     }
   };
 
+  // Recreate payment intent with discounted amount
+  const recreatePaymentIntentWithDiscount = async (discountedAmount: number, discountCode: string) => {
+    if (discountedAmount === 0) {
+      // For free registrations, no need to recreate payment intent
+      return;
+    }
+    
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const eventId = params.get('eventId') || '';
+      const option = params.get('option') || 'full';
+      
+      // Get registration data from sessionStorage
+      const registrationData = {
+        firstName: sessionStorage.getItem('registration_firstName') || '',
+        lastName: sessionStorage.getItem('registration_lastName') || '',
+        email: sessionStorage.getItem('registration_email') || '',
+        phone: sessionStorage.getItem('registration_phone') || '',
+        contactName: sessionStorage.getItem('registration_contactName') || '',
+        tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
+        grade: sessionStorage.getItem('registration_grade') || '',
+        gender: sessionStorage.getItem('registration_gender') || '',
+        schoolName: sessionStorage.getItem('registration_schoolName') || '',
+        clubName: sessionStorage.getItem('registration_clubName') || '',
+        day1: sessionStorage.getItem('registration_day1') === 'true',
+        day2: sessionStorage.getItem('registration_day2') === 'true',
+        day3: sessionStorage.getItem('registration_day3') === 'true',
+      };
+      
+      // Create new payment intent with discounted amount
+      const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          option,
+          registrationData,
+          discountedAmount,
+          discountCode
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.clientSecret) {
+          // Update the payment elements with new client secret
+          window.location.reload(); // Reload to reinitialize with new payment intent
+        }
+      }
+    } catch (error) {
+      console.error('Error recreating payment intent with discount:', error);
+    }
+  };
+
   // Handler for applying discount code
   const handleApplyDiscount = async () => {
     if (!discountCode.trim()) {
@@ -319,18 +374,21 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode
         });
         
-        // Store only discount code - backend will handle all pricing calculations
+        // Store discount code and amount for backend synchronization
         sessionStorage.setItem('applied_discount_code', discountCode);
+        sessionStorage.setItem('discounted_amount', data.discount.finalPrice.toString());
         
-        // Display discount info to user but don't trust these amounts for payment
-        onDiscountApplied(data.discount.finalPrice);
+        // Update UI amount and trigger payment intent recreation with correct amount
+        onDiscountApplied && onDiscountApplied(data.discount.finalPrice);
+        
+        // Immediately recreate payment intent with discounted amount
+        await recreatePaymentIntentWithDiscount(data.discount.finalPrice, discountCode);
         
         // Make sure all registration data is also in sessionStorage
-        // We need this to ensure full information is saved in discount code case
         const params = new URLSearchParams(window.location.search);
         sessionStorage.setItem('registration_option', params.get('option') || 'full');
         
-        // Show success message for discount application but don't auto-process
+        // Show success message for discount application
         if (data.discount.finalPrice === 0) {
           toast({
             title: "100% Discount Applied",

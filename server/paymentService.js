@@ -16,18 +16,32 @@ export class PaymentService {
     const { email } = registrationData;
     const registrationType = option || 'full';
     
-    // Calculate the final amount (either discounted amount or original amount)
-    let finalAmount = discountedAmount;
+    // Generate session ID first
+    const sessionId = sessionManager.generateSessionId(email, eventId, registrationType);
     
-    // If no discounted amount provided, calculate base amount from event pricing
-    if (finalAmount === null || finalAmount === undefined) {
-      // Import pricing utilities to calculate base amount
+    // CRITICAL FIX: Always prioritize discountedAmount when provided
+    let finalAmount;
+    
+    if (discountedAmount !== null && discountedAmount !== undefined && typeof discountedAmount === 'number') {
+      // Use the explicitly provided discounted amount
+      finalAmount = discountedAmount;
+      console.log(`🎯 Using provided discounted amount: $${finalAmount} for session: ${sessionId}`);
+    } else {
+      // Calculate base amount from event pricing only when no discount provided
       const { calculateRegistrationAmount } = await import('./pricingUtils.js');
       finalAmount = calculateRegistrationAmount(eventId, registrationType) / 100; // Convert cents to dollars
+      console.log(`💰 Using calculated base amount: $${finalAmount} for session: ${sessionId}`);
     }
     
-    // Generate session ID
-    const sessionId = sessionManager.generateSessionId(email, eventId, registrationType);
+    // Validation: Ensure finalAmount is a valid positive number
+    if (isNaN(finalAmount) || finalAmount < 0) {
+      console.error(`❌ Invalid final amount calculated: ${finalAmount} for session: ${sessionId}`);
+      return {
+        success: false,
+        error: 'Invalid payment amount calculated',
+        userFriendlyMessage: 'Unable to calculate payment amount. Please try again.'
+      };
+    }
     
     console.log(`🎯 Processing payment request - Session: ${sessionId}, Email: ${email}, Amount: $${finalAmount}, DiscountCode: ${discountCode}`);
     
