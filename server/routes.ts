@@ -135,6 +135,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stripe webhook endpoint - CRITICAL for Shopify order creation
+  app.post('/api/stripe-webhook', (req: Request, res: Response) => {
+    console.log('🎯 Webhook endpoint hit:', req.method, req.path);
+    console.log('🎯 Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('🎯 Body type:', typeof req.body);
+    console.log('🎯 Body length:', req.body?.length || 'undefined');
+    return handleStripeWebhook(req, res);
+  });
+
   // BULLETPROOF Payment Intent Creation - Prevents Multiple Charges
   app.post("/api/events/:eventId(\\d+)/create-payment-intent", async (req: Request, res: Response) => {
     try {

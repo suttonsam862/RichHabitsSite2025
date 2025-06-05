@@ -8,7 +8,8 @@ import { fileURLToPath } from "url";
 // Create Express application
 const app = express();
 
-// Configure Express middleware
+// Configure Express middleware - Stripe webhook needs raw body first
+app.use('/api/stripe-webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
