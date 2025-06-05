@@ -434,11 +434,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve static files in production
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(process.cwd(), 'dist')));
+    const staticPath = path.join(process.cwd(), 'dist', 'public');
+    const indexPath = path.join(staticPath, 'index.html');
     
-    // Catch-all handler for client-side routing
+    console.log(`Production mode: serving static files from ${staticPath}`);
+    console.log(`Production mode: index.html location ${indexPath}`);
+    
+    // Check if build files exist
+    try {
+      const fs = await import('fs');
+      if (fs.existsSync(staticPath)) {
+        console.log('✅ Static files directory exists');
+        if (fs.existsSync(indexPath)) {
+          console.log('✅ index.html found');
+        } else {
+          console.log('❌ index.html not found at expected location');
+        }
+      } else {
+        console.log('❌ Static files directory does not exist');
+      }
+    } catch (error) {
+      console.log('Error checking build files:', error);
+    }
+    
+    // Serve built client files from dist/public (matches Vite build output)
+    app.use(express.static(staticPath));
+    
+    // Catch-all handler for client-side routing - React Router fallback
     app.get('*', (req: Request, res: Response) => {
-      res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+      console.log(`Production fallback route hit for: ${req.path}`);
+      console.log(`Attempting to serve index.html from: ${indexPath}`);
+      
+      try {
+        res.sendFile(indexPath, (err) => {
+          if (err) {
+            console.error('Error serving index.html:', err);
+            res.status(500).send('Server Error: Could not serve application');
+          }
+        });
+      } catch (error) {
+        console.error('Fallback route error:', error);
+        res.status(500).send('Server Error: Application not available');
+      }
     });
   }
 
