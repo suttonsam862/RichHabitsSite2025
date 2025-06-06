@@ -115,12 +115,10 @@ function Router() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-white">
-        <Router />
-        <Toaster />
-      </div>
-    </TooltipProvider>
+    <div style={{ padding: '20px', backgroundColor: 'lightblue', minHeight: '100vh' }}>
+      <h1 style={{ color: 'black', fontSize: '24px' }}>App is Loading</h1>
+      <p>If you see this, React is working</p>
+    </div>
   );
 }
 
