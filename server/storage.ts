@@ -568,45 +568,74 @@ export class DatabaseStorage implements IStorage {
     return registration;
   }
   
-  async getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]> {
-    // Use direct SQL query for the completed registrations
+  // Updated method using unified registrations table
+  async getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<Registration[]> {
     try {
-      // Use the pool to execute raw SQL queries
       const client = await pool.connect();
       
       try {
         let query = `
-          SELECT * FROM completed_event_registrations
+          SELECT * FROM registrations
+          WHERE status = 'paid'
         `;
         
         const params: any[] = [];
-        let whereClauseAdded = false;
         
         // Add WHERE clause for event_id if provided
         if (eventId) {
           params.push(eventId);
-          query += ` WHERE event_id = $${params.length}`;
-          whereClauseAdded = true;
+          query += ` AND event_id = $${params.length}`;
         }
         
         // Add filter for payment_verified status if provided
         if (paymentVerified) {
-          const clause = whereClauseAdded ? ' AND' : ' WHERE';
-          
           if (paymentVerified === 'true') {
-            query += `${clause} payment_verified = TRUE`;
+            query += ` AND payment_verified = TRUE`;
           } else if (paymentVerified === 'false') {
-            query += `${clause} (payment_verified = FALSE OR payment_verified IS NULL)`;
+            query += ` AND (payment_verified = FALSE OR payment_verified IS NULL)`;
           }
         }
         
         // Add sorting
-        query += ` ORDER BY completed_date DESC NULLS LAST`;
+        query += ` ORDER BY completed_at DESC NULLS LAST, created_at DESC`;
         
-        // Execute query with parameters
         const result = await client.query(query, params);
         
-        return result.rows as CompletedEventRegistration[];
+        return result.rows.map(row => ({
+          id: row.id,
+          eventId: row.event_id,
+          eventSlug: row.event_slug || '',
+          firstName: row.first_name,
+          lastName: row.last_name,
+          contactName: row.contact_name,
+          email: row.email,
+          phone: row.phone,
+          tShirtSize: row.t_shirt_size,
+          grade: row.grade,
+          gender: row.gender,
+          schoolName: row.school_name,
+          clubName: row.club_name,
+          medicalReleaseAccepted: row.medical_release_accepted ?? false,
+          registrationType: row.registration_type,
+          shopifyOrderId: row.shopify_order_id,
+          stripePaymentIntentId: row.stripe_payment_intent_id,
+          paymentStatus: row.payment_status || 'completed',
+          status: row.status || 'paid',
+          paymentVerified: row.payment_verified || false,
+          completedAt: row.completed_at,
+          day1: row.day1 ?? false,
+          day2: row.day2 ?? false,
+          day3: row.day3 ?? false,
+          numberOfDays: row.number_of_days,
+          selectedDates: row.selected_dates,
+          age: row.age,
+          experience: row.experience,
+          shirtSize: row.shirt_size,
+          parentName: row.parent_name,
+          parentPhoneNumber: row.parent_phone_number,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at
+        }));
       } finally {
         client.release();
       }
@@ -616,23 +645,56 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  async getCompletedRegistrationsForSync(): Promise<CompletedEventRegistration[]> {
+  async getCompletedRegistrationsForSync(): Promise<Registration[]> {
     // Get all completed registrations that need to be synced with Shopify
     try {
-      // Use the pool to execute raw SQL queries
       const client = await pool.connect();
       
       try {
         // Get registrations that have a stripe payment intent ID (meaning payment completed)
-        // We're not filtering by shopify_order_id being null here so we can force-update if needed
         const query = `
-          SELECT * FROM completed_event_registrations
+          SELECT * FROM registrations
           WHERE stripe_payment_intent_id IS NOT NULL
+          AND status = 'paid'
           ORDER BY id ASC
         `;
         
         const result = await client.query(query);
-        return result.rows as CompletedEventRegistration[];
+        return result.rows.map(row => ({
+          id: row.id,
+          eventId: row.event_id,
+          eventSlug: row.event_slug || '',
+          firstName: row.first_name,
+          lastName: row.last_name,
+          contactName: row.contact_name,
+          email: row.email,
+          phone: row.phone,
+          tShirtSize: row.t_shirt_size,
+          grade: row.grade,
+          gender: row.gender,
+          schoolName: row.school_name,
+          clubName: row.club_name,
+          medicalReleaseAccepted: row.medical_release_accepted ?? false,
+          registrationType: row.registration_type,
+          shopifyOrderId: row.shopify_order_id,
+          stripePaymentIntentId: row.stripe_payment_intent_id,
+          paymentStatus: row.payment_status || 'completed',
+          status: row.status || 'paid',
+          paymentVerified: row.payment_verified || false,
+          completedAt: row.completed_at,
+          day1: row.day1 ?? false,
+          day2: row.day2 ?? false,
+          day3: row.day3 ?? false,
+          numberOfDays: row.number_of_days,
+          selectedDates: row.selected_dates,
+          age: row.age,
+          experience: row.experience,
+          shirtSize: row.shirt_size,
+          parentName: row.parent_name,
+          parentPhoneNumber: row.parent_phone_number,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at
+        }));
       } finally {
         client.release();
       }
@@ -643,20 +705,20 @@ export class DatabaseStorage implements IStorage {
   }
   
   /**
-   * Creates a completed event registration record by copying data from the original registration
+   * DEPRECATED: Use completeRegistration instead - updates existing registration instead of creating duplicate
    * @param registrationId The ID of the original registration to mark as completed
    * @param stripePaymentIntentId Optional Stripe payment intent ID
-   * @returns The created completed registration record
+   * @returns The updated registration record
    */
-  async createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined> {
+  async createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<Registration | undefined> {
     try {
-      console.log(`Creating completed registration for registration ID ${registrationId} with payment ${stripePaymentIntentId || 'none'}`);
+      console.log(`Completing registration for registration ID ${registrationId} with payment ${stripePaymentIntentId || 'none'}`);
       
       // Get the original registration
       const [registration] = await db
         .select()
-        .from(eventRegistrations)
-        .where(eq(eventRegistrations.id, registrationId));
+        .from(registrations)
+        .where(eq(registrations.id, registrationId));
         
       if (!registration) {
         console.error(`Registration with ID ${registrationId} not found`);
@@ -665,7 +727,7 @@ export class DatabaseStorage implements IStorage {
       
       console.log(`Found original registration for ${registration.firstName} ${registration.lastName}`);
       
-      // CRITICAL: Verify payment status before creating completed record
+      // CRITICAL: Verify payment status before marking as completed
       let paymentVerified = false;
       const paymentId = stripePaymentIntentId || registration.stripePaymentIntentId;
       
@@ -683,7 +745,7 @@ export class DatabaseStorage implements IStorage {
           const isPaymentValid = await verifyPaymentIntent(paymentId);
           
           if (!isPaymentValid) {
-            console.log(`Payment verification failed for Stripe payment ${paymentId}, continuing with creation but marking as unverified`);
+            console.log(`Payment verification failed for Stripe payment ${paymentId}, continuing with completion but marking as unverified`);
             paymentVerified = false;
           } else {
             console.log(`Payment ${paymentId} successfully verified with Stripe`);
@@ -708,123 +770,51 @@ export class DatabaseStorage implements IStorage {
         paymentVerified = false;
       }
       
-      // Get a client from the pool
-      const client = await pool.connect();
+      // Update the existing registration to mark it as completed
+      console.log(`Updating registration ${registration.id} to mark as completed`);
       
-      try {
-        // Use a direct SQL approach with simple parameter binding for maximum compatibility
-        // First check if a completed registration already exists for this original registration
-        const checkQuery = `
-          SELECT * FROM completed_event_registrations
-          WHERE original_registration_id = $1
-          LIMIT 1
-        `;
-        
-        const checkResult = await client.query(checkQuery, [registration.id]);
-        
-        if (checkResult.rows.length > 0) {
-          console.log(`Completed registration already exists for registration ID ${registration.id}, returning existing record`);
-          return checkResult.rows[0] as CompletedEventRegistration;
-        }
-        
-        // If no existing record, create a new one
-        console.log(`Creating new completed registration record for registration ID ${registration.id}`);
-        
-        const query = `
-          INSERT INTO completed_event_registrations (
-            original_registration_id, event_id, first_name, last_name, contact_name, 
-            email, phone, t_shirt_size, grade, school_name, club_name, 
-            medical_release_accepted, registration_type, shopify_order_id, 
-            stripe_payment_intent_id, day1, day2, day3, age, experience, registration_date,
-            payment_verified
-          ) VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 
-            $16, $17, $18, $19, $20, $21, $22
-          ) 
-          RETURNING *
-        `;
-        
-        const values = [
-          registration.id,
-          registration.eventId,
-          registration.firstName,
-          registration.lastName,
-          registration.contactName,
-          registration.email,
-          registration.phone,
-          registration.tShirtSize,
-          registration.grade,
-          registration.schoolName,
-          registration.clubName,
-          registration.medicalReleaseAccepted,
-          registration.registrationType,
-          registration.shopifyOrderId,
-          paymentId,
-          registration.day1,
-          registration.day2,
-          registration.day3,
-          registration.age,
-          registration.experience,
-          registration.createdAt,
-          paymentVerified
-        ];
-        
-        try {
-          const result = await client.query(query, values);
-          
-          if (result.rows.length > 0) {
-            console.log(`Successfully created completed registration with ID ${result.rows[0].id}`);
-            return result.rows[0] as CompletedEventRegistration;
-          } else {
-            console.error('Failed to create completed registration record, no rows returned');
-            return undefined;
-          }
-        } catch (error) {
-          console.error('Error executing completed registration insert:', error);
-          return undefined;
-        }
-      } finally {
-        client.release();
+      const updateData = {
+        status: 'paid' as const,
+        paymentVerified: paymentVerified,
+        completedAt: new Date(),
+        ...(stripePaymentIntentId && { stripePaymentIntentId })
+      };
+      
+      const [updatedRegistration] = await db
+        .update(registrations)
+        .set(updateData)
+        .where(eq(registrations.id, registrationId))
+        .returning();
+      
+      if (updatedRegistration) {
+        console.log(`Successfully completed registration for ${updatedRegistration.firstName} ${updatedRegistration.lastName}`);
+        return updatedRegistration;
+      } else {
+        console.error(`Failed to update registration ${registrationId}`);
+        return undefined;
       }
     } catch (error) {
-      console.error("Error creating completed registration:", error);
+      console.error("Error completing registration:", error);
       return undefined;
     }
   }
-  
-  async updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined> {
+
+  // DEPRECATED: Use updateRegistration instead - updates existing registration in unified table
+  async updateCompletedRegistration(id: number, data: Record<string, any>): Promise<Registration | undefined> {
     try {
-      // Get a client from the pool
-      const client = await pool.connect();
+      // Update the registration in the unified table
+      const [updatedRegistration] = await db
+        .update(registrations)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(registrations.id, id))
+        .returning();
       
-      try {
-        // Build the SET part of the query dynamically based on the data object
-        const setClause = Object.entries(data)
-          .map(([key, _], index) => `${key} = $${index + 2}`)
-          .join(', ');
-        
-        const values = [id, ...Object.values(data)];
-        
-        // Construct and execute the update query
-        const query = `
-          UPDATE completed_event_registrations
-          SET ${setClause}
-          WHERE id = $1
-          RETURNING *
-        `;
-        
-        const result = await client.query(query, values);
-        
-        if (result.rows.length > 0) {
-          return result.rows[0] as CompletedEventRegistration;
-        }
-        
-        return undefined;
-      } finally {
-        client.release();
-      }
+      return updatedRegistration;
     } catch (error) {
-      console.error("Error updating completed registration:", error);
+      console.error("Error updating registration:", error);
       return undefined;
     }
   }
