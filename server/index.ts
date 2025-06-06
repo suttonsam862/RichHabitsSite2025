@@ -318,6 +318,53 @@ async function startServer() {
     // Register all routes
     const server = await registerRoutes(app);
 
+    // Add global error handling middleware
+    app.use((err: any, req: any, res: any, next: any) => {
+      console.error('Global error handler:', {
+        error: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+        path: req.path,
+        method: req.method,
+        timestamp: new Date().toISOString()
+      });
+
+      // Don't expose stack traces in production
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      
+      res.status(err.status || 500).json({
+        error: 'Internal Server Error',
+        message: isDevelopment ? err.message : 'Something went wrong',
+        ...(isDevelopment && { stack: err.stack })
+      });
+    });
+
+    // Catch-all 404 handler for API routes
+    app.use('/api/*', (req, res) => {
+      res.status(404).json({
+        error: 'Not Found',
+        message: `API endpoint ${req.path} not found`,
+        path: req.path
+      });
+    });
+
+    // Catch-all handler for serving frontend
+    app.get('*', (req, res) => {
+      // Serve index.html for all non-API routes to enable client-side routing
+      const indexPath = process.env.NODE_ENV === 'production'
+        ? path.resolve(process.cwd(), 'dist', 'index.html')
+        : path.resolve(process.cwd(), 'index.html');
+      
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error('Error serving index.html:', err);
+          res.status(500).json({
+            error: 'Server Error',
+            message: 'Unable to serve the application'
+          });
+        }
+      });
+    });
+
     // Setup Vite only in development - with faster startup
     console.log("Setting up application...");
     if (process.env.NODE_ENV !== 'production') {

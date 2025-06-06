@@ -2,7 +2,9 @@ import { Switch, Route } from "wouter";
 import { Suspense, lazy } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { LoadingFallback, PageLoadingFallback } from "./components/ui/loading-fallback";
+import { PageLoadingFallback } from "./components/ui/loading-fallback";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import NotFound from "./components/NotFound";
 
 // Keep Home page loaded immediately for best UX (above the fold)
 import Home from "./pages/Home";
@@ -16,7 +18,7 @@ const TeamRegistration = lazy(() => import("./pages/TeamRegistration"));
 const StripeCheckout = lazy(() => import("./pages/StripeCheckout"));
 const CustomApparel = lazy(() => import("./pages/CustomApparel"));
 const Contact = lazy(() => import("./pages/Contact"));
-const NotFound = lazy(() => import("./pages/not-found"));
+
 
 function Router() {
   return (
@@ -80,9 +82,7 @@ function Router() {
       </Route>
       
       <Route>
-        <Suspense fallback={<PageLoadingFallback />}>
-          <NotFound />
-        </Suspense>
+        <NotFound />
       </Route>
     </Switch>
   );
