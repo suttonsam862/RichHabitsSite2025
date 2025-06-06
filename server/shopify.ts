@@ -965,15 +965,19 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
       throw new Error(`Failed to complete Shopify order: ${completeResponse.status} ${completeResponse.statusText}`);
     }
     
-    const completeData = await completeResponse.json() as { order: any };
+    const completeData = await completeResponse.json() as { draft_order?: any; order?: any };
     console.log('Complete order response data:', JSON.stringify(completeData, null, 2));
     
-    const finalOrder = completeData.order;
+    // Shopify returns different response formats depending on the API version
+    const finalOrder = completeData.order || completeData.draft_order;
     
     if (!finalOrder) {
       console.error('No order data returned from Shopify completion:', completeData);
       throw new Error('Failed to complete Shopify order - no order data returned');
     }
+    
+    // Use order_id if present (from draft_order response) or id (from order response)
+    const orderId = finalOrder.order_id || finalOrder.id;
     
     // Log the customer information in the final order
     if (finalOrder.customer) {
@@ -986,8 +990,13 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
       console.warn('No customer information found in completed order');
     }
     
-    console.log('Successfully created and completed Shopify order:', finalOrder.id);
-    return finalOrder;
+    console.log('Successfully created and completed Shopify order:', orderId);
+    
+    // Return order with consistent ID field
+    return {
+      ...finalOrder,
+      id: orderId
+    };
   } catch (error) {
     console.error('Error creating Shopify order:', error);
     return null;
