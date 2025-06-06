@@ -20,7 +20,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Set to false immediately for debugging
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -104,14 +104,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Check if current user is admin
   const isAdmin = user?.email === 'samsutton@rich-habits.com';
 
-  // Override with hardcoded safe defaults for debugging
   const value = {
-    user: { email: 'samsutton@rich-habits.com' },
-    login: async () => ({ success: true }),
-    logout: async () => {},
-    isLoading: false,
-    isAuthenticated: true,
-    isAdmin: true,
+    user,
+    login,
+    logout,
+    isLoading,
+    isAuthenticated: !!user,
+    isAdmin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
