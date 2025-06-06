@@ -461,7 +461,7 @@ export class DatabaseStorage implements IStorage {
       
       try {
         let query = `
-          SELECT * FROM event_registrations
+          SELECT * FROM registrations
           WHERE 1=1
         `;
         
@@ -494,6 +494,7 @@ export class DatabaseStorage implements IStorage {
           const registration: EventRegistration = {
             id: row.id,
             eventId: row.event_id,
+            eventSlug: row.event_slug || '',
             firstName: row.first_name,
             lastName: row.last_name,
             contactName: row.contact_name,
@@ -501,6 +502,7 @@ export class DatabaseStorage implements IStorage {
             phone: row.phone,
             tShirtSize: row.t_shirt_size,
             grade: row.grade,
+            gender: row.gender,
             schoolName: row.school_name,
             clubName: row.club_name,
             medicalReleaseAccepted: row.medical_release_accepted ?? false,
@@ -508,11 +510,19 @@ export class DatabaseStorage implements IStorage {
             shopifyOrderId: row.shopify_order_id,
             stripePaymentIntentId: row.stripe_payment_intent_id,
             paymentStatus: row.payment_status || 'pending',
+            status: row.status || 'pending',
+            paymentVerified: row.payment_verified || false,
+            completedAt: row.completed_at,
             day1: row.day1 ?? false,
             day2: row.day2 ?? false,
             day3: row.day3 ?? false,
+            numberOfDays: row.number_of_days,
+            selectedDates: row.selected_dates,
             age: row.age,
             experience: row.experience,
+            shirtSize: row.shirt_size,
+            parentName: row.parent_name,
+            parentPhoneNumber: row.parent_phone_number,
             createdAt: row.created_at,
             updatedAt: row.updated_at || row.created_at
           };
@@ -526,6 +536,36 @@ export class DatabaseStorage implements IStorage {
       console.error('Error fetching registrations:', error);
       return [];
     }
+  }
+
+  // Add the missing getRegistrations method implementation
+  async getRegistrations(eventId?: number, status?: string): Promise<Registration[]> {
+    return this.getEventRegistrations(eventId, status) as Promise<Registration[]>;
+  }
+
+  // Complete registrations methods - keeping these for backward compatibility
+  async createCompleteRegistration(registration: CompleteRegistrationInsert): Promise<CompleteRegistration> {
+    const [created] = await db
+      .insert(completeRegistrations)
+      .values(registration)
+      .returning();
+    return created;
+  }
+
+  async getCompleteRegistrations(): Promise<CompleteRegistration[]> {
+    return await db.select().from(completeRegistrations);
+  }
+
+  async getCompleteRegistrationsByEvent(eventId: number): Promise<CompleteRegistration[]> {
+    return await db.select().from(completeRegistrations).where(eq(completeRegistrations.eventId, eventId));
+  }
+
+  async getCompleteRegistrationByPaymentIntent(paymentIntentId: string): Promise<CompleteRegistration | undefined> {
+    const [registration] = await db
+      .select()
+      .from(completeRegistrations)
+      .where(eq(completeRegistrations.stripePaymentIntentId, paymentIntentId));
+    return registration;
   }
   
   async getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]> {
