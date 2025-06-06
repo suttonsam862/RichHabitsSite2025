@@ -102,14 +102,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // API endpoint to fetch completed event registrations
+  // API endpoint to fetch completed event registrations (using unified table)
   app.get("/api/completed-registrations", authenticateAdmin, async (req, res) => {
     try {
-      // Get optional event ID filter from query parameters
+      // Get optional event ID and payment verification filters from query parameters
       const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
+      const paymentVerified = req.query.paymentVerified as string;
       
-      // Fetch completed registrations from storage
-      const completedRegistrations = await storage.getCompletedEventRegistrations(eventId);
+      // Fetch completed registrations from unified table (status = 'paid')
+      let completedRegistrations = await storage.getRegistrations(eventId, 'paid');
+      
+      // Apply payment verification filter if specified
+      if (paymentVerified) {
+        if (paymentVerified === 'true') {
+          completedRegistrations = completedRegistrations.filter(reg => reg.paymentVerified === true);
+        } else if (paymentVerified === 'false') {
+          completedRegistrations = completedRegistrations.filter(reg => reg.paymentVerified === false || reg.paymentVerified === null);
+        }
+      }
       
       // Return the completed registrations
       res.status(200).json(completedRegistrations);

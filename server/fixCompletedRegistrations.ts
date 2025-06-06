@@ -21,11 +21,12 @@ export async function fixCompletedRegistrationsWithMissingInfo(): Promise<{
       errors: [] as string[]
     };
     
-    // Get all completed registrations with payment IDs but missing information
+    // Get all completed registrations with payment IDs but missing information (using unified table)
     const incompleteRegistrations = await client.query(`
-      SELECT id, original_registration_id, first_name, last_name, email, event_id, shopify_order_id
-      FROM completed_event_registrations
-      WHERE (first_name = 'Not provided' OR last_name = 'Not provided' OR email = 'Not provided')
+      SELECT id, first_name, last_name, email, event_id, shopify_order_id, stripe_payment_intent_id
+      FROM registrations
+      WHERE status = 'paid'
+      AND (first_name = 'Not provided' OR last_name = 'Not provided' OR email = 'Not provided')
       AND (shopify_order_id LIKE 'pi_%' OR stripe_payment_intent_id IS NOT NULL)
     `);
     
