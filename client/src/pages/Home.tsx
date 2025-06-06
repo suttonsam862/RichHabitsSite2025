@@ -1,7 +1,7 @@
 import { Link } from 'wouter';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Header from '../components/layout/Header';
+import Layout from '../components/layout/Layout';
 
 const Home = () => {
   const [formData, setFormData] = useState({
@@ -28,36 +28,45 @@ const Home = () => {
   const featuredEvents = events?.slice(0, 3) || [];
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
+    <Layout>
       {/* Hero Section */}
-      <section className="pt-24 section-padding">
+      <section className="section-padding">
         <div className="container-fluid">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Main Headline */}
-            <h1 className="font-title text-6xl lg:text-8xl text-black mb-6 animate-float">
-              Elite Wrestling
-              <br />
-              <span className="font-script text-5xl lg:text-7xl text-gradient">
-                Training & Events
-              </span>
-            </h1>
+          <div className="grid-container">
+            <div className="grid-6">
+              <h1 className="font-title text-6xl lg:text-8xl text-black mb-8 animate-float">
+                Elite Wrestling
+                <br />
+                <span className="font-script text-5xl lg:text-7xl text-gradient">
+                  Training & Events
+                </span>
+              </h1>
+              
+              <p className="font-body text-xl lg:text-2xl text-black/80 mb-12 leading-relaxed">
+                Championship-level coaching, intensive training camps, and premier recruiting events 
+                for wrestlers who demand excellence.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/events" className="btn-primary animate-glow">
+                  View Upcoming Events
+                </Link>
+                <Link href="/custom-apparel" className="btn-ghost">
+                  Custom Training Gear
+                </Link>
+              </div>
+            </div>
             
-            {/* Subheadline */}
-            <p className="font-body text-xl lg:text-2xl text-black/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Championship-level coaching, intensive training camps, and premier recruiting events 
-              for wrestlers who demand excellence.
-            </p>
-            
-            {/* Hero CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/events" className="btn-primary animate-glow">
-                View Upcoming Events
-              </Link>
-              <Link href="/custom-apparel" className="btn-ghost">
-                Custom Training Gear
-              </Link>
+            <div className="grid-6">
+              <img 
+                src="/src/assets/events/rich-habits-hero.jpg" 
+                alt="Elite Wrestling Training" 
+                className="hero-image"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/src/assets/images/wrestling-hero.jpg';
+                }}
+              />
             </div>
           </div>
         </div>
@@ -354,7 +363,7 @@ const Home = () => {
           </div>
         </div>
       </footer>
-    </div>
+    </Layout>
   );
 };
 

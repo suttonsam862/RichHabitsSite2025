@@ -196,11 +196,47 @@ body {
 }
 
 .section-padding {
-  @apply py-16 lg:py-24;
+  @apply py-20 lg:py-32;
 }
 
 .section-gap {
-  @apply space-y-16 lg:space-y-24;
+  @apply space-y-20 lg:space-y-32;
+}
+
+/* Grid System for Perfect Alignment */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+
+.grid-6 {
+  grid-column: span 6;
+}
+
+.grid-4 {
+  grid-column: span 4;
+}
+
+.grid-3 {
+  grid-column: span 3;
+}
+
+.grid-12 {
+  grid-column: span 12;
+}
+
+@media (max-width: 768px) {
+  .grid-6,
+  .grid-4,
+  .grid-3 {
+    grid-column: span 12;
+  }
+  
+  .grid-container {
+    gap: 1.5rem;
+  }
 }
 
 /* Animation Utilities */
@@ -276,6 +312,30 @@ body {
   }
 }
 
+/* Image Components */
+.hero-image {
+  @apply w-full h-auto object-cover;
+  border-radius: 0;
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.3s ease-out;
+}
+
+.hero-image:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.showcase-image {
+  @apply w-full h-64 lg:h-80 object-cover;
+  border-radius: 0;
+  box-shadow: var(--shadow-subtle);
+}
+
+.card-image {
+  @apply w-full h-48 object-cover;
+  border-radius: 0;
+}
+
 /* Utilities */
 .text-gradient {
   background: var(--gradient-border);
@@ -291,6 +351,17 @@ body {
 .backdrop-blur {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+/* Global Header Spacing */
+.page-content {
+  padding-top: 4rem; /* 64px for fixed header */
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding-top: 3.5rem; /* 56px for mobile header */
+  }
 }
 
 /* Responsive Design */
