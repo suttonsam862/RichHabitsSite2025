@@ -200,11 +200,20 @@ if (process.env.NODE_ENV === 'production') {
       if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.JPG')) {
         res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Vary', 'Accept-Encoding');
       }
-      if (path.endsWith('.webm') || path.endsWith('.mp4')) {
+      // Fix MIME types for video files
+      if (path.endsWith('.webm')) {
         res.setHeader('Content-Type', 'video/webm');
-        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours for videos
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Vary', 'Accept-Encoding');
+      }
+      if (path.endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/mp4');
+        res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours for videos
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Vary', 'Accept-Encoding');
       }
     }
   }));
@@ -216,11 +225,20 @@ if (process.env.NODE_ENV === 'production') {
       if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.JPG')) {
         res.setHeader('Cache-Control', 'public, max-age=86400');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Vary', 'Accept-Encoding');
       }
-      if (path.endsWith('.webm') || path.endsWith('.mp4')) {
+      // Fix MIME types for video files
+      if (path.endsWith('.webm')) {
         res.setHeader('Content-Type', 'video/webm');
-        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Vary', 'Accept-Encoding');
+      }
+      if (path.endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/mp4');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Vary', 'Accept-Encoding');
       }
     }
   }));
@@ -232,10 +250,21 @@ if (process.env.NODE_ENV === 'production') {
     setHeaders: (res, path) => {
       if (path.endsWith('.webp') || path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.JPG')) {
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 hour in dev
+        res.setHeader('Vary', 'Accept-Encoding');
       }
-      if (path.endsWith('.webm') || path.endsWith('.mp4')) {
+      // Fix MIME types for video files in development
+      if (path.endsWith('.webm')) {
         res.setHeader('Content-Type', 'video/webm');
         res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Vary', 'Accept-Encoding');
+      }
+      if (path.endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/mp4');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Vary', 'Accept-Encoding');
       }
     }
   }));
