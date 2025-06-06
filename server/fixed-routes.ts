@@ -37,8 +37,9 @@ declare module 'express-session' {
   }
 }
 
-// Admin authentication middleware
-const authenticateAdmin = (req: Request, res: Response, next: any) => {
+// Legacy session-based admin authentication (deprecated)
+// This is kept for backward compatibility but should be replaced by Supabase Auth
+const legacyAuthenticateAdmin = (req: Request, res: Response, next: any) => {
   // Check if already authenticated in session
   if (req.session && req.session.isAdmin === true) {
     return next();
@@ -83,10 +84,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint to approve registrations and move them to completed
-  app.post("/api/approve-registrations", authenticateAdmin, approveRegistrations);
+  app.post("/api/approve-registrations", authenticateUser, authorizeAdmin, approveRegistrations);
   
   // API endpoint to fetch registrations with various filters
-  app.get("/api/registrations", authenticateAdmin, async (req, res) => {
+  app.get("/api/registrations", authenticateUser, authorizeAdmin, async (req, res) => {
     try {
       // Get optional event ID filter from query parameters
       const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
@@ -104,7 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint to fetch completed event registrations (using unified table)
-  app.get("/api/completed-registrations", authenticateAdmin, async (req, res) => {
+  app.get("/api/completed-registrations", authenticateUser, authorizeAdmin, async (req, res) => {
     try {
       // Get optional event ID and payment verification filters from query parameters
       const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
@@ -131,7 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all events for the admin dashboard
-  app.get("/api/events", authenticateAdmin, async (req, res) => {
+  app.get("/api/events", authenticateUser, authorizeAdmin, async (req, res) => {
     try {
       const events = await storage.getEvents();
       res.status(200).json(events);
