@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef, type ComponentType } from 'react';
 
 // Comprehensive mobile crash prevention system
 export const isMobile = () => {
@@ -10,8 +10,8 @@ export const isMobile = () => {
 };
 
 // Memory-safe component wrapper
-export const withMobileSafety = <T extends Record<string, any>>(Component: React.ComponentType<T>) => {
-  return React.forwardRef<any, T>((props, ref) => {
+export const withMobileSafety = <T extends Record<string, any>>(Component: ComponentType<T>) => {
+  return forwardRef<any, T>((props, ref) => {
     try {
       // Add mobile-specific optimizations
       const mobileProps = isMobile() ? {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { useRoute, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { loadStripe } from "@stripe/stripe-js";
@@ -61,14 +61,14 @@ interface CheckoutFormProps {
   onSuccess: () => void;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess }) => {
+const CheckoutForm = ({ onSuccess }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState("");
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
     if (!stripe || !elements) {
@@ -250,7 +250,7 @@ export default function EventRegistration() {
   };
   
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     
     if (type === 'checkbox') {

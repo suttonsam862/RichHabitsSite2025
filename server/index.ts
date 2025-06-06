@@ -374,7 +374,7 @@ async function startServer() {
     });
 
     // Use PORT from environment with fallback - deployment uses PORT 
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : (process.env.NODE_ENV === 'production' ? 3000 : 5173);
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : (process.env.NODE_ENV === 'production' ? 3000 : 5000);
     
     // Test database connection before starting server
     if (process.env.NODE_ENV === 'production') {

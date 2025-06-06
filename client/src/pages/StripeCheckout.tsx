@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useLocation } from 'wouter';
 import { useToast } from '../hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
@@ -166,7 +166,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   const [discount, setDiscount] = useState<{ valid: boolean; amount: number; finalPrice?: number; code: string } | null>(null);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
