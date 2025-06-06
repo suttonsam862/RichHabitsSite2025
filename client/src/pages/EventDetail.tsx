@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
+import { OptimizedImage, OptimizedVideo } from "@/components/OptimizedMedia";
 
 // Comprehensive mobile crash prevention
 const isMobile = () => {
