@@ -139,7 +139,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe webhook endpoint - CRITICAL for Shopify order creation
   app.post('/api/stripe-webhook', handleStripeWebhook);
 
-
+  // Production monitoring endpoint - Available in both development and production
+  app.get('/api/system-health', async (req: Request, res: Response) => {
+    console.log('System health endpoint called');
+    try {
+      const health = await getSystemHealth();
+      console.log('Health data:', health);
+      res.setHeader('Content-Type', 'application/json');
+      res.json(health);
+    } catch (error) {
+      console.error('Health endpoint error:', error);
+      res.status(500).json({
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
 
   // BULLETPROOF Payment Intent Creation - Prevents Multiple Charges
   app.post("/api/events/:eventId(\\d+)/create-payment-intent", async (req: Request, res: Response) => {
