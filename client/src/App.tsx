@@ -3,9 +3,7 @@ import { Suspense, lazy } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { PageLoadingFallback } from "./components/ui/loading-fallback";
-import { ErrorBoundary } from "./components/ErrorBoundary";
 import NotFound from "./components/NotFound";
-import { AuthProvider } from "./contexts/AuthContext";
 import AuthGate from "./components/AuthGate";
 
 // Keep Home page loaded immediately for best UX (above the fold)
@@ -117,14 +115,12 @@ function Router() {
 
 function App() {
   return (
-    <AuthProvider>
-      <TooltipProvider>
-        <div className="min-h-screen bg-white">
-          <Router />
-          <Toaster />
-        </div>
-      </TooltipProvider>
-    </AuthProvider>
+    <TooltipProvider>
+      <div className="min-h-screen bg-white">
+        <Router />
+        <Toaster />
+      </div>
+    </TooltipProvider>
   );
 }
 
