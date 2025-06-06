@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Container } from "@/components/ui/container";
-import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -12,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { submitContactForm } from "@/lib/shopify";
 import { Helmet } from "react-helmet";
+import Layout from "../components/layout/Layout";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
