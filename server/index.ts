@@ -311,6 +311,10 @@ async function startServer() {
       res.json({ status: 'ok', version: '1.0.0' });
     });
 
+    // Add image optimization endpoint
+    const { optimizeImage } = await import('./imageOptimizer.js');
+    app.get('/api/images/*', optimizeImage);
+
     // Register all routes
     const server = await registerRoutes(app);
 

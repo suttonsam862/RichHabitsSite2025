@@ -399,27 +399,15 @@ export default function EventDetail() {
       >
         {/* CRITICAL: Mobile-safe backgrounds - videos disabled on mobile to prevent crashes */}
         {!isMobile() && event.id === 1 && (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
+          <OptimizedVideo
+            src="/videos/events-hero.mp4"
             className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => {
-              console.log('Video failed, hiding element');
-              e.currentTarget.style.display = 'none';
-            }}
-            onLoadStart={() => {
-              // Prevent memory issues
-              if (isMobile()) {
-                return false;
-              }
-            }}
-          >
-            <source src="/videos/events-hero.webm" type="video/webm" />
-            <source src="/videos/events-hero.mp4" type="video/mp4" />
-          </video>
+            autoPlay={true}
+            loop={true}
+            muted={true}
+            controls={false}
+            fallbackText="Event highlights video"
+          />
         )}
 
         {!isMobile() && event.id === 2 && (
