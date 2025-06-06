@@ -352,7 +352,7 @@ async function startServer() {
       // Serve index.html for all non-API routes to enable client-side routing
       const indexPath = process.env.NODE_ENV === 'production'
         ? path.resolve(process.cwd(), 'dist', 'index.html')
-        : path.resolve(process.cwd(), 'index.html');
+        : path.resolve(process.cwd(), 'public', 'index.html');
       
       res.sendFile(indexPath, (err) => {
         if (err) {
