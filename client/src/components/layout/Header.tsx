@@ -33,7 +33,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="font-title text-2xl text-black tracking-tight">
+            <div className="font-script text-3xl text-black">
               Rich Habits
             </div>
           </Link>
@@ -51,11 +51,11 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Button */}
+          {/* Right Logo */}
           <div className="hidden md:block">
-            <Link href="/events" className="btn-primary">
-              Register Now
-            </Link>
+            <div className="font-script text-2xl text-black">
+              Rich Habits
+            </div>
           </div>
 
           {/* Mobile Menu Button */}

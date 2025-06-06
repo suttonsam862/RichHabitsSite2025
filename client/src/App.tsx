@@ -1,6 +1,7 @@
 import { Switch, Route } from "wouter";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
+import Layout from "./components/layout/Layout";
 
 // Page imports
 import Home from "./pages/Home";
