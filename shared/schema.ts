@@ -120,8 +120,8 @@ export const insertEventSchema = createInsertSchema(events).pick({
   maxParticipants: true
 });
 
-// Event registrations table
-export const eventRegistrations = pgTable("event_registrations", {
+// Unified registrations table - handles both pending and completed registration states
+export const registrations = pgTable("registrations", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull(),
   eventSlug: text("event_slug").notNull(), // Text-based event identifier
@@ -140,6 +140,9 @@ export const eventRegistrations = pgTable("event_registrations", {
   shopifyOrderId: text("shopify_order_id"),
   stripePaymentIntentId: text("stripe_payment_intent_id"), // Added for Stripe integration
   paymentStatus: text("payment_status").default("pending"), // Added for tracking payment status
+  status: text("status").default("pending"), // Overall registration status: 'pending', 'paid', 'cancelled'
+  paymentVerified: boolean("payment_verified").default(false), // Track if payment has been verified
+  completedAt: timestamp("completed_at"), // When registration was completed/paid
   day1: boolean("day1").default(false), // For multi-day events to track day selection
   day2: boolean("day2").default(false), // For multi-day events to track day selection
   day3: boolean("day3").default(false), // For multi-day events to track day selection
@@ -152,7 +155,11 @@ export const eventRegistrations = pgTable("event_registrations", {
   parentPhoneNumber: text("parent_phone_number"), // New field for parent phone
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
-});
+}, (table) => [
+  index("registrations_event_id_idx").on(table.eventId),
+  index("registrations_email_idx").on(table.email),
+  index("registrations_stripe_payment_intent_id_idx").on(table.stripePaymentIntentId)
+]);
 
 // Event Registration Log - Single source of truth for ALL registration attempts
 export const eventRegistrationLog = pgTable("event_registration_log", {
@@ -291,9 +298,10 @@ export const recruitingClinicRequests = pgTable("recruiting_clinic_requests", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Create the base schema first
-export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
+// Create the base schema for the unified registrations table
+export const insertRegistrationSchema = createInsertSchema(registrations).pick({
   eventId: true,
+  eventSlug: true,
   firstName: true,
   lastName: true,
   contactName: true,
@@ -301,6 +309,7 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   phone: true,
   tShirtSize: true,
   grade: true,
+  gender: true,
   schoolName: true,
   clubName: true,
   medicalReleaseAccepted: true,
@@ -308,13 +317,18 @@ export const insertEventRegistrationSchema = createInsertSchema(eventRegistratio
   shopifyOrderId: true,
   stripePaymentIntentId: true,
   paymentStatus: true,
+  status: true,
+  paymentVerified: true,
   day1: true,
   day2: true,
   day3: true,
   numberOfDays: true,
   selectedDates: true,
   age: true,
-  experience: true
+  experience: true,
+  shirtSize: true,
+  parentName: true,
+  parentPhoneNumber: true
 });
 
 // Event Registration Log schema - Single source of truth for all attempts
@@ -425,24 +439,29 @@ export const strictRecruitingClinicRequestSchema = insertRecruitingClinicRequest
 });
 
 // Now extend the original schema with stricter validation
-export const strictEventRegistrationSchema = insertEventRegistrationSchema.extend({
+export const strictRegistrationSchema = insertRegistrationSchema.extend({
   // Make all required fields truly required with string validation
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   contactName: z.string().min(1, "Parent/Guardian name is required"),
   email: z.string().email("Valid email is required"),
-  phone: z.string().min(1, "Phone number is required"),
-  tShirtSize: z.string().min(1, "T-shirt size is required"),
-  grade: z.string().min(1, "Grade is required"),
-  schoolName: z.string().min(1, "School name is required"),
+  phone: z.string().optional(),
+  tShirtSize: z.string().optional(),
+  grade: z.string().optional(),
+  schoolName: z.string().optional(),
   // Make medicalReleaseAccepted explicitly true
   medicalReleaseAccepted: z.boolean().refine(val => val === true, "Medical release must be accepted"),
   // Ensure registrationType is either "full" or "single"
   registrationType: z.enum(["full", "single"]),
   // Make clubName optional but still validate if provided
   clubName: z.string().optional(),
+  // Status validation
+  status: z.enum(["pending", "paid", "cancelled"]).default("pending"),
   // Keep the rest of the fields as is
 });
+
+// Keep backward compatibility alias
+export const strictEventRegistrationSchema = strictRegistrationSchema;
 
 // Custom apparel inquiries table
 export const customApparelInquiries = pgTable("custom_apparel_inquiries", {
@@ -536,8 +555,16 @@ export type Collection = typeof collections.$inferSelect;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 export type Event = typeof events.$inferSelect;
 
-export type InsertEventRegistration = z.infer<typeof insertEventRegistrationSchema>;
-export type EventRegistration = typeof eventRegistrations.$inferSelect;
+export type InsertRegistration = z.infer<typeof insertRegistrationSchema>;
+export type Registration = typeof registrations.$inferSelect;
+
+// Keep backward compatibility aliases for existing code
+export type InsertEventRegistration = InsertRegistration;
+export type EventRegistration = Registration;
+
+// Export backward compatibility for schema
+export const insertEventRegistrationSchema = insertRegistrationSchema;
+export const eventRegistrations = registrations;
 
 export type InsertCustomApparelInquiry = z.infer<typeof insertCustomApparelInquirySchema>;
 export type CustomApparelInquiry = typeof customApparelInquiries.$inferSelect;
@@ -631,41 +658,8 @@ export type InsertEventCoach = z.infer<typeof insertEventCoachSchema>;
 export type EventCoach = typeof eventCoaches.$inferSelect;
 
 // Completed Event registrations table - for storing finalized/paid registrations
-export const completedEventRegistrations = pgTable("completed_event_registrations", {
-  id: serial("id").primaryKey(),
-  originalRegistrationId: integer("original_registration_id").notNull(),
-  eventId: integer("event_id").notNull(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  contactName: text("contact_name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  tShirtSize: text("t_shirt_size"),
-  grade: text("grade"),
-  gender: text("gender"),
-  schoolName: text("school_name"),
-  clubName: text("club_name"),
-  medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
-  registrationType: text("registration_type"),
-  shopifyOrderId: text("shopify_order_id"),
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  day1: boolean("day1").default(false),
-  day2: boolean("day2").default(false), 
-  day3: boolean("day3").default(false),
-  age: text("age"),
-  experience: text("experience"),
-  registrationDate: timestamp("registration_date").notNull(),
-  completedDate: timestamp("completed_date").defaultNow(),
-  paymentVerified: boolean("payment_verified").default(false) // Track if payment has been verified
-});
-
-export const insertCompletedEventRegistrationSchema = createInsertSchema(completedEventRegistrations).omit({
-  id: true,
-  completedDate: true
-});
-
-export type InsertCompletedEventRegistration = z.infer<typeof insertCompletedEventRegistrationSchema>;
-export type CompletedEventRegistration = typeof completedEventRegistrations.$inferSelect;
+// NOTE: The completedEventRegistrations table has been merged into the unified registrations table above.
+// A migration script will be needed to port existing completed registrations data.
 
 // Verified customer registrations table - contains only authentic customer data
 export const verifiedCustomerRegistrations = pgTable("verified_customer_registrations", {
