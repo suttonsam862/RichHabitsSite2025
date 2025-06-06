@@ -59,13 +59,9 @@ const Home = () => {
             
             <div className="grid-6">
               <img 
-                src="/src/assets/events/rich-habits-hero.jpg" 
+                src="@assets/image_1749172307289.png"
                 alt="Elite Wrestling Training" 
                 className="hero-image"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/src/assets/images/wrestling-hero.jpg';
-                }}
               />
             </div>
           </div>

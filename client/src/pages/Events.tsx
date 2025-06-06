@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import Layout from "../components/layout/Layout";
 import EventFilters from "@/components/events/EventFilters";
-// Using a simpler approach for now to ensure functionality
 
 // Event data - using working images and proper error handling
 const events = [
@@ -114,7 +114,8 @@ export default function Events() {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-24 pb-20">
+    <Layout>
+      <div className="min-h-screen bg-white pb-20">
       {/* Hero Section - Mobile Optimized */}
       <motion.div 
         className="relative h-[50vh] sm:h-[60vh] lg:h-[70vh] mb-12 sm:mb-20 overflow-hidden"
@@ -264,6 +265,6 @@ export default function Events() {
           ))}
         </motion.div>
       </div>
-    </div>
+    </Layout>
   );
 }

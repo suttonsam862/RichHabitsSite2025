@@ -81,7 +81,7 @@ body {
 .font-title {
   font-family: var(--font-title);
   font-weight: bold;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.05em;
 }
 
 .font-body {
