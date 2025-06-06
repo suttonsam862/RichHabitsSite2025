@@ -9,6 +9,7 @@ import { pool } from "./db";
 import Stripe from "stripe";
 import { approveRegistrations } from "./registrationApproval";
 import { storage } from "./storage";
+import { authenticateUser, authorizeAdmin, optionalAuth } from "./auth";
 import { 
   insertContactSubmissionSchema, 
   insertCustomApparelInquirySchema, 
