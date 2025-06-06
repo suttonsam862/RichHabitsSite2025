@@ -20,6 +20,9 @@ const TeamRegistration = lazy(() => import("./pages/TeamRegistration"));
 const StripeCheckout = lazy(() => import("./pages/StripeCheckout"));
 const CustomApparel = lazy(() => import("./pages/CustomApparel"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Login = lazy(() => import("./pages/Login"));
+const Admin = lazy(() => import("./pages/Admin"));
+const AdminEditor = lazy(() => import("./pages/AdminEditor"));
 
 
 function Router() {
@@ -83,6 +86,28 @@ function Router() {
         </Suspense>
       </Route>
       
+      <Route path="/login">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <Login />
+        </Suspense>
+      </Route>
+      
+      <Route path="/admin">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <AuthGate requireAdmin={true}>
+            <Admin />
+          </AuthGate>
+        </Suspense>
+      </Route>
+      
+      <Route path="/admin/editor">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <AuthGate requireAdmin={true}>
+            <AdminEditor />
+          </AuthGate>
+        </Suspense>
+      </Route>
+      
       <Route>
         <NotFound />
       </Route>
@@ -92,12 +117,14 @@ function Router() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-white">
-        <Router />
-        <Toaster />
-      </div>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <div className="min-h-screen bg-white">
+          <Router />
+          <Toaster />
+        </div>
+      </TooltipProvider>
+    </AuthProvider>
   );
 }
 
