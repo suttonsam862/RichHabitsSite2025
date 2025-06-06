@@ -338,6 +338,32 @@ async function startServer() {
       });
     });
 
+    // Setup Vite BEFORE any catch-all routes in development
+    console.log("Setting up application...");
+    if (process.env.NODE_ENV !== 'production') {
+      // Wait for Vite setup to complete before starting server
+      await setupVite(app, server);
+      console.log("✅ Vite development server ready");
+    } else {
+      console.log('Production mode: Static files handled by routes.ts');
+      
+      // Catch-all handler for serving frontend (production only)
+      app.get('*', (req, res) => {
+        // Serve index.html for all non-API routes to enable client-side routing
+        const indexPath = path.resolve(process.cwd(), 'dist', 'index.html');
+        
+        res.sendFile(indexPath, (err) => {
+          if (err) {
+            console.error('Error serving index.html:', err);
+            res.status(500).json({
+              error: 'Server Error',
+              message: 'Unable to serve the application'
+            });
+          }
+        });
+      });
+    }
+
     // Catch-all 404 handler for API routes
     app.use('/api/*', (req, res) => {
       res.status(404).json({
@@ -346,34 +372,6 @@ async function startServer() {
         path: req.path
       });
     });
-
-    // Catch-all handler for serving frontend
-    app.get('*', (req, res) => {
-      // Serve index.html for all non-API routes to enable client-side routing
-      const indexPath = process.env.NODE_ENV === 'production'
-        ? path.resolve(process.cwd(), 'dist', 'index.html')
-        : path.resolve(process.cwd(), 'public', 'index.html');
-      
-      res.sendFile(indexPath, (err) => {
-        if (err) {
-          console.error('Error serving index.html:', err);
-          res.status(500).json({
-            error: 'Server Error',
-            message: 'Unable to serve the application'
-          });
-        }
-      });
-    });
-
-    // Setup Vite only in development - with faster startup
-    console.log("Setting up application...");
-    if (process.env.NODE_ENV !== 'production') {
-      // Wait for Vite setup to complete before starting server
-      await setupVite(app, server);
-      console.log("✅ Vite development server ready");
-    } else {
-      console.log('Production mode: Static files handled by routes.ts');
-    }
 
     // Use PORT from environment with fallback - deployment uses PORT 
     const port = process.env.NODE_ENV === 'production' ? (process.env.PORT ? parseInt(process.env.PORT, 10) : 5000) : 5000;
