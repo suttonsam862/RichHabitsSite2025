@@ -5,6 +5,8 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { PageLoadingFallback } from "./components/ui/loading-fallback";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import NotFound from "./components/NotFound";
+import { AuthProvider } from "./contexts/AuthContext";
+import AuthGate from "./components/AuthGate";
 
 // Keep Home page loaded immediately for best UX (above the fold)
 import Home from "./pages/Home";

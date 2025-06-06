@@ -7,6 +7,7 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,12 +75,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
+  // Check if current user is admin
+  const isAdmin = user?.email === 'samsutton@rich-habits.com';
+
   const value = {
     user,
     login,
     logout,
     isLoading,
     isAuthenticated: !!user,
+    isAdmin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
