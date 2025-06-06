@@ -23,24 +23,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Immediately set loading to false to allow app to render
+    setIsLoading(false);
+    setUser(null);
+    
+    // Initialize auth in background without blocking render
     const initAuth = async () => {
       try {
-        // Set a timeout to prevent infinite loading
-        const timeoutId = setTimeout(() => {
-          console.warn('Auth initialization timeout - proceeding without authentication');
-          setUser(null);
-          setIsLoading(false);
-        }, 5000);
-
-        // Check if there's an existing session
         const { data: { session }, error } = await supabase.auth.getSession();
-        
-        clearTimeout(timeoutId);
         
         if (error) {
           console.error('Supabase session error:', error);
-          setUser(null);
-          setIsLoading(false);
           return;
         }
         
@@ -48,11 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.access_token) {
           localStorage.setItem('supabase_auth_token', session.access_token);
         }
-        setIsLoading(false);
       } catch (error) {
         console.error('Supabase connection failed:', error);
-        setUser(null);
-        setIsLoading(false);
       }
     };
 
@@ -67,7 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           localStorage.removeItem('supabase_auth_token');
         }
-        setIsLoading(false);
       }
     );
 
