@@ -133,13 +133,9 @@ export function getAlternativeMimeTypes(source: string): { type: string, src: st
 export function generateVideoSourceElements(source: string): React.ReactElement[] {
   const alternatives = getAlternativeMimeTypes(source);
   
-  return alternatives.map(({ type, src }, index) => {
-    return React.createElement('source', {
-      key: `source-${index}`,
-      src: src,
-      type: type
-    });
-  });
+  return alternatives.map(({ type, src }, index) => (
+    <source key={`source-${index}`} src={src} type={type} />
+  ));
 }
 
 /**

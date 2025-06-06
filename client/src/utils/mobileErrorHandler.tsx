@@ -22,23 +22,17 @@ export const withMobileSafety = <T extends Record<string, any>>(Component: React
         enableEffects: false
       } : props;
 
-      return React.createElement(Component, { ...mobileProps, ref });
+      return <Component {...mobileProps} ref={ref} />;
     } catch (error) {
       console.error('Mobile component crash prevented:', error);
-      return React.createElement('div', {
-        className: "flex items-center justify-center p-4 min-h-32"
-      }, React.createElement('div', {
-        className: "text-center"
-      }, [
-        React.createElement('div', {
-          key: 'spinner',
-          className: "animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"
-        }),
-        React.createElement('p', {
-          key: 'text',
-          className: "text-sm text-gray-600"
-        }, 'Loading...')
-      ]));
+      return (
+        <div className="flex items-center justify-center p-4 min-h-32">
+          <div className="text-center">
+            <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2" />
+            <p className="text-sm text-gray-600">Loading...</p>
+          </div>
+        </div>
+      );
     }
   });
 };

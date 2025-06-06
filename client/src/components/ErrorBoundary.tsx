@@ -1,59 +1,53 @@
-import React from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
-interface ErrorBoundaryState {
+interface Props {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+interface State {
   hasError: boolean;
-  error?: Error;
+  error: Error | null;
 }
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
+class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false,
+    error: null
+  };
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
-  render() {
+  public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
       return (
-        <div style={{ 
-          padding: '50px', 
-          backgroundColor: '#ffcccc', 
-          color: '#cc0000', 
-          fontSize: '18px',
-          fontFamily: 'monospace'
-        }}>
-          <h2>Application Error</h2>
-          <p>Something went wrong: {this.state.error?.message}</p>
-          <details style={{ marginTop: '20px' }}>
-            <summary>Error Details</summary>
-            <pre style={{ whiteSpace: 'pre-wrap', fontSize: '14px' }}>
-              {this.state.error?.stack}
-            </pre>
-          </details>
-          <button 
-            onClick={() => window.location.reload()}
-            style={{ 
-              marginTop: '20px', 
-              padding: '10px 20px', 
-              backgroundColor: '#cc0000', 
-              color: 'white', 
-              border: 'none', 
-              cursor: 'pointer' 
-            }}
-          >
-            Reload Page
-          </button>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="max-w-md mx-auto text-center p-6">
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                Something went wrong
+              </h1>
+              <p className="text-gray-600 mb-6">
+                We're experiencing a technical issue. Please refresh the page to try again.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Refresh Page
+              </button>
+            </div>
+          </div>
         </div>
       );
     }
@@ -61,3 +55,5 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;
