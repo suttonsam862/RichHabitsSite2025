@@ -3,6 +3,14 @@ import { Request, Response } from 'express';
 import { EVENT_PRODUCTS } from './shopify';
 import { storage } from './storage';
 import { getStripePriceId, getStripeProductId } from './stripeProducts';
+import { 
+  trackWebhookReceived, 
+  trackWebhookSuccess, 
+  trackWebhookFailure, 
+  trackOrderCreated, 
+  trackOrderFailed,
+  logCriticalFailure
+} from './monitoring.js';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe key: STRIPE_SECRET_KEY');
@@ -607,9 +615,13 @@ export async function createShopifyOrderFromRegistration(
 
 // Create a webhook handler for Stripe events
 export const handleStripeWebhook = async (req: Request, res: Response) => {
+  trackWebhookReceived();
+  
   const sig = req.headers['stripe-signature'];
 
   if (!sig || typeof sig !== 'string') {
+    trackWebhookFailure();
+    logCriticalFailure('webhook', 'Missing Stripe signature', { headers: req.headers });
     return res.status(400).json({ error: 'Missing Stripe signature' });
   }
 
@@ -617,7 +629,6 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
 
   try {
     // Verify the event came from Stripe using the signing secret
-    // (We would need to set STRIPE_WEBHOOK_SECRET in production)
     if (process.env.STRIPE_WEBHOOK_SECRET) {
       event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } else {
@@ -707,6 +718,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
             
             if (shopifyOrder) {
               console.log('Successfully created Shopify order:', shopifyOrder.id);
+              trackOrderCreated();
               
               // Update registration with Shopify order ID if we have a database record
               if (registrationId && !isNaN(registrationId)) {
@@ -724,6 +736,12 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               registration.shopifyOrderId = shopifyOrder.id;
             } else {
               console.error('Failed to create Shopify order from registration data');
+              trackOrderFailed();
+              logCriticalFailure('shopify', 'Order creation failed', { 
+                paymentIntentId: paymentIntent.id, 
+                eventId, 
+                registrationData: registration 
+              });
             }
             
             // Copy to completed registrations table if we have a registration ID
@@ -790,9 +808,15 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         console.log(`Unhandled event type: ${event.type}`);
     }
 
+    trackWebhookSuccess();
     res.json({ received: true });
   } catch (err) {
     console.error('Error handling Stripe webhook:', err);
+    trackWebhookFailure();
+    logCriticalFailure('webhook', err instanceof Error ? err.message : 'Unknown webhook error', {
+      requestBody: req.body,
+      headers: req.headers
+    });
     res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
   }
 };

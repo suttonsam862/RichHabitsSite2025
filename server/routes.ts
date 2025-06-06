@@ -43,6 +43,7 @@ import {
   getEventPricing 
 } from './pricingUtils.js';
 import { handleStripeWebhook } from './stripe.js';
+import { getSystemHealth } from './monitoring.js';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
