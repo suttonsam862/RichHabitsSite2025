@@ -1,17 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+console.log("main.tsx loaded");
 
-function SimpleApp() {
-  return (
-    <div style={{ padding: '50px', backgroundColor: 'red', color: 'white', fontSize: '30px' }}>
-      MINIMAL REACT TEST - If you see this, React works
-    </div>
-  );
-}
-
-const root = document.getElementById("root");
-if (root) {
-  ReactDOM.createRoot(root).render(<SimpleApp />);
-} else {
-  console.error("Root element not found");
+try {
+  console.log("About to create root element");
+  const root = document.getElementById("root");
+  console.log("Root element:", root);
+  
+  if (root) {
+    console.log("Creating React root and rendering");
+    root.innerHTML = '<div style="padding: 50px; background: red; color: white; font-size: 30px;">DIRECT DOM TEST - No React</div>';
+  } else {
+    console.error("Root element not found");
+    document.body.innerHTML = '<div style="padding: 50px; background: blue; color: white; font-size: 30px;">NO ROOT ELEMENT FOUND</div>';
+  }
+} catch (error) {
+  console.error("Error in main.tsx:", error);
+  document.body.innerHTML = '<div style="padding: 50px; background: orange; color: white; font-size: 30px;">JAVASCRIPT ERROR: ' + error.message + '</div>';
 }
