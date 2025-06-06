@@ -2,6 +2,7 @@ import { Link } from 'wouter';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Layout from '../components/layout/Layout';
+import { usePrefetch, prefetchPages } from '@/hooks/usePrefetch';
 
 const Home = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,11 @@ const Home = () => {
     email: '',
     message: ''
   });
+
+  // Prefetch commonly visited pages after 2 seconds
+  usePrefetch(prefetchPages.events, 2000);
+  usePrefetch(prefetchPages.contact, 3000);
+  usePrefetch(prefetchPages.customApparel, 4000);
 
   // Fetch events data
   const { data: events } = useQuery({

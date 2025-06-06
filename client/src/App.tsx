@@ -1,34 +1,89 @@
 import { Switch, Route } from "wouter";
+import { Suspense, lazy } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
-import Layout from "./components/layout/Layout";
+import { LoadingFallback, PageLoadingFallback } from "./components/ui/loading-fallback";
 
-// Page imports
+// Keep Home page loaded immediately for best UX (above the fold)
 import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import Events from "./pages/EventsSimple";
-import EventDetail from "./pages/EventDetail";
-import EventRegistration from "./pages/EventRegistration";
-import TeamRegistration from "./pages/TeamRegistration";
-import StripeCheckout from "./pages/StripeCheckout";
-import CustomApparel from "./pages/CustomApparel";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/not-found";
+
+// Lazy load all other pages for code splitting
+const Shop = lazy(() => import("./pages/Shop"));
+const Events = lazy(() => import("./pages/EventsSimple"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
+const EventRegistration = lazy(() => import("./pages/EventRegistration"));
+const TeamRegistration = lazy(() => import("./pages/TeamRegistration"));
+const StripeCheckout = lazy(() => import("./pages/StripeCheckout"));
+const CustomApparel = lazy(() => import("./pages/CustomApparel"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/not-found"));
 
 function Router() {
   return (
     <Switch>
+      {/* Home page loads immediately for best UX */}
       <Route path="/" component={Home} />
-      <Route path="/shop" component={Shop} />
-      <Route path="/events" component={Events} />
-      <Route path="/events/:id" component={EventDetail} />
-      <Route path="/register/:id" component={EventRegistration} />
-      <Route path="/team-register/:id" component={TeamRegistration} />
-      <Route path="/team-registration" component={TeamRegistration} />
-      <Route path="/stripe-checkout" component={StripeCheckout} />
-      <Route path="/custom-apparel" component={CustomApparel} />
-      <Route path="/contact" component={Contact} />
-      <Route component={NotFound} />
+      
+      {/* All other routes use lazy loading with Suspense */}
+      <Route path="/shop">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <Shop />
+        </Suspense>
+      </Route>
+      
+      <Route path="/events">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <Events />
+        </Suspense>
+      </Route>
+      
+      <Route path="/events/:id">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <EventDetail />
+        </Suspense>
+      </Route>
+      
+      <Route path="/register/:id">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <EventRegistration />
+        </Suspense>
+      </Route>
+      
+      <Route path="/team-register/:id">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <TeamRegistration />
+        </Suspense>
+      </Route>
+      
+      <Route path="/team-registration">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <TeamRegistration />
+        </Suspense>
+      </Route>
+      
+      <Route path="/stripe-checkout">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <StripeCheckout />
+        </Suspense>
+      </Route>
+      
+      <Route path="/custom-apparel">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <CustomApparel />
+        </Suspense>
+      </Route>
+      
+      <Route path="/contact">
+        <Suspense fallback={<PageLoadingFallback />}>
+          <Contact />
+        </Suspense>
+      </Route>
+      
+      <Route>
+        <Suspense fallback={<PageLoadingFallback />}>
+          <NotFound />
+        </Suspense>
+      </Route>
     </Switch>
   );
 }
