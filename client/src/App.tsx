@@ -115,12 +115,9 @@ function Router() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-white">
-        <Router />
-        <Toaster />
-      </div>
-    </TooltipProvider>
+    <div style={{ padding: '4rem', fontSize: '2rem', textAlign: 'center' }}>
+      ✅ React is Rendering — Static Test Page
+    </div>
   );
 }
 
