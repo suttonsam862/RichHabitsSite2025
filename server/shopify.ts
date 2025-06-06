@@ -966,10 +966,17 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
     }
     
     const completeData = await completeResponse.json() as { order: any };
+    console.log('Complete order response data:', JSON.stringify(completeData, null, 2));
+    
     const finalOrder = completeData.order;
     
+    if (!finalOrder) {
+      console.error('No order data returned from Shopify completion:', completeData);
+      throw new Error('Failed to complete Shopify order - no order data returned');
+    }
+    
     // Log the customer information in the final order
-    if (finalOrder && finalOrder.customer) {
+    if (finalOrder.customer) {
       console.log('Customer in completed order:', {
         email: finalOrder.customer.email,
         firstName: finalOrder.customer.first_name,
