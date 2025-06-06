@@ -438,7 +438,7 @@ export const strictRecruitingClinicRequestSchema = insertRecruitingClinicRequest
   areasOfInterest: z.array(z.string()).optional()
 });
 
-// Now extend the original schema with stricter validation
+// Now extend the unified registration schema with stricter validation
 export const strictRegistrationSchema = insertRegistrationSchema.extend({
   // Make all required fields truly required with string validation
   firstName: z.string().min(1, "First name is required"),

@@ -3,7 +3,7 @@ import {
   products, type Product, type InsertProduct,
   collections, type Collection, type InsertCollection,
   events, type Event, type InsertEvent,
-  eventRegistrations, type EventRegistration, type InsertEventRegistration,
+  registrations, type Registration, type InsertRegistration,
   eventRegistrationLog, type EventRegistrationLog, type EventRegistrationLogInsert,
   completeRegistrations, type CompleteRegistration, type CompleteRegistrationInsert,
   customApparelInquiries, type CustomApparelInquiry, type InsertCustomApparelInquiry,
@@ -12,8 +12,9 @@ import {
   collaborations, type Collaboration, type InsertCollaboration,
   coaches, type Coach, type InsertCoach,
   eventCoaches, type EventCoach, type InsertEventCoach,
-  completedEventRegistrations, type CompletedEventRegistration, type InsertCompletedEventRegistration,
-  recruitingClinicRequests, type RecruitingClinicRequest, type RecruitingClinicRequestInsert
+  recruitingClinicRequests, type RecruitingClinicRequest, type RecruitingClinicRequestInsert,
+  // Keep backward compatibility types
+  type EventRegistration, type InsertEventRegistration
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -36,16 +37,22 @@ export interface IStorage {
   getEvents(): Promise<Event[]>;
   getEvent(id: number): Promise<Event | undefined>;
   getEventBySlug(slug: string): Promise<Event | undefined>;
+  
+  // Unified registration methods
+  createRegistration(data: InsertRegistration): Promise<Registration>;
+  getRegistration(id: number): Promise<Registration | undefined>;
+  getRegistrationByEmail(email: string, eventId: number): Promise<Registration | undefined>;
+  getRegistrationsByPaymentIntent(paymentIntentId: string): Promise<Registration[]>;
+  updateRegistration(id: number, data: Partial<Registration>): Promise<Registration | undefined>;
+  completeRegistration(paymentIntentId: string): Promise<boolean>;
+  getRegistrations(eventId?: number, status?: string): Promise<Registration[]>;
+  
+  // Backward compatibility methods (delegate to unified methods)
   createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration>;
-  getRegistration(id: number): Promise<EventRegistration | undefined>;
   getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined>;
   getEventRegistrationsByPaymentIntent(paymentIntentId: string): Promise<EventRegistration[]>;
-  updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined>;
   updateEventRegistrationPaymentStatus(paymentIntentId: string, status: string): Promise<boolean>;
   getEventRegistrations(eventId?: number, paymentStatus?: string): Promise<EventRegistration[]>;
-  getCompletedEventRegistrations(eventId?: number, paymentVerified?: string): Promise<CompletedEventRegistration[]>;
-  createCompletedEventRegistration(registrationId: number, stripePaymentIntentId?: string): Promise<CompletedEventRegistration | undefined>;
-  updateCompletedRegistration(id: number, data: Record<string, any>): Promise<CompletedEventRegistration | undefined>;
   
   // Event Registration Log methods - Single source of truth for ALL registration attempts
   createRegistrationLog(data: EventRegistrationLogInsert): Promise<EventRegistrationLog>;
@@ -173,22 +180,25 @@ export class DatabaseStorage implements IStorage {
     return undefined;
   }
 
-  async createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration> {
+  // Unified registration methods implementation
+  async createRegistration(data: InsertRegistration): Promise<Registration> {
     try {
       // Ensure we have default values for optional fields
       const registrationData = {
         ...data,
         paymentStatus: data.paymentStatus || 'pending',
+        status: data.status || 'pending',
+        paymentVerified: data.paymentVerified ?? false,
         day1: data.day1 ?? false,
         day2: data.day2 ?? false,
         day3: data.day3 ?? false,
         medicalReleaseAccepted: data.medicalReleaseAccepted ?? true
       };
       
-      console.log('Creating event registration with data:', registrationData);
+      console.log('Creating registration with data:', registrationData);
       
       const [registration] = await db
-        .insert(eventRegistrations)
+        .insert(registrations)
         .values(registrationData)
         .returning();
       
@@ -196,26 +206,31 @@ export class DatabaseStorage implements IStorage {
       
       return registration;
     } catch (error) {
-      console.error('Error creating event registration:', error);
+      console.error('Error creating registration:', error);
       throw error;
     }
   }
+
+  // Backward compatibility method
+  async createEventRegistration(data: InsertEventRegistration): Promise<EventRegistration> {
+    return this.createRegistration(data as InsertRegistration);
+  }
   
-  async getRegistration(id: number): Promise<EventRegistration | undefined> {
+  async getRegistration(id: number): Promise<Registration | undefined> {
     const [registration] = await db
       .select()
-      .from(eventRegistrations)
-      .where(eq(eventRegistrations.id, id));
+      .from(registrations)
+      .where(eq(registrations.id, id));
     return registration;
   }
   
-  async getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined> {
+  async getRegistrationByEmail(email: string, eventId: number): Promise<Registration | undefined> {
     try {
       const client = await pool.connect();
       
       try {
         const query = `
-          SELECT * FROM event_registrations 
+          SELECT * FROM registrations 
           WHERE email = $1 AND event_id = $2
         `;
         
@@ -231,6 +246,7 @@ export class DatabaseStorage implements IStorage {
         return {
           id: row.id,
           eventId: row.event_id,
+          eventSlug: row.event_slug || '',
           firstName: row.first_name,
           lastName: row.last_name,
           contactName: row.contact_name,
@@ -238,6 +254,7 @@ export class DatabaseStorage implements IStorage {
           phone: row.phone,
           tShirtSize: row.t_shirt_size,
           grade: row.grade,
+          gender: row.gender,
           schoolName: row.school_name,
           clubName: row.club_name,
           medicalReleaseAccepted: row.medical_release_accepted,
@@ -245,11 +262,19 @@ export class DatabaseStorage implements IStorage {
           shopifyOrderId: row.shopify_order_id,
           stripePaymentIntentId: row.stripe_payment_intent_id,
           paymentStatus: row.payment_status,
+          status: row.status || 'pending',
+          paymentVerified: row.payment_verified || false,
+          completedAt: row.completed_at,
           day1: row.day1,
           day2: row.day2,
           day3: row.day3,
+          numberOfDays: row.number_of_days,
+          selectedDates: row.selected_dates,
           age: row.age,
           experience: row.experience,
+          shirtSize: row.shirt_size,
+          parentName: row.parent_name,
+          parentPhoneNumber: row.parent_phone_number,
           createdAt: row.created_at,
           updatedAt: row.updated_at
         };
@@ -257,18 +282,23 @@ export class DatabaseStorage implements IStorage {
         client.release();
       }
     } catch (error) {
-      console.error('Error in getEventRegistrationByEmail:', error);
+      console.error('Error in getRegistrationByEmail:', error);
       return undefined;
     }
   }
+
+  // Backward compatibility method
+  async getEventRegistrationByEmail(email: string, eventId: number): Promise<EventRegistration | undefined> {
+    return this.getRegistrationByEmail(email, eventId);
+  }
   
-  async getEventRegistrationsByPaymentIntent(paymentIntentId: string): Promise<EventRegistration[]> {
+  async getRegistrationsByPaymentIntent(paymentIntentId: string): Promise<Registration[]> {
     try {
       const client = await pool.connect();
       
       try {
         const query = `
-          SELECT * FROM event_registrations 
+          SELECT * FROM registrations 
           WHERE stripe_payment_intent_id = $1
         `;
         
@@ -279,10 +309,10 @@ export class DatabaseStorage implements IStorage {
         
         // Map the results to our TypeScript types
         return result.rows.map(row => {
-          // Convert database snake_case to camelCase and ensure all fields are present
-          const registration: EventRegistration = {
+          const registration: Registration = {
             id: row.id,
             eventId: row.event_id,
+            eventSlug: row.event_slug || '',
             firstName: row.first_name,
             lastName: row.last_name,
             contactName: row.contact_name,
@@ -290,6 +320,7 @@ export class DatabaseStorage implements IStorage {
             phone: row.phone,
             tShirtSize: row.t_shirt_size,
             grade: row.grade,
+            gender: row.gender,
             schoolName: row.school_name,
             clubName: row.club_name,
             medicalReleaseAccepted: row.medical_release_accepted ?? false,
@@ -297,11 +328,19 @@ export class DatabaseStorage implements IStorage {
             shopifyOrderId: row.shopify_order_id,
             stripePaymentIntentId: row.stripe_payment_intent_id,
             paymentStatus: row.payment_status || 'pending',
+            status: row.status || 'pending',
+            paymentVerified: row.payment_verified || false,
+            completedAt: row.completed_at,
             day1: row.day1 ?? false,
             day2: row.day2 ?? false,
             day3: row.day3 ?? false,
+            numberOfDays: row.number_of_days,
+            selectedDates: row.selected_dates,
             age: row.age,
             experience: row.experience,
+            shirtSize: row.shirt_size,
+            parentName: row.parent_name,
+            parentPhoneNumber: row.parent_phone_number,
             createdAt: row.created_at,
             updatedAt: row.updated_at || row.created_at
           };
@@ -316,26 +355,32 @@ export class DatabaseStorage implements IStorage {
       return [];
     }
   }
+
+  // Backward compatibility method
+  async getEventRegistrationsByPaymentIntent(paymentIntentId: string): Promise<EventRegistration[]> {
+    return this.getRegistrationsByPaymentIntent(paymentIntentId);
+  }
   
-  async updateRegistration(id: number, data: Partial<EventRegistration>): Promise<EventRegistration | undefined> {
+  async updateRegistration(id: number, data: Partial<Registration>): Promise<Registration | undefined> {
     const [updated] = await db
-      .update(eventRegistrations)
+      .update(registrations)
       .set(data)
-      .where(eq(eventRegistrations.id, id))
+      .where(eq(registrations.id, id))
       .returning();
     return updated;
   }
   
-  async updateEventRegistrationPaymentStatus(paymentIntentId: string, status: string): Promise<boolean> {
+  // New unified method to complete registrations
+  async completeRegistration(paymentIntentId: string): Promise<boolean> {
     try {
-      console.log(`Updating payment status for intent ${paymentIntentId} to ${status}`);
+      console.log(`Completing registration for payment intent ${paymentIntentId}`);
       
       const client = await pool.connect();
       
       try {
         // Find registrations with this payment intent ID
         const findQuery = `
-          SELECT * FROM event_registrations 
+          SELECT * FROM registrations 
           WHERE stripe_payment_intent_id = $1
         `;
         
@@ -348,37 +393,57 @@ export class DatabaseStorage implements IStorage {
         
         console.log(`Found ${result.rows.length} registrations with payment intent ID ${paymentIntentId}`);
         
-        // Update payment status and complete registration if necessary
+        // Update registrations to completed status
         for (const row of result.rows) {
           const registrationId = row.id;
           
-          console.log(`Updating registration ${registrationId} payment status to ${status}`);
+          console.log(`Completing registration ${registrationId}`);
           
-          // Update the existing registration record
+          // Update the registration to completed status
           const updateQuery = `
-            UPDATE event_registrations 
-            SET payment_status = $1, 
+            UPDATE registrations 
+            SET payment_status = 'completed',
+                status = 'paid',
+                payment_verified = true,
+                completed_at = NOW(),
                 updated_at = NOW() 
-            WHERE id = $2
+            WHERE id = $1
             RETURNING *
           `;
           
-          const updateResult = await client.query(updateQuery, [status, registrationId]);
-          console.log(`Updated registration payment status successfully for ID ${registrationId}`);
-          
-          // If payment is completed, create a completed registration record
-          if (status === 'succeeded' || status === 'completed') {
-            console.log(`Payment complete for registration ${registrationId}, creating completed record`);
-            try {
-              const completedReg = await this.createCompletedEventRegistration(registrationId, paymentIntentId);
-              console.log(`Created completed registration record: ${completedReg?.id || 'unknown'}`);
-            } catch (completionError) {
-              console.error(`Error creating completed registration for ${registrationId}:`, completionError);
-              // Continue processing other registrations even if this one fails
-            }
-          }
+          await client.query(updateQuery, [registrationId]);
+          console.log(`Registration ${registrationId} marked as completed`);
         }
         
+        return true;
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error('Error completing registration:', error);
+      return false;
+    }
+  }
+
+  // Backward compatibility method
+  async updateEventRegistrationPaymentStatus(paymentIntentId: string, status: string): Promise<boolean> {
+    if (status === 'succeeded' || status === 'completed') {
+      return this.completeRegistration(paymentIntentId);
+    }
+    
+    // For other statuses, just update payment status
+    try {
+      const client = await pool.connect();
+      
+      try {
+        const updateQuery = `
+          UPDATE registrations 
+          SET payment_status = $1, 
+              updated_at = NOW() 
+          WHERE stripe_payment_intent_id = $2
+        `;
+        
+        await client.query(updateQuery, [status, paymentIntentId]);
         return true;
       } finally {
         client.release();
