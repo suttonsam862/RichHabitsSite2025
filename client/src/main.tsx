@@ -1,21 +1,20 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ErrorBoundary } from "./components/ErrorBoundary";
-import "./index.css";
+import { createRoot } from "react-dom/client";
 
-const queryClient = new QueryClient();
+function MinimalApp() {
+  return React.createElement("div", {
+    style: {
+      padding: "50px",
+      backgroundColor: "#4CAF50",
+      color: "white",
+      fontSize: "24px",
+      textAlign: "center"
+    }
+  }, "REACT IS WORKING - Vite Plugin Fixed");
+}
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  </React.StrictMode>
-);
+const container = document.getElementById("root");
+if (container) {
+  const root = createRoot(container);
+  root.render(React.createElement(MinimalApp));
+}
