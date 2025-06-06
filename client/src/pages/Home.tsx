@@ -2,6 +2,7 @@ import { Link } from 'wouter';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Layout from '../components/layout/Layout';
+import AppStatus from '../components/AppStatus';
 import { usePrefetch, prefetchPages } from '@/hooks/usePrefetch';
 
 const Home = () => {
@@ -35,6 +36,9 @@ const Home = () => {
 
   return (
     <Layout>
+      {/* App Status for debugging */}
+      <AppStatus />
+      
       {/* Hero Section */}
       <section className="section-padding">
         <div className="container-fluid">
