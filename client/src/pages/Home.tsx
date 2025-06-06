@@ -1,473 +1,361 @@
-import { Link } from "wouter";
-import { motion } from "framer-motion";
-import { ChevronDown, Users, User, X } from "lucide-react";
-import { useState } from "react";
+import { Link } from 'wouter';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import Header from '../components/layout/Header';
 
-export default function Home() {
-  const [showEventSelector, setShowEventSelector] = useState(false);
+const Home = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
 
-  const scrollToSignup = () => {
-    document.getElementById('signup-portal')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const events = [
-    {
-      id: 1,
-      title: "Birmingham Slam Camp",
-      date: "June 19-21, 2025",
-      location: "Clay-Chalkville Middle School, Alabama",
-      price: 249,
-      teamPrice: 199,
-      savings: 50
-    },
-    {
-      id: 2,
-      title: "National Champ Camp",
-      date: "June 5-7, 2025", 
-      location: "Roy Martin Middle School, Las Vegas",
-      price: 299,
-      teamPrice: 199,
-      savings: 100
-    },
-    {
-      id: 3,
-      title: "Texas Recruiting Clinic",
-      date: "June 12-13, 2025",
-      location: "Arlington Martin High School, Arlington, TX", 
-      price: 249,
-      teamPrice: 199,
-      savings: 50
+  // Fetch events data
+  const { data: events } = useQuery({
+    queryKey: ['/api/events'],
+    queryFn: async () => {
+      const response = await fetch('/api/events');
+      return response.json();
     }
-  ];
+  });
 
-  const handleEventSelect = (eventId: number) => {
-    setShowEventSelector(false);
-    window.location.href = `/team-registration?eventId=${eventId}`;
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle contact form submission
+    console.log('Contact form submitted:', formData);
   };
+
+  const featuredEvents = events?.slice(0, 3) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* TOP-LEVEL TEAM DISCOUNT BANNER */}
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto text-center">
-          <button 
-            onClick={scrollToSignup}
-            className="w-full hover:bg-black/10 transition-colors rounded p-2"
-          >
-            <span className="text-lg font-bold tracking-wide">
-              👉 NEW: HUGE TEAM DISCOUNT NOW AVAILABLE – CLICK TO REGISTER AS A TEAM
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* COMPRESSED MOBILE-FOCUSED HERO */}
-      <section className="w-full h-[70vh] md:h-[80vh] flex items-center justify-center relative overflow-hidden">
-        {/* Hero background image */}
-        <div className="absolute inset-0 w-full h-full">
-          <img 
-            src="/images/hero-background.webp" 
-            alt="Rich Habits premium athletic wear collection"
-            className="w-full h-full object-cover object-right"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
-        </div>
-        
-        {/* Content Overlay with Split CTA */}
-        <div className="container mx-auto px-4 z-10 text-white relative flex items-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h1 className="text-4xl md:text-6xl mb-4 leading-tight tracking-tighter title-font">
-              Train with NCAA Champions
+    <div className="min-h-screen bg-white">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="pt-24 section-padding">
+        <div className="container-fluid">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Main Headline */}
+            <h1 className="font-title text-6xl lg:text-8xl text-black mb-6 animate-float">
+              Elite Wrestling
+              <br />
+              <span className="font-script text-5xl lg:text-7xl text-gradient">
+                Training & Events
+              </span>
             </h1>
-            <p className="text-lg md:text-xl mb-8 tracking-wide text-gray-200 subtitle-font">
-              Camps Nationwide This Summer
+            
+            {/* Subheadline */}
+            <p className="font-body text-xl lg:text-2xl text-black/80 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Championship-level coaching, intensive training camps, and premier recruiting events 
+              for wrestlers who demand excellence.
             </p>
             
-            {/* SPLIT CTA SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              <button
-                onClick={scrollToSignup}
-                className="bg-white text-gray-900 py-4 px-8 text-lg font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
-              >
-                <User size={20} />
-                <span>Register as Individual</span>
-              </button>
-              <button
-                onClick={scrollToSignup}
-                className="bg-orange-500 text-white py-4 px-8 text-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
-              >
-                <Users size={20} />
-                <span>Register as Team</span>
-              </button>
+            {/* Hero CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/events" className="btn-primary animate-glow">
+                View Upcoming Events
+              </Link>
+              <Link href="/custom-apparel" className="btn-ghost">
+                Custom Training Gear
+              </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
-        
-        {/* FLOATING SCROLL ARROW */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-          <button
-            onClick={scrollToSignup}
-            className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 animate-bounce"
-          >
-            <ChevronDown size={24} />
-          </button>
-        </div>
-        
-        {/* Subtle sky accent line */}
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-30"></div>
       </section>
-      
-      {/* NATIONAL CHAMP CAMP DISCOUNT PROMOTION */}
-      <section className="py-12 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center text-white"
-          >
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-4">
-                <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-pulse">
-                  LIMITED TIME OFFER
-                </span>
-              </div>
-              
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 title-font">
-                National Champ Camp
-              </h2>
-              
-              <p className="text-xl md:text-2xl mb-6 text-blue-100">
-                Train with NCAA Champions & Olympic Athletes
-              </p>
-              
-              <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
-                {/* Pricing Display */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-4 mb-2">
-                    <span className="text-2xl text-blue-300 line-through">$349</span>
-                    <span className="text-5xl font-bold text-white">$299</span>
-                  </div>
-                  <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold">
-                    SAVE $50
-                  </div>
+
+      {/* Featured Events Section */}
+      <section className="section-padding bg-white">
+        <div className="container-fluid">
+          <div className="text-center mb-16">
+            <h2 className="font-title text-4xl lg:text-5xl text-black mb-4">
+              Upcoming Events
+            </h2>
+            <p className="font-body text-lg text-black/70 max-w-2xl mx-auto">
+              Join elite wrestlers and championship coaches at our intensive training events
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredEvents.map((event: any) => (
+              <div key={event.id} className="card card-chromatic p-6 group">
+                <div className="mb-4">
+                  <h3 className="font-title text-xl text-black mb-2 group-hover:text-gradient transition-all duration-300">
+                    {event.name}
+                  </h3>
+                  <p className="font-body text-black/60 text-sm mb-3">
+                    {new Date(event.date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                  <p className="font-body text-black/80 text-sm leading-relaxed">
+                    {event.description}
+                  </p>
                 </div>
                 
-                {/* Flexible Options */}
-                <div className="text-center bg-white/10 rounded-lg p-6">
-                  <h3 className="text-xl font-bold mb-4 text-yellow-300">NEW! Flexible Options</h3>
-                  <div className="space-y-2 text-blue-100">
-                    <div>1 Day Option: <span className="font-bold text-white">$119</span></div>
-                    <div>2 Day Option: <span className="font-bold text-white">$238</span></div>
-                    <div>Full 3 Days: <span className="font-bold text-white">$299</span></div>
-                  </div>
-                  <p className="text-sm text-yellow-200 mt-2">Choose your schedule!</p>
+                <div className="flex items-center justify-between">
+                  <span className="font-body font-semibold text-black">
+                    ${event.price}
+                  </span>
+                  <Link 
+                    href={`/events/${event.id}`}
+                    className="btn-ghost text-sm"
+                  >
+                    Learn More
+                  </Link>
                 </div>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/events/2">
-                  <span className="inline-block bg-white text-blue-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-50 transition-colors cursor-pointer shadow-lg">
-                    Register Now - Save $50
-                  </span>
-                </Link>
-                <Link href="/events/2">
-                  <span className="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-blue-900 transition-colors cursor-pointer">
-                    Learn More
-                  </span>
-                </Link>
-              </div>
-              
-              <p className="text-sm text-blue-200 mt-6">
-                June 5-7, 2025 • Roy Martin Middle School, Las Vegas, NV
-              </p>
-            </div>
-          </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Link href="/events" className="btn-primary">
+              View All Events
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* MOBILE-SCROLLABLE CAMP SCHEDULE PREVIEW */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl mb-8 text-center title-font">
-              Summer 2025 Camps
+      {/* Fruit Hunters Section */}
+      <section className="section-padding bg-gray-50/30">
+        <div className="container-fluid">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-title text-4xl lg:text-5xl text-black mb-6">
+              Fruit Hunters
             </h2>
-            
-            {/* Mobile-scrollable horizontal slider */}
-            <div className="overflow-x-auto pb-4">
-              <div className="flex space-x-6 w-max md:grid md:grid-cols-3 md:gap-8 md:w-full">
-                {/* Birmingham Slam Camp */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
-                >
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src="/images/birmingham-slam-camp.webp" 
-                      alt="Birmingham Slam Camp"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">Birmingham Slam Camp</h3>
-                    <p className="text-sm text-gray-600 mb-1">June 19-21, 2025</p>
-                    <p className="text-sm text-gray-600 mb-2">$249</p>
-                    <button 
-                      onClick={scrollToSignup}
-                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              
-                {/* National Champ Camp */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  viewport={{ once: true }}
-                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
-                >
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src="/images/national-champ-camp.webp" 
-                      alt="National Champ Camp"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">National Champ Camp</h3>
-                    <p className="text-sm text-gray-600 mb-1">June 5-7, 2025</p>
-                    <div className="text-sm text-gray-600 mb-2">
-                      <span className="text-gray-500 line-through">$349</span>
-                      <span className="text-green-600 font-bold ml-2">$299</span>
-                      <span className="bg-red-500 text-white text-xs px-1 ml-1 rounded">SAVE $50</span>
-                    </div>
-                    <button 
-                      onClick={scrollToSignup}
-                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              
-                {/* Texas Recruiting Clinic */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  viewport={{ once: true }}
-                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
-                >
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src="/images/texas-recruiting-clinic.webp" 
-                      alt="Texas Recruiting Clinic"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">Texas Recruiting Clinic</h3>
-                    <p className="text-sm text-gray-600 mb-1">June 12-13, 2025</p>
-                    <p className="text-sm text-gray-600 mb-2">$249</p>
-                    <button 
-                      onClick={scrollToSignup}
-                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      
-      {/* SIGNUP PORTAL ANCHOR SECTION */}
-      <section id="signup-portal" className="py-20 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h2 className="text-4xl mb-8 title-font">Choose Your Registration</h2>
-            <p className="text-xl mb-12 text-gray-600">Join thousands of wrestlers training with NCAA champions</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-              {/* Individual Registration */}
-              <div className="bg-white p-8 rounded-lg shadow-lg">
-                <div className="flex items-center justify-center mb-6">
-                  <User size={48} className="text-gray-600" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Individual Registration</h3>
-                <p className="text-gray-600 mb-6">Perfect for individual athletes looking to train with the best</p>
-                <Link 
-                  href="/events" 
-                  className="w-full bg-gray-900 text-white py-4 px-8 rounded-lg hover:bg-gray-800 transition-colors inline-block text-center"
-                >
-                  Browse Individual Camps
-                </Link>
-              </div>
-              
-              {/* Team Registration */}
-              <div className="bg-orange-500 p-8 rounded-lg shadow-lg text-white relative">
-                <div className="absolute top-4 right-4">
-                  <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">HUGE DISCOUNT!</span>
-                </div>
-                <div className="flex items-center justify-center mb-6">
-                  <Users size={48} className="text-white" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Team Registration</h3>
-                <p className="mb-6">Bring your entire team and save big with our exclusive team discounts</p>
-                <button 
-                  onClick={() => setShowEventSelector(true)}
-                  className="w-full bg-white text-orange-500 py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
-                >
-                  Get Team Discount
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      
-      {/* Newsletter Section - Minimalist Approach */}
-      <section className="py-24 bg-white relative">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-xl mx-auto"
-          >
-            <h2 className="text-4xl mb-6 text-center title-font">
-              Stay Connected
-            </h2>
-            <p className="text-gray-700 mb-10 text-center subtitle-font">
-              Subscribe to receive updates on upcoming events, new apparel releases, and exclusive offers.
+            <p className="font-body text-lg text-black/80 mb-8 leading-relaxed">
+              Elite recruiting network connecting top wrestlers with championship programs. 
+              Discover opportunities, showcase talent, and elevate your wrestling career.
             </p>
             
-            <div className="bg-gray-50 p-8 shadow-md">
-              <form className="flex flex-col space-y-5">
-                <input 
-                  type="email" 
-                  placeholder="your@email.com" 
-                  className="px-5 py-4 border border-gray-300 focus:outline-none focus:border-gray-900 bg-transparent subtitle-font"
-                />
-                <button 
-                  type="submit" 
-                  className="bg-gray-900 text-white py-4 px-6 hover:bg-gray-800 transition-colors subtitle-font"
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
-            
-            <div className="mt-10 flex justify-center space-x-8">
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-instagram"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Event Selection Popup */}
-      {showEventSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-          >
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Select Your Event</h2>
-                <button 
-                  onClick={() => setShowEventSelector(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X size={24} />
-                </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              <div className="card p-6 text-center">
+                <div className="w-12 h-12 bg-black/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="font-title text-lg text-black mb-2">Talent Discovery</h3>
+                <p className="font-body text-black/70 text-sm">
+                  Connect with college recruiters and showcase your wrestling achievements
+                </p>
               </div>
               
-              <p className="text-gray-600 mb-6">
-                Choose which wrestling camp you'd like to register your team for. All events offer significant team discounts!
-              </p>
-              
-              <div className="space-y-4">
-                {events.map((event) => (
-                  <div 
-                    key={event.id}
-                    onClick={() => handleEventSelect(event.id)}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-orange-500 hover:bg-orange-50 cursor-pointer transition-all"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                          {event.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {event.date} • {event.location}
-                        </p>
-                        <div className="flex items-center gap-4">
-                          <div className="text-sm">
-                            <span className="text-gray-500 line-through">${event.price}</span>
-                            <span className="text-green-600 font-semibold ml-2">${event.teamPrice} per athlete</span>
-                          </div>
-                          <div className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
-                            Save ${event.savings} each
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-orange-500 font-semibold text-sm">
-                        Select →
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="card p-6 text-center">
+                <div className="w-12 h-12 bg-black/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 className="font-title text-lg text-black mb-2">Elite Network</h3>
+                <p className="font-body text-black/70 text-sm">
+                  Access exclusive coaching clinics and training opportunities
+                </p>
               </div>
               
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  <strong>Team Requirements:</strong> Minimum 5 athletes required for team pricing. 
-                  All team members will be registered under one payment with the team coach as the primary contact.
+              <div className="card p-6 text-center">
+                <div className="w-12 h-12 bg-black/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                </div>
+                <h3 className="font-title text-lg text-black mb-2">Championship Path</h3>
+                <p className="font-body text-black/70 text-sm">
+                  Proven development programs for elite wrestling success
                 </p>
               </div>
             </div>
-          </motion.div>
+            
+            <Link href="/contact" className="btn-primary">
+              Join Fruit Hunters
+            </Link>
+          </div>
         </div>
-      )}
+      </section>
+
+      {/* Custom Gear Section */}
+      <section className="section-padding bg-white">
+        <div className="container-fluid">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="font-title text-4xl lg:text-5xl text-black mb-6">
+                Custom Training Gear
+              </h2>
+              <p className="font-body text-lg text-black/80 mb-8 leading-relaxed">
+                Premium wrestling apparel designed for champions. Custom team gear, 
+                competition singlets, and training equipment built to elite standards.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-black rounded-full"></div>
+                  <span className="font-body text-black/80">Custom team designs and logos</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-black rounded-full"></div>
+                  <span className="font-body text-black/80">Premium performance fabrics</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-black rounded-full"></div>
+                  <span className="font-body text-black/80">Fast turnaround times</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-black rounded-full"></div>
+                  <span className="font-body text-black/80">Championship-grade quality</span>
+                </div>
+              </div>
+              
+              <Link href="/custom-apparel" className="btn-primary">
+                Design Custom Gear
+              </Link>
+            </div>
+            
+            <div className="relative">
+              <div className="card p-8 text-center animate-float">
+                <div className="w-24 h-24 bg-black/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg className="w-12 h-12 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                </div>
+                <h3 className="font-title text-xl text-black mb-3">
+                  Elite Wrestling Apparel
+                </h3>
+                <p className="font-body text-black/70 mb-6">
+                  Custom singlets, warm-ups, and training gear designed for peak performance
+                </p>
+                <div className="text-2xl font-title text-black">
+                  From $45
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="section-padding bg-gray-50/30">
+        <div className="container-fluid">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-title text-4xl lg:text-5xl text-black mb-4">
+                Get In Touch
+              </h2>
+              <p className="font-body text-lg text-black/70">
+                Ready to elevate your wrestling journey? Contact us about events, custom gear, or recruiting opportunities.
+              </p>
+            </div>
+            
+            <form onSubmit={handleContactSubmit} className="card p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="name" className="form-label">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    className="form-input"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="email" className="form-label">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="form-input"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label htmlFor="message" className="form-label">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  rows={6}
+                  className="form-input resize-none"
+                  placeholder="Tell us about your wrestling goals and how we can help..."
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="text-center">
+                <button type="submit" className="btn-primary">
+                  Send Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-100 py-12">
+        <div className="container-fluid">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="col-span-1 md:col-span-2">
+              <div className="font-title text-2xl text-black mb-4">
+                Rich Habits
+              </div>
+              <p className="font-body text-black/70 max-w-md">
+                Elite wrestling training and custom apparel for champions. 
+                Building excellence through proven coaching and premier events.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-title text-lg text-black mb-4">Quick Links</h4>
+              <div className="space-y-2">
+                <Link href="/events" className="block font-body text-black/70 hover:text-black transition-colors">
+                  Events
+                </Link>
+                <Link href="/custom-apparel" className="block font-body text-black/70 hover:text-black transition-colors">
+                  Custom Gear
+                </Link>
+                <Link href="/about" className="block font-body text-black/70 hover:text-black transition-colors">
+                  About
+                </Link>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-title text-lg text-black mb-4">Connect</h4>
+              <div className="space-y-2">
+                <Link href="/contact" className="block font-body text-black/70 hover:text-black transition-colors">
+                  Contact Us
+                </Link>
+                <a href="mailto:info@richhabits.com" className="block font-body text-black/70 hover:text-black transition-colors">
+                  info@richhabits.com
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-100 mt-8 pt-8 text-center">
+            <p className="font-body text-black/60 text-sm">
+              © 2025 Rich Habits. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-}
+};
+
+export default Home;
