@@ -8,7 +8,10 @@ export default defineConfig({
     // force the classic JSX runtime so the plugin can detect your imports
     react({
       jsxRuntime: "classic",
-      include: "**/*.tsx",
+      include: "**/*.{tsx,jsx}",
+      babel: {
+        plugins: []
+      }
     }),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID
