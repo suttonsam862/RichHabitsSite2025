@@ -1,125 +1,62 @@
-import { Suspense, lazy } from "react";
-import { Switch, Route } from "wouter";
-import { Toaster } from "./components/ui/toaster";
-import { TooltipProvider } from "./components/ui/tooltip";
-import { PageLoadingFallback } from "./components/ui/loading-fallback";
-import NotFound from "./components/NotFound";
-import AuthGate from "./components/AuthGate";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Events from './pages/Events';
+import NotFound from './components/NotFound';
 
-// Keep Home page loaded immediately for best UX (above the fold)
-import Home from "./pages/Home";
+// Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-// Lazy load all other pages for code splitting
-const Shop = lazy(() => import("./pages/Shop"));
-const Events = lazy(() => import("./pages/EventsSimple"));
-const EventDetail = lazy(() => import("./pages/EventDetail"));
-const EventRegistration = lazy(() => import("./pages/EventRegistration"));
-const TeamRegistration = lazy(() => import("./pages/TeamRegistration"));
-const StripeCheckout = lazy(() => import("./pages/StripeCheckout"));
-const CustomApparel = lazy(() => import("./pages/CustomApparel"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Login = lazy(() => import("./pages/Login"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminEditor = lazy(() => import("./pages/AdminEditor"));
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
 
-function Router() {
-  return (
-    <Switch>
-      {/* Home page loads immediately for best UX */}
-      <Route path="/" component={Home} />
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error Boundary Caught:', error, errorInfo);
+  }
 
-      {/* All other routes use lazy loading with Suspense */}
-      <Route path="/shop">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <Shop />
-        </Suspense>
-      </Route>
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
+            <p className="text-gray-600 mb-4">
+              {this.state.error?.message || 'An unexpected error occurred'}
+            </p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
 
-      <Route path="/events">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <Events />
-        </Suspense>
-      </Route>
-
-      <Route path="/events/:id">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <EventDetail />
-        </Suspense>
-      </Route>
-
-      <Route path="/register/:id">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <EventRegistration />
-        </Suspense>
-      </Route>
-
-      <Route path="/team-register/:id">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <TeamRegistration />
-        </Suspense>
-      </Route>
-
-      <Route path="/team-registration">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <TeamRegistration />
-        </Suspense>
-      </Route>
-
-      <Route path="/stripe-checkout">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <StripeCheckout />
-        </Suspense>
-      </Route>
-
-      <Route path="/custom-apparel">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <CustomApparel />
-        </Suspense>
-      </Route>
-
-      <Route path="/contact">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <Contact />
-        </Suspense>
-      </Route>
-
-      <Route path="/login">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <Login />
-        </Suspense>
-      </Route>
-
-      <Route path="/admin">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <AuthGate requireAdmin={true}>
-            <Admin />
-          </AuthGate>
-        </Suspense>
-      </Route>
-
-      <Route path="/admin/editor">
-        <Suspense fallback={<PageLoadingFallback />}>
-          <AuthGate requireAdmin={true}>
-            <AdminEditor />
-          </AuthGate>
-        </Suspense>
-      </Route>
-
-      <Route>
-        <NotFound />
-      </Route>
-    </Switch>
-  );
+    return this.props.children;
+  }
 }
 
 function App() {
   return (
-    <TooltipProvider>
+    <ErrorBoundary>
       <div className="min-h-screen bg-white">
-        <Router />
-        <Toaster />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </div>
-    </TooltipProvider>
+    </ErrorBoundary>
   );
 }
 
