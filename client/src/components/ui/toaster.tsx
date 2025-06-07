@@ -1,14 +1,6 @@
 
-import { StrictMode } from 'react';
-
 export function Toaster() {
   return (
-    <div id="toaster" className="fixed top-0 right-0 z-50 p-4 space-y-4 w-full max-w-xs">
-    </div>
+    <div id="toaster" className="fixed top-0 right-0 z-50 p-4 space-y-4 w-full max-w-xs"></div>
   );
-}
-
-// Export with explicit JSX to help SWC plugin detection
-export default function ToasterComponent() {
-  return <Toaster />;
 }
