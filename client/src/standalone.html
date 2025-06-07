@@ -57,22 +57,6 @@
         .events-button {
             background: #3b82f6;
         }
-        .event-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-        .event-title {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        .event-details {
-            margin: 0;
-            opacity: 0.8;
-        }
     </style>
 </head>
 <body>
@@ -83,68 +67,38 @@
 
         function RichHabitsApp() {
             const [status, setStatus] = useState('Initializing...');
-            const [currentView, setCurrentView] = useState('home');
             const [events] = useState([
-                { 
-                    id: 1, 
-                    name: 'Spring Wrestling Championship', 
-                    date: '2024-04-15', 
-                    location: 'Madison Arena',
-                    description: 'Annual championship featuring top wrestlers from across the region'
-                },
-                { 
-                    id: 2, 
-                    name: 'Youth Wrestling Tournament', 
-                    date: '2024-04-22', 
-                    location: 'Community Sports Center',
-                    description: 'Tournament for young wrestlers ages 8-16'
-                },
-                { 
-                    id: 3, 
-                    name: 'Elite Training Camp', 
-                    date: '2024-05-01', 
-                    location: 'Rich Habits Training Facility',
-                    description: 'Intensive 3-day training camp with professional coaches'
-                },
-                { 
-                    id: 4, 
-                    name: 'Summer Wrestling League', 
-                    date: '2024-06-10', 
-                    location: 'Athletic Complex',
-                    description: 'Weekly matches throughout the summer season'
-                }
+                { id: 1, name: 'Spring Wrestling Championship', date: '2024-04-15', location: 'Madison Arena' },
+                { id: 2, name: 'Youth Tournament', date: '2024-04-22', location: 'Community Center' },
+                { id: 3, name: 'Elite Training Camp', date: '2024-05-01', location: 'Training Facility' }
             ]);
 
             useEffect(() => {
                 setTimeout(() => setStatus('Application Ready'), 1000);
             }, []);
 
+            const [currentView, setCurrentView] = useState('home');
+
             if (currentView === 'events') {
                 return (
                     <div className="app-container">
                         <div className="content">
                             <h1 className="title">Wrestling Events</h1>
-                            <p className="subtitle">Upcoming tournaments and training opportunities</p>
-                            
-                            <div style={{ marginBottom: '2rem' }}>
+                            <div style={{ textAlign: 'left', marginBottom: '2rem' }}>
                                 {events.map(event => (
-                                    <div key={event.id} className="event-card">
-                                        <h3 className="event-title">{event.name}</h3>
-                                        <p className="event-details">
-                                            📅 {event.date} | 📍 {event.location}
+                                    <div key={event.id} style={{
+                                        background: 'rgba(255, 255, 255, 0.1)',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <h3 style={{ margin: '0 0 0.5rem 0' }}>{event.name}</h3>
+                                        <p style={{ margin: '0', opacity: 0.8 }}>
+                                            {event.date} - {event.location}
                                         </p>
-                                        <p className="event-details">{event.description}</p>
-                                        <button 
-                                            className="button"
-                                            style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
-                                            onClick={() => alert(`Registration for ${event.name} - Feature coming soon!`)}
-                                        >
-                                            Register
-                                        </button>
                                     </div>
                                 ))}
                             </div>
-                            
                             <button 
                                 className="button"
                                 onClick={() => setCurrentView('home')}
@@ -166,7 +120,6 @@
                             <div className="status-item">✅ Server running successfully</div>
                             <div className="status-item">✅ React application loaded</div>
                             <div className="status-item">✅ Status: {status}</div>
-                            <div className="status-item">✅ Ready for event registration</div>
                         </div>
 
                         <div>
@@ -182,16 +135,6 @@
                             >
                                 Refresh
                             </button>
-                            <button 
-                                className="button"
-                                onClick={() => alert('Contact: info@richhabits.com | (555) 123-4567')}
-                            >
-                                Contact
-                            </button>
-                        </div>
-                        
-                        <div style={{ marginTop: '2rem', fontSize: '0.9rem', opacity: 0.7 }}>
-                            Wrestling excellence through dedicated training and competition
                         </div>
                     </div>
                 </div>
