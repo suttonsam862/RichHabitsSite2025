@@ -1,14 +1,48 @@
-module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    es2021: true,
-    node: true,
+const typescriptParser = require('@typescript-eslint/parser');
+
+module.exports = [
+  {
+    files: ['**/*.js', '**/*.jsx'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        global: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+      },
+    },
+    rules: {},
   },
-  extends: [],
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: typescriptParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        global: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+      },
+    },
+    rules: {},
   },
-  rules: {},
-};
+];
