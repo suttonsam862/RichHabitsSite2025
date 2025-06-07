@@ -27,6 +27,6 @@ function TestApp() {
 
 const container = document.getElementById('root');
 if (container) {
-  const root = ReactDOM.createRoot(container);
+  const root = createRoot(container);
   root.render(<TestApp />);
 }

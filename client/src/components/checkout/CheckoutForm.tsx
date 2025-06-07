@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { motion } from "framer-motion";
 
@@ -6,7 +6,7 @@ interface CheckoutFormProps {
   onSuccess: () => void;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess }) => {
+const CheckoutForm = ({ onSuccess }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   
