@@ -5,10 +5,13 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
   plugins: [
-    react(),
+    // force the classic JSX runtime so the plugin can detect your imports
+    react({
+      jsxRuntime: "classic",
+      include: "**/*.tsx",
+    }),
     runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID
       ? [
           await import("@replit/vite-plugin-cartographer").then((m) =>
             m.cartographer(),

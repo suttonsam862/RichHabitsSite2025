@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rich Habits Wrestling</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+        .app {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 1rem;
+        }
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        .status-grid {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .icon { font-size: 1.2rem; }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); }
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .event-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .event-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+        .event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .event-description {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+        .footer-text {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 2rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        const events = [
+            {
+                id: 1,
+                name: 'Spring Wrestling Championship',
+                date: 'April 15, 2024',
+                time: '9:00 AM - 6:00 PM',
+                location: 'Madison Arena',
+                description: 'Annual championship featuring top wrestlers from across the region. Multiple weight classes and skill levels.',
+                status: 'Registration Open'
+            },
+            {
+                id: 2,
+                name: 'Youth Wrestling Tournament',
+                date: 'April 22, 2024',
+                time: '10:00 AM - 4:00 PM',
+                location: 'Community Sports Center',
+                description: 'Tournament for young wrestlers ages 8-16. Great opportunity for new competitors.',
+                status: 'Early Bird Pricing'
+            },
+            {
+                id: 3,
+                name: 'Elite Training Camp',
+                date: 'May 1-3, 2024',
+                time: 'All Day Sessions',
+                location: 'Rich Habits Training Facility',
+                description: 'Intensive 3-day training camp with Olympic-level coaches. Advanced techniques and conditioning.',
+                status: 'Limited Spots'
+            },
+            {
+                id: 4,
+                name: 'Summer Wrestling League',
+                date: 'June 10 - August 15, 2024',
+                time: 'Weekly Matches',
+                location: 'Various Locations',
+                description: 'Competitive league running throughout the summer. Weekly matches and skill development.',
+                status: 'Season Pass Available'
+            }
+        ];
+
+        function App() {
+            const [currentView, setCurrentView] = useState('home');
+            const [appStatus, setAppStatus] = useState('Initializing...');
+            
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    setAppStatus('Ready');
+                }, 1500);
+                return () => clearTimeout(timer);
+            }, []);
+
+            const handleRegister = (eventName) => {
+                alert(`Registration for "${eventName}"\n\nTo complete registration:\n• Email: register@richhabits.com\n• Phone: (555) 123-WRAP\n• Online portal coming soon!`);
+            };
+
+            const handleContact = () => {
+                alert('Rich Habits Wrestling Contact:\n\n📧 info@richhabits.com\n📞 (555) 123-WRAP\n🌐 www.richhabits.com\n📍 123 Wrestling Way, Sports City, SC 12345');
+            };
+
+            if (currentView === 'events') {
+                return (
+                    <div className="app">
+                        <div className="container">
+                            <h1 className="logo">Wrestling Events</h1>
+                            <p className="tagline">Upcoming tournaments and training opportunities</p>
+                            
+                            <div className="events-grid">
+                                {events.map(event => (
+                                    <div key={event.id} className="event-card">
+                                        <h3 className="event-title">{event.name}</h3>
+                                        <div className="event-meta">
+                                            <div>📅 {event.date}</div>
+                                            <div>⏰ {event.time}</div>
+                                            <div>📍 {event.location}</div>
+                                            <div style={{color: '#10b981', fontWeight: 'bold'}}>🎯 {event.status}</div>
+                                        </div>
+                                        <p className="event-description">{event.description}</p>
+                                        <button 
+                                            className="btn btn-success"
+                                            onClick={() => handleRegister(event.name)}
+                                            style={{width: '100%'}}
+                                        >
+                                            Register Now
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <button 
+                                className="btn btn-secondary"
+                                onClick={() => setCurrentView('home')}
+                            >
+                                ← Back to Home
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="app">
+                    <div className="container">
+                        <h1 className="logo">Rich Habits Wrestling</h1>
+                        <p className="tagline">Elite Wrestling Training & Events Platform</p>
+                        
+                        <div className="status-grid">
+                            <div className="status-item">
+                                <span className="icon">🚀</span>
+                                <span>Server Online</span>
+                            </div>
+                            <div className="status-item">
+                                <span className="icon">⚛️</span>
+                                <span>React Application</span>
+                            </div>
+                            <div className="status-item">
+                                <span className="icon">✅</span>
+                                <span>Status: {appStatus}</span>
+                            </div>
+                            <div className="status-item">
+                                <span className="icon">🥇</span>
+                                <span>Ready for Registration</span>
+                            </div>
+                        </div>
+
+                        <div className="button-group">
+                            <button 
+                                className="btn btn-primary"
+                                onClick={() => setCurrentView('events')}
+                            >
+                                View Wrestling Events
+                            </button>
+                            <button 
+                                className="btn btn-success"
+                                onClick={handleContact}
+                            >
+                                Contact Us
+                            </button>
+                            <button 
+                                className="btn btn-secondary"
+                                onClick={() => window.location.reload()}
+                            >
+                                Refresh App
+                            </button>
+                        </div>
+                        
+                        <div className="footer-text">
+                            Building champions through discipline, technique, and relentless training
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+        console.log('Rich Habits Wrestling application loaded successfully');
+    </script>
+</body>
+</html>
