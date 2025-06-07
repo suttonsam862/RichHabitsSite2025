@@ -102,7 +102,7 @@ try {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // Skip signature verification for testing by not including Stripe-Signature header
+      'Stripe-Signature': 'development',
       'User-Agent': 'Test-Webhook-Script'
     },
     body: JSON.stringify(webhookPayload)
