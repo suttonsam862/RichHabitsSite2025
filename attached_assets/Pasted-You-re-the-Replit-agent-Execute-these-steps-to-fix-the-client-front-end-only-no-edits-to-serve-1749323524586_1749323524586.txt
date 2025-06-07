@@ -1,0 +1,99 @@
+You’re the Replit agent. Execute these steps to fix the **client** front-end only (no edits to server or Vite config):
+
+1. **Install needed plugins**:
+   ```bash
+   npm install -D @vitejs/plugin-react react-router-dom@6 vite-plugin-checker
+Update client/src/main.tsx with this content:
+
+tsx
+Copy
+Edit
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+window.addEventListener('error', e => console.error('[CLIENT ERROR]', e));
+window.addEventListener('unhandledrejection', e => console.error('[UNHANDLED REJECTION]', e.reason));
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode><App/></React.StrictMode>
+);
+Replace client/src/App.tsx with:
+
+tsx
+Copy
+Edit
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+const Home = lazy(() => import('./pages/Home'));
+const Events = lazy(() => import('./pages/Events'));
+const NotFound = lazy(() => import('./components/NotFound'));
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Loading…</div>}>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/events" element={<Events/>}/>
+          <Route path="*" element={<NotFound/>}/>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+Create or update client/src/pages/Home.tsx:
+
+tsx
+Copy
+Edit
+import React from 'react';
+export default function Home() {
+  return <h1 className="text-center mt-20">Welcome to Rich Habits Wrestling</h1>;
+}
+Create or update client/src/pages/Events.tsx:
+
+tsx
+Copy
+Edit
+import React from 'react';
+export default function Events() {
+  return (
+    <div className="min-h-screen bg-white pb-20">
+      <h1 className="text-3xl font-bold text-center pt-10">Upcoming Events</h1>
+      {/* TODO: Replace this with your event list */}
+    </div>
+  );
+}
+Create or update client/src/components/NotFound.tsx:
+
+tsx
+Copy
+Edit
+import React from 'react';
+export default function NotFound() {
+  return <h2 className="text-red-600 text-center mt-20">404: Page Not Found</h2>;
+}
+Add a Vite checker plugin automatically picks up on errors—no file edits needed.
+
+Define npm scripts in your root package.json (under "scripts"):
+
+json
+Copy
+Edit
+{
+  "dev:client": "vite --host 0.0.0.0 --port 3000"
+}
+Clean install and run:
+
+bash
+Copy
+Edit
+rm -rf node_modules .vite
+npm install
+npm run dev:client
+Open Replit Preview on port 3000 to verify your Rich Habits front-end loads correctly without white screens or preamble errors.
+
+This will restore your existing site using a stable React plugin and show errors in-browser for any remaining issues.
