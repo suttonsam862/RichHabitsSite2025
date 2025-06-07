@@ -1,9 +1,9 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
-const Home = lazy(() => import('./pages/Home'));
-const Events = lazy(() => import('./pages/Events'));
-const NotFound = lazy(() => import('./components/NotFound'));
+const Home = lazy(() => import('./pages/Home-clean'));
+const Events = lazy(() => import('./pages/Events-clean'));
+const NotFound = lazy(() => import('./components/NotFound-clean'));
 
 export default function App() {
   return (
