@@ -9,9 +9,9 @@ export default defineConfig({
     react({
       jsxRuntime: "classic",
       include: "**/*.{tsx,jsx}",
-      babel: {
-        plugins: []
-      }
+      exclude: /node_modules/,
+      fastRefresh: true,
+      jsxImportSource: undefined
     }),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID
