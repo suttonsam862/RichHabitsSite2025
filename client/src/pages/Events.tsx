@@ -265,6 +265,7 @@ export default function Events() {
           ))}
         </motion.div>
       </div>
+      </div>
     </Layout>
   );
 }

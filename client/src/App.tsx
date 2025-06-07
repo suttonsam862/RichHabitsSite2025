@@ -22,7 +22,6 @@ const Login = lazy(() => import("./pages/Login"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminEditor = lazy(() => import("./pages/AdminEditor"));
 
-
 function Router() {
   return (
     <Switch>
@@ -112,29 +111,6 @@ function Router() {
     </Switch>
   );
 }
-
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/contexts/AuthContext";
-import Layout from "@/components/layout/Layout";
-import Home from "@/pages/Home";
-import Events from "@/pages/Events";
-import EventDetail from "@/pages/EventDetail";
-import Shop from "@/pages/Shop";
-import About from "@/pages/About";
-import Contact from "@/pages/Contact";
-import Gallery from "@/pages/Gallery";
-import CustomApparel from "@/pages/CustomApparel";
-import AdminLogin from "@/pages/AdminLogin";
-import Admin from "@/pages/Admin";
-import NotFound from "@/components/NotFound";
-import ShopifyRedirect from "@/pages/ShopifyRedirect";
-import { queryClient } from "@/lib/queryClient";
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import ReturnPolicy from "@/pages/ReturnPolicy";
-import EventRegistration from "@/pages/EventRegistration";
 
 function App() {
   return (
