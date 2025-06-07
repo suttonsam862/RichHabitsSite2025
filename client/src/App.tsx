@@ -28,68 +28,68 @@ function Router() {
     <Switch>
       {/* Home page loads immediately for best UX */}
       <Route path="/" component={Home} />
-      
+
       {/* All other routes use lazy loading with Suspense */}
       <Route path="/shop">
         <Suspense fallback={<PageLoadingFallback />}>
           <Shop />
         </Suspense>
       </Route>
-      
+
       <Route path="/events">
         <Suspense fallback={<PageLoadingFallback />}>
           <Events />
         </Suspense>
       </Route>
-      
+
       <Route path="/events/:id">
         <Suspense fallback={<PageLoadingFallback />}>
           <EventDetail />
         </Suspense>
       </Route>
-      
+
       <Route path="/register/:id">
         <Suspense fallback={<PageLoadingFallback />}>
           <EventRegistration />
         </Suspense>
       </Route>
-      
+
       <Route path="/team-register/:id">
         <Suspense fallback={<PageLoadingFallback />}>
           <TeamRegistration />
         </Suspense>
       </Route>
-      
+
       <Route path="/team-registration">
         <Suspense fallback={<PageLoadingFallback />}>
           <TeamRegistration />
         </Suspense>
       </Route>
-      
+
       <Route path="/stripe-checkout">
         <Suspense fallback={<PageLoadingFallback />}>
           <StripeCheckout />
         </Suspense>
       </Route>
-      
+
       <Route path="/custom-apparel">
         <Suspense fallback={<PageLoadingFallback />}>
           <CustomApparel />
         </Suspense>
       </Route>
-      
+
       <Route path="/contact">
         <Suspense fallback={<PageLoadingFallback />}>
           <Contact />
         </Suspense>
       </Route>
-      
+
       <Route path="/login">
         <Suspense fallback={<PageLoadingFallback />}>
           <Login />
         </Suspense>
       </Route>
-      
+
       <Route path="/admin">
         <Suspense fallback={<PageLoadingFallback />}>
           <AuthGate requireAdmin={true}>
@@ -97,7 +97,7 @@ function Router() {
           </AuthGate>
         </Suspense>
       </Route>
-      
+
       <Route path="/admin/editor">
         <Suspense fallback={<PageLoadingFallback />}>
           <AuthGate requireAdmin={true}>
@@ -105,13 +105,36 @@ function Router() {
           </AuthGate>
         </Suspense>
       </Route>
-      
+
       <Route>
         <NotFound />
       </Route>
     </Switch>
   );
 }
+
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Layout from "@/components/layout/Layout";
+import Home from "@/pages/Home";
+import Events from "@/pages/Events";
+import EventDetail from "@/pages/EventDetail";
+import Shop from "@/pages/Shop";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
+import Gallery from "@/pages/Gallery";
+import CustomApparel from "@/pages/CustomApparel";
+import AdminLogin from "@/pages/AdminLogin";
+import Admin from "@/pages/Admin";
+import NotFound from "@/components/NotFound";
+import ShopifyRedirect from "@/pages/ShopifyRedirect";
+import { queryClient } from "@/lib/queryClient";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import ReturnPolicy from "@/pages/ReturnPolicy";
+import EventRegistration from "@/pages/EventRegistration";
 
 function App() {
   return (
