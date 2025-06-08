@@ -574,7 +574,7 @@ export default function EventDetail() {
                     <div>
                       <h3 className="text-xl mb-3 title-font text-blue-900">Who Should Attend</h3>
                       <p className="text-gray-700 leading-relaxed subtitle-font mb-4">
-                        Perfect for serious athletes looking to improve technique, mental toughness, and competitive performance.
+                        Welcome to all wrestlers, boys and girls of every age and skill level! Whether you're just starting your wrestling journey or competing at the highest levels, this camp is designed to help you grow, learn, and excel in a supportive environment alongside fellow athletes who share your passion for wrestling.
                       </p>
                     </div>
                   </div>
