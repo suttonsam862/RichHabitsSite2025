@@ -310,12 +310,24 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         }),
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        if (data.clientSecret) {
-          // Update the payment elements with new client secret
-          window.location.reload(); // Reload to reinitialize with new payment intent
-        }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create new payment intent with discount');
+      }
+      
+      const data = await response.json();
+      console.log('Payment intent recreated with discount:', data);
+      
+      if (data.clientSecret) {
+        // Store the new payment details for page reload
+        sessionStorage.setItem('payment_client_secret', data.clientSecret);
+        sessionStorage.setItem('payment_amount', discountedAmount.toString());
+        sessionStorage.setItem('discount_applied', 'true');
+        
+        // Force page reload to reinitialize Stripe Elements with new payment intent
+        window.location.reload();
+      } else {
+        throw new Error('No client secret returned from discount payment intent creation');
       }
     } catch (error) {
       console.error('Error recreating payment intent with discount:', error);

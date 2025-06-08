@@ -12,7 +12,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export class PaymentService {
   // Create or retrieve payment intent with full duplicate protection
   async createOrRetrievePaymentIntent(requestData) {
-    const { eventId, option, registrationData, discountCode, discountedAmount } = requestData;
+    const { eventId, option, registrationData, discountCode, discountedAmount, forceNewIntent } = requestData;
     const { email } = registrationData;
     const registrationType = option || 'full';
     
@@ -116,28 +116,49 @@ export class PaymentService {
     sessionManager.lockSession(sessionId, email, eventId, registrationType, finalAmount);
     
     try {
-      // Check if we already have a payment intent for this exact session
-      const existingIntent = sessionManager.getPaymentIntent(sessionId);
-      if (existingIntent) {
-        console.log(`♻️ Found existing payment intent for session: ${sessionId}`);
+      // Check if we should force creation of a new payment intent (for discount code changes)
+      if (forceNewIntent) {
+        console.log(`🔄 Force new intent requested - bypassing existing intent check for session: ${sessionId}`);
         
-        // Verify the intent still exists in Stripe
-        try {
-          const stripeIntent = await stripe.paymentIntents.retrieve(existingIntent.paymentIntentId);
-          
-          if (stripeIntent.status === 'requires_payment_method' || stripeIntent.status === 'requires_confirmation') {
-            console.log(`✅ Existing Stripe intent is valid: ${existingIntent.paymentIntentId}`);
-            return {
-              success: true,
-              clientSecret: existingIntent.clientSecret,
-              paymentIntentId: existingIntent.paymentIntentId,
-              sessionId: sessionId,
-              message: 'Retrieved existing valid payment intent'
-            };
+        // Clear any existing payment intent for this session
+        const existingIntent = sessionManager.getPaymentIntent(sessionId);
+        if (existingIntent) {
+          try {
+            // Cancel the old payment intent to prevent confusion
+            await stripe.paymentIntents.cancel(existingIntent.paymentIntentId);
+            console.log(`❌ Cancelled old payment intent: ${existingIntent.paymentIntentId}`);
+          } catch (cancelError) {
+            console.warn(`⚠️ Could not cancel old payment intent: ${existingIntent.paymentIntentId}`, cancelError);
           }
-        } catch (stripeError) {
-          console.warn(`⚠️ Existing payment intent not found in Stripe: ${existingIntent.paymentIntentId}`);
-          // Continue to create new one
+          
+          // Remove from session manager
+          sessionManager.clearPaymentIntent(sessionId);
+        }
+      } else {
+        // Check if we already have a payment intent for this exact session
+        const existingIntent = sessionManager.getPaymentIntent(sessionId);
+        if (existingIntent) {
+          console.log(`♻️ Found existing payment intent for session: ${sessionId}`);
+          
+          // Verify the intent still exists in Stripe
+          try {
+            const stripeIntent = await stripe.paymentIntents.retrieve(existingIntent.paymentIntentId);
+            
+            if (stripeIntent.status === 'requires_payment_method' || stripeIntent.status === 'requires_confirmation') {
+              console.log(`✅ Existing Stripe intent is valid: ${existingIntent.paymentIntentId}`);
+              return {
+                success: true,
+                clientSecret: existingIntent.clientSecret,
+                paymentIntentId: existingIntent.paymentIntentId,
+                sessionId: sessionId,
+                amount: finalAmount,
+                message: 'Retrieved existing valid payment intent'
+              };
+            }
+          } catch (stripeError) {
+            console.warn(`⚠️ Existing payment intent not found in Stripe: ${existingIntent.paymentIntentId}`);
+            // Continue to create new one
+          }
         }
       }
       

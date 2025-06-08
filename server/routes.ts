@@ -691,51 +691,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Use the unified discount validation handler from discounts.ts
-      const { validateDiscountCode: validateDiscountHandler } = await import('./discounts.js');
+      // Direct discount validation using discountCodes.js
+      const { validateDiscountCode, applyDiscount } = await import('./discountCodes.js');
       
-      // Create a mock request/response to use the existing validation logic
-      const mockReq = {
-        body: {
-          code: discountCode,
-          eventId,
-          email,
-          amount: originalPrice,
-          schoolName
-        }
-      };
+      console.log(`Validating discount code: ${discountCode} for amount: $${originalPrice}`);
       
-      let validationResult;
-      const mockRes = {
-        json: (data: any) => { validationResult = data; },
-        status: (code: number) => ({ 
-          json: (data: any) => { validationResult = { ...data, statusCode: code }; }
-        })
-      };
+      // First validate the discount code
+      const validation = validateDiscountCode(discountCode);
       
-      await validateDiscountHandler(mockReq as any, mockRes as any);
-      
-      // Transform the response to match expected format
-      if (validationResult && validationResult.valid) {
-        const discountAmount = validationResult.discountAmount || 0;
-        const finalPrice = Math.max(0, originalPrice - discountAmount);
-        
-        return res.json({
-          success: true,
-          valid: true,
-          discount: {
-            discountAmount,
-            finalPrice,
-            discountDescription: validationResult.message || 'Discount applied'
-          },
-          message: validationResult.message || 'Discount applied successfully'
-        });
-      } else {
-        return res.status((validationResult && validationResult.statusCode) || 400).json({
+      if (!validation.valid) {
+        console.log(`Discount validation failed: ${validation.error}`);
+        return res.status(400).json({
+          success: false,
           valid: false,
-          message: (validationResult && validationResult.message) || 'Invalid discount code'
+          message: validation.error || 'Invalid discount code'
         });
       }
+      
+      // Apply the discount
+      const discountResult = applyDiscount(originalPrice, discountCode);
+      
+      if (!discountResult.success) {
+        console.log(`Discount application failed: ${discountResult.error}`);
+        return res.status(400).json({
+          success: false,
+          valid: false,
+          message: discountResult.error || 'Failed to apply discount'
+        });
+      }
+      
+      console.log(`Discount applied successfully:`, discountResult);
+      
+      return res.json({
+        success: true,
+        valid: true,
+        discount: {
+          discountAmount: discountResult.discountAmount,
+          finalPrice: discountResult.finalPrice,
+          discountDescription: discountResult.discountDescription || 'Discount applied'
+        },
+        message: `${discountResult.discountDescription || 'Discount'} applied successfully`
+      });
     } catch (error) {
       console.error('Error validating discount code:', error);
       res.status(500).json({
