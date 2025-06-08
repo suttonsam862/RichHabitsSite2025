@@ -48,13 +48,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* TOP-LEVEL TEAM DISCOUNT BANNER */}
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 sticky top-0 z-50 shadow-lg">
+      <div className="bg-gradient-to-r from-black to-gray-800 text-white py-3 px-4 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto text-center">
           <button 
             onClick={scrollToSignup}
-            className="w-full hover:bg-black/10 transition-colors rounded p-2"
+            className="w-full hover:bg-white/10 transition-colors rounded p-2"
           >
-            <span className="text-lg font-bold tracking-wide">
+            <span className="text-lg font-bold tracking-wider">
               👉 NEW: HUGE TEAM DISCOUNT NOW AVAILABLE – CLICK TO REGISTER AS A TEAM
             </span>
           </button>

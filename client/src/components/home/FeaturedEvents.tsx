@@ -192,10 +192,10 @@ export function FeaturedEvents() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="relative overflow-hidden bg-white shadow-lg rounded-sm p-4 h-[280px] flex flex-col"
                   style={{ 
-                    background: 'linear-gradient(135deg, rgba(255,125,0,0.05) 0%, rgba(255,77,0,0.1) 100%)',
+                    background: 'linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(64,64,64,0.1) 100%)',
                     border: '2px solid',
                     borderImageSlice: 1,
-                    borderImageSource: 'linear-gradient(to right, #ff7d00, #ff4d00)'
+                    borderImageSource: 'linear-gradient(to right, #000000, #404040)'
                   }}
                 >
                   {/* Animated Edge Top Left */}
@@ -204,7 +204,7 @@ export function FeaturedEvents() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    style={{ borderColor: '#ff7d00' }}
+                    style={{ borderColor: '#000000' }}
                   />
                   
                   {/* Animated Edge Bottom Right */}
@@ -213,16 +213,16 @@ export function FeaturedEvents() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
-                    style={{ borderColor: '#ff4d00' }}
+                    style={{ borderColor: '#404040' }}
                   />
                   
                   <div className="mb-2">
-                    <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm bg-orange-600 text-white">
+                    <span className="inline-block text-xs font-medium px-3 py-1 rounded-sm bg-gradient-to-r from-black to-gray-700 text-white">
                       Wrestling
                     </span>
                   </div>
                   
-                  <h3 className="text-2xl font-bold mb-2 text-orange-600">
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent font-display" style={{ letterSpacing: '0.05em' }}>
                     BIRMINGHAM SLAM CAMP
                   </h3>
                   
@@ -238,7 +238,7 @@ export function FeaturedEvents() {
                   </p>
                   
                   <div className="mt-auto">
-                    <Link href="/events/1" className="bg-gradient-to-r from-orange-600 to-red-600 inline-block py-2 px-6 text-white rounded-md font-medium transition-transform hover:scale-105">
+                    <Link href="/events/1" className="bg-gradient-to-r from-black to-gray-700 inline-block py-2 px-6 text-white rounded-md font-medium transition-transform hover:scale-105">
                       Learn More
                     </Link>
                   </div>
