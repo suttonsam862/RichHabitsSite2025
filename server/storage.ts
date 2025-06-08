@@ -962,39 +962,38 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  // Log payment intent creation with discount information
-  async logEventRegistration(data: {
-    email: string;
-    eventSlug: string;
-    eventId: number;
-    finalAmount: number;
-    discountCode: string | null;
-    stripeIntentId: string;
-    sessionId: string;
-    registrationType: string;
-    originalAmount: number;
-    discountAmount: number;
-  }): Promise<EventRegistrationLog> {
+  // Log complete event registration data
+  async logEventRegistration(data: any): Promise<EventRegistrationLog> {
     try {
       const logData: EventRegistrationLogInsert = {
-        // Remove the custom id generation to let the database auto-generate the UUID
-        firstName: 'Payment Intent',
-        lastName: 'Created',
+        formSessionId: data.formSessionId,
+        firstName: data.firstName,
+        lastName: data.lastName,
         email: data.email,
-        eventSlug: data.eventSlug || `event-${data.eventId || 1}`,
-        eventId: data.eventId || (data.eventSlug ? parseInt(data.eventSlug.replace('event-', '')) : 1),
-        registrationType: data.registrationType,
-        formSessionId: data.sessionId,
-        paymentIntentId: data.stripeIntentId,
-        paymentStatus: 'payment_intent_created',
-        originalAmount: data.originalAmount,
-        finalAmount: data.finalAmount,
-        discountCode: data.discountCode,
-        discountAmount: data.discountAmount,
+        phone: data.phone || null,
+        eventSlug: data.eventSlug || `event-${data.eventId}`,
+        eventId: data.eventId,
+        registrationType: data.registrationType || 'individual',
+        grade: data.grade || null,
+        schoolName: data.schoolName || null,
+        clubName: data.clubName || null,
+        tShirtSize: data.tShirtSize || null,
+        gender: data.gender || null,
+        experience: data.experience || null,
+        day1: data.day1 || data.registrationOption === 'full' || data.registrationOption === 'day1',
+        day2: data.day2 || data.registrationOption === 'full' || data.registrationOption === 'day2',
+        day3: data.day3 || data.registrationOption === 'full' || data.registrationOption === 'day3',
+        basePrice: Math.round((data.finalAmount || 0) * 100), // Convert to cents
+        finalPrice: Math.round((data.finalAmount || 0) * 100),
+        discountCode: data.discountCode || null,
+        discountAmount: 0,
+        paymentStatus: data.paymentStatus || 'completed',
         ipAddress: 'server',
-        userAgent: 'payment-system',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        userAgent: 'registration-system',
+        deviceType: 'server',
+        medicalReleaseAccepted: true,
+        termsAccepted: true,
+        dataSource: 'registration_endpoint'
       };
 
       const [logEntry] = await db
@@ -1002,7 +1001,7 @@ export class DatabaseStorage implements IStorage {
         .values(logData)
         .returning();
 
-      console.log(`Payment intent logged: ${data.stripeIntentId} for ${data.email}, amount: $${data.finalAmount}, discount: ${data.discountCode || 'none'}`);
+      console.log(`Registration logged: ${logEntry.id} for ${data.firstName} ${data.lastName} (${data.email})`);
       return logEntry;
     } catch (error) {
       console.error('Error logging payment intent:', error);

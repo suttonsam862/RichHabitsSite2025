@@ -313,6 +313,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Handle free registration
         console.log('Processing free registration for event:', eventId);
         
+        // Generate form session ID if missing (required for database)
+        const formSessionId = `free_reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
         const registration = await storage.logEventRegistration({
           ...registrationData,
           eventId: parseInt(eventId),
@@ -320,7 +323,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           finalAmount: 0,
           registrationType: registrationData.registrationType || 'full',
           discountCode: discountCode || null,
-          paymentStatus: 'free'
+          paymentStatus: 'free',
+          formSessionId: formSessionId
         });
 
         console.log('Free registration logged:', registration.id);
@@ -386,6 +390,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Payment not completed' });
       }
 
+      // Generate form session ID if missing (required for database)
+      const formSessionId = `paid_reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
       // Log the registration
       const registration = await storage.logEventRegistration({
         ...registrationData,
@@ -395,7 +402,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         registrationType: registrationData.registrationType || 'full',
         paymentIntentId,
         paymentStatus: 'paid',
-        discountCode: discountCode || null
+        discountCode: discountCode || null,
+        formSessionId: formSessionId
       });
 
       console.log('Paid registration logged:', registration.id);
