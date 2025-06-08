@@ -187,8 +187,17 @@ const events = [
       }
     ],
     capacity: 150,
-    ageGroup: "15-18 years",
+    ageGroup: "All ages, boys and girls",
     signature: "Recruiting exposure with NCAA stars",
+    schedule: [
+      { time: "9:00-10:30", activity: "Session 1" },
+      { time: "10:30-11:00", activity: "Live Session" },
+      { time: "11:00-12:15", activity: "Lunch" },
+      { time: "12:15-1:00", activity: "Day 1 Seminar" },
+      { time: "1:05-2:20", activity: "Session 2" },
+      { time: "2:25-3:00", activity: "Live Session" },
+      { time: "3:00-3:30", activity: "Parents and Athletes Q&A" }
+    ],
     benefits: [
       "Spotlight matches with NCAA stars",
       "Direct evaluation from college coaches",
@@ -806,26 +815,51 @@ export default function EventDetail() {
               {/* Schedule Preview */}
               <div className="mb-12">
                 <h3 className="text-2xl mb-6 title-font">Daily Schedule Overview</h3>
-                <div className="space-y-4">
-                  <div className={`border-l-4 pl-6 py-2 ${
-                    event.id === 1 ? 'border-orange-600' : 'border-blue-900'
-                  }`}>
-                    <h4 className="font-bold subtitle-font">Morning Sessions</h4>
-                    <p className="text-gray-600 subtitle-font">Technique development, drill work, and fundamentals</p>
+                {event.id === 3 && event.schedule ? (
+                  <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                    <div className="bg-red-600 text-white px-6 py-3">
+                      <h4 className="font-bold text-lg">Texas Recruiting Clinic Schedule</h4>
+                      <p className="text-red-100 text-sm">Open to all ages, boys and girls</p>
+                    </div>
+                    <div className="divide-y divide-gray-200">
+                      {event.schedule.map((item, index) => (
+                        <div key={index} className="px-6 py-4 flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span className="font-semibold text-gray-900 subtitle-font">{item.time}</span>
+                          </div>
+                          <span className="text-gray-600 subtitle-font">{item.activity}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bg-gray-50 px-6 py-3">
+                      <p className="text-sm text-gray-600 italic">
+                        Note: Break time 2:30-3:00 between Session 2 and Live Session
+                      </p>
+                    </div>
                   </div>
-                  <div className={`border-l-4 pl-6 py-2 ${
-                    event.id === 1 ? 'border-red-600' : 'border-blue-900'
-                  }`}>
-                    <h4 className="font-bold subtitle-font">Afternoon Training</h4>
-                    <p className="text-gray-600 subtitle-font">Live wrestling, situation training, and conditioning</p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className={`border-l-4 pl-6 py-2 ${
+                      event.id === 1 ? 'border-orange-600' : 'border-blue-900'
+                    }`}>
+                      <h4 className="font-bold subtitle-font">Morning Sessions</h4>
+                      <p className="text-gray-600 subtitle-font">Technique development, drill work, and fundamentals</p>
+                    </div>
+                    <div className={`border-l-4 pl-6 py-2 ${
+                      event.id === 1 ? 'border-red-600' : 'border-blue-900'
+                    }`}>
+                      <h4 className="font-bold subtitle-font">Afternoon Training</h4>
+                      <p className="text-gray-600 subtitle-font">Live wrestling, situation training, and conditioning</p>
+                    </div>
+                    <div className={`border-l-4 pl-6 py-2 ${
+                      event.id === 1 ? 'border-orange-500' : 'border-blue-900'
+                    }`}>
+                      <h4 className="font-bold subtitle-font">Evening Sessions</h4>
+                      <p className="text-gray-600 subtitle-font">Mental preparation, video review, and Q&A</p>
+                    </div>
                   </div>
-                  <div className={`border-l-4 pl-6 py-2 ${
-                    event.id === 1 ? 'border-orange-500' : 'border-blue-900'
-                  }`}>
-                    <h4 className="font-bold subtitle-font">Evening Sessions</h4>
-                    <p className="text-gray-600 subtitle-font">Mental preparation, video review, and Q&A</p>
-                  </div>
-                </div>
+                )}
               </div>
               
               {/* Image Gallery */}
