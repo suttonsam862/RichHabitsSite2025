@@ -1,20 +1,3 @@
-/* Import custom fonts */
-@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
-@import './styles/fonts.css';
-
-/* Fallback in case Rogbold/Rodmole aren't available */
-@font-face {
-  font-family: 'Rogbold-Fallback';
-  src: local('Arial Black'), local('Arial-Bold');
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: 'Rodmole-Fallback';
-  src: local('Impact'), local('Arial-Bold');
-  font-weight: bold;
-}
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 
@@ -22,63 +5,294 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Rogbold';
+  src: url('/fonts/rogbold.woff2') format('woff2'),
+       url('/fonts/rogbold.woff') format('woff');
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rogbold-Fallback';
+  src: local('Impact'), local('Arial-Bold');
+  font-weight: bold;
+}
+
 :root {
-  --color-sky: rgb(186, 230, 253, 0.3);
-  --title-font: 'Rogbold', 'Rodmole', 'Rogbold-Fallback', sans-serif;
-  --subtitle-font: 'Arial', sans-serif;
+  --font-display: 'Rogbold', 'Rogbold-Fallback', 'Impact', sans-serif;
+  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-accent: 'Playfair Display', serif;
+  
+  /* Pure minimal colors */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  
+  /* Subtle gradients for depth */
+  --gradient-chrome: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(200,200,255,0.05) 50%, rgba(255,200,255,0.1) 100%);
+  --gradient-glow: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(123,0,255,0.1) 100%);
+  --gradient-border: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(123,123,255,0.2) 50%, rgba(255,123,255,0.1) 100%);
+  
+  /* Shadows */
+  --shadow-soft: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 0 1px rgba(0,0,0,0.05), 0 4px 8px rgba(0,0,0,0.02), 0 0 20px rgba(123,123,255,0.05);
+  --shadow-hover: 0 8px 25px rgba(0,0,0,0.08), 0 0 40px rgba(123,123,255,0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: var(--subtitle-font);
-  color: #333;
-  background-color: #f8f8f8;
+  font-family: var(--font-body);
+  background-color: var(--color-white);
+  color: var(--color-black);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3 {
-  font-family: var(--title-font);
-  letter-spacing: 0.03em;
-  word-spacing: 0.05em;
+/* Typography System */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: bold;
+  letter-spacing: -0.025em;
 }
 
-h4, h5, h6 {
-  font-family: var(--title-font);
+.font-body {
+  font-family: var(--font-body);
 }
 
-.subtitle {
-  font-family: var(--subtitle-font);
-  font-weight: 600;
+.font-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
 }
 
-.title-font {
-  font-family: var(--title-font);
-  letter-spacing: 0.03em;
-  word-spacing: 0.05em;
+/* Layout Utilities */
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.subtitle-font {
-  font-family: var(--subtitle-font);
-  font-weight: 600;
+.section-spacing {
+  padding: 6rem 0;
 }
 
-/* Animation utilities */
-.transition-all {
-  transition: all 0.3s ease;
+.section-spacing-lg {
+  padding: 8rem 0;
 }
 
-.hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Button System */
+.btn-primary {
+  @apply relative inline-flex items-center justify-center px-8 py-3 font-medium text-black bg-white border border-black/10 rounded-lg overflow-hidden transition-all duration-300;
+  background: var(--gradient-chrome);
+  backdrop-filter: blur(10px);
 }
 
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px -15px rgba(0, 0, 0, 0.1);
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: var(--gradient-border);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-/* Subtle sky accents */
-.sky-accent {
-  border-color: var(--color-sky);
+.btn-primary:hover::before {
+  opacity: 1;
 }
 
-.sky-hover:hover {
-  color: #0369a1;
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Link System */
+.link-chromatic {
+  @apply relative inline-block text-black transition-all duration-300;
+  background: linear-gradient(135deg, transparent 0%, rgba(123,123,255,0.1) 50%, transparent 100%);
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+}
+
+.link-chromatic::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gradient-border);
+  transition: width 0.3s ease;
+}
+
+.link-chromatic:hover::after {
+  width: 100%;
+}
+
+.link-chromatic:hover {
+  background-size: 100% 100%;
+}
+
+/* Card System */
+.card-minimal {
+  @apply bg-white border border-black/5 rounded-xl p-8 transition-all duration-300;
+  box-shadow: var(--shadow-soft);
+}
+
+.card-minimal:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.card-minimal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--gradient-chrome);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.card-minimal:hover::before {
+  opacity: 0.1;
+}
+
+/* Header System */
+.header-fixed {
+  @apply fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-black/5;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Hero System */
+.hero-title {
+  @apply font-display text-6xl md:text-8xl lg:text-9xl leading-none tracking-tight mb-6;
+  background: linear-gradient(135deg, #000 0%, #333 50%, #000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  @apply font-body text-xl md:text-2xl text-black/70 mb-8 max-w-2xl;
+}
+
+/* Animation System */
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(123,123,255,0.1);
+  }
+  to {
+    box-shadow: 0 0 40px rgba(123,123,255,0.2);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: var(--gradient-border);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gradient {
+  position: relative;
+  background: white;
+}
+
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: var(--gradient-border);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+}
+
+/* Form System */
+.form-input {
+  @apply w-full px-4 py-3 bg-white border border-black/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 transition-all duration-300;
+}
+
+.form-input:focus {
+  box-shadow: var(--shadow-glow);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 0 1rem;
+  }
+  
+  .section-spacing {
+    padding: 4rem 0;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+  }
+}
+
+/* Remove default styles */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid rgba(0,0,0,0.2);
+  outline-offset: 2px;
 }
