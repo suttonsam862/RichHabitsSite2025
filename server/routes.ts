@@ -148,6 +148,96 @@ ${data.discountCode ? `Discount Code: ${data.discountCode}` : ''}`;
   }
 }
 
+// Unified registration completion function for all registration types
+async function completeRegistration(data: {
+  registration: any;
+  eventId: number;
+  registrationData: any;
+  amount: number;
+  paymentIntentId: string;
+  discountCode?: string;
+  registrationType: 'free' | 'paid' | 'discounted';
+}) {
+  const { registration, eventId, registrationData, amount, paymentIntentId, discountCode, registrationType } = data;
+  let shopifyOrderId = null;
+  
+  console.log(`Completing ${registrationType} registration for event ${eventId}`);
+
+  // 1. Create Shopify order
+  try {
+    const event = await storage.getEvent(eventId);
+    if (event) {
+      const shopifyOrder = await createShopifyOrder({
+        eventId,
+        eventTitle: event.title,
+        registrationData,
+        amount,
+        paymentIntentId,
+        discountCode
+      });
+      
+      shopifyOrderId = shopifyOrder?.id || null;
+      console.log(`Shopify order created for ${registrationType} registration:`, shopifyOrderId);
+      
+      // Update registration with Shopify order ID
+      if (shopifyOrderId) {
+        await storage.updateRegistrationWithShopifyOrder(registration.id, shopifyOrderId);
+        if (registrationType === 'paid' || registrationType === 'discounted') {
+          await storage.updateRegistrationWithPaymentDetails(registration.id, amount, discountCode);
+        }
+        console.log(`Registration ${registration.id} updated with Shopify order ${shopifyOrderId}`);
+      }
+    }
+  } catch (shopifyError) {
+    console.error(`Error creating Shopify order for ${registrationType} registration:`, shopifyError);
+  }
+
+  // 2. Send confirmation email
+  try {
+    const event = await storage.getEvent(eventId);
+    if (event) {
+      await sendRegistrationConfirmationEmail({
+        firstName: registrationData.firstName,
+        lastName: registrationData.lastName,
+        email: registrationData.email,
+        eventName: event.title,
+        eventDates: event.date,
+        eventLocation: event.location,
+        registrationType: registrationData.registrationType || 'full',
+        amount: amount.toFixed(2),
+        paymentId: paymentIntentId,
+        discountCode
+      });
+      console.log(`Confirmation email sent for ${registrationType} registration`);
+    }
+  } catch (emailError) {
+    console.error(`Error sending confirmation email for ${registrationType} registration:`, emailError);
+  }
+
+  // 3. Admin logging for reporting and dashboard
+  try {
+    await logAdminRegistration({
+      email: registrationData.email,
+      eventId,
+      discountCode: discountCode || null,
+      shopifyOrderId,
+      paymentIntentId,
+      amountPaid: amount,
+      registrationType
+    });
+    console.log(`Admin logging completed for ${registrationType} registration`);
+  } catch (logError) {
+    console.error(`Error in admin logging for ${registrationType} registration:`, logError);
+  }
+
+  return {
+    success: true,
+    registrationId: registration.id,
+    shopifyOrderId,
+    emailSent: true
+  };
+}
+
 async function sendRegistrationConfirmationEmail(data: {
   firstName: string;
   lastName: string;
@@ -452,69 +542,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log('Free registration logged:', registration.id);
 
-        // Create Shopify order for free registration
-        let freeShopifyOrderId = null;
-        try {
-          const event = await storage.getEvent(parseInt(eventId));
-          if (event) {
-            const shopifyOrder = await createShopifyOrder({
-              eventId: parseInt(eventId),
-              eventTitle: event.title,
-              registrationData,
-              amount: 0,
-              paymentIntentId: `free_reg_${registration.id}`,
-              discountCode
-            });
-            
-            console.log('Shopify order created for free registration:', shopifyOrder?.id);
-            freeShopifyOrderId = shopifyOrder?.id || null;
-            
-            // Update registration with Shopify order ID
-            if (shopifyOrder?.id) {
-              await storage.updateRegistrationWithShopifyOrder(registration.id, shopifyOrder.id);
-              console.log(`Registration ${registration.id} updated with Shopify order ${shopifyOrder.id}`);
-            }
-          }
-        } catch (shopifyError) {
-          console.error('Error creating Shopify order for free registration:', shopifyError);
-        }
-
-        // Send confirmation email
-        try {
-          const event = await storage.getEvent(parseInt(eventId));
-          if (event) {
-            await sendRegistrationConfirmationEmail({
-              firstName: registrationData.firstName,
-              lastName: registrationData.lastName,
-              email: registrationData.email,
-              eventName: event.title,
-              eventDates: event.date,
-              eventLocation: event.location,
-              registrationType: registrationData.registrationType,
-              amount: '0.00',
-              paymentId: `free_reg_${registration.id}`,
-              discountCode
-            });
-            console.log('Confirmation email sent for free registration');
-          }
-        } catch (emailError) {
-          console.error('Error sending confirmation email for free registration:', emailError);
-        }
-
-        // Admin logging for reporting and dashboard
-        try {
-          await logAdminRegistration({
-            email: registrationData.email,
-            eventId: parseInt(eventId),
-            discountCode: discountCode || null,
-            shopifyOrderId: freeShopifyOrderId,
-            paymentIntentId: `free_reg_${registration.id}`,
-            amountPaid: 0,
-            registrationType: 'free'
-          });
-        } catch (logError) {
-          console.error('Error in admin logging for free registration:', logError);
-        }
+        // Use unified completion function for free registration
+        await completeRegistration({
+          registration,
+          eventId: parseInt(eventId),
+          registrationData,
+          amount: 0,
+          paymentIntentId: `free_reg_${registration.id}`,
+          discountCode,
+          registrationType: 'free'
+        });
 
         return res.json({
           success: true,
@@ -554,73 +591,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('Paid registration logged:', registration.id);
 
-      // Create Shopify order
-      let paidShopifyOrderId = null;
-      try {
-        const event = await storage.getEvent(parseInt(eventId));
-        if (event) {
-          const shopifyOrder = await createShopifyOrder({
-            eventId: parseInt(eventId),
-            eventTitle: event.title,
-            registrationData,
-            amount: paymentIntent.amount / 100,
-            paymentIntentId,
-            discountCode
-          });
-          
-          console.log('Shopify order created:', shopifyOrder?.id);
-          paidShopifyOrderId = shopifyOrder?.id || null;
-          
-          // Update registration with Shopify order ID and payment details
-          if (shopifyOrder?.id) {
-            await storage.updateRegistrationWithShopifyOrder(registration.id, shopifyOrder.id);
-            await storage.updateRegistrationWithPaymentDetails(
-              registration.id, 
-              paymentIntent.amount / 100,
-              discountCode
-            );
-            console.log(`Registration ${registration.id} updated with Shopify order ${shopifyOrder.id} and payment details`);
-          }
-        }
-      } catch (shopifyError) {
-        console.error('Error creating Shopify order:', shopifyError);
-      }
+      // Determine registration type based on discount code and amount
+      const originalAmount = paymentIntent.amount / 100;
+      const registrationType = discountCode && originalAmount < 249 ? 'discounted' : 'paid';
 
-      // Send confirmation email
-      try {
-        const event = await storage.getEvent(parseInt(eventId));
-        if (event) {
-          await sendRegistrationConfirmationEmail({
-            firstName: registrationData.firstName,
-            lastName: registrationData.lastName,
-            email: registrationData.email,
-            eventName: event.title,
-            eventDates: event.date,
-            eventLocation: event.location,
-            registrationType: registrationData.registrationType,
-            amount: (paymentIntent.amount / 100).toFixed(2),
-            paymentId: paymentIntentId
-          });
-          console.log('Confirmation email sent for paid registration');
-        }
-      } catch (emailError) {
-        console.error('Error sending confirmation email:', emailError);
-      }
-
-      // Admin logging for reporting and dashboard
-      try {
-        await logAdminRegistration({
-          email: registrationData.email,
-          eventId: parseInt(eventId),
-          discountCode: discountCode || null,
-          shopifyOrderId: paidShopifyOrderId,
-          paymentIntentId: paymentIntentId,
-          amountPaid: paymentIntent.amount / 100,
-          registrationType: registrationData.registrationType || 'paid'
-        });
-      } catch (logError) {
-        console.error('Error in admin logging for paid registration:', logError);
-      }
+      // Use unified completion function for paid/discounted registration
+      await completeRegistration({
+        registration,
+        eventId: parseInt(eventId),
+        registrationData,
+        amount: originalAmount,
+        paymentIntentId,
+        discountCode,
+        registrationType
+      });
 
       res.json({
         success: true,
