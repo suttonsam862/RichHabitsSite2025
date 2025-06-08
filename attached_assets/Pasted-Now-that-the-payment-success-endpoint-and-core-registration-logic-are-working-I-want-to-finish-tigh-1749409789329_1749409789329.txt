@@ -1,0 +1,83 @@
+Now that the payment success endpoint and core registration logic are working, I want to finish tightening every remaining edge case in the payment system to make it fully airtight and production-ready. Please move slowly and double-check each step. Here’s what to verify and implement next:
+
+Shopify Order Tracking:
+
+Make sure the Shopify order ID is saved in the event_registrations table after successful order creation. If it’s only being logged or passed in the response, add a DB update so the order is permanently linked to the registration.
+
+If it already exists in the completed_registrations table, mirror it to event_registrations or ensure there’s a unique foreign key reference.
+
+Discount Code Storage:
+
+Store the applied discount code (if any) in the registration row. This allows us to track which codes were used, for reconciliation or abuse prevention.
+
+Amount Paid Field:
+
+Add an amountPaid (in cents) field to event_registrations if not already present. Populate it on both free and paid registrations using Stripe PaymentIntent or final calculated value.
+
+Use this field for reconciling revenue with Stripe/Shopify.
+
+Stripe Webhook Fallback (Optional but Ideal):
+
+If it’s not active yet, set up a Stripe webhook route to catch payment_intent.succeeded events. This acts as a fallback in case a frontend error occurs.
+
+Match webhook payload to the correct registration using metadata.paymentIntentId or registrationId.
+
+Prevent Duplicate Registrations Across Sessions:
+
+Ensure the bulletproofPaymentService checks if a user (by email + event ID) already completed a registration before generating a new PaymentIntent. This prevents accidental multiple signups.
+
+If a completed registration exists, return early with a success message and do not charge again.
+
+Improve Admin Logging:
+
+On each successful registration, log:
+
+Email
+
+Event ID
+
+Discount Code (if any)
+
+Shopify Order ID
+
+PaymentIntent ID
+
+Amount Paid
+
+Store this in a clean audit table or console log for future dashboard/reporting purposes.
+
+Frontend Confirmation Page:
+
+Ensure the ?paymentSuccess=true URL param is being used to display a confirmation message. If this doesn't exist yet, build a simple conditional that shows:
+“✅ Thanks for registering! You’ll receive a confirmation email shortly.”
+
+User-Friendly Error Handling:
+
+Add detailed error messages for:
+
+Stripe payment failures
+
+Discount code invalidity
+
+Shopify order failure
+
+Backend registration failures
+
+All errors should be visible and understandable to a non-technical user.
+
+Form Field Validation Sync:
+
+Ensure all required fields (email, phone, school name, etc.) are:
+
+Validated on frontend before Stripe is called.
+
+Required on backend with clean validation logic and error response.
+
+Mapped correctly to Shopify order note attributes.
+
+Cleanup Legacy or Redundant Logic:
+
+If there are old flows still using previous versions of the registration routes or creating incomplete entries, remove or disable them now.
+
+After this full tightening step, the payment and registration system should be bulletproof. Let me know when each task is complete so we can do final scenario testing. Do not skip any of the steps above—go slow and confirm each one works before moving on.
+

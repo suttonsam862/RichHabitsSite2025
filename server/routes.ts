@@ -343,6 +343,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
             
             console.log('Shopify order created for free registration:', shopifyOrder?.id);
+            
+            // Update registration with Shopify order ID
+            if (shopifyOrder?.id) {
+              await storage.updateRegistrationWithShopifyOrder(registration.id, shopifyOrder.id);
+              console.log(`Registration ${registration.id} updated with Shopify order ${shopifyOrder.id}`);
+            }
           }
         } catch (shopifyError) {
           console.error('Error creating Shopify order for free registration:', shopifyError);
@@ -422,6 +428,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           console.log('Shopify order created:', shopifyOrder?.id);
+          
+          // Update registration with Shopify order ID and payment details
+          if (shopifyOrder?.id) {
+            await storage.updateRegistrationWithShopifyOrder(registration.id, shopifyOrder.id);
+            await storage.updateRegistrationWithPaymentDetails(
+              registration.id, 
+              paymentIntent.amount / 100,
+              discountCode
+            );
+            console.log(`Registration ${registration.id} updated with Shopify order ${shopifyOrder.id} and payment details`);
+          }
         }
       } catch (shopifyError) {
         console.error('Error creating Shopify order:', shopifyError);

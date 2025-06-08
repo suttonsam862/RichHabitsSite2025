@@ -1009,6 +1009,70 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // Update registration with Shopify order ID after successful order creation
+  async updateRegistrationWithShopifyOrder(registrationId: string, shopifyOrderId: string): Promise<void> {
+    try {
+      await db
+        .update(eventRegistrationLog)
+        .set({ 
+          shopifyOrderId: shopifyOrderId,
+          updatedAt: new Date()
+        })
+        .where(eq(eventRegistrationLog.id, registrationId));
+      
+      console.log(`Registration ${registrationId} updated with Shopify order ${shopifyOrderId}`);
+    } catch (error) {
+      console.error('Error updating registration with Shopify order:', error);
+      throw error;
+    }
+  }
+
+  // Update registration with amount paid and payment details
+  async updateRegistrationWithPaymentDetails(registrationId: string, amountPaid: number, discountCode?: string): Promise<void> {
+    try {
+      const updateData: any = {
+        finalPrice: Math.round(amountPaid * 100), // Convert to cents
+        updatedAt: new Date()
+      };
+      
+      if (discountCode) {
+        updateData.discountCode = discountCode;
+      }
+      
+      await db
+        .update(eventRegistrationLog)
+        .set(updateData)
+        .where(eq(eventRegistrationLog.id, registrationId));
+      
+      console.log(`Registration ${registrationId} updated with payment details: $${amountPaid}`);
+    } catch (error) {
+      console.error('Error updating registration with payment details:', error);
+      throw error;
+    }
+  }
+
+  // Check if user already has completed registration for event (prevent duplicates)
+  async checkExistingRegistration(email: string, eventId: number): Promise<boolean> {
+    try {
+      const existing = await db
+        .select()
+        .from(eventRegistrationLog)
+        .where(
+          and(
+            eq(eventRegistrationLog.email, email),
+            eq(eventRegistrationLog.eventId, eventId),
+            eq(eventRegistrationLog.paymentStatus, 'completed')
+          )
+        )
+        .limit(1);
+      
+      return existing.length > 0;
+    } catch (error) {
+      console.error('Error checking existing registration:', error);
+      return false;
+    }
+  }
+
   // Recruiting clinic request methods
   async createRecruitingClinicRequest(data: RecruitingClinicRequestInsert): Promise<RecruitingClinicRequest> {
     try {

@@ -194,6 +194,8 @@ export const eventRegistrationLog = pgTable("event_registration_log", {
   // Payment tracking
   paymentStatus: text("payment_status").notNull().default("pending"), // pending, paid, failed, cancelled
   paymentMethod: text("payment_method"), // card, etc.
+  stripePaymentIntentId: text("stripe_payment_intent_id"), // Stripe payment intent ID
+  shopifyOrderId: text("shopify_order_id"), // Shopify order ID after successful order creation
   
   // Session and device tracking
   ipAddress: text("ip_address"),
