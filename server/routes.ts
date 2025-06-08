@@ -45,6 +45,32 @@ import {
 import { handleStripeWebhook, verifyPaymentIntent as stripeVerifyPaymentIntent } from './stripe.js';
 import { getSystemHealth } from './monitoring.js';
 
+// Admin logging function for reporting and dashboard
+async function logAdminRegistration(data: {
+  email: string;
+  eventId: number;
+  discountCode: string | null;
+  shopifyOrderId: string | null;
+  paymentIntentId: string;
+  amountPaid: number;
+  registrationType: string;
+}): Promise<void> {
+  try {
+    console.log('📊 ADMIN LOG - Successful Registration:', {
+      email: data.email,
+      eventId: data.eventId,
+      discountCode: data.discountCode,
+      shopifyOrderId: data.shopifyOrderId,
+      paymentIntentId: data.paymentIntentId,
+      amountPaid: `$${data.amountPaid.toFixed(2)}`,
+      registrationType: data.registrationType,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error in admin logging:', error);
+  }
+}
+
 // Add missing functions for the new endpoint
 async function createShopifyOrder(data: {
   eventId: number;
@@ -219,6 +245,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
 
+      // Check for existing completed registration to prevent duplicates
+      if (registrationData?.email) {
+        const existingRegistration = await storage.checkExistingRegistration(registrationData.email, eventId);
+        if (existingRegistration) {
+          console.log(`Preventing duplicate registration for ${registrationData.email} on event ${eventId}`);
+          return res.status(409).json({
+            error: 'Registration already exists',
+            userFriendlyMessage: 'You have already registered for this event. Check your email for confirmation details.',
+            canRetry: false
+          });
+        }
+      }
+
       // Use bulletproof payment service to prevent duplicate charges
       console.log('Using bulletproof payment service for registration...');
       
@@ -330,6 +369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Free registration logged:', registration.id);
 
         // Create Shopify order for free registration
+        let freeShopifyOrderId = null;
         try {
           const event = await storage.getEvent(parseInt(eventId));
           if (event) {
@@ -343,6 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
             
             console.log('Shopify order created for free registration:', shopifyOrder?.id);
+            freeShopifyOrderId = shopifyOrder?.id || null;
             
             // Update registration with Shopify order ID
             if (shopifyOrder?.id) {
@@ -374,6 +415,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (emailError) {
           console.error('Error sending confirmation email for free registration:', emailError);
+        }
+
+        // Admin logging for reporting and dashboard
+        try {
+          await logAdminRegistration({
+            email: registrationData.email,
+            eventId: parseInt(eventId),
+            discountCode: discountCode || null,
+            shopifyOrderId: shopifyOrder?.id || null,
+            paymentIntentId: `free_reg_${registration.id}`,
+            amountPaid: 0,
+            registrationType: 'free'
+          });
+        } catch (logError) {
+          console.error('Error in admin logging for free registration:', logError);
         }
 
         return res.json({
