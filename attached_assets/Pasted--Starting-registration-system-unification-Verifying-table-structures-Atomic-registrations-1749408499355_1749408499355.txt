@@ -1,0 +1,68 @@
+🚀 Starting registration system unification...
+🔍 Verifying table structures...
+Atomic registrations columns: event_price_cents, payment_completed_at, age, created_at, weight, id, email, contact_name, phone, grade, gender, tshirt_size, school_name, experience_level, club_name, payment_status, stripe_customer_id, stripe_client_secret, registration_source, ip_address, user_agent, data_checksum, system_version, uuid, stripe_payment_intent_id, event_slug, first_name, last_name
+Event registration log columns: terms_accepted, event_id, day1, day2, day3, gear_selection, base_price, discount_amount, final_price, recovered, created_at, updated_at, medical_release_accepted, id, t_shirt_size, gender, experience, registration_type, data_source, payment_status, payment_method, ip_address, user_agent, discount_code, form_session_id, stripe_payment_intent_id, first_name, last_name, email, phone, event_slug, device_type, camp_date, team_name, grade, school_name, club_name
+📊 Collecting data from all registration tables...
+📋 Found 269 total registration records across all tables
+🔄 Deduplicating registrations...
+✅ Deduplicated to 61 unique registrations
+🗑️ Found 208 duplicate records
+📝 Creating unified registration export...
+
+📊 UNIFIED REGISTRATION SUMMARY:
+=====================================
+undefined:
+  Total: 61
+  Paid: 0
+  Pending: 61
+
+OVERALL TOTALS:
+Total Unique Registrations: 61
+Total Paid Registrations: 0
+Total Pending Registrations: 61
+
+💾 Creating backup of existing tables...
+❌ Error during unification: NeonDbError: relation "completed_event_registrations" does not exist
+    at execute (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1556:55)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async unifyRegistrationSystem (/home/runner/workspace/scripts/unify-registration-system.ts:270:5) {
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '74',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1449',
+  routine: 'parserOpenTable',
+  sourceError: undefined
+}
+NeonDbError: relation "completed_event_registrations" does not exist
+    at execute (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1556:55)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async unifyRegistrationSystem (/home/runner/workspace/scripts/unify-registration-system.ts:270:5) {
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '74',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1449',
+  routine: 'parserOpenTable',
+  sourceError: undefined
+}
