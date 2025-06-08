@@ -124,8 +124,10 @@ export default function Home() {
       </section>
       
       {/* NATIONAL CHAMP CAMP DISCOUNT PROMOTION */}
-      <section className="py-12 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700">
-        <div className="container mx-auto px-4">
+      <section className="py-12 relative bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url(/images/camp-background.webp)'}}>
+        {/* Black overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -144,7 +146,7 @@ export default function Home() {
                 National Champ Camp
               </h2>
               
-              <p className="text-xl md:text-2xl mb-6 text-blue-100">
+              <p className="text-xl md:text-2xl mb-6 text-gray-200">
                 Train with NCAA Champions & Olympic Athletes
               </p>
               
@@ -152,7 +154,7 @@ export default function Home() {
                 {/* Pricing Display */}
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-4 mb-2">
-                    <span className="text-2xl text-blue-300 line-through">$349</span>
+                    <span className="text-2xl text-gray-300 line-through">$349</span>
                     <span className="text-5xl font-bold text-white">$299</span>
                   </div>
                   <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold">
@@ -163,29 +165,29 @@ export default function Home() {
                 {/* Flexible Options */}
                 <div className="text-center bg-white/10 rounded-lg p-6">
                   <h3 className="text-xl font-bold mb-4 text-yellow-300">NEW! Flexible Options</h3>
-                  <div className="space-y-2 text-blue-100">
+                  <div className="space-y-2 text-gray-200">
                     <div>1 Day Option: <span className="font-bold text-white">$119</span></div>
                     <div>2 Day Option: <span className="font-bold text-white">$238</span></div>
                     <div>Full 3 Days: <span className="font-bold text-white">$299</span></div>
                   </div>
-                  <p className="text-sm text-yellow-200 mt-2">Choose your schedule!</p>
+                  <p className="text-sm text-yellow-300 mt-2">Choose your schedule!</p>
                 </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/events/2">
-                  <span className="inline-block bg-white text-blue-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-50 transition-colors cursor-pointer shadow-lg">
+                  <span className="inline-block bg-white text-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors cursor-pointer shadow-lg">
                     Register Now - Save $50
                   </span>
                 </Link>
                 <Link href="/events/2">
-                  <span className="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-blue-900 transition-colors cursor-pointer">
+                  <span className="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-black transition-colors cursor-pointer">
                     Learn More
                   </span>
                 </Link>
               </div>
               
-              <p className="text-sm text-blue-200 mt-6">
+              <p className="text-sm text-gray-300 mt-6">
                 June 5-7, 2025 • Roy Martin Middle School, Las Vegas, NV
               </p>
             </div>
