@@ -266,7 +266,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         option,
         registrationData,
         discountCode,
-        discountedAmount
+        discountedAmount,
+        forceNewIntent: req.body.forceNewIntent || false
       });
 
       console.log('Payment service result:', {

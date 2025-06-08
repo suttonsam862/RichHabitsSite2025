@@ -96,6 +96,12 @@ class SessionManager {
     }, 30 * 60 * 1000); // 30 minutes
   }
 
+  // Clear payment intent for session (used when forcing new intent creation)
+  clearPaymentIntent(sessionId) {
+    console.log(`🗑️ Clearing payment intent for session: ${sessionId}`);
+    this.paymentIntents.delete(sessionId);
+  }
+
   // Increment attempt counter for session
   incrementAttempts(sessionId) {
     const session = this.activeSessions.get(sessionId);
