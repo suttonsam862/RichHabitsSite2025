@@ -99,8 +99,8 @@ export default function Home() {
                 <span>Register as Individual</span>
               </button>
               <button
-                onClick={scrollToSignup}
-                className="bg-orange-500 text-white py-4 px-8 text-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
+                onClick={() => setShowEventSelector(true)}
+                className="bg-black text-white py-4 px-8 text-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
               >
                 <Users size={20} />
                 <span>Register as Team</span>
