@@ -9,7 +9,6 @@ import { pool } from "./db";
 import Stripe from "stripe";
 import { approveRegistrations } from "./registrationApproval";
 import { storage } from "./storage";
-import { authenticateUser, authorizeAdmin, optionalAuth } from "./auth";
 import { 
   insertContactSubmissionSchema, 
   insertCustomApparelInquirySchema, 
@@ -37,9 +36,8 @@ declare module 'express-session' {
   }
 }
 
-// Legacy session-based admin authentication (deprecated)
-// This is kept for backward compatibility but should be replaced by Supabase Auth
-const legacyAuthenticateAdmin = (req: Request, res: Response, next: any) => {
+// Admin authentication middleware
+const authenticateAdmin = (req: Request, res: Response, next: any) => {
   // Check if already authenticated in session
   if (req.session && req.session.isAdmin === true) {
     return next();
@@ -84,10 +82,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint to approve registrations and move them to completed
-  app.post("/api/approve-registrations", authenticateUser, authorizeAdmin, approveRegistrations);
+  app.post("/api/approve-registrations", authenticateAdmin, approveRegistrations);
   
   // API endpoint to fetch registrations with various filters
-  app.get("/api/registrations", authenticateUser, authorizeAdmin, async (req, res) => {
+  app.get("/api/registrations", authenticateAdmin, async (req, res) => {
     try {
       // Get optional event ID filter from query parameters
       const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
@@ -104,24 +102,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // API endpoint to fetch completed event registrations (using unified table)
-  app.get("/api/completed-registrations", authenticateUser, authorizeAdmin, async (req, res) => {
+  // API endpoint to fetch completed event registrations
+  app.get("/api/completed-registrations", authenticateAdmin, async (req, res) => {
     try {
-      // Get optional event ID and payment verification filters from query parameters
+      // Get optional event ID filter from query parameters
       const eventId = req.query.eventId ? parseInt(req.query.eventId as string, 10) : undefined;
-      const paymentVerified = req.query.paymentVerified as string;
       
-      // Fetch completed registrations from unified table (status = 'paid')
-      let completedRegistrations = await storage.getRegistrations(eventId, 'paid');
-      
-      // Apply payment verification filter if specified
-      if (paymentVerified) {
-        if (paymentVerified === 'true') {
-          completedRegistrations = completedRegistrations.filter(reg => reg.paymentVerified === true);
-        } else if (paymentVerified === 'false') {
-          completedRegistrations = completedRegistrations.filter(reg => reg.paymentVerified === false || reg.paymentVerified === null);
-        }
-      }
+      // Fetch completed registrations from storage
+      const completedRegistrations = await storage.getCompletedEventRegistrations(eventId);
       
       // Return the completed registrations
       res.status(200).json(completedRegistrations);
@@ -132,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all events for the admin dashboard
-  app.get("/api/events", authenticateUser, authorizeAdmin, async (req, res) => {
+  app.get("/api/events", authenticateAdmin, async (req, res) => {
     try {
       const events = await storage.getEvents();
       res.status(200).json(events);

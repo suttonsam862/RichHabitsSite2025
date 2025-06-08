@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
-import { OptimizedImage, OptimizedVideo } from "@/components/OptimizedMedia";
 
 // Comprehensive mobile crash prevention
 const isMobile = () => {
@@ -400,15 +399,27 @@ export default function EventDetail() {
       >
         {/* CRITICAL: Mobile-safe backgrounds - videos disabled on mobile to prevent crashes */}
         {!isMobile() && event.id === 1 && (
-          <OptimizedVideo
-            src="/videos/events-hero.mp4"
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
-            autoPlay={true}
-            loop={true}
-            muted={true}
-            controls={false}
-            fallbackText="Event highlights video"
-          />
+            onError={(e) => {
+              console.log('Video failed, hiding element');
+              e.currentTarget.style.display = 'none';
+            }}
+            onLoadStart={() => {
+              // Prevent memory issues
+              if (isMobile()) {
+                return false;
+              }
+            }}
+          >
+            <source src="/videos/events-hero.webm" type="video/webm" />
+            <source src="/videos/events-hero.mp4" type="video/mp4" />
+          </video>
         )}
 
         {!isMobile() && event.id === 2 && (

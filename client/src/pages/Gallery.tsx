@@ -4,7 +4,6 @@ import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Helmet } from "react-helmet";
-import { OptimizedImage } from "@/components/OptimizedMedia";
 
 // Gallery items
 const galleryItems = [
@@ -203,13 +202,11 @@ export default function Gallery() {
                     className="gallery-image relative aspect-square cursor-pointer"
                     onClick={() => openLightbox(item)}
                   >
-                    <OptimizedImage 
+                    <img 
                       src={item.image} 
                       alt={item.title} 
                       className="w-full h-full object-cover"
-                      width={400}
-                      height={400}
-                      fallbackSrc={`/api/images${item.image}?w=200&quality=60`}
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all duration-300 flex items-end">
                       <div className="p-4 text-white opacity-0 hover:opacity-100 transition-opacity duration-300 w-full">

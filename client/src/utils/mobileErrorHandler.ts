@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentType } from 'react';
+import React from 'react';
 
 // Comprehensive mobile crash prevention system
 export const isMobile = () => {
@@ -10,8 +10,8 @@ export const isMobile = () => {
 };
 
 // Memory-safe component wrapper
-export const withMobileSafety = <T extends Record<string, any>>(Component: ComponentType<T>) => {
-  return forwardRef<any, T>((props, ref) => {
+export const withMobileSafety = <T extends Record<string, any>>(Component: React.ComponentType<T>) => {
+  return React.forwardRef<any, T>((props, ref) => {
     try {
       // Add mobile-specific optimizations
       const mobileProps = isMobile() ? {
@@ -22,17 +22,23 @@ export const withMobileSafety = <T extends Record<string, any>>(Component: Compo
         enableEffects: false
       } : props;
 
-      return <Component {...mobileProps} ref={ref} />;
+      return React.createElement(Component, { ...mobileProps, ref });
     } catch (error) {
       console.error('Mobile component crash prevented:', error);
-      return (
-        <div className="flex items-center justify-center p-4 min-h-32">
-          <div className="text-center">
-            <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2" />
-            <p className="text-sm text-gray-600">Loading...</p>
-          </div>
-        </div>
-      );
+      return React.createElement('div', {
+        className: "flex items-center justify-center p-4 min-h-32"
+      }, React.createElement('div', {
+        className: "text-center"
+      }, [
+        React.createElement('div', {
+          key: 'spinner',
+          className: "animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"
+        }),
+        React.createElement('p', {
+          key: 'text',
+          className: "text-sm text-gray-600"
+        }, 'Loading...')
+      ]));
     }
   });
 };

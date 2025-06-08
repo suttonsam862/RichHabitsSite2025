@@ -1,178 +1,269 @@
+import { useState } from "react";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
+import EventFilters from "@/components/events/EventFilters";
+// Using a simpler approach for now to ensure functionality
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-const wrestlingEvents = [
+// Event data - using working images and proper error handling
+const events = [
   {
     id: 1,
     title: "Birmingham Slam Camp",
     date: "June 19-21, 2025",
     location: "Clay-Chalkville Middle School, Birmingham, AL",
     price: "$249",
-    description: "High-energy wrestling camp featuring top coaches and intensive skill development sessions.",
-    features: ["3 days of training", "Elite coaching staff", "Technique workshops", "Live wrestling"]
+    shortDescription: "A high-energy wrestling camp featuring top coaches and intensive training.",
+    image: null, // Will use gradient background instead
+    accent: "orange",
+    signature: "Exclusive partnership with Fruit Hunters",
+    gradientFrom: "from-red-600",
+    gradientTo: "to-orange-500"
   },
   {
     id: 2,
     title: "National Champ Camp",
     date: "June 5-7, 2025",
-    location: "Roy Martin Middle School, Las Vegas, NV", 
+    location: "Roy Martin Middle School, Las Vegas, NV",
     price: "$349",
-    description: "Train with NCAA champions and Olympic athletes in this premium intensive camp.",
-    features: ["Olympic-level training", "NCAA champion coaches", "Advanced techniques", "Competition prep"]
+    shortDescription: "Train with NCAA champions and Olympic athletes in this intensive camp.",
+    image: "/national-champ-hero.png", // Using the working image we already have
+    accent: "blue",
+    signature: "Focus on championship-level techniques",
+    gradientFrom: "from-blue-900",
+    gradientTo: "to-blue-700"
   },
   {
     id: 3,
     title: "Texas Recruiting Clinic",
-    date: "July 12-14, 2025",
-    location: "Austin Wrestling Academy, Austin, TX",
-    price: "$199",
-    description: "Perfect for high school wrestlers looking to get recruited by college programs.",
-    features: ["College recruitment", "Scholarship guidance", "Film sessions", "Coach networking"]
+    date: "June 12-13, 2025",
+    location: "Arlington Martin High School, Arlington, TX",
+    price: "$249",
+    shortDescription: "Designed specifically for high school wrestlers seeking collegiate opportunities.",
+    image: null, // Will use gradient background instead
+    accent: "red",
+    signature: "College coach evaluations included",
+    gradientFrom: "from-red-700",
+    gradientTo: "to-red-500"
+  },
+  {
+    id: 4,
+    title: "Panther Train Tour",
+    date: "June 15-17, 2025",
+    location: "Multiple Locations, Alabama",
+    price: "$99 per day",
+    shortDescription: "A multi-location training tour with elite coaches.",
+    image: null, // Will use gradient background instead
+    accent: "black",
+    signature: "Travel across multiple training facilities",
+    gradientFrom: "from-gray-900",
+    gradientTo: "to-gray-700"
   }
 ];
 
+// Animation variants
+const fadeIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.8 } }
+};
+
+const stagger = {
+  animate: {
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const imageReveal = {
+  initial: { scale: 1.2, opacity: 0 },
+  animate: { 
+    scale: 1, 
+    opacity: 1, 
+    transition: { 
+      duration: 1.2,
+      ease: [0.25, 1, 0.5, 1]
+    } 
+  }
+};
+
 export default function Events() {
-  const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
-
-  const selectedEventData = selectedEvent 
-    ? wrestlingEvents.find(event => event.id === selectedEvent)
-    : null;
-
+  // Simplified state to improve performance
+  const [filteredEvents, setFilteredEvents] = useState(events);
+  const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
+  
+  // Optimized filter handler
+  const handleFilterChange = (filters: any) => {
+    console.log("Filtering events with:", filters);
+    // Simple filtering to reduce computational load
+    const filtered = events.filter(event => {
+      // Basic location filter
+      if (filters.location !== "All Locations" && !event.location.includes(filters.location)) {
+        return false;
+      }
+      
+      // Simplified month filter
+      if (filters.month !== "All Months" && !event.date.includes(filters.month.substring(0, 3))) {
+        return false;
+      }
+      
+      return true;
+    });
+    
+    setFilteredEvents(filtered);
+  };
+  
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Wrestling Events & Camps
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Join our premium wrestling camps and clinics designed to elevate your skills 
-            and take your wrestling to the next level.
-          </p>
-        </header>
-
-        {/* Events Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {wrestlingEvents.map((event) => (
-            <div 
-              key={event.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-24 pb-20">
+      {/* Hero Section - Mobile Optimized */}
+      <motion.div 
+        className="relative h-[50vh] sm:h-[60vh] lg:h-[70vh] mb-12 sm:mb-20 overflow-hidden"
+        variants={fadeIn}
+        initial="initial"
+        animate="animate"
+      >
+        <div className="absolute inset-0 bg-gray-900">
+          <motion.div 
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 20, ease: "easeInOut" }}
+            className="absolute inset-0 opacity-50 bg-red-600"
+          ></motion.div>
+        </div>
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
+        
+        <div className="container mx-auto px-4 sm:px-6 h-full flex items-center relative z-10">
+          <div className="max-w-3xl">
+            <h1 
+              className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 sm:mb-8 title-font"
             >
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900 flex-1">
-                    {event.title}
-                  </h2>
-                  <span className="text-xl font-bold text-blue-600 ml-4">
-                    {event.price}
-                  </span>
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  <p className="text-gray-600 flex items-center">
-                    <span className="mr-2">📅</span>
-                    {event.date}
-                  </p>
-                  <p className="text-gray-600 flex items-center">
-                    <span className="mr-2">📍</span>
-                    {event.location}
-                  </p>
-                </div>
-
-                <p className="text-gray-700 mb-4 text-sm">
-                  {event.description}
-                </p>
-
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => setSelectedEvent(event.id)}
-                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors text-sm font-medium"
-                  >
-                    View Details
-                  </button>
-                  <Link
-                    to={`/events/${event.id}/register`}
-                    className="flex-1 bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900 transition-colors text-sm font-medium text-center"
-                  >
-                    Register
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Call to Action */}
-        <div className="text-center bg-blue-600 text-white rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-4">Ready to Take Your Wrestling to the Next Level?</h2>
-          <p className="text-lg mb-6">Join hundreds of wrestlers who have improved their skills at Rich Habits camps.</p>
-          <Link
-            to="/contact"
-            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-          >
-            Contact Us
-          </Link>
-        </div>
-      </div>
-
-      {/* Modal */}
-      {selectedEvent && selectedEventData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-bold">{selectedEventData.title}</h3>
-              <button 
-                onClick={() => setSelectedEvent(null)}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <p className="font-medium text-gray-900">Date & Location</p>
-                <p className="text-gray-600">{selectedEventData.date}</p>
-                <p className="text-gray-600">{selectedEventData.location}</p>
-              </div>
-
-              <div>
-                <p className="font-medium text-gray-900">Price</p>
-                <p className="text-2xl font-bold text-blue-600">{selectedEventData.price}</p>
-              </div>
-
-              <div>
-                <p className="font-medium text-gray-900 mb-2">What's Included</p>
-                <ul className="space-y-1">
-                  {selectedEventData.features.map((feature, index) => (
-                    <li key={index} className="text-gray-600 flex items-center">
-                      <span className="text-green-500 mr-2">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="pt-4 space-y-2">
-                <Link
-                  to={`/events/${selectedEventData.id}/register`}
-                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded hover:bg-blue-700 transition-colors font-medium"
-                >
-                  Register Now
-                </Link>
-                <button 
-                  onClick={() => setSelectedEvent(null)}
-                  className="block w-full bg-gray-200 text-gray-700 text-center py-2 px-4 rounded hover:bg-gray-300 transition-colors"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
+              Events
+            </h1>
+            <p 
+              className="text-lg sm:text-xl text-gray-200 mb-8 sm:mb-10 subtitle-font"
+            >
+              Premium wrestling camps and clinics designed to elevate your skills, technique, and competitive edge.
+            </p>
           </div>
         </div>
-      )}
+        
+        {/* Subtle sky accent line */}
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-30"></div>
+      </motion.div>
+      
+      {/* Event Filters */}
+      <div className="container mx-auto px-4 sm:px-6">
+        <EventFilters 
+          onFilterChange={handleFilterChange}
+          totalEvents={events.length}
+          filteredEvents={filteredEvents.length}
+        />
+      </div>
+      
+      {/* Events Grid - Mobile Optimized */}
+      <div className="container mx-auto px-4 sm:px-6">
+        <motion.div
+          variants={stagger}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
+        >
+          {filteredEvents.map((event) => (
+            <motion.div 
+              key={event.id}
+              variants={fadeIn}
+              className="group bg-white shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              onMouseEnter={() => setHoveredEvent(event.id)}
+              onMouseLeave={() => setHoveredEvent(null)}
+            >
+              <Link href={`/events/${event.id}`}>
+                {/* Image Section with Crash-Proof Error Handling - Mobile Optimized */}
+                <div className="relative overflow-hidden h-48 sm:h-56 lg:h-60">
+                  <motion.div
+                    variants={imageReveal}
+                    className="w-full h-full"
+                  >
+                    {event.image ? (
+                      <div className="w-full h-full relative">
+                        <img
+                          src={event.image}
+                          alt={event.title}
+                          className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                          loading="lazy"
+                          onError={(e) => {
+                            // Prevent infinite reloading loops and browser crashes
+                            const target = e.currentTarget;
+                            if (!target.dataset.errorHandled) {
+                              target.dataset.errorHandled = "true";
+                              target.style.display = "none";
+                              const fallback = target.nextElementSibling as HTMLElement;
+                              if (fallback) {
+                                fallback.style.display = "flex";
+                              }
+                              // Track failed images to prevent retry attempts
+                              setImageErrors(prev => new Set(prev).add(event.id));
+                            }
+                          }}
+                          onLoad={(e) => {
+                            // Ensure fallback is hidden when image loads successfully
+                            const target = e.currentTarget;
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) {
+                              fallback.style.display = "none";
+                            }
+                          }}
+                        />
+                        {/* Gradient Fallback */}
+                        <div 
+                          className={`w-full h-full bg-gradient-to-br ${event.gradientFrom} ${event.gradientTo} transform transition-transform duration-700 group-hover:scale-105 flex items-center justify-center absolute inset-0`}
+                          style={{ display: "none" }}
+                        >
+                          <h3 className="text-xl font-medium text-white text-center px-4">{event.title}</h3>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Pure Gradient Background for Events Without Images */
+                      <div 
+                        className={`w-full h-full bg-gradient-to-br ${event.gradientFrom} ${event.gradientTo} transform transition-transform duration-700 group-hover:scale-105 flex items-center justify-center`}
+                      >
+                        <h3 className="text-xl font-medium text-white text-center px-4">{event.title}</h3>
+                      </div>
+                    )}
+                  </motion.div>
+                  
+                  {/* Hover effect */}
+                  <motion.div 
+                    className="absolute bottom-0 left-0 w-full h-1 bg-sky-200 opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+                    animate={{ 
+                      width: hoveredEvent === event.id ? '100%' : '0%',
+                      opacity: hoveredEvent === event.id ? 0.7 : 0
+                    }}
+                    transition={{ duration: 0.5 }}
+                  ></motion.div>
+                </div>
+                
+                {/* Content Section - Only Title, Date, Location */}
+                <div className="p-6">
+                  <h2 className="text-2xl mb-3 title-font">{event.title}</h2>
+                  <div className="mb-1">
+                    <span className="text-sm text-gray-500 subtitle-font">{event.date}</span>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-600 subtitle-font">{event.location}</span>
+                  </div>
+                  <div className="mt-5">
+                    <span className="text-sm font-medium text-gray-900 border-b border-gray-900 pb-1 hover:text-sky-800 hover:border-sky-800 transition-colors inline-block subtitle-font">
+                      View Details
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </div>
   );
 }

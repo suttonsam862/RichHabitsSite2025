@@ -1,4 +1,20 @@
-/* Font Imports - Must come first */
+/* Import custom fonts */
+@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+@import './styles/fonts.css';
+
+/* Fallback in case Rogbold/Rodmole aren't available */
+@font-face {
+  font-family: 'Rogbold-Fallback';
+  src: local('Arial Black'), local('Arial-Bold');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Rodmole-Fallback';
+  src: local('Impact'), local('Arial-Bold');
+  font-weight: bold;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 
@@ -6,393 +22,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Rogbold Font */
-@font-face {
-  font-family: 'Rogbold';
-  src: url('./styles/fonts/rogbold.woff2') format('woff2'),
-       url('./styles/fonts/rogbold.woff') format('woff');
-  font-display: swap;
-  font-weight: bold;
-}
-
-/* Birds of Paradise Script Font - For rare accent elements */
-@font-face {
-  font-family: 'Birds of Paradise';
-  src: url('./styles/fonts/birds-of-paradise.woff2') format('woff2'),
-       url('./styles/fonts/birds-of-paradise.woff') format('woff');
-  font-display: swap;
-  font-style: italic;
-}
-
 :root {
-  /* Design System Colors */
-  --white: #ffffff;
-  --black: #000000;
-  
-  /* Typography */
-  --font-title: 'Rogbold', 'Impact', sans-serif;
-  --font-body: 'Poppins', sans-serif;
-  --font-script: 'Birds of Paradise', cursive;
-  
-  /* Chromatic Effects */
-  --gradient-chromatic: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(0, 0, 0, 0.05) 25%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(0, 0, 0, 0.05) 75%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  
-  --gradient-border: linear-gradient(90deg, 
-    rgba(0, 0, 0, 0.1) 0%,
-    rgba(0, 0, 0, 0.2) 50%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  
-  /* Shadows */
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-chromatic: 0 0 20px rgba(0, 0, 0, 0.03);
-}
-
-/* Global Reset & Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --color-sky: rgb(186, 230, 253, 0.3);
+  --title-font: 'Rogbold', 'Rodmole', 'Rogbold-Fallback', sans-serif;
+  --subtitle-font: 'Arial', sans-serif;
 }
 
 body {
-  font-family: var(--font-body);
-  font-weight: 400;
-  line-height: 1.6;
-  color: var(--black);
-  background-color: var(--white);
-  overflow-x: hidden;
+  font-family: var(--subtitle-font);
+  color: #333;
+  background-color: #f8f8f8;
 }
 
-/* Typography Utilities */
-.font-title {
-  font-family: var(--font-title);
-  font-weight: bold;
-  letter-spacing: 0.05em;
+h1, h2, h3 {
+  font-family: var(--title-font);
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
 }
 
-.font-body {
-  font-family: var(--font-body);
+h4, h5, h6 {
+  font-family: var(--title-font);
 }
 
-.font-script {
-  font-family: var(--font-script);
-  font-style: italic;
+.subtitle {
+  font-family: var(--subtitle-font);
+  font-weight: 600;
 }
 
-/* Button Components */
-.btn-primary {
-  @apply inline-flex items-center justify-center px-8 py-4 text-base font-medium;
-  @apply border border-black bg-white text-black;
-  @apply transition-all duration-300 ease-out;
-  @apply relative overflow-hidden;
-  
-  font-family: var(--font-body);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  
-  /* Chromatic hover effect */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-chromatic);
-    transition: left 0.3s ease-out;
-    z-index: -1;
-  }
-  
-  &:hover {
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-1px);
-    
-    &::before {
-      left: 0;
-    }
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
+.title-font {
+  font-family: var(--title-font);
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
 }
 
-.btn-ghost {
-  @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium;
-  @apply bg-transparent text-black border-none;
-  @apply transition-all duration-300 ease-out;
-  @apply relative;
-  
-  font-family: var(--font-body);
-  font-weight: 400;
-  
-  /* Animated underline */
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 1px;
-    background: var(--gradient-border);
-    transition: all 0.3s ease-out;
-    transform: translateX(-50%);
-  }
-  
-  &:hover::after {
-    width: 100%;
-  }
+.subtitle-font {
+  font-family: var(--subtitle-font);
+  font-weight: 600;
 }
 
-/* Card Components */
-.card {
-  @apply bg-white border border-gray-100 rounded-none;
-  box-shadow: var(--shadow-subtle);
-  transition: all 0.3s ease-out;
-  
-  &:hover {
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-2px);
-  }
+/* Animation utilities */
+.transition-all {
+  transition: all 0.3s ease;
 }
 
-.card-chromatic {
-  @apply relative overflow-hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--gradient-border);
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
-  }
-  
-  &:hover::before {
-    opacity: 1;
-  }
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Layout Components */
-.container-fluid {
-  @apply w-full max-w-7xl mx-auto px-6 lg:px-8;
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -15px rgba(0, 0, 0, 0.1);
 }
 
-.section-padding {
-  @apply py-20 lg:py-32;
+/* Subtle sky accents */
+.sky-accent {
+  border-color: var(--color-sky);
 }
 
-.section-gap {
-  @apply space-y-20 lg:space-y-32;
-}
-
-/* Grid System for Perfect Alignment */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 2rem;
-  align-items: center;
-}
-
-.grid-6 {
-  grid-column: span 6;
-}
-
-.grid-4 {
-  grid-column: span 4;
-}
-
-.grid-3 {
-  grid-column: span 3;
-}
-
-.grid-12 {
-  grid-column: span 12;
-}
-
-@media (max-width: 768px) {
-  .grid-6,
-  .grid-4,
-  .grid-3 {
-    grid-column: span 12;
-  }
-  
-  .grid-container {
-    gap: 1.5rem;
-  }
-}
-
-/* Animation Utilities */
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from {
-    box-shadow: var(--shadow-subtle);
-  }
-  to {
-    box-shadow: var(--shadow-chromatic);
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-/* Form Components */
-.form-input {
-  @apply w-full px-4 py-3 border border-gray-200 bg-white text-black;
-  @apply focus:outline-none focus:ring-1 focus:ring-black focus:border-black;
-  @apply transition-all duration-200 ease-out;
-  
-  font-family: var(--font-body);
-  font-weight: 400;
-  
-  &::placeholder {
-    color: rgba(0, 0, 0, 0.4);
-  }
-}
-
-.form-label {
-  @apply block text-sm font-medium text-black mb-2;
-  font-family: var(--font-body);
-  font-weight: 500;
-}
-
-/* Navigation */
-.nav-link {
-  @apply relative text-black no-underline;
-  @apply transition-all duration-300 ease-out;
-  
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 0.9rem;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--black);
-    transition: width 0.3s ease-out;
-  }
-  
-  &:hover::after,
-  &.active::after {
-    width: 100%;
-  }
-}
-
-/* Image Components */
-.hero-image {
-  @apply w-full h-auto object-cover;
-  border-radius: 0;
-  box-shadow: var(--shadow-subtle);
-  transition: all 0.3s ease-out;
-}
-
-.hero-image:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-}
-
-.showcase-image {
-  @apply w-full h-64 lg:h-80 object-cover;
-  border-radius: 0;
-  box-shadow: var(--shadow-subtle);
-}
-
-.card-image {
-  @apply w-full h-48 object-cover;
-  border-radius: 0;
-}
-
-/* Utilities */
-.text-gradient {
-  background: var(--gradient-border);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.border-chromatic {
-  border-image: var(--gradient-border) 1;
-}
-
-.backdrop-blur {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* Global Header Spacing */
-.page-content {
-  padding-top: 4rem; /* 64px for fixed header */
-}
-
-@media (max-width: 768px) {
-  .page-content {
-    padding-top: 3.5rem; /* 56px for mobile header */
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .section-padding {
-    @apply py-12;
-  }
-  
-  .container-fluid {
-    @apply px-4;
-  }
-  
-  .btn-primary {
-    @apply px-6 py-3 text-sm;
-  }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Print Styles */
-@media print {
-  * {
-    background: transparent !important;
-    color: black !important;
-    box-shadow: none !important;
-  }
+.sky-hover:hover {
+  color: #0369a1;
 }

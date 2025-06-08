@@ -1,83 +1,78 @@
-import { Link, useLocation } from 'wouter';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { motion } from "framer-motion";
 
-const Header = () => {
+export function Header() {
+  const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
 
+  // Track scroll position to change header style when scrolled
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const isScrolled = window.scrollY > 50;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { href: '/events', label: 'Events' },
-    { href: '/custom-apparel', label: 'Custom Gear' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
-  ];
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur border-b border-gray-100' 
-          : 'bg-white'
+      className={`fixed w-full top-0 z-40 transition-all duration-300 ${
+        scrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-6'
       }`}
     >
-      <div className="container-fluid">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="font-script text-3xl text-black">
-              Rich Habits
-            </div>
-          </Link>
+      <div className="container mx-auto px-6 flex justify-between items-center">
+        <Link href="/">
+          <motion.img 
+            src="/Cursive-Logo.webp"
+            alt="Rich Habits"
+            className="h-8 w-auto cursor-pointer"
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.2 }}
+          />
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`nav-link ${location === link.href ? 'active' : ''}`}
-              >
-                {link.label}
-              </Link>
+        <nav>
+          <ul className="flex space-x-8">
+            {[
+              { path: '/', label: 'Home' },
+              { path: '/events', label: 'Events' },
+              { path: '/shop', label: 'Shop' },
+              { path: '/custom-apparel', label: 'Custom Apparel' },
+              { path: '/contact', label: 'Contact' }
+            ].map(({ path, label }) => (
+              <li key={path}>
+                <Link href={path}>
+                  <motion.span
+                    className={`cursor-pointer relative ${
+                      scrolled ? 'text-gray-800' : 'text-gray-800'
+                    } ${location === path ? 'font-medium' : ''}`}
+                    style={{ fontFamily: "'Sanchez', serif" }}
+                    whileHover={{ color: '#0369a1' }} // subtle sky blue on hover
+                    transition={{ duration: 0.2 }}
+                  >
+                    {label}
+                    {location === path && (
+                      <motion.span 
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-200 opacity-70"
+                        layoutId="underline"
+                      />
+                    )}
+                  </motion.span>
+                </Link>
+              </li>
             ))}
-          </nav>
-
-          {/* Right Logo */}
-          <div className="hidden md:block">
-            <div className="font-script text-2xl text-black">
-              Rich Habits
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button className="md:hidden p-2">
-            <svg 
-              className="w-6 h-6" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M4 6h16M4 12h16M4 18h16" 
-              />
-            </svg>
-          </button>
-        </div>
+          </ul>
+        </nav>
       </div>
+      {/* Subtle sky accent line */}
+      <div className={`absolute bottom-0 left-0 w-full h-px bg-sky-200 opacity-30 ${scrolled ? 'opacity-100' : 'opacity-30'}`}></div>
     </header>
   );
-};
-
-export default Header;
+}

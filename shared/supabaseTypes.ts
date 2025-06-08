@@ -138,8 +138,6 @@ export interface Database {
           id?: number
         }
       }
-      // DEPRECATED: Use unified registrations table instead
-      // completed_event_registrations table has been merged into registrations
       completed_event_registrations: {
         Row: {
           id: number

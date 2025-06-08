@@ -5,7 +5,7 @@
  * for video and audio playback with improved mobile compatibility.
  */
 
-import { type ReactElement } from 'react';
+import React from 'react';
 import { isIOSDevice, isMobileDevice } from './deviceDetection';
 
 /**
@@ -130,12 +130,16 @@ export function getAlternativeMimeTypes(source: string): { type: string, src: st
  * Generate video source elements for multiple formats
  * to improve cross-browser compatibility
  */
-export function generateVideoSourceElements(source: string): ReactElement[] {
+export function generateVideoSourceElements(source: string): React.ReactElement[] {
   const alternatives = getAlternativeMimeTypes(source);
   
-  return alternatives.map(({ type, src }, index) => (
-    <source key={`source-${index}`} src={src} type={type} />
-  ));
+  return alternatives.map(({ type, src }, index) => {
+    return React.createElement('source', {
+      key: `source-${index}`,
+      src: src,
+      type: type
+    });
+  });
 }
 
 /**

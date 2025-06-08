@@ -32,7 +32,7 @@ if (secretIsLive !== publishableIsLive) {
 // Using the latest API version and enabling live mode 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
-  apiVersion: '2025-05-28.basil'
+  apiVersion: '2025-04-30.basil'
 });
 
 // Explicitly log whether we're in live mode
@@ -619,34 +619,22 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   
   const sig = req.headers['stripe-signature'];
 
-  // Allow development testing with special signature
   if (!sig || typeof sig !== 'string') {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Development mode: Accepting webhook without signature verification');
-    } else {
-      trackWebhookFailure();
-      logCriticalFailure('webhook', 'Missing Stripe signature', { headers: req.headers });
-      return res.status(400).json({ error: 'Missing Stripe signature' });
-    }
+    trackWebhookFailure();
+    logCriticalFailure('webhook', 'Missing Stripe signature', { headers: req.headers });
+    return res.status(400).json({ error: 'Missing Stripe signature' });
   }
 
   let event;
 
   try {
     // Verify the event came from Stripe using the signing secret
-    if (process.env.STRIPE_WEBHOOK_SECRET && sig && sig !== 'development' && process.env.NODE_ENV === 'production') {
+    if (process.env.STRIPE_WEBHOOK_SECRET) {
       event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } else {
-      // For development testing, accept webhook without verification
-      console.warn('Development mode: Skipping signature verification for webhook');
-      // Parse the raw body as JSON for development testing
-      if (Buffer.isBuffer(req.body)) {
-        event = JSON.parse(req.body.toString());
-      } else if (typeof req.body === 'string') {
-        event = JSON.parse(req.body);
-      } else {
-        event = req.body;
-      }
+      // For development, we'll just log and accept the webhook without verification
+      console.warn('STRIPE_WEBHOOK_SECRET not set, skipping signature verification');
+      event = req.body;
     }
 
     // Handle the event
@@ -756,106 +744,37 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               });
             }
             
-            // Create database records for successful payments
-            try {
-              let completedRegistration;
-              
-              if (registrationId && !isNaN(registrationId)) {
-                // Get existing registration and mark as completed
-                const existingRegistration = await storage.getRegistration(registrationId);
-                if (existingRegistration) {
-                  // Update the existing registration with payment info
-                  await storage.updateRegistration(registrationId, {
-                    stripePaymentIntentId: paymentIntent.id,
-                    shopifyOrderId: shopifyOrder?.id?.toString() || null,
-                    paymentStatus: 'completed',
-                    status: 'paid'
-                  });
-                  console.log(`Updated existing registration #${registrationId} with payment info`);
-                  completedRegistration = existingRegistration;
-                } else {
-                  console.error(`Registration #${registrationId} not found`);
-                }
-              } else {
-                // Create new registration directly from payment intent metadata
-                console.log('No registration ID found, creating new registration from payment intent metadata');
+            // Copy to completed registrations table if we have a registration ID
+            if (registrationId && !isNaN(registrationId)) {
+              try {
+                // Copy the registration to the completed table
+                const completedRegistration = await storage.createCompletedEventRegistration(
+                  registrationId, 
+                  paymentIntent.id
+                );
                 
-                const registrationData = {
-                  eventId: eventId,
-                  eventSlug: event.slug,
-                  firstName: registration.firstName,
-                  lastName: registration.lastName,
-                  contactName: registration.contactName,
-                  email: registration.email,
-                  phone: registration.phone || null,
-                  tShirtSize: registration.tShirtSize || null,
-                  grade: registration.grade || null,
-                  schoolName: registration.schoolName || null,
-                  clubName: registration.clubName || null,
-                  medicalReleaseAccepted: true,
-                  registrationType: registration.registrationType,
-                  day1: registration.day1,
-                  day2: registration.day2,
-                  day3: registration.day3,
-                  stripePaymentIntentId: paymentIntent.id,
-                  shopifyOrderId: shopifyOrder?.id?.toString() || null,
-                  amountPaid: paymentIntent.amount,
-                  paymentDate: new Date(),
-                  paymentStatus: 'completed',
-                  status: 'paid'
-                };
-                
-                // Create the registration record using the correct method
-                const newRegistration = await storage.createRegistration(registrationData);
-                console.log(`Created new registration record #${newRegistration.id} from webhook`);
-                completedRegistration = newRegistration;
-                
-                // Also create a complete registration record for tracking
-                try {
-                  const completeRegistrationData = {
-                    eventId: eventId,
-                    eventName: event.title,
-                    eventDate: event.date || '',
-                    eventLocation: event.location || '',
-                    camperName: `${registration.firstName} ${registration.lastName}`,
-                    firstName: registration.firstName,
-                    lastName: registration.lastName,
-                    email: registration.email,
-                    phone: registration.phone || '',
-                    grade: registration.grade || '',
-                    gender: 'Not specified',
-                    schoolName: registration.schoolName || '',
-                    clubName: registration.clubName || '',
-                    tShirtSize: registration.tShirtSize || '',
-                    parentGuardianName: registration.contactName || '',
-                    registrationType: registration.registrationType,
-                    day1: registration.day1,
-                    day2: registration.day2,
-                    day3: registration.day3,
-                    medicalReleaseAccepted: true,
-                    stripePaymentIntentId: paymentIntent.id,
-                    shopifyOrderId: shopifyOrder?.id?.toString() || null,
-                    amountPaid: paymentIntent.amount,
-                    paymentDate: new Date(),
-                    paymentStatus: 'completed',
-                    source: 'website_webhook',
-                    notes: 'Registration completed via webhook'
-                  };
+                if (completedRegistration) {
+                  console.log(`Created completed registration record #${completedRegistration.id} for registration #${registrationId}`);
                   
-                  const completeReg = await storage.createCompleteRegistration(completeRegistrationData);
-                  console.log(`Created complete registration record #${completeReg.id} for tracking`);
-                } catch (error) {
-                  console.error('Error creating complete registration record:', error);
+                  // If we have a Shopify order ID, update the completed registration
+                  if (shopifyOrder && shopifyOrder.id) {
+                    try {
+                      await storage.updateCompletedRegistration(completedRegistration.id, {
+                        shopify_order_id: shopifyOrder.id
+                      });
+                      console.log(`Updated completed registration #${completedRegistration.id} with Shopify order ID ${shopifyOrder.id}`);
+                    } catch (error) {
+                      console.error('Error updating completed registration with Shopify order ID:', error);
+                    }
+                  }
+                } else {
+                  console.error(`Failed to create completed registration for registration #${registrationId}`);
                 }
+              } catch (error) {
+                console.error('Error creating completed registration:', error);
               }
-              
-            } catch (error) {
-              console.error('Error creating registration records:', error);
-              logCriticalFailure('webhook', 'Registration creation failed', { 
-                paymentIntentId: paymentIntent.id, 
-                eventId, 
-                error: error instanceof Error ? error.message : 'Unknown error'
-              });
+            } else {
+              console.warn('No registration ID in metadata, skipping completed registration creation');
             }
             
             // Send confirmation email

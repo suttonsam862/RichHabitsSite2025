@@ -2,7 +2,6 @@ import { Link } from "wouter";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { Container } from "@/components/ui/container";
 import { motion } from "framer-motion";
-import { OptimizedImage } from "@/components/OptimizedMedia";
 
 const galleryImages = [
   {
@@ -65,13 +64,11 @@ export function GallerySection() {
               viewport={{ once: true }}
               className="gallery-image relative aspect-square"
             >
-              <OptimizedImage 
+              <img 
                 src={image.src} 
                 alt={image.alt} 
                 className="w-full h-full object-cover"
-                width={400}
-                height={400}
-                fallbackSrc={`/api/images${image.src}?w=200&quality=60`}
+                loading="lazy"
               />
             </motion.div>
           ))}
