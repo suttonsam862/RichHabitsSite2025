@@ -332,9 +332,9 @@ export default function Home() {
               </div>
               
               {/* Team Registration */}
-              <div className="bg-orange-500 p-8 rounded-lg shadow-lg text-white relative">
+              <div className="bg-gradient-to-br from-black to-gray-800 p-8 rounded-lg shadow-lg text-white relative">
                 <div className="absolute top-4 right-4">
-                  <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">HUGE DISCOUNT!</span>
+                  <span className="bg-white text-black px-3 py-1 rounded-full text-sm font-bold">HUGE DISCOUNT!</span>
                 </div>
                 <div className="flex items-center justify-center mb-6">
                   <Users size={48} className="text-white" />
@@ -343,7 +343,7 @@ export default function Home() {
                 <p className="mb-6">Bring your entire team and save big with our exclusive team discounts</p>
                 <button 
                   onClick={() => setShowEventSelector(true)}
-                  className="w-full bg-white text-orange-500 py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                  className="w-full bg-white text-black py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
                 >
                   Get Team Discount
                 </button>
@@ -430,7 +430,7 @@ export default function Home() {
                   <div 
                     key={event.id}
                     onClick={() => handleEventSelect(event.id)}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-orange-500 hover:bg-orange-50 cursor-pointer transition-all"
+                    className="border border-gray-200 rounded-lg p-4 hover:border-black hover:bg-gray-50 cursor-pointer transition-all"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
