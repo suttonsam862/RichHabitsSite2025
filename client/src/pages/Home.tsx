@@ -195,111 +195,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MOBILE-SCROLLABLE CAMP SCHEDULE PREVIEW */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
+      {/* SUMMER 2025 CAMPS VIDEO SECTION */}
+      <section className="py-24 relative h-96 overflow-hidden">
+        {/* Background Video */}
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/hero-video.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Bright white overlay */}
+        <div className="absolute inset-0 bg-white bg-opacity-80"></div>
+        
+        {/* Content */}
+        <div className="container mx-auto px-4 h-full flex items-center justify-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
+            className="text-center"
           >
-            <h2 className="text-3xl mb-8 text-center title-font">
+            <h2 className="text-5xl md:text-6xl font-bold mb-8 text-black title-font">
               Summer 2025 Camps
             </h2>
             
-            {/* Mobile-scrollable horizontal slider */}
-            <div className="overflow-x-auto pb-4">
-              <div className="flex space-x-6 w-max md:grid md:grid-cols-3 md:gap-8 md:w-full">
-                {/* Birmingham Slam Camp */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
-                >
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src="/images/birmingham-slam-camp.webp" 
-                      alt="Birmingham Slam Camp"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">Birmingham Slam Camp</h3>
-                    <p className="text-sm text-gray-600 mb-1">June 19-21, 2025</p>
-                    <p className="text-sm text-gray-600 mb-2">$249</p>
-                    <button 
-                      onClick={scrollToSignup}
-                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              
-                {/* National Champ Camp */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  viewport={{ once: true }}
-                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
-                >
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src="/images/national-champ-camp.webp" 
-                      alt="National Champ Camp"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">National Champ Camp</h3>
-                    <p className="text-sm text-gray-600 mb-1">June 5-7, 2025</p>
-                    <div className="text-sm text-gray-600 mb-2">
-                      <span className="text-gray-500 line-through">$349</span>
-                      <span className="text-green-600 font-bold ml-2">$299</span>
-                      <span className="bg-red-500 text-white text-xs px-1 ml-1 rounded">SAVE $50</span>
-                    </div>
-                    <button 
-                      onClick={scrollToSignup}
-                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              
-                {/* Texas Recruiting Clinic */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  viewport={{ once: true }}
-                  className="bg-white shadow-md overflow-hidden w-80 md:w-auto flex-shrink-0 rounded-lg"
-                >
-                  <div className="h-32 overflow-hidden">
-                    <img 
-                      src="/images/texas-recruiting-clinic.webp" 
-                      alt="Texas Recruiting Clinic"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold mb-2">Texas Recruiting Clinic</h3>
-                    <p className="text-sm text-gray-600 mb-1">June 12-13, 2025</p>
-                    <p className="text-sm text-gray-600 mb-2">$249</p>
-                    <button 
-                      onClick={scrollToSignup}
-                      className="w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
+            <Link href="/events">
+              <span className="inline-block bg-black text-white px-12 py-4 text-xl font-bold hover:bg-gray-800 transition-colors cursor-pointer rounded-lg shadow-lg">
+                View Our Events
+              </span>
+            </Link>
           </motion.div>
         </div>
       </section>
