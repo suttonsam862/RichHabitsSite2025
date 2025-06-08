@@ -82,12 +82,69 @@ async function createShopifyOrder(data: {
 }) {
   try {
     console.log('Creating Shopify order for:', data.eventTitle);
-    // For now, return a mock order ID until Shopify integration is fully set up
-    // This prevents the endpoint from failing while maintaining the workflow
-    return { id: `shopify_${Date.now()}` };
+    
+    // Import Shopify functions
+    const { createShopifyDraftOrder } = await import('./shopify');
+    
+    // Create line items for the order
+    const lineItems = [{
+      title: `${data.eventTitle} Registration`,
+      quantity: 1,
+      price: data.amount
+    }];
+    
+    // Customer information
+    const customer = {
+      firstName: data.registrationData.firstName,
+      lastName: data.registrationData.lastName,
+      email: data.registrationData.email,
+      phone: data.registrationData.phone || ''
+    };
+    
+    // Order notes with registration details
+    const note = `Registration Details:
+Name: ${data.registrationData.firstName} ${data.registrationData.lastName}
+Contact: ${data.registrationData.contactName}
+Email: ${data.registrationData.email}
+Phone: ${data.registrationData.phone || 'Not provided'}
+T-Shirt Size: ${data.registrationData.tShirtSize}
+Grade: ${data.registrationData.grade}
+School: ${data.registrationData.schoolName}
+Club: ${data.registrationData.clubName || 'N/A'}
+Registration Type: ${data.registrationData.registrationType}
+Payment ID: ${data.paymentIntentId}
+${data.discountCode ? `Discount Code: ${data.discountCode}` : ''}`;
+    
+    // Create attributes array for detailed tracking
+    const attributes = [
+      { key: 'Event ID', value: data.eventId.toString() },
+      { key: 'Payment Intent ID', value: data.paymentIntentId },
+      { key: 'Registration Type', value: data.registrationData.registrationType },
+      { key: 'T-Shirt Size', value: data.registrationData.tShirtSize },
+      { key: 'Grade', value: data.registrationData.grade },
+      { key: 'School', value: data.registrationData.schoolName },
+      { key: 'Contact Name', value: data.registrationData.contactName }
+    ];
+    
+    if (data.discountCode) {
+      attributes.push({ key: 'Discount Code', value: data.discountCode });
+    }
+    
+    // Create the Shopify order
+    const shopifyOrder = await createShopifyDraftOrder({
+      lineItems,
+      customer,
+      note,
+      attributes
+    });
+    
+    console.log('Shopify order created successfully:', shopifyOrder?.id);
+    return shopifyOrder;
+    
   } catch (error) {
     console.error('Error creating Shopify order:', error);
-    throw error;
+    // Return null instead of throwing to prevent registration failure
+    return null;
   }
 }
 
@@ -116,8 +173,34 @@ async function sendRegistrationConfirmationEmail(data: {
     const emailContent = `Registration confirmed for ${data.eventName}. Payment: $${data.amount}. Payment ID: ${data.paymentId}`;
     console.log('Email content prepared:', emailContent);
     
-    // Email sending would be implemented here with SendGrid or similar
-    return true;
+    // Send email using SendGrid
+    const { sendConfirmationEmail } = await import('./emailService.js');
+    const emailSent = await sendConfirmationEmail({
+      to: data.email,
+      subject: `Registration Confirmed - ${data.eventName}`,
+      html: `
+        <h2>Registration Confirmed!</h2>
+        <p>Dear ${data.firstName || 'Wrestler'},</p>
+        <p>Your registration for <strong>${data.eventName}</strong> has been confirmed.</p>
+        <p><strong>Payment Details:</strong></p>
+        <ul>
+          <li>Amount: $${data.amount}</li>
+          <li>Payment ID: ${data.paymentId}</li>
+          <li>Registration Type: ${data.registrationType}</li>
+          ${data.discountCode ? `<li>Discount Code: ${data.discountCode}</li>` : ''}
+        </ul>
+        <p>We look forward to seeing you at the camp!</p>
+        <p>Best regards,<br>Rich Habits Wrestling Team</p>
+      `
+    });
+    
+    if (emailSent) {
+      console.log('Confirmation email sent successfully');
+    } else {
+      console.error('Failed to send confirmation email');
+    }
+    
+    return emailSent;
   } catch (error) {
     console.error('Failed to send confirmation email:', error);
     return false;

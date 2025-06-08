@@ -88,7 +88,7 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
       });
       
       // Redirect to success page
-      window.location.href = `/event-registration/${eventId}?paymentSuccess=true&freeRegistration=true`;
+      window.location.href = `/stripe-checkout?success=true&eventId=${eventId}&eventName=${encodeURIComponent(eventName)}&freeRegistration=true`;
       
     } catch (error) {
       console.error('Free registration error:', error);

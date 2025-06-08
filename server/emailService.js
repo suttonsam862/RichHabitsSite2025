@@ -265,18 +265,26 @@ export function createTeamConfirmationEmail(teamRegistrationData) {
   };
 }
 
-export async function sendConfirmationEmail(emailData) {
+// Generic email sending function for simple confirmations
+export async function sendConfirmationEmail({ to, subject, html }) {
   if (!process.env.SENDGRID_API_KEY) {
     console.error('SendGrid API key not configured');
-    throw new Error('Email service not configured');
+    return false;
   }
 
   try {
+    const emailData = {
+      to,
+      from: 'noreply@rich-habits.com',
+      subject,
+      html
+    };
+
     await sgMail.send(emailData);
-    console.log('Confirmation email sent successfully');
-    return { success: true };
+    console.log(`Email sent successfully to ${to}`);
+    return true;
   } catch (error) {
-    console.error('Error sending confirmation email:', error);
-    throw error;
+    console.error('Error sending email:', error);
+    return false;
   }
 }
