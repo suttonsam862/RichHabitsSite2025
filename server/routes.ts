@@ -423,7 +423,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             email: registrationData.email,
             eventId: parseInt(eventId),
             discountCode: discountCode || null,
-            shopifyOrderId: shopifyOrder?.id || null,
+            shopifyOrderId: freeShopifyOrderId,
             paymentIntentId: `free_reg_${registration.id}`,
             amountPaid: 0,
             registrationType: 'free'
@@ -471,6 +471,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Paid registration logged:', registration.id);
 
       // Create Shopify order
+      let paidShopifyOrderId = null;
       try {
         const event = await storage.getEvent(parseInt(eventId));
         if (event) {
@@ -484,6 +485,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           console.log('Shopify order created:', shopifyOrder?.id);
+          paidShopifyOrderId = shopifyOrder?.id || null;
           
           // Update registration with Shopify order ID and payment details
           if (shopifyOrder?.id) {
@@ -519,6 +521,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } catch (emailError) {
         console.error('Error sending confirmation email:', emailError);
+      }
+
+      // Admin logging for reporting and dashboard
+      try {
+        await logAdminRegistration({
+          email: registrationData.email,
+          eventId: parseInt(eventId),
+          discountCode: discountCode || null,
+          shopifyOrderId: paidShopifyOrderId,
+          paymentIntentId: paymentIntentId,
+          amountPaid: paymentIntent.amount / 100,
+          registrationType: registrationData.registrationType || 'paid'
+        });
+      } catch (logError) {
+        console.error('Error in admin logging for paid registration:', logError);
       }
 
       res.json({
