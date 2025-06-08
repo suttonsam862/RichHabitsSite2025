@@ -12,6 +12,7 @@ interface RegistrationRecord {
   phone?: string;
   eventSlug: string;
   eventName: string;
+  eventId?: number;
   paymentStatus: string;
   stripePaymentIntentId?: string;
   amountPaid?: number;
@@ -45,7 +46,7 @@ async function unifyRegistrationSystem() {
     console.log('📊 Collecting data from all registration tables...');
     
     const allSources = await Promise.all([
-      // Event registration log (primary source)
+      // Event registration log (primary source) - Enhanced search
       sql`
         SELECT 
           id::text,
@@ -54,11 +55,13 @@ async function unifyRegistrationSystem() {
           email,
           phone,
           event_slug,
+          event_id,
           CASE 
             WHEN event_slug = 'birmingham-slam-camp' THEN 'Birmingham Slam Camp'
             WHEN event_slug = 'texas-recruiting-clinic' THEN 'Texas Recruiting Clinic'
             WHEN event_slug = 'national-champ-camp' THEN 'National Champ Camp'
-            ELSE event_slug
+            WHEN event_id = 2 THEN 'Texas Recruiting Clinic'
+            ELSE COALESCE(event_slug, 'Unknown Event')
           END as event_name,
           payment_status,
           stripe_payment_intent_id,
@@ -70,7 +73,7 @@ async function unifyRegistrationSystem() {
         ORDER BY created_at ASC
       `,
       
-      // Original event registrations
+      // Original event registrations - Enhanced search
       sql`
         SELECT 
           id::text,
@@ -94,6 +97,7 @@ async function unifyRegistrationSystem() {
           stripe_payment_intent_id,
           NULL as amount_paid,
           created_at as registration_date,
+          event_id,
           'event_registrations' as source_table
         FROM event_registrations 
         WHERE email IS NOT NULL
@@ -184,19 +188,61 @@ async function unifyRegistrationSystem() {
     // Step 3: Create unified export with proper event names
     console.log('📝 Creating unified registration export...');
     
-    // Map event slugs to proper names for display
+    // Enhanced event name mapping
     const eventNameMap: Record<string, string> = {
       'birmingham-slam-camp': 'Birmingham Slam Camp',
       'texas-recruiting-clinic': 'Texas Recruiting Clinic', 
       'national-champ-camp': 'National Champ Camp',
-      'unknown-event': 'Unknown Event'
+      'unknown-event': 'Unknown Event',
+      'texas': 'Texas Recruiting Clinic',
+      'recruiting': 'Texas Recruiting Clinic',
+      'clinic': 'Texas Recruiting Clinic'
     };
+    
+    // Function to determine event name with enhanced logic
+    function getEventName(reg: RegistrationRecord): string {
+      // First try the existing event name
+      if (reg.eventName && reg.eventName !== 'Unknown Event') {
+        return reg.eventName;
+      }
+      
+      // Try mapping from event slug
+      if (reg.eventSlug && eventNameMap[reg.eventSlug]) {
+        return eventNameMap[reg.eventSlug];
+      }
+      
+      // Try partial matching on event slug
+      if (reg.eventSlug) {
+        const slug = reg.eventSlug.toLowerCase();
+        if (slug.includes('texas') || slug.includes('recruiting')) {
+          return 'Texas Recruiting Clinic';
+        }
+        if (slug.includes('birmingham') || slug.includes('slam')) {
+          return 'Birmingham Slam Camp';
+        }
+        if (slug.includes('national') || slug.includes('champ')) {
+          return 'National Champ Camp';
+        }
+      }
+      
+      // Map by event ID if available
+      if (reg.eventId === 1) return 'Birmingham Slam Camp';
+      if (reg.eventId === 2) return 'Texas Recruiting Clinic';
+      if (reg.eventId === 3) return 'National Champ Camp';
+      
+      return reg.eventSlug || 'Unknown Event';
+    }
     
     // Ensure all registrations have proper event names
     const registrationsWithEventNames = finalRegistrations.map(reg => ({
       ...reg,
-      eventName: reg.eventName || eventNameMap[reg.eventSlug] || reg.eventSlug || 'Unknown Event'
+      eventName: getEventName(reg)
     }));
+    
+    console.log('📋 Sample registrations after event name mapping:');
+    registrationsWithEventNames.slice(0, 5).forEach(reg => {
+      console.log(`  - ${reg.firstName} ${reg.lastName}: ${reg.eventName} (slug: ${reg.eventSlug}, id: ${reg.eventId})`);
+    });
     
     const csvHeaders = [
       'ID',
@@ -245,12 +291,27 @@ async function unifyRegistrationSystem() {
     // Step 3.1: Create separate Texas Recruiting Clinic export
     console.log('📝 Creating Texas Recruiting Clinic specific export...');
     
-    const texasRegistrations = registrationsWithEventNames.filter(reg => 
-      reg.eventSlug === 'texas-recruiting-clinic' || 
-      reg.eventName === 'Texas Recruiting Clinic'
-    );
+    // Enhanced Texas Recruiting Clinic detection
+    const texasRegistrations = registrationsWithEventNames.filter(reg => {
+      const eventSlug = (reg.eventSlug || '').toLowerCase();
+      const eventName = (reg.eventName || '').toLowerCase();
+      
+      return eventSlug.includes('texas') || 
+             eventSlug.includes('recruiting') ||
+             eventName.includes('texas') ||
+             eventName.includes('recruiting') ||
+             eventSlug === 'texas-recruiting-clinic' ||
+             eventName === 'Texas Recruiting Clinic' ||
+             reg.eventId === 2; // Texas Recruiting Clinic has event ID 2
+    });
     
     console.log(`Found ${texasRegistrations.length} Texas Recruiting Clinic registrations`);
+    
+    // Debug: Show what events we actually found
+    const uniqueEvents = [...new Set(registrationsWithEventNames.map(reg => 
+      `${reg.eventSlug || 'no-slug'} | ${reg.eventName || 'no-name'} | ID: ${reg.eventId || 'no-id'}`
+    ))];
+    console.log('📋 All unique events found:', uniqueEvents);
     
     if (texasRegistrations.length > 0) {
       const texasCsvContent = [
