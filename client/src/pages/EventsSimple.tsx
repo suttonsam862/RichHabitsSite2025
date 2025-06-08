@@ -122,7 +122,7 @@ export default function EventsSimple() {
                       {/* Main recruiting event banner */}
                       <div className="absolute top-2 left-2 right-2">
                         <div className="bg-red-600 text-white px-3 py-1 text-xs font-bold tracking-wider text-center transform -rotate-1 shadow-lg">
-                          HIGH SCHOOL WRESTLING RECRUITING EVENT
+                          Open to All Ages, Boys and Girls
                         </div>
                       </div>
                       
