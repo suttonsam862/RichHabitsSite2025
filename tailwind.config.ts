@@ -6,8 +6,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Montserrat", "sans-serif"],
-        serif: ["Oswald", "Impact", "Arial Black", "sans-serif"],
+        sans: ["Poppins", "system-ui", "-apple-system", "sans-serif"],
+        serif: ["Playfair Display", "serif"],
+        display: ["Anton", "Oswald", "Impact", "Arial Black", "sans-serif"],
+        title: ["Anton", "Oswald", "Impact", "Arial Black", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
