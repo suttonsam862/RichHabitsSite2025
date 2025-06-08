@@ -27,7 +27,7 @@ import {
 import { registerBulletproofRoutes } from "./bulletproof-routes.js";
 import { paymentService } from "./paymentService.js";
 import { z } from "zod";
-import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail } from "./emailService.js";
+import { createIndividualConfirmationEmail, createTeamConfirmationEmail, sendConfirmationEmail, sendConfirmationEmailForPayment } from "./emailService.js";
 import { validateDiscountCode, applyDiscount, incrementDiscountCodeUsage } from "./discountCodes.js";
 import { validateDiscountCode as validateDiscountHandler } from "./discounts.js";
 import { 
@@ -42,7 +42,7 @@ import {
   validateNationalChampCampRegistration,
   getEventPricing 
 } from './pricingUtils.js';
-import { handleStripeWebhook, verifyPaymentIntent } from './stripe.js';
+import { handleStripeWebhook, verifyPaymentIntent as stripeVerifyPaymentIntent } from './stripe.js';
 import { getSystemHealth } from './monitoring.js';
 
 // Add missing functions for the new endpoint
@@ -533,7 +533,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Processing successful payment: ${paymentIntentId} from ${source}`);
       
       // Verify payment intent is actually succeeded
-      const isValid = await verifyPaymentIntent(paymentIntentId);
+      const isValid = await stripeVerifyPaymentIntent(paymentIntentId);
       if (!isValid) {
         throw new Error('Payment intent verification failed');
       }
