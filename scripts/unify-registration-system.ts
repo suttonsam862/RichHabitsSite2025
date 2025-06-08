@@ -23,6 +23,24 @@ async function unifyRegistrationSystem() {
   console.log('🚀 Starting registration system unification...');
   
   try {
+    // Step 0: Verify table structures
+    console.log('🔍 Verifying table structures...');
+    
+    const atomicColumns = await sql`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'atomic_registrations'
+    `;
+    
+    const eventLogColumns = await sql`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'event_registration_log'
+    `;
+    
+    console.log('Atomic registrations columns:', atomicColumns.map(c => c.column_name).join(', '));
+    console.log('Event registration log columns:', eventLogColumns.map(c => c.column_name).join(', '));
+    
     // Step 1: Collect all registration data from every table
     console.log('📊 Collecting data from all registration tables...');
     
@@ -99,7 +117,7 @@ async function unifyRegistrationSystem() {
           END as event_name,
           payment_status,
           stripe_payment_intent_id,
-          final_price as amount_paid,
+          event_price_cents as amount_paid,
           created_at as registration_date,
           'atomic_registrations' as source_table
         FROM atomic_registrations 
