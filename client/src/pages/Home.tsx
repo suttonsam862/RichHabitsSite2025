@@ -284,6 +284,46 @@ export default function Home() {
         </div>
       </section>
       
+      {/* FRUIT HUNTERS PROMOTION SECTION */}
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-pink-600">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <a 
+              href="https://fruithunters.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block hover:scale-105 transition-transform duration-300"
+            >
+              <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-8 hover:shadow-2xl transition-shadow">
+                <img 
+                  src="/images/fruit-hunters-logo.png" 
+                  alt="Fruit Hunters"
+                  className="mx-auto h-20 mb-6"
+                />
+                <h3 className="text-3xl font-bold text-gray-800 mb-4">
+                  Fuel Your Training with Premium Nutrition
+                </h3>
+                <p className="text-lg text-gray-600 mb-6">
+                  Discover the healthiest, most delicious fruits to power your wrestling performance
+                </p>
+                <div className="inline-flex items-center text-purple-600 font-semibold text-lg">
+                  Explore Fruit Hunters
+                  <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Newsletter Section - Minimalist Approach */}
       <section className="py-24 bg-white relative">
         <div className="container mx-auto px-4">
