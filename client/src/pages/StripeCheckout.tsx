@@ -150,9 +150,11 @@ interface CheckoutFormProps {
   onSuccess: () => void;
   amount: number;
   onDiscountApplied?: (newAmount: number) => void;
+  onClientSecretUpdate?: (newClientSecret: string) => void;
+  onAmountUpdate?: (newAmount: number) => void;
 }
 
-const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onDiscountApplied }: CheckoutFormProps) => {
+const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onDiscountApplied, onClientSecretUpdate, onAmountUpdate }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   
@@ -412,7 +414,24 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
             },
             body: JSON.stringify({
               option,
-              registrationData,
+              registrationData: {
+                firstName: sessionStorage.getItem('registration_firstName') || '',
+                lastName: sessionStorage.getItem('registration_lastName') || '',
+                email: sessionStorage.getItem('registration_email') || '',
+                phone: sessionStorage.getItem('registration_phone') || '',
+                contactName: sessionStorage.getItem('registration_contactName') || '',
+                tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
+                grade: sessionStorage.getItem('registration_grade') || '',
+                gender: sessionStorage.getItem('registration_gender') || '',
+                schoolName: sessionStorage.getItem('registration_schoolName') || '',
+                clubName: sessionStorage.getItem('registration_clubName') || '',
+                day1: sessionStorage.getItem('registration_day1') === 'true',
+                day2: sessionStorage.getItem('registration_day2') === 'true',
+                day3: sessionStorage.getItem('registration_day3') === 'true',
+                medicalReleaseAccepted: sessionStorage.getItem('registration_medicalReleaseAccepted') === 'true',
+                eventId: parseInt(eventId),
+                registrationType: option
+              },
               discountedAmount: data.discount.finalPrice,
               discountCode: discountCode,
               forceNewIntent: true
@@ -423,9 +442,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
             const recreateData = await recreateResponse.json();
             console.log('New payment intent created with discount:', recreateData);
             
-            // Update payment state
-            setClientSecret(recreateData.clientSecret);
-            setAmount(data.discount.finalPrice);
+            // Update payment state via callbacks
+            onClientSecretUpdate && onClientSecretUpdate(recreateData.clientSecret);
+            onAmountUpdate && onAmountUpdate(data.discount.finalPrice);
             
             // Show success message
             if (data.discount.finalPrice === 0) {
@@ -944,6 +963,8 @@ export default function StripeCheckout() {
                     onSuccess={handlePaymentSuccess}
                     amount={amount}
                     onDiscountApplied={handleDiscountApplied}
+                    onClientSecretUpdate={setClientSecret}
+                    onAmountUpdate={setAmount}
                   />
                 </Elements>
               )}
