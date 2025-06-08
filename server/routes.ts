@@ -42,7 +42,7 @@ import {
   validateNationalChampCampRegistration,
   getEventPricing 
 } from './pricingUtils.js';
-import { handleStripeWebhook } from './stripe.js';
+import { handleStripeWebhook, verifyPaymentIntent } from './stripe.js';
 import { getSystemHealth } from './monitoring.js';
 
 // Add missing functions for the new endpoint
@@ -244,59 +244,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Handle free registrations
+      // Handle free registrations - DO NOT CREATE REGISTRATION HERE TO PREVENT DUPLICATES
       if (paymentResult.isFreeRegistration) {
-        console.log('Processing free registration directly');
+        console.log('Free registration detected - returning client setup without creating database entry');
         
-        // Process the registration immediately without any payment
-        try {
-          // Use direct SQL insert to bypass schema issues
-          const registrationId = Math.floor(Math.random() * 1000000);
-          
-          await db.execute(sql`
-            INSERT INTO event_registrations (
-              event_id, first_name, last_name, email, phone, contact_name,
-              t_shirt_size, grade, school_name, club_name, medical_release_accepted,
-              registration_type, payment_status, stripe_payment_intent_id,
-              day1, day2, day3, created_at, updated_at
-            ) VALUES (
-              ${eventId}, ${registrationData.firstName}, ${registrationData.lastName},
-              ${registrationData.email}, ${registrationData.phone || null},
-              ${registrationData.firstName + ' ' + registrationData.lastName},
-              ${registrationData.tShirtSize || null}, ${registrationData.grade || null},
-              ${registrationData.schoolName || null}, ${registrationData.clubName || null},
-              true, ${option}, 'completed', 'FREE_REGISTRATION',
-              ${option === 'full' || option === 'day1'}, 
-              ${option === 'full' || option === 'day2'},
-              ${option === 'full' || option === 'day3'},
-              NOW(), NOW()
-            )
-          `);
-
-          return res.json({
-            success: true,
-            isFreeRegistration: true,
-            registrationId: registrationId,
-            message: 'Registration completed successfully at no cost'
-          });
-        } catch (error) {
-          console.error('Error processing free registration:', error);
-          
-          // Log detailed error information for debugging
-          console.error('Free registration error details:', {
-            eventId,
-            registrationData: registrationData ? Object.keys(registrationData) : 'null',
-            error: error instanceof Error ? error.stack : error
-          });
-          
-          return res.status(500).json({
-            error: 'Failed to process free registration',
-            userFriendlyMessage: 'Unable to complete registration. Please contact support if this issue persists.',
-            errorCode: 'FREE_REG_FAILED'
-          });
-        }
+        // Return free registration flag to frontend so user can complete the process
+        // The actual registration will be created in the payment success endpoint
+        return res.json({
+          success: true,
+          isFreeRegistration: true,
+          clientSecret: 'free_registration', // Special flag for frontend
+          amount: 0,
+          paymentIntentId: paymentResult.paymentIntentId,
+          message: 'Free registration ready - complete registration to finalize'
+        });
       }
 
+      // Return regular payment intent for paid registrations
       res.json({
         clientSecret: paymentResult.clientSecret,
         amount: paymentResult.amount,
@@ -637,7 +601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await validateDiscountHandler(mockReq as any, mockRes as any);
       
       // Transform the response to match expected format
-      if (validationResult.valid) {
+      if (validationResult && validationResult.valid) {
         const discountAmount = validationResult.discountAmount || 0;
         const finalPrice = Math.max(0, originalPrice - discountAmount);
         
@@ -652,9 +616,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: validationResult.message || 'Discount applied successfully'
         });
       } else {
-        return res.status(validationResult.statusCode || 400).json({
+        return res.status((validationResult && validationResult.statusCode) || 400).json({
           valid: false,
-          message: validationResult.message || 'Invalid discount code'
+          message: (validationResult && validationResult.message) || 'Invalid discount code'
         });
       }
     } catch (error) {
