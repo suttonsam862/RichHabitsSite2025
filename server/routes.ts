@@ -564,13 +564,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Generate required form session ID for free registration
+      const formSessionId = `free_reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
       // Process the free registration directly
       const registration = await storage.logEventRegistration({
         ...registrationData,
         eventId: parseInt(eventId),
         registrationOption: option,
         finalAmount: 0,
-        registrationType: option
+        registrationType: option,
+        formSessionId: formSessionId
       });
 
       res.json({ 
