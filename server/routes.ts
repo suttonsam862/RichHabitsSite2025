@@ -564,6 +564,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Check for existing registration to prevent duplicates
+      if (registrationData?.email) {
+        const existingRegistration = await storage.checkExistingRegistration(registrationData.email, parseInt(eventId));
+        if (existingRegistration) {
+          console.log(`Preventing duplicate free registration for ${registrationData.email} on event ${eventId}`);
+          return res.status(409).json({
+            error: 'Registration already exists',
+            userFriendlyMessage: 'You have already registered for this event. Check your email for confirmation details.',
+            canRetry: false
+          });
+        }
+      }
+
       // Generate required form session ID for free registration
       const formSessionId = `free_reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       

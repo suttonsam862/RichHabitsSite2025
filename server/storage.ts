@@ -16,7 +16,7 @@ import {
   recruitingClinicRequests, type RecruitingClinicRequest, type RecruitingClinicRequestInsert
 } from "@shared/schema";
 import { db, pool } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, or } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -1061,7 +1061,11 @@ export class DatabaseStorage implements IStorage {
           and(
             eq(eventRegistrationLog.email, email),
             eq(eventRegistrationLog.eventId, eventId),
-            eq(eventRegistrationLog.paymentStatus, 'completed')
+            or(
+              eq(eventRegistrationLog.paymentStatus, 'completed'),
+              eq(eventRegistrationLog.paymentStatus, 'paid'),
+              eq(eventRegistrationLog.paymentStatus, 'succeeded')
+            )
           )
         )
         .limit(1);
