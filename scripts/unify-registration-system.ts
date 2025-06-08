@@ -181,8 +181,22 @@ async function unifyRegistrationSystem() {
     console.log(`✅ Deduplicated to ${finalRegistrations.length} unique registrations`);
     console.log(`🗑️ Found ${duplicates.length} duplicate records`);
     
-    // Step 3: Create unified export
+    // Step 3: Create unified export with proper event names
     console.log('📝 Creating unified registration export...');
+    
+    // Map event slugs to proper names for display
+    const eventNameMap: Record<string, string> = {
+      'birmingham-slam-camp': 'Birmingham Slam Camp',
+      'texas-recruiting-clinic': 'Texas Recruiting Clinic', 
+      'national-champ-camp': 'National Champ Camp',
+      'unknown-event': 'Unknown Event'
+    };
+    
+    // Ensure all registrations have proper event names
+    const registrationsWithEventNames = finalRegistrations.map(reg => ({
+      ...reg,
+      eventName: reg.eventName || eventNameMap[reg.eventSlug] || reg.eventSlug || 'Unknown Event'
+    }));
     
     const csvHeaders = [
       'ID',
@@ -191,6 +205,7 @@ async function unifyRegistrationSystem() {
       'Email',
       'Phone',
       'Event',
+      'Event Slug',
       'Payment Status',
       'Payment Intent ID',
       'Amount Paid (cents)',
@@ -198,13 +213,14 @@ async function unifyRegistrationSystem() {
       'Source Table'
     ];
     
-    const csvRows = finalRegistrations.map(reg => [
+    const csvRows = registrationsWithEventNames.map(reg => [
       reg.id,
       reg.firstName || '',
       reg.lastName || '',
       reg.email,
       reg.phone || '',
       reg.eventName,
+      reg.eventSlug,
       reg.paymentStatus,
       reg.stripePaymentIntentId || '',
       reg.amountPaid || '',
@@ -225,6 +241,47 @@ async function unifyRegistrationSystem() {
     
     // Write unified export
     writeFileSync('unified-registrations.csv', csvContent);
+    
+    // Step 3.1: Create separate Texas Recruiting Clinic export
+    console.log('📝 Creating Texas Recruiting Clinic specific export...');
+    
+    const texasRegistrations = registrationsWithEventNames.filter(reg => 
+      reg.eventSlug === 'texas-recruiting-clinic' || 
+      reg.eventName === 'Texas Recruiting Clinic'
+    );
+    
+    console.log(`Found ${texasRegistrations.length} Texas Recruiting Clinic registrations`);
+    
+    if (texasRegistrations.length > 0) {
+      const texasCsvContent = [
+        csvHeaders.join(','),
+        ...texasRegistrations.map(reg => [
+          reg.id,
+          reg.firstName || '',
+          reg.lastName || '',
+          reg.email,
+          reg.phone || '',
+          reg.eventName,
+          reg.eventSlug,
+          reg.paymentStatus,
+          reg.stripePaymentIntentId || '',
+          reg.amountPaid || '',
+          reg.registrationDate,
+          reg.source
+        ]).map(row => 
+          row.map(cell => 
+            typeof cell === 'string' && cell.includes(',') 
+              ? `"${cell.replace(/"/g, '""')}"` 
+              : cell
+          ).join(',')
+        )
+      ].join('\n');
+      
+      writeFileSync('texas-recruiting-clinic-registrations.csv', texasCsvContent);
+      console.log('✅ Texas Recruiting Clinic export created');
+    } else {
+      console.log('⚠️ No Texas Recruiting Clinic registrations found');
+    }
     
     // Step 4: Generate summary report
     const eventSummary = finalRegistrations.reduce((acc, reg) => {
@@ -272,6 +329,9 @@ async function unifyRegistrationSystem() {
     
     console.log('✅ Backup tables created');
     
+    // Calculate Texas-specific statistics
+    const texasStats = eventSummary['Texas Recruiting Clinic'] || { total: 0, paid: 0, pending: 0 };
+    
     // Export detailed report
     const reportContent = `
 REGISTRATION SYSTEM UNIFICATION REPORT
@@ -291,21 +351,30 @@ ${Object.entries(eventSummary).map(([event, stats]) =>
 TOTAL UNIQUE REGISTRATIONS: ${totalRegistrations}
 TOTAL PAID REGISTRATIONS: ${totalPaid}
 
+TEXAS RECRUITING CLINIC SPECIFIC:
+- Total Texas registrations: ${texasStats.total}
+- Paid Texas registrations: ${texasStats.paid}
+- Pending Texas registrations: ${texasStats.pending}
+
 FILES CREATED:
-- unified-registrations.csv (main export)
+- unified-registrations.csv (all events with event names)
+${texasStats.total > 0 ? '- texas-recruiting-clinic-registrations.csv (Texas-specific export)' : ''}
 - unification-report.txt (this file)
 
 BACKUP TABLES CREATED:
-- backup_event_registrations
-- backup_completed_event_registrations  
-- backup_verified_customer_registrations
+- backup_event_registrations (if exists)
+- backup_completed_event_registrations (if exists)
+- backup_verified_customer_registrations (if exists)
 `;
     
     writeFileSync('unification-report.txt', reportContent);
     
     console.log('\n🎉 Unification complete!');
     console.log('📁 Files created:');
-    console.log('  - unified-registrations.csv');
+    console.log('  - unified-registrations.csv (all events)');
+    if (texasRegistrations && texasRegistrations.length > 0) {
+      console.log('  - texas-recruiting-clinic-registrations.csv (Texas-specific)');
+    }
     console.log('  - unification-report.txt');
     
   } catch (error) {
