@@ -390,6 +390,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       const data = await response.json();
       
       if (data.success && data.valid && data.discount) {
+        // Set discount state to update UI immediately
         setDiscount({
           valid: true,
           amount: data.discount.discountAmount,
@@ -397,37 +398,62 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode
         });
         
-        // Store discount code and amount for backend synchronization
+        // Store discount information for persistence
         sessionStorage.setItem('applied_discount_code', discountCode);
         sessionStorage.setItem('discounted_amount', data.discount.finalPrice.toString());
+        sessionStorage.setItem('discount_amount', data.discount.discountAmount.toString());
         
-        // Update UI amount and trigger payment intent recreation with correct amount
-        onDiscountApplied && onDiscountApplied(data.discount.finalPrice);
-        
-        // Immediately recreate payment intent with discounted amount
-        await recreatePaymentIntentWithDiscount(data.discount.finalPrice, discountCode);
-        
-        // Make sure all registration data is also in sessionStorage
-        const params = new URLSearchParams(window.location.search);
-        sessionStorage.setItem('registration_option', params.get('option') || 'full');
-        
-        // Show success message for discount application
-        if (data.discount.finalPrice === 0) {
-          toast({
-            title: "100% Discount Applied",
-            description: "Your registration is free! Click 'Complete Registration' to finish.",
+        // Create new payment intent with discount applied
+        try {
+          const recreateResponse = await fetch(`/api/events/${eventId}/create-payment-intent`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              option,
+              registrationData,
+              discountedAmount: data.discount.finalPrice,
+              discountCode: discountCode,
+              forceNewIntent: true
+            }),
           });
-        } else {
-          // Regular partial discount
+          
+          if (recreateResponse.ok) {
+            const recreateData = await recreateResponse.json();
+            console.log('New payment intent created with discount:', recreateData);
+            
+            // Update payment state
+            setClientSecret(recreateData.clientSecret);
+            setAmount(data.discount.finalPrice);
+            
+            // Show success message
+            if (data.discount.finalPrice === 0) {
+              toast({
+                title: "100% Discount Applied",
+                description: "Your registration is free! Complete your registration below.",
+              });
+            } else {
+              toast({
+                title: "Discount Applied",
+                description: `New total: $${data.discount.finalPrice.toFixed(2)} (saved $${data.discount.discountAmount.toFixed(2)})`,
+              });
+            }
+          } else {
+            throw new Error('Failed to recreate payment intent with discount');
+          }
+        } catch (recreateError) {
+          console.error('Error recreating payment intent:', recreateError);
           toast({
             title: "Discount Applied",
-            description: `Discount of $${data.discount.discountAmount.toFixed(2)} applied! New total: $${data.discount.finalPrice.toFixed(2)}`,
+            description: "Discount applied successfully. Please refresh the page to continue.",
+            variant: "default"
           });
         }
       } else {
         toast({
           title: "Invalid Discount",
-          description: data.error || 'This discount code is not valid',
+          description: data.message || data.error || 'This discount code is not valid',
           variant: "destructive"
         });
       }
@@ -515,9 +541,17 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           </span>
         ) : (
           <span className="flex items-center justify-center">
-            🔒 Complete Payment - ${discount?.valid ? 
-              (discount.finalPrice !== undefined ? discount.finalPrice.toFixed(2) : (amount - discount.amount).toFixed(2)) : 
-              amount.toFixed(2)}
+            {(() => {
+              const finalAmount = discount?.valid ? 
+                (discount.finalPrice !== undefined ? discount.finalPrice : (amount - discount.amount)) : 
+                amount;
+              
+              if (finalAmount === 0) {
+                return "🎉 Complete FREE Registration";
+              } else {
+                return `🔒 Complete Payment - $${finalAmount.toFixed(2)}`;
+              }
+            })()}
           </span>
         )}
       </button>

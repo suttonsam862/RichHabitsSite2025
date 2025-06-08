@@ -51,6 +51,19 @@ export const discountCodes = {
     currentUses: 0,
     active: true,
     applicableEvents: 'all'
+  },
+  '1XsWQ23OakMountain12!': {
+    code: '1XsWQ23OakMountain12!',
+    type: 'school_discount',
+    discountType: 'percentage',
+    discountValue: 100, // 100% off - FREE for Oak Mountain wrestlers
+    description: 'Oak Mountain High School - FREE Registration',
+    validFrom: new Date('2025-01-01'),
+    validUntil: new Date('2025-12-31'),
+    maxUses: null, // Unlimited uses for Oak Mountain wrestlers
+    currentUses: 0,
+    active: true,
+    applicableEvents: 'all'
   }
 };
 
