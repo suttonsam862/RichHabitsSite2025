@@ -192,15 +192,17 @@ async function completeRegistration(data: {
     console.error(`Error creating Shopify order for ${registrationType} registration:`, shopifyError);
   }
 
-  // 2. Send confirmation email
+  // 2. Send enhanced confirmation email with schedule and waiver
   try {
     const event = await storage.getEvent(eventId);
     if (event) {
-      await sendRegistrationConfirmationEmail({
+      const { createEventConfirmationEmail } = await import('./emailService.js');
+      const emailData = await createEventConfirmationEmail({
         firstName: registrationData.firstName,
         lastName: registrationData.lastName,
         email: registrationData.email,
         eventName: event.title,
+        eventSlug: event.slug,
         eventDates: event.date,
         eventLocation: event.location,
         registrationType: registrationData.registrationType || 'full',
@@ -208,10 +210,19 @@ async function completeRegistration(data: {
         paymentId: paymentIntentId,
         discountCode
       });
-      console.log(`Confirmation email sent for ${registrationType} registration`);
+      
+      // Send email with SendGrid using the enhanced email template
+      const sgMail = await import('@sendgrid/mail');
+      if (process.env.SENDGRID_API_KEY) {
+        sgMail.default.setApiKey(process.env.SENDGRID_API_KEY);
+        await sgMail.default.send(emailData);
+        console.log(`Enhanced confirmation email sent for ${registrationType} registration to ${registrationData.email}`);
+      } else {
+        console.error('SendGrid API key not configured for enhanced email');
+      }
     }
   } catch (emailError) {
-    console.error(`Error sending confirmation email for ${registrationType} registration:`, emailError);
+    console.error(`Error sending enhanced confirmation email for ${registrationType} registration:`, emailError);
   }
 
   // 3. Admin logging for reporting and dashboard
