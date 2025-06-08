@@ -99,7 +99,7 @@ async function unifyRegistrationSystem() {
           END as event_name,
           payment_status,
           stripe_payment_intent_id,
-          event_price as amount_paid,
+          final_price as amount_paid,
           created_at as registration_date,
           'atomic_registrations' as source_table
         FROM atomic_registrations 
