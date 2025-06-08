@@ -468,9 +468,30 @@ export default function EventDetail() {
           </video>
         )}
 
+        {!isMobile() && event.id === 3 && (
+          <>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 w-full h-full object-cover z-0"
+              onError={(e) => {
+                console.log('Video failed, hiding element');
+                e.currentTarget.style.display = 'none';
+              }}
+            >
+              <source src="/videos/events-hero.webm" type="video/webm" />
+              <source src="/videos/events-hero.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-white/20 to-red-600/20 z-10"></div>
+          </>
+        )}
+
         {/* CRITICAL: Mobile fallback backgrounds - lightweight for stability */}
-        {(isMobile() || event.id === 3) && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-black"></div>
+        {isMobile() && event.id === 3 && (
+          <div className="absolute inset-0 bg-gradient-to-br from-red-900 via-red-700 to-red-800"></div>
         )}
         
         {/* Fallback background for other events */}
