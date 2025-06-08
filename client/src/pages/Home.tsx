@@ -301,11 +301,11 @@ export default function Home() {
               className="block hover:scale-105 transition-transform duration-300"
             >
               <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-8 hover:shadow-2xl transition-shadow">
-                <img 
-                  src="/images/fruit-hunters-logo.png" 
-                  alt="Fruit Hunters"
-                  className="mx-auto h-20 mb-6"
-                />
+                <div className="mb-6">
+                  <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 text-center">
+                    FRUIT HUNTERS
+                  </h2>
+                </div>
                 <h3 className="text-3xl font-bold text-gray-800 mb-4">
                   Fuel Your Training with Premium Nutrition
                 </h3>
