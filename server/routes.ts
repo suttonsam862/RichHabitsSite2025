@@ -44,10 +44,9 @@ const frontendRegistrationSchema = z.object({
 // Helper function to map legacy event IDs to new slugs
 function getEventSlugFromLegacyId(legacyId: number): string {
   const mapping: Record<number, string> = {
-    1: 'birmingham-slam-camp',
-    2: 'national-champ-camp', 
-    3: 'texas-recruiting-clinic',
-    4: 'panther-train-tour'
+    1: 'summer-wrestling-camp-2025',
+    2: 'recruiting-showcase-2025', 
+    3: 'technique-clinic-advanced'
   };
   return mapping[legacyId] || 'unknown-event';
 }
