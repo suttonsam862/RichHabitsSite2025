@@ -179,6 +179,8 @@ async function createEventSpecificTables() {
           );
 
           if (paymentColumns.length > 0) {
+            for (const column of paymentColumns) {
+              try {
                 const directMatch = await sql(`
                   SELECT *
                   FROM "${tableNameSearch}" 
@@ -216,7 +218,10 @@ async function createEventSpecificTables() {
                   registrationFound = true;
                   break;
                 }
+              } catch (error) {
+                // Continue to next column
               }
+            }
             if (registrationFound) break;
           }
         }
@@ -228,17 +233,17 @@ async function createEventSpecificTables() {
 
             if (emailColumns.length > 0) {
               try {
-                const emailMatch = await sql`
+                const emailMatch = await sql(`
                   SELECT *
-                  FROM ${sql(tableNameSearch)} 
-                  WHERE ${sql(emailColumns[0])} = ${customerEmail}
+                  FROM "${tableNameSearch}" 
+                  WHERE "${emailColumns[0]}" = $1
                   AND (
-                    created_at::date = ${paymentDate.toISOString().split('T')[0]}::date OR
-                    updated_at::date = ${paymentDate.toISOString().split('T')[0]}::date OR
-                    payment_date::date = ${paymentDate.toISOString().split('T')[0]}::date
+                    created_at::date = $2::date OR
+                    updated_at::date = $2::date OR
+                    payment_date::date = $2::date
                   )
                   LIMIT 1
-                `;
+                `, [customerEmail, paymentDate.toISOString().split('T')[0]]);
 
                 if (emailMatch.length > 0) {
                   const reg = emailMatch[0];
@@ -298,22 +303,24 @@ async function createEventSpecificTables() {
       // Insert all registrations for this event
       for (const reg of foundRegistrations) {
         await sql(`
-          INSERT INTO ${tableName} (
+          INSERT INTO "${tableName}" (
             stripe_payment_intent_id, payment_amount, payment_date,
             customer_email, customer_name, first_name, last_name, phone,
             school_name, club_name, grade, age, experience, weight,
             t_shirt_size, registration_type, parent_name, parent_email,
             parent_phone, source_table, correlation_method, registration_data
           ) VALUES (
-            ${reg.payment_intent_id}, ${reg.payment_amount}, ${reg.payment_date},
-            ${reg.customer_email}, ${reg.customer_name}, ${reg.first_name}, 
-            ${reg.last_name}, ${reg.phone}, ${reg.school_name}, ${reg.club_name},
-            ${reg.grade}, ${reg.age}, ${reg.experience}, ${reg.weight},
-            ${reg.t_shirt_size}, ${reg.registration_type}, ${reg.parent_name},
-            ${reg.parent_email}, ${reg.parent_phone}, ${reg.source_table},
-            ${reg.correlation_method}, ${JSON.stringify(reg.registration_data)}
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22
           )
-        `);
+        `, [
+          reg.payment_intent_id, reg.payment_amount, reg.payment_date,
+          reg.customer_email, reg.customer_name, reg.first_name, 
+          reg.last_name, reg.phone, reg.school_name, reg.club_name,
+          reg.grade, reg.age, reg.experience, reg.weight,
+          reg.t_shirt_size, reg.registration_type, reg.parent_name,
+          reg.parent_email, reg.parent_phone, reg.source_table,
+          reg.correlation_method, JSON.stringify(reg.registration_data)
+        ]);
       }
 
       console.log(`✅ ${tableName} created with ${foundRegistrations.length} registrations`);
@@ -341,7 +348,7 @@ async function createEventSpecificTables() {
         .substring(0, 50);
 
       const tableName = `event_${sanitizedEventName}_registrations`;
-      const count = await sql`SELECT COUNT(*) as count FROM ${sql(tableName)}`;
+      const count = await sql(`SELECT COUNT(*) as count FROM "${tableName}"`);
 
       createdTables.push({
         original_name: eventName,
