@@ -839,4 +839,64 @@ export function setupRoutes(app: Express): void {
       res.status(500).json({ error: "Failed to fetch archive summary" });
     }
   });
+
+  // Shop API endpoints
+  import("./shopify.js").then(shopifyModule => {
+    const { listCollections, getCollectionByHandle, getCollectionProducts, getProductById } = shopifyModule;
+
+    // Get all collections
+    app.get("/api/shop/collections", async (req: Request, res: Response) => {
+      try {
+        const collections = await listCollections();
+        res.json(collections);
+      } catch (error) {
+        console.error('Error fetching collections:', error);
+        res.status(500).json({ error: "Failed to fetch collections" });
+      }
+    });
+
+    // Get collection by handle (e.g., "retail-collection")
+    app.get("/api/shop/collections/:handle", async (req: Request, res: Response) => {
+      try {
+        const { handle } = req.params;
+        const collection = await getCollectionByHandle(handle);
+        if (!collection) {
+          return res.status(404).json({ error: "Collection not found" });
+        }
+        res.json(collection);
+      } catch (error) {
+        console.error('Error fetching collection:', error);
+        res.status(500).json({ error: "Failed to fetch collection" });
+      }
+    });
+
+    // Get products in a collection
+    app.get("/api/shop/collections/:handle/products", async (req: Request, res: Response) => {
+      try {
+        const { handle } = req.params;
+        const collection = await getCollectionByHandle(handle);
+        if (!collection) {
+          return res.status(404).json({ error: "Collection not found" });
+        }
+        
+        const products = await getCollectionProducts(collection.id);
+        res.json(products);
+      } catch (error) {
+        console.error('Error fetching collection products:', error);
+        res.status(500).json({ error: "Failed to fetch collection products" });
+      }
+    });
+
+    // Get individual product by ID
+    app.get("/api/shop/products/:id", async (req: Request, res: Response) => {
+      try {
+        const { id } = req.params;
+        const product = await getProductById(id);
+        res.json(product);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ error: "Failed to fetch product" });
+      }
+    });
+  });
 }

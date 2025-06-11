@@ -98,6 +98,45 @@ export async function listCollections() {
   }
 }
 
+// Function to get collection by handle
+export async function getCollectionByHandle(handle: string) {
+  try {
+    console.log(`Fetching collection '${handle}' from Shopify Admin API`);
+    const collections = await listCollections();
+    return collections.find(collection => collection.handle === handle);
+  } catch (error) {
+    console.error('Error fetching collection from Shopify:', error);
+    throw error;
+  }
+}
+
+// Function to get products in a collection
+export async function getCollectionProducts(collectionId: string) {
+  try {
+    console.log(`Fetching products for collection ${collectionId} from Shopify Admin API`);
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/collections/${collectionId}/products.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { products: any[] };
+    console.log(`Found ${data.products.length} products in collection`);
+    return data.products;
+  } catch (error) {
+    console.error('Error fetching collection products from Shopify:', error);
+    throw error;
+  }
+}
+
 // Function to get products in a collection by collection ID
 export async function getProductsByCollectionId(collectionId: string) {
   try {
@@ -125,8 +164,8 @@ export async function getProductsByCollectionId(collectionId: string) {
   }
 }
 
-// Function to get a collection by handle using Admin API
-export async function getCollectionByHandle(handle: string) {
+// Function to get a collection by handle using Admin API (alternate implementation)
+export async function getCollectionByHandleDetailed(handle: string) {
   try {
     console.log(`Fetching collection with handle "${handle}" from Shopify Admin API`);
     
