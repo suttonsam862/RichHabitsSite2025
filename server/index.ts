@@ -17,8 +17,14 @@ app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files in development
-if (process.env.NODE_ENV !== 'production') {
+// Serve static files
+if (process.env.NODE_ENV === 'production') {
+  // In production, serve built client files
+  const distPublicPath = path.resolve(process.cwd(), 'dist/public');
+  console.log('Production: Serving static files from:', distPublicPath);
+  app.use(express.static(distPublicPath));
+} else {
+  // In development, serve public directory
   const publicPath = path.resolve(process.cwd(), 'public');
   console.log('Development: Serving static files from:', publicPath);
   app.use(express.static(publicPath));
@@ -66,6 +72,25 @@ async function startServer() {
     // Setup legacy bridge for frontend form compatibility
     const { setupLegacyBridge } = await import('./legacy-bridge.js');
     setupLegacyBridge(app);
+
+    // Catch-all handler for client-side routing in production
+    if (process.env.NODE_ENV === 'production') {
+      app.get('*', (req, res, next) => {
+        // Skip API routes - let them return 404 if not found
+        if (req.path.startsWith('/api/')) {
+          return next();
+        }
+        
+        // Serve React app for all other routes
+        const indexPath = path.resolve(process.cwd(), 'dist/public/index.html');
+        res.sendFile(indexPath, (err) => {
+          if (err) {
+            console.error('Error serving index.html:', err);
+            res.status(500).send('Internal Server Error');
+          }
+        });
+      });
+    }
 
     // Create HTTP server
     const server = app.listen(5000, '0.0.0.0', () => {

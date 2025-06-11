@@ -28,14 +28,26 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve index.html for client-side routing
-app.get('*', (req, res) => {
-  // Skip API routes
-  if (req.path.startsWith('/api/')) return;
+app.get('*', (req, res, next) => {
+  // Skip API routes - let them return 404 if not found
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
   
   if (process.env.NODE_ENV === 'production') {
-    res.sendFile(path.join(__dirname, 'dist/public/index.html'));
+    res.sendFile(path.join(__dirname, 'dist/public/index.html'), (err) => {
+      if (err) {
+        console.error('Error serving index.html:', err);
+        res.status(500).send('Internal Server Error');
+      }
+    });
   } else {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, 'public/index.html'), (err) => {
+      if (err) {
+        console.error('Error serving index.html:', err);
+        res.status(500).send('Internal Server Error');
+      }
+    });
   }
 });
 
