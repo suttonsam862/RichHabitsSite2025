@@ -1,6 +1,45 @@
 import type { Express, Request, Response } from "express";
 import { storage } from "./storage.js";
 import { getDatabaseHealthStatus } from "./db.js";
+import { z } from "zod";
+import { insertEventRegistrationSchema } from "../shared/schema.js";
+
+// Frontend-to-Database field mapping validation schema
+const frontendRegistrationSchema = z.object({
+  eventId: z.union([z.string(), z.number()]).transform(val => String(val)),
+  firstName: z.string().min(1, "First name is required").trim(),
+  lastName: z.string().min(1, "Last name is required").trim(),
+  email: z.string().email("Valid email is required").trim(),
+  phone: z.string().optional(),
+  
+  // Handle frontend field name variations
+  grade: z.string().optional(),
+  age: z.string().optional(),
+  
+  // Map frontend tShirtSize to database shirtSize
+  tShirtSize: z.string().optional(),
+  shirtSize: z.string().optional(),
+  
+  // Map frontend contactName to database parentName
+  contactName: z.string().optional(),
+  parentName: z.string().optional(),
+  
+  // Map frontend experienceLevel to database experience
+  experienceLevel: z.string().optional(),
+  experience: z.string().optional(),
+  
+  // Other optional fields
+  gender: z.string().optional(),
+  schoolName: z.string().optional(),
+  clubName: z.string().optional(),
+  registrationType: z.string().default('individual'),
+  gearSelection: z.any().optional(),
+  basePrice: z.union([z.string(), z.number()]).optional(),
+  finalPrice: z.union([z.string(), z.number()]).optional(),
+  medicalReleaseAccepted: z.boolean().default(false),
+  waiverAccepted: z.boolean().default(false),
+  termsAccepted: z.boolean().default(false)
+});
 
 // Helper function to map legacy event IDs to new slugs
 function getEventSlugFromLegacyId(legacyId: number): string {
@@ -115,49 +154,75 @@ export function setupRoutes(app: Express): void {
     }
   });
 
-  // Event registration submission endpoint
+  // Event registration submission endpoint with bulletproof field mapping
   app.post("/api/event-registration", async (req: Request, res: Response) => {
     try {
-      const registrationData = req.body;
+      // Validate and sanitize input using Zod
+      const validationResult = frontendRegistrationSchema.safeParse(req.body);
       
-      // Validate required fields
-      if (!registrationData.eventId || !registrationData.firstName || !registrationData.lastName || !registrationData.email) {
-        return res.status(400).json({ error: "Missing required registration fields" });
+      if (!validationResult.success) {
+        console.error("Validation errors:", validationResult.error.issues);
+        return res.status(400).json({ 
+          error: "Registration validation failed",
+          details: validationResult.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          }))
+        });
       }
+
+      const registrationData = validationResult.data;
 
       // Convert legacy event ID to UUID if needed
       let eventUuid = registrationData.eventId;
-      if (Number.isInteger(registrationData.eventId)) {
+      if (!isNaN(Number(registrationData.eventId))) {
         // Map legacy event IDs to new UUIDs
         const events = await storage.getEvents();
-        const event = events.find(e => e.slug === getEventSlugFromLegacyId(registrationData.eventId));
+        const event = events.find(e => e.slug === getEventSlugFromLegacyId(Number(registrationData.eventId)));
         if (!event) {
           return res.status(400).json({ error: "Event not found" });
         }
         eventUuid = event.id;
       }
 
-      // Create registration in new UUID system
-      const registration = await storage.createEventRegistration({
+      // Map frontend fields to database fields with fallbacks
+      const mappedRegistration = {
         eventId: eventUuid,
         firstName: registrationData.firstName,
         lastName: registrationData.lastName,
         email: registrationData.email,
-        phone: registrationData.phone,
-        grade: registrationData.grade,
-        schoolName: registrationData.schoolName,
-        clubName: registrationData.clubName,
-        registrationType: registrationData.registrationType || 'individual',
-        gearSelection: registrationData.gearSelection,
-        basePrice: registrationData.basePrice || "0",
-        finalPrice: registrationData.finalPrice || "0",
-        waiverAccepted: registrationData.medicalReleaseAccepted || false,
-        termsAccepted: registrationData.termsAccepted || false,
+        phone: registrationData.phone || null,
+        
+        // Handle grade/age mapping
+        grade: registrationData.grade || registrationData.age || null,
+        
+        // Map tShirtSize -> shirtSize
+        shirtSize: registrationData.tShirtSize || registrationData.shirtSize || null,
+        
+        // Map contactName -> parentName
+        parentName: registrationData.contactName || registrationData.parentName || null,
+        
+        // Map experienceLevel -> experience
+        experience: registrationData.experienceLevel || registrationData.experience || null,
+        
+        // Other fields
+        gender: registrationData.gender || null,
+        schoolName: registrationData.schoolName || null,
+        clubName: registrationData.clubName || null,
+        registrationType: registrationData.registrationType,
+        gearSelection: registrationData.gearSelection || null,
+        basePrice: String(registrationData.basePrice || "0"),
+        finalPrice: String(registrationData.finalPrice || "0"),
+        waiverAccepted: registrationData.waiverAccepted || registrationData.medicalReleaseAccepted,
+        termsAccepted: registrationData.termsAccepted,
         sessionId: req.sessionID,
         ipAddress: req.ip,
         userAgent: req.get('User-Agent'),
         deviceType: detectDeviceType(req.get('User-Agent'))
-      });
+      };
+
+      // Create registration in database
+      const registration = await storage.createEventRegistration(mappedRegistration);
 
       res.json({ 
         success: true, 
@@ -166,7 +231,10 @@ export function setupRoutes(app: Express): void {
       });
     } catch (error) {
       console.error("Registration creation error:", error);
-      res.status(500).json({ error: "Failed to create registration" });
+      res.status(500).json({ 
+        error: "Failed to create registration",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
