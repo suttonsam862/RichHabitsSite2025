@@ -185,14 +185,12 @@ async function createEventSpecificTables() {
           );
 
           if (paymentColumns.length > 0) {
-            for (const column of paymentColumns) {
-              try {
-                const directMatch = await sql`
+                const directMatch = await sql(`
                   SELECT *
-                  FROM ${sql(tableNameSearch)} 
-                  WHERE ${sql(column)} = ${intent.id}
+                  FROM "${tableNameSearch}" 
+                  WHERE "${column}" = $1
                   LIMIT 1
-                `;
+                `, [intent.id]);
 
                 if (directMatch.length > 0) {
                   const reg = directMatch[0];
@@ -224,10 +222,7 @@ async function createEventSpecificTables() {
                   registrationFound = true;
                   break;
                 }
-              } catch (error) {
-                // Continue to next column
               }
-            }
             if (registrationFound) break;
           }
         }
