@@ -77,23 +77,30 @@ const athleteSchema = z.object({
 const teamRegistrationSchema = z.object({
   eventId: z.union([z.string(), z.number()]).transform(val => String(val)),
   teamName: z.string().min(1, "Team name is required").trim(),
-  teamPrice: z.union([z.string(), z.number()]).transform(val => Number(val)),
+  schoolName: z.string().optional(),
   
-  // Coach information (optional for team registrations)
-  coachInfo: z.object({
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
-    email: z.string().email().optional(),
+  // Team contact (coach) information - required for team registrations
+  teamContact: z.object({
+    firstName: z.string().min(1, "Coach first name is required").trim(),
+    lastName: z.string().min(1, "Coach last name is required").trim(),
+    email: z.string().email("Valid coach email is required").trim(),
     phone: z.string().optional()
-  }).optional(),
+  }),
+  
+  // Registration option and pricing
+  registrationType: z.enum(['team']).default('team'),
+  option: z.enum(['full', '1day', '2day']).default('full'),
+  numberOfDays: z.number().optional(),
+  selectedDates: z.array(z.string()).optional(),
   
   // Array of athletes with validation
   athletes: z.array(athleteSchema).min(1, "At least one athlete is required"),
   
   // Optional team-level fields
   discountCode: z.string().optional(),
-  totalAmount: z.union([z.string(), z.number()]).optional(),
-  discountedAmount: z.union([z.string(), z.number()]).optional()
+  basePrice: z.union([z.string(), z.number()]).optional(),
+  finalPrice: z.union([z.string(), z.number()]).optional(),
+  stripePaymentIntentId: z.string().optional()
 });
 
 // Helper function to map legacy event IDs to new slugs
@@ -345,12 +352,13 @@ export function setupRoutes(app: Express): void {
 
       // Convert legacy event ID to UUID if needed
       let eventUuid = teamData.eventId;
+      let event;
       if (!isNaN(Number(teamData.eventId))) {
         const events = await storage.getEvents();
         const targetSlug = getEventSlugFromLegacyId(Number(teamData.eventId));
         console.log(`Team registration: Legacy ID ${teamData.eventId} maps to slug: ${targetSlug}`);
         
-        const event = events.find(e => e.slug === targetSlug);
+        event = events.find(e => e.slug === targetSlug);
         if (!event) {
           console.error(`Team registration: Event not found for slug: ${targetSlug}`);
           return res.status(400).json({ 
@@ -360,11 +368,59 @@ export function setupRoutes(app: Express): void {
         }
         eventUuid = event.id;
         console.log(`Team registration: Mapped legacy ID ${teamData.eventId} to UUID: ${eventUuid}`);
+      } else {
+        event = await storage.getEventBySlug(teamData.eventId) || await storage.getEvent(teamData.eventId);
+        if (!event) {
+          return res.status(400).json({ error: "Event not found" });
+        }
+        eventUuid = event.id;
+      }
+
+      // Calculate team pricing based on athlete count and option
+      const { calculateTeamPrice } = await import('./pricingUtils.js');
+      const athleteCount = teamData.athletes.length;
+      const calculatedPrice = calculateTeamPrice(Number(event.id) || 1, athleteCount, teamData.option);
+      const finalPrice = teamData.finalPrice ? Number(teamData.finalPrice) * 100 : calculatedPrice; // Convert to cents
+
+      console.log(`Team pricing: ${athleteCount} athletes x ${teamData.option} = ${finalPrice} cents`);
+
+      // Create team contact record first
+      const teamContactData = {
+        eventId: eventUuid,
+        firstName: teamData.teamContact.firstName,
+        lastName: teamData.teamContact.lastName,
+        email: teamData.teamContact.email,
+        phone: teamData.teamContact.phone || null,
+        registrationType: 'team_contact',
+        teamName: teamData.teamName,
+        schoolName: teamData.schoolName || null,
+        basePrice: String(finalPrice),
+        finalPrice: String(finalPrice),
+        waiverAccepted: true,
+        termsAccepted: true,
+        sessionId: req.sessionID,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        deviceType: detectDeviceType(req.get('User-Agent'))
+      };
+
+      let teamContactId;
+      try {
+        const teamContact = await storage.createEventRegistration(teamContactData);
+        teamContactId = teamContact.id;
+        console.log(`Team contact created: ${teamData.teamContact.firstName} ${teamData.teamContact.lastName} with ID: ${teamContactId}`);
+      } catch (contactError) {
+        console.error("Failed to create team contact:", contactError);
+        return res.status(500).json({ 
+          error: "Failed to create team contact record",
+          details: contactError instanceof Error ? contactError.message : "Unknown error"
+        });
       }
 
       // Process each athlete with field mapping
-      const registrationIds = [];
+      const registrationIds = [teamContactId];
       const failedAthletes = [];
+      let shopifyOrderId;
 
       for (let i = 0; i < teamData.athletes.length; i++) {
         const athlete = teamData.athletes[i];
@@ -394,14 +450,14 @@ export function setupRoutes(app: Express): void {
             
             // Other fields
             gender: athlete.gender || null,
-            schoolName: athlete.schoolName || null,
+            schoolName: athlete.schoolName || teamData.schoolName || null,
             clubName: athlete.clubName || null,
             
             // Team-specific fields
             registrationType: 'team',
             teamName: teamData.teamName,
-            basePrice: String(teamData.teamPrice),
-            finalPrice: String(teamData.teamPrice),
+            basePrice: String(finalPrice / athleteCount), // Individual athlete price
+            finalPrice: String(finalPrice / athleteCount),
             waiverAccepted: true,
             termsAccepted: true,
             sessionId: req.sessionID,
@@ -425,13 +481,64 @@ export function setupRoutes(app: Express): void {
         }
       }
 
+      // Create Shopify order for the team registration
+      if (teamData.stripePaymentIntentId) {
+        try {
+          const { createShopifyOrderFromRegistration } = await import('./stripe.js');
+          
+          const teamRegistrationData = {
+            eventId: Number(event.id) || 1,
+            firstName: teamData.teamContact.firstName,
+            lastName: teamData.teamContact.lastName,
+            email: teamData.teamContact.email,
+            phone: teamData.teamContact.phone || '',
+            teamName: teamData.teamName,
+            schoolName: teamData.schoolName || '',
+            registrationType: 'team',
+            option: teamData.option,
+            numberOfDays: teamData.numberOfDays,
+            selectedDates: teamData.selectedDates,
+            athleteCount
+          };
+
+          const shopifyOrder = await createShopifyOrderFromRegistration(
+            teamRegistrationData,
+            event,
+            finalPrice / 100 // Convert cents to dollars
+          );
+
+          if (shopifyOrder?.id) {
+            shopifyOrderId = shopifyOrder.id.toString();
+            console.log(`Shopify order created for team: ${shopifyOrderId}`);
+            
+            // Update all registrations with the Shopify order ID
+            for (const regId of registrationIds) {
+              try {
+                await storage.updateEventRegistration(regId, { 
+                  shopifyOrderId: shopifyOrderId,
+                  stripePaymentIntentId: teamData.stripePaymentIntentId,
+                  status: 'completed'
+                });
+              } catch (updateError) {
+                console.error(`Failed to update registration ${regId} with Shopify order ID:`, updateError);
+              }
+            }
+          }
+        } catch (shopifyError) {
+          console.error("Failed to create Shopify order for team:", shopifyError);
+          // Don't fail the entire registration for Shopify errors
+        }
+      }
+
       // Check if any athletes failed to register
       if (failedAthletes.length > 0) {
         return res.status(400).json({
           error: "Some athletes could not be registered",
-          successfulRegistrations: registrationIds.length,
+          successfulRegistrations: registrationIds.length - 1, // Exclude team contact
           failedAthletes: failedAthletes,
-          registrationIds: registrationIds
+          registrationIds: registrationIds,
+          teamContactId,
+          shopifyOrderId
         });
       }
 
@@ -439,8 +546,11 @@ export function setupRoutes(app: Express): void {
         success: true, 
         message: "Team registration successful",
         teamName: teamData.teamName,
-        athleteCount: registrationIds.length,
-        registrationIds: registrationIds
+        athleteCount: teamData.athletes.length,
+        totalPrice: finalPrice / 100,
+        registrationIds: registrationIds,
+        teamContactId,
+        shopifyOrderId
       });
       
     } catch (error) {
@@ -616,6 +726,83 @@ export function setupRoutes(app: Express): void {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch system overview" });
+    }
+  });
+
+  // Payment intent creation endpoint for all registration types
+  app.post("/api/events/:eventId/create-payment-intent", async (req: Request, res: Response) => {
+    try {
+      const { eventId } = req.params;
+      const { option = 'full', registrationType = 'individual', athletes = [], numberOfDays, selectedDates, discountedAmount } = req.body;
+
+      // Get event information
+      const events = await storage.getEvents();
+      let event;
+      
+      if (!isNaN(Number(eventId))) {
+        const targetSlug = getEventSlugFromLegacyId(Number(eventId));
+        event = events.find(e => e.slug === targetSlug);
+      } else {
+        event = events.find(e => e.id === eventId || e.slug === eventId);
+      }
+
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+
+      // Import pricing utilities
+      const { calculateRegistrationAmount, calculateTeamPrice } = await import('./pricingUtils.js');
+      
+      let amount: number;
+
+      try {
+        if (registrationType === 'team') {
+          // Calculate team pricing
+          const athleteCount = athletes.length || 1;
+          amount = calculateTeamPrice(Number(event.id) || 1, athleteCount, option);
+        } else {
+          // Calculate individual pricing (including 1-day)
+          amount = calculateRegistrationAmount(Number(event.id) || 1, option, numberOfDays, selectedDates);
+        }
+
+        // Override with discounted amount if provided
+        if (discountedAmount !== null && discountedAmount !== undefined && typeof discountedAmount === 'number') {
+          amount = Math.round(discountedAmount * 100); // Convert to cents
+          console.log(`Using discounted amount: $${discountedAmount} (${amount} cents)`);
+        }
+
+        console.log(`Payment intent for ${registrationType} registration: ${option} = ${amount} cents`);
+
+      } catch (pricingError) {
+        console.error("Pricing calculation error:", pricingError);
+        return res.status(400).json({ 
+          error: "Failed to calculate pricing", 
+          details: pricingError instanceof Error ? pricingError.message : "Unknown pricing error"
+        });
+      }
+
+      // Import Stripe functionality
+      const { createPaymentIntent } = await import('./stripe.js');
+      
+      // Create payment intent using existing Stripe logic
+      const mockReq = {
+        ...req,
+        params: { eventSlug: event.slug },
+        body: {
+          ...req.body,
+          option,
+          discountedAmount: discountedAmount !== null && discountedAmount !== undefined ? discountedAmount : undefined
+        }
+      };
+
+      await createPaymentIntent(mockReq, res);
+
+    } catch (error) {
+      console.error("Payment intent creation error:", error);
+      res.status(500).json({ 
+        error: "Failed to create payment intent",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
