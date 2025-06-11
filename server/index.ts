@@ -58,6 +58,10 @@ async function startServer() {
 
     // Register all routes
     setupRoutes(app);
+    
+    // Setup legacy bridge for frontend form compatibility
+    const { setupLegacyBridge } = await import('./legacy-bridge.js');
+    setupLegacyBridge(app);
 
     // Create HTTP server
     const server = app.listen(5000, '0.0.0.0', () => {
