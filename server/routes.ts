@@ -1,8 +1,10 @@
 import type { Express, Request, Response } from "express";
+import express from "express";
 import { storage } from "./storage.js";
 import { getDatabaseHealthStatus } from "./db.js";
 import { z } from "zod";
 import { insertEventRegistrationSchema } from "../shared/schema.js";
+import { handleStripeWebhook } from "./stripe.js";
 
 // Frontend-to-Database field mapping validation schema
 const frontendRegistrationSchema = z.object({
@@ -728,6 +730,9 @@ export function setupRoutes(app: Express): void {
       res.status(500).json({ error: "Failed to fetch system overview" });
     }
   });
+
+  // Stripe webhook handler for payment success notifications
+  app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
 
   // Payment intent creation endpoint for all registration types
   app.post("/api/events/:eventId/create-payment-intent", async (req: Request, res: Response) => {

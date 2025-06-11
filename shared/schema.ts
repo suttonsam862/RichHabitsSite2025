@@ -343,6 +343,10 @@ export const eventRegistrations = pgTable("event_registrations", {
   waiverSignedAt: timestamp("waiver_signed_at"),
   termsAccepted: boolean("terms_accepted").default(false),
   
+  // Payment and order tracking
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  shopifyOrderId: text("shopify_order_id"),
+  
   // Status tracking
   status: orderStatusEnum("status").default('pending'),
   confirmedAt: timestamp("confirmed_at"),
