@@ -1,4 +1,3 @@
-import React from "react";
 import { Switch, Route } from "wouter";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";

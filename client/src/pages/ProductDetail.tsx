@@ -19,7 +19,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
 
   const { data: product, isLoading } = useQuery({
-    queryKey: ['/api/shop/products/handle', handle],
+    queryKey: [`/api/shop/products/handle/${handle}`],
     enabled: !!handle
   });
 
