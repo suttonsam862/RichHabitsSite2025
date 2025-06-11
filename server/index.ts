@@ -92,9 +92,10 @@ async function startServer() {
       });
     }
 
-    // Create HTTP server
-    const server = app.listen(5000, '0.0.0.0', () => {
-      console.log(`✅ Rich Habits server running on port 5000 in ${process.env.NODE_ENV || 'development'} mode`);
+    // Create HTTP server with dynamic port assignment
+    const PORT = parseInt(process.env.PORT || '3000', 10);
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`✅ Rich Habits server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
       console.log('🌐 Server address:', server.address());
     });
 
@@ -107,7 +108,7 @@ async function startServer() {
     // Error handling
     server.on('error', (error: any) => {
       if (error.code === 'EADDRINUSE') {
-        console.error('Port 5000 is already in use');
+        console.error(`Port ${PORT} is already in use`);
       } else {
         console.error('Server error:', error);
       }
