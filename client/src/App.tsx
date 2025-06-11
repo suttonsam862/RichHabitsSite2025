@@ -9,6 +9,7 @@ import { TooltipProvider } from "./components/ui/tooltip";
 // Page imports
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import Events from "./pages/EventsSimple";
 import EventDetail from "./pages/EventDetail";
 import EventRegistration from "./pages/EventRegistration";
@@ -23,6 +24,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/shop" component={Shop} />
+      <Route path="/shop/products/:id" component={ProductDetail} />
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/register/:id" component={EventRegistration} />
