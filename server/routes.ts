@@ -5,6 +5,7 @@ import { getDatabaseHealthStatus } from "./db.js";
 import { z } from "zod";
 import { insertEventRegistrationSchema } from "../shared/schema.js";
 import { handleStripeWebhook } from "./stripe.js";
+import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById } from "./shopify.js";
 
 // Frontend-to-Database field mapping validation schema
 const frontendRegistrationSchema = z.object({
@@ -841,87 +842,83 @@ export function setupRoutes(app: Express): void {
   });
 
   // Shop API endpoints
-  import("./shopify.js").then(shopifyModule => {
-    const { listCollections, getCollectionByHandle, getCollectionProducts, getProductById } = shopifyModule;
+  // Get all collections
+  app.get("/api/shop/collections", async (req: Request, res: Response) => {
+    try {
+      const collections = await listCollections();
+      res.json(collections);
+    } catch (error) {
+      console.error('Error fetching collections:', error);
+      res.status(500).json({ error: "Failed to fetch collections" });
+    }
+  });
 
-    // Get all collections
-    app.get("/api/shop/collections", async (req: Request, res: Response) => {
-      try {
-        const collections = await listCollections();
-        res.json(collections);
-      } catch (error) {
-        console.error('Error fetching collections:', error);
-        res.status(500).json({ error: "Failed to fetch collections" });
+  // Get collection by handle (e.g., "retail-collection")
+  app.get("/api/shop/collections/:handle", async (req: Request, res: Response) => {
+    try {
+      const { handle } = req.params;
+      const collection = await getCollectionByHandle(handle);
+      if (!collection) {
+        return res.status(404).json({ error: "Collection not found" });
       }
-    });
+      res.json(collection);
+    } catch (error) {
+      console.error('Error fetching collection:', error);
+      res.status(500).json({ error: "Failed to fetch collection" });
+    }
+  });
 
-    // Get collection by handle (e.g., "retail-collection")
-    app.get("/api/shop/collections/:handle", async (req: Request, res: Response) => {
-      try {
-        const { handle } = req.params;
-        const collection = await getCollectionByHandle(handle);
-        if (!collection) {
-          return res.status(404).json({ error: "Collection not found" });
-        }
-        res.json(collection);
-      } catch (error) {
-        console.error('Error fetching collection:', error);
-        res.status(500).json({ error: "Failed to fetch collection" });
+  // Get products in a collection
+  app.get("/api/shop/collections/:handle/products", async (req: Request, res: Response) => {
+    try {
+      const { handle } = req.params;
+      const collection = await getCollectionByHandle(handle);
+      if (!collection) {
+        return res.status(404).json({ error: "Collection not found" });
       }
-    });
+      
+      const products = await getCollectionProducts(collection.id);
+      res.json(products);
+    } catch (error) {
+      console.error('Error fetching collection products:', error);
+      res.status(500).json({ error: "Failed to fetch collection products" });
+    }
+  });
 
-    // Get products in a collection
-    app.get("/api/shop/collections/:handle/products", async (req: Request, res: Response) => {
-      try {
-        const { handle } = req.params;
-        const collection = await getCollectionByHandle(handle);
-        if (!collection) {
-          return res.status(404).json({ error: "Collection not found" });
-        }
-        
+  // Get individual product by ID
+  app.get("/api/shop/products/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const product = await getProductById(id);
+      res.json(product);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
+
+  // Get individual product by handle
+  app.get("/api/shop/products/handle/:handle", async (req: Request, res: Response) => {
+    try {
+      const { handle } = req.params;
+      // First get all products and find by handle
+      const collections = await listCollections();
+      let foundProduct = null;
+      
+      for (const collection of collections) {
         const products = await getCollectionProducts(collection.id);
-        res.json(products);
-      } catch (error) {
-        console.error('Error fetching collection products:', error);
-        res.status(500).json({ error: "Failed to fetch collection products" });
+        foundProduct = products.find((p: any) => p.handle === handle);
+        if (foundProduct) break;
       }
-    });
-
-    // Get individual product by ID
-    app.get("/api/shop/products/:id", async (req: Request, res: Response) => {
-      try {
-        const { id } = req.params;
-        const product = await getProductById(id);
-        res.json(product);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        res.status(500).json({ error: "Failed to fetch product" });
+      
+      if (!foundProduct) {
+        return res.status(404).json({ error: "Product not found" });
       }
-    });
-
-    // Get individual product by handle
-    app.get("/api/shop/products/handle/:handle", async (req: Request, res: Response) => {
-      try {
-        const { handle } = req.params;
-        // First get all products and find by handle
-        const collections = await listCollections();
-        let foundProduct = null;
-        
-        for (const collection of collections) {
-          const products = await getCollectionProducts(collection.id);
-          foundProduct = products.find((p: any) => p.handle === handle);
-          if (foundProduct) break;
-        }
-        
-        if (!foundProduct) {
-          return res.status(404).json({ error: "Product not found" });
-        }
-        
-        res.json(foundProduct);
-      } catch (error) {
-        console.error('Error fetching product by handle:', error);
-        res.status(500).json({ error: "Failed to fetch product" });
-      }
-    });
+      
+      res.json(foundProduct);
+    } catch (error) {
+      console.error('Error fetching product by handle:', error);
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
   });
 }
