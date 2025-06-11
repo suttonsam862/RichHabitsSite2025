@@ -32,13 +32,13 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <motion.div
-      className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-red-600/30 transition-all duration-300 group"
-      whileHover={{ y: -5 }}
+      className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden border border-gray-700 hover:border-gray-500 transition-all duration-300 group hover:shadow-xl"
+      whileHover={{ y: -8 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="aspect-square bg-gray-800 overflow-hidden">
+      <div className="aspect-square bg-gradient-to-br from-gray-800 to-gray-700 overflow-hidden relative">
         {imageUrl ? (
           <img 
             src={imageUrl} 
@@ -50,10 +50,11 @@ function ProductCard({ product }: { product: Product }) {
             <ShoppingCart className="w-16 h-16" />
           </div>
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
       
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-2 group-hover:text-red-400 transition-colors">
+        <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors text-gray-100">
           {product.title}
         </h3>
         
@@ -67,21 +68,21 @@ function ProductCard({ product }: { product: Product }) {
         )}
         
         <div className="flex items-center justify-between mb-4">
-          <div className="text-2xl font-bold text-red-400">
+          <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             ${price.toFixed(2)}
           </div>
           <div className="flex items-center gap-1">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
             ))}
           </div>
         </div>
         
         <Link href={`/shop/products/${product.id}`}>
-          <a className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 group">
+          <button className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-lg">
             View Details
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
+          </button>
         </Link>
       </div>
     </motion.div>
@@ -103,16 +104,17 @@ export default function Shop() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="relative bg-gradient-to-r from-red-600 to-red-700 py-20">
-        <div className="container mx-auto px-6 text-center">
+      <div className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 py-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/10 to-gray-900 opacity-60"></div>
+        <div className="container mx-auto px-6 text-center relative">
           <motion.h1 
-            className="text-5xl md:text-6xl font-bold mb-4"
+            className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent"
             {...fadeIn}
           >
             Rich Habits Shop
           </motion.h1>
           <motion.p 
-            className="text-xl text-red-100 max-w-2xl mx-auto"
+            className="text-xl text-gray-300 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -127,7 +129,7 @@ export default function Shop() {
         <div className="container mx-auto px-6">
           {isLoading ? (
             <div className="text-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
               <p className="text-gray-400">Loading products...</p>
             </div>
           ) : (
@@ -173,7 +175,7 @@ export default function Shop() {
                     We're working on stocking our retail collection. Check back soon!
                   </p>
                   <Link href="/events">
-                    <a className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-xl transition-colors">
+                    <a className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg">
                       Explore Training Camps
                     </a>
                   </Link>
@@ -194,8 +196,8 @@ export default function Shop() {
             transition={{ duration: 0.6, delay: 0.5 }}
           >
             <div className="text-center">
-              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShoppingCart className="w-8 h-8" />
+              <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <ShoppingCart className="w-8 h-8 text-blue-400" />
               </div>
               <h3 className="text-xl font-bold mb-2">Premium Quality</h3>
               <p className="text-gray-400">
@@ -204,8 +206,8 @@ export default function Shop() {
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8" />
+              <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Star className="w-8 h-8 text-purple-400" />
               </div>
               <h3 className="text-xl font-bold mb-2">Fast Shipping</h3>
               <p className="text-gray-400">
@@ -214,8 +216,8 @@ export default function Shop() {
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ArrowRight className="w-8 h-8" />
+              <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <ArrowRight className="w-8 h-8 text-emerald-400" />
               </div>
               <h3 className="text-xl font-bold mb-2">Easy Returns</h3>
               <p className="text-gray-400">
@@ -227,19 +229,20 @@ export default function Shop() {
       </div>
 
       {/* Call to Action */}
-      <div className="py-20 bg-gradient-to-r from-red-900/20 to-black">
-        <div className="container mx-auto px-6 text-center">
+      <div className="py-20 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-purple-900/5 to-gray-900 opacity-60"></div>
+        <div className="container mx-auto px-6 text-center relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <h3 className="text-3xl font-bold mb-6">Train Like a Champion</h3>
+            <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">Train Like a Champion</h3>
             <p className="text-xl text-gray-300 mb-8">
               Gear up with our premium products and join our wrestling camps for the complete experience
             </p>
             <Link href="/events">
-              <a className="inline-block bg-red-600 hover:bg-red-700 text-white text-lg font-semibold px-8 py-4 rounded-xl transition-colors hover:scale-105">
+              <a className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-lg font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105">
                 View Training Camps
               </a>
             </Link>
