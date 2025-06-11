@@ -126,46 +126,40 @@ async function createEventSpecificTables() {
       // Drop and recreate table
       await sql`DROP TABLE IF EXISTS ${sql(tableName)}`;
 
-      await sql`
-        CREATE TABLE ${sql(tableName)} (
+      await sql(`
+        CREATE TABLE "${tableName}" (
           id SERIAL PRIMARY KEY,
           stripe_payment_intent_id TEXT UNIQUE NOT NULL,
           payment_amount DECIMAL(10,2) NOT NULL,
           payment_date TIMESTAMP NOT NULL,
 
-          -- Customer Information
           customer_email TEXT,
           customer_name TEXT,
           first_name TEXT,
           last_name TEXT,
           phone TEXT,
 
-          -- Academic Information
           school_name TEXT,
           club_name TEXT,
           grade TEXT,
           age TEXT,
 
-          -- Athletic Information
           experience TEXT,
           weight TEXT,
           t_shirt_size TEXT,
           registration_type TEXT,
 
-          -- Parent/Guardian Information
           parent_name TEXT,
           parent_email TEXT,
           parent_phone TEXT,
 
-          -- Metadata
           source_table TEXT,
           correlation_method TEXT NOT NULL,
           registration_data JSONB,
 
-          -- Audit
           created_at TIMESTAMP DEFAULT NOW()
         )
-      `;
+      `);
 
       console.log(`📝 Populating ${tableName} with ${payments.length} payments...`);
 
