@@ -1,4 +1,3 @@
-
 import Stripe from 'stripe';
 import { neon } from '@neondatabase/serverless';
 import { writeFileSync } from 'fs';
@@ -37,11 +36,11 @@ async function createEventSpecificTables() {
 
     // Step 1: Get all successful payment intents from Stripe
     console.log('\n🔍 Fetching all successful payment intents...');
-    
+
     const allPaymentIntents = [];
     let hasMore = true;
     let startingAfter = null;
-    
+
     while (hasMore) {
       const params: any = {
         limit: 100,
@@ -49,14 +48,14 @@ async function createEventSpecificTables() {
           gte: Math.floor(Date.now() / 1000) - (365 * 24 * 60 * 60)
         }
       };
-      
+
       if (startingAfter) {
         params.starting_after = startingAfter;
       }
-      
+
       const batch = await stripe.paymentIntents.list(params);
       allPaymentIntents.push(...batch.data);
-      
+
       hasMore = batch.has_more;
       if (hasMore && batch.data.length > 0) {
         startingAfter = batch.data[batch.data.length - 1].id;
@@ -71,7 +70,7 @@ async function createEventSpecificTables() {
 
     // Step 2: Group payments by event
     const eventGroups = new Map<string, any[]>();
-    
+
     successfulPayments.forEach(intent => {
       const eventName = intent.metadata?.event_name || intent.metadata?.eventName || 'Unknown Event';
       if (!eventGroups.has(eventName)) {
@@ -87,7 +86,7 @@ async function createEventSpecificTables() {
 
     // Step 3: Get all database tables that might contain registration data
     console.log('\n🗃️ Scanning database for registration data...');
-    
+
     const allTables = await sql`
       SELECT table_name, column_name
       FROM information_schema.columns 
@@ -119,72 +118,72 @@ async function createEventSpecificTables() {
         .replace(/[^a-z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .substring(0, 50);
-      
+
       const tableName = `event_${sanitizedEventName}_registrations`;
-      
+
       console.log(`\n🔧 Creating table: ${tableName}`);
-      
+
       // Drop and recreate table
       await sql`DROP TABLE IF EXISTS ${sql(tableName)}`;
-      
+
       await sql`
         CREATE TABLE ${sql(tableName)} (
           id SERIAL PRIMARY KEY,
           stripe_payment_intent_id TEXT UNIQUE NOT NULL,
           payment_amount DECIMAL(10,2) NOT NULL,
           payment_date TIMESTAMP NOT NULL,
-          
+
           -- Customer Information
           customer_email TEXT,
           customer_name TEXT,
           first_name TEXT,
           last_name TEXT,
           phone TEXT,
-          
+
           -- Academic Information
           school_name TEXT,
           club_name TEXT,
           grade TEXT,
           age TEXT,
-          
+
           -- Athletic Information
           experience TEXT,
           weight TEXT,
           t_shirt_size TEXT,
           registration_type TEXT,
-          
+
           -- Parent/Guardian Information
           parent_name TEXT,
           parent_email TEXT,
           parent_phone TEXT,
-          
+
           -- Metadata
           source_table TEXT,
           correlation_method TEXT NOT NULL,
           registration_data JSONB,
-          
+
           -- Audit
           created_at TIMESTAMP DEFAULT NOW()
         )
       `;
 
       console.log(`📝 Populating ${tableName} with ${payments.length} payments...`);
-      
+
       const foundRegistrations: EventRegistration[] = [];
-      
+
       // Find registration data for each payment
       for (const intent of payments) {
         const paymentDate = new Date(intent.created * 1000);
         const customerEmail = intent.metadata?.email;
-        
+
         let registrationFound = false;
-        
+
         // Method 1: Direct payment intent ID match
         for (const [tableNameSearch, columns] of tableMap) {
           const paymentColumns = columns.filter((col: string) => 
             col.includes('stripe') || col.includes('payment') || col.includes('intent')
           );
-          
+
           if (paymentColumns.length > 0) {
             for (const column of paymentColumns) {
               try {
@@ -194,7 +193,7 @@ async function createEventSpecificTables() {
                   WHERE ${sql(column)} = ${intent.id}
                   LIMIT 1
                 `;
-                
+
                 if (directMatch.length > 0) {
                   const reg = directMatch[0];
                   foundRegistrations.push({
@@ -221,7 +220,7 @@ async function createEventSpecificTables() {
                     source_table: tableNameSearch,
                     correlation_method: 'EXACT_PAYMENT_INTENT_MATCH'
                   });
-                  
+
                   registrationFound = true;
                   break;
                 }
@@ -232,12 +231,12 @@ async function createEventSpecificTables() {
             if (registrationFound) break;
           }
         }
-        
+
         // Method 2: Email + date correlation
         if (!registrationFound && customerEmail) {
           for (const [tableNameSearch, columns] of tableMap) {
             const emailColumns = columns.filter((col: string) => col.includes('email'));
-            
+
             if (emailColumns.length > 0) {
               try {
                 const emailMatch = await sql`
@@ -251,7 +250,7 @@ async function createEventSpecificTables() {
                   )
                   LIMIT 1
                 `;
-                
+
                 if (emailMatch.length > 0) {
                   const reg = emailMatch[0];
                   foundRegistrations.push({
@@ -278,7 +277,7 @@ async function createEventSpecificTables() {
                     source_table: tableNameSearch,
                     correlation_method: 'EMAIL_DATE_CORRELATION'
                   });
-                  
+
                   registrationFound = true;
                   break;
                 }
@@ -288,7 +287,7 @@ async function createEventSpecificTables() {
             }
           }
         }
-        
+
         // Method 3: Payment only (no registration data found)
         if (!registrationFound) {
           foundRegistrations.push({
@@ -309,8 +308,8 @@ async function createEventSpecificTables() {
 
       // Insert all registrations for this event
       for (const reg of foundRegistrations) {
-        await sql`
-          INSERT INTO ${sql(tableName)} (
+        await sql(`
+          INSERT INTO ${tableName} (
             stripe_payment_intent_id, payment_amount, payment_date,
             customer_email, customer_name, first_name, last_name, phone,
             school_name, club_name, grade, age, experience, weight,
@@ -325,16 +324,16 @@ async function createEventSpecificTables() {
             ${reg.parent_email}, ${reg.parent_phone}, ${reg.source_table},
             ${reg.correlation_method}, ${JSON.stringify(reg.registration_data)}
           )
-        `;
+        `);
       }
 
       console.log(`✅ ${tableName} created with ${foundRegistrations.length} registrations`);
-      
+
       // Generate summary for this event
       const exactMatches = foundRegistrations.filter(r => r.correlation_method === 'EXACT_PAYMENT_INTENT_MATCH').length;
       const emailMatches = foundRegistrations.filter(r => r.correlation_method === 'EMAIL_DATE_CORRELATION').length;
       const paymentOnly = foundRegistrations.filter(r => r.correlation_method === 'PAYMENT_ONLY').length;
-      
+
       console.log(`  📊 Exact matches: ${exactMatches}`);
       console.log(`  📊 Email correlations: ${emailMatches}`);
       console.log(`  📊 Payment only: ${paymentOnly}`);
@@ -343,7 +342,7 @@ async function createEventSpecificTables() {
     // Step 5: Generate summary report
     console.log('\n🎉 EVENT-SPECIFIC TABLES CREATION COMPLETE!');
     console.log('===========================================');
-    
+
     const createdTables = [];
     for (const eventName of eventGroups.keys()) {
       const sanitizedEventName = eventName
@@ -351,10 +350,10 @@ async function createEventSpecificTables() {
         .replace(/[^a-z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .substring(0, 50);
-      
+
       const tableName = `event_${sanitizedEventName}_registrations`;
       const count = await sql`SELECT COUNT(*) as count FROM ${sql(tableName)}`;
-      
+
       createdTables.push({
         original_name: eventName,
         table_name: tableName,
