@@ -41,6 +41,61 @@ const frontendRegistrationSchema = z.object({
   termsAccepted: z.boolean().default(false)
 });
 
+// Team athlete validation schema with field mapping
+const athleteSchema = z.object({
+  firstName: z.string().min(1, "Athlete first name is required").trim(),
+  lastName: z.string().min(1, "Athlete last name is required").trim(),
+  email: z.string().email("Valid athlete email is required").trim(),
+  
+  // Handle frontend field variations for team athletes
+  age: z.string().optional(),
+  grade: z.string().optional(),
+  
+  // Map frontend shirtSize/tShirtSize to database shirtSize
+  shirtSize: z.string().optional(),
+  tShirtSize: z.string().optional(),
+  
+  // Map frontend parentName/contactName to database parentName
+  parentName: z.string().optional(),
+  contactName: z.string().optional(),
+  
+  // Map frontend parentPhoneNumber to database phone
+  parentPhoneNumber: z.string().optional(),
+  phone: z.string().optional(),
+  
+  // Map frontend experienceLevel to database experience
+  experienceLevel: z.string().optional(),
+  experience: z.string().optional(),
+  
+  // Other optional fields
+  gender: z.string().optional(),
+  schoolName: z.string().optional(),
+  clubName: z.string().optional()
+});
+
+// Team registration validation schema
+const teamRegistrationSchema = z.object({
+  eventId: z.union([z.string(), z.number()]).transform(val => String(val)),
+  teamName: z.string().min(1, "Team name is required").trim(),
+  teamPrice: z.union([z.string(), z.number()]).transform(val => Number(val)),
+  
+  // Coach information (optional for team registrations)
+  coachInfo: z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    email: z.string().email().optional(),
+    phone: z.string().optional()
+  }).optional(),
+  
+  // Array of athletes with validation
+  athletes: z.array(athleteSchema).min(1, "At least one athlete is required"),
+  
+  // Optional team-level fields
+  discountCode: z.string().optional(),
+  totalAmount: z.union([z.string(), z.number()]).optional(),
+  discountedAmount: z.union([z.string(), z.number()]).optional()
+});
+
 // Helper function to map legacy event IDs to new slugs
 function getEventSlugFromLegacyId(legacyId: number): string {
   const mapping: Record<number, string> = {
@@ -268,57 +323,131 @@ export function setupRoutes(app: Express): void {
     }
   });
 
-  // Team registration endpoint (connects frontend team forms to new UUID database)
+  // Team registration endpoint with bulletproof validation and field mapping
   app.post("/api/team-registration", async (req: Request, res: Response) => {
     try {
-      const teamData = req.body;
-      console.log("Team registration received:", teamData);
-
-      // Map legacy event ID to UUID
-      const events = await storage.getEvents();
-      const eventSlug = getEventSlugFromLegacyId(parseInt(teamData.eventId));
-      const event = events.find(e => e.slug === eventSlug);
+      // Validate and sanitize team registration data using Zod
+      const validationResult = teamRegistrationSchema.safeParse(req.body);
       
-      if (!event) {
-        return res.status(400).json({ error: "Event not found" });
+      if (!validationResult.success) {
+        console.error("Team registration validation errors:", validationResult.error.issues);
+        return res.status(400).json({ 
+          error: "Team registration validation failed",
+          details: validationResult.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          }))
+        });
       }
 
-      // Create registrations for each team member
+      const teamData = validationResult.data;
+      console.log("Team registration received:", teamData);
+
+      // Convert legacy event ID to UUID if needed
+      let eventUuid = teamData.eventId;
+      if (!isNaN(Number(teamData.eventId))) {
+        const events = await storage.getEvents();
+        const targetSlug = getEventSlugFromLegacyId(Number(teamData.eventId));
+        console.log(`Team registration: Legacy ID ${teamData.eventId} maps to slug: ${targetSlug}`);
+        
+        const event = events.find(e => e.slug === targetSlug);
+        if (!event) {
+          console.error(`Team registration: Event not found for slug: ${targetSlug}`);
+          return res.status(400).json({ 
+            error: "Event not found", 
+            debug: { requestedSlug: targetSlug, availableSlugs: events.map(e => e.slug) }
+          });
+        }
+        eventUuid = event.id;
+        console.log(`Team registration: Mapped legacy ID ${teamData.eventId} to UUID: ${eventUuid}`);
+      }
+
+      // Process each athlete with field mapping
       const registrationIds = [];
-      for (const athlete of teamData.athletes) {
-        const registration = await storage.createEventRegistration({
-          eventId: event.id,
-          firstName: athlete.firstName,
-          lastName: athlete.lastName,
-          email: athlete.email,
-          phone: athlete.parentPhoneNumber,
-          parentName: athlete.parentName,
-          registrationType: 'team',
-          teamName: teamData.teamName,
-          basePrice: teamData.teamPrice.toString(),
-          finalPrice: teamData.teamPrice.toString(),
-          shirtSize: athlete.shirtSize,
-          waiverAccepted: true,
-          termsAccepted: true,
-          sessionId: req.sessionID,
-          ipAddress: req.ip,
-          userAgent: req.get('User-Agent'),
-          deviceType: detectDeviceType(req.get('User-Agent'))
+      const failedAthletes = [];
+
+      for (let i = 0; i < teamData.athletes.length; i++) {
+        const athlete = teamData.athletes[i];
+        
+        try {
+          // Map frontend athlete fields to database fields with fallbacks
+          const mappedAthlete = {
+            eventId: eventUuid,
+            firstName: athlete.firstName,
+            lastName: athlete.lastName,
+            email: athlete.email,
+            
+            // Map parentPhoneNumber -> phone
+            phone: athlete.parentPhoneNumber || athlete.phone || null,
+            
+            // Handle grade/age mapping
+            grade: athlete.grade || athlete.age || null,
+            
+            // Map shirtSize/tShirtSize -> shirtSize
+            shirtSize: athlete.shirtSize || athlete.tShirtSize || null,
+            
+            // Map parentName/contactName -> parentName
+            parentName: athlete.parentName || athlete.contactName || null,
+            
+            // Map experienceLevel -> experience
+            experience: athlete.experienceLevel || athlete.experience || null,
+            
+            // Other fields
+            gender: athlete.gender || null,
+            schoolName: athlete.schoolName || null,
+            clubName: athlete.clubName || null,
+            
+            // Team-specific fields
+            registrationType: 'team',
+            teamName: teamData.teamName,
+            basePrice: String(teamData.teamPrice),
+            finalPrice: String(teamData.teamPrice),
+            waiverAccepted: true,
+            termsAccepted: true,
+            sessionId: req.sessionID,
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent'),
+            deviceType: detectDeviceType(req.get('User-Agent'))
+          };
+
+          const registration = await storage.createEventRegistration(mappedAthlete);
+          registrationIds.push(registration.id);
+          
+          console.log(`Team registration: Created registration for ${athlete.firstName} ${athlete.lastName} with ID: ${registration.id}`);
+          
+        } catch (athleteError) {
+          console.error(`Failed to register athlete ${i + 1}:`, athleteError);
+          failedAthletes.push({
+            index: i + 1,
+            name: `${athlete.firstName} ${athlete.lastName}`,
+            error: athleteError instanceof Error ? athleteError.message : "Unknown error"
+          });
+        }
+      }
+
+      // Check if any athletes failed to register
+      if (failedAthletes.length > 0) {
+        return res.status(400).json({
+          error: "Some athletes could not be registered",
+          successfulRegistrations: registrationIds.length,
+          failedAthletes: failedAthletes,
+          registrationIds: registrationIds
         });
-        registrationIds.push(registration.id);
       }
 
       res.json({ 
         success: true, 
         message: "Team registration successful",
-        registrationIds: registrationIds,
-        teamName: teamData.teamName
+        teamName: teamData.teamName,
+        athleteCount: registrationIds.length,
+        registrationIds: registrationIds
       });
+      
     } catch (error) {
       console.error("Team registration error:", error);
       res.status(500).json({ 
         error: "Failed to process team registration",
-        userFriendlyMessage: "Unable to process team registration. Please try again."
+        details: error instanceof Error ? error.message : "Unknown error"
       });
     }
   });

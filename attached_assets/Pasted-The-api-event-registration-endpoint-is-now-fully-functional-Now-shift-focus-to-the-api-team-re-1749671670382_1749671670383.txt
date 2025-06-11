@@ -1,0 +1,32 @@
+The `/api/event-registration` endpoint is now fully functional. Now shift focus to the `/api/team-registration` endpoint. This flow currently has its own payload structure and minimal validation, and still relies on legacy logic.
+
+Your goal is to modernize and bulletproof the team registration process while keeping compatibility with how the frontend currently sends data.
+
+### OBJECTIVES:
+1. Add a proper Zod validation schema (`teamRegistrationSchema`) for the full request body.
+   - Validate the team’s `teamName`, `teamPrice`, `eventId` (UUID or legacy).
+   - Validate the array of `athletes` with the same field rules we used in individual registration: `firstName`, `lastName`, `email`, `phone`, `tShirtSize`, `contactName`, `grade`, `experienceLevel`.
+
+2. Fix the `/api/team-registration` route in `routes.ts` so it:
+   - Accepts both UUID and legacy event IDs.
+   - Maps all fields correctly to the `event_registrations` table.
+   - Loops over each athlete, validates, and inserts them with correct mapped fields (e.g., `tShirtSize → shirt_size`, `contactName → parent_name`).
+   - Records the team registration as a batch with all entries linked to the same event.
+
+3. Ensure error responses are JSON with clear error messages (no HTML).
+4. Add a test script or curl snippet that simulates a full team registration with 2 athletes.
+5. After inserting, SELECT the 2 latest rows from the `event_registrations` table to verify correct mapping.
+
+### CONSTRAINTS:
+- Do not touch the `payments` system yet.
+- Do not attempt to send confirmation emails yet.
+- Continue using `event_registrations` as the target table (not atomic_registrations for now).
+- Confirm the frontend sends the following keys: `teamName`, `teamPrice`, `eventId`, `athletes[]`, each with `firstName`, `lastName`, `email`, `parentName`, `parentPhoneNumber`, `shirtSize`, `grade`, etc.
+
+Once the above is complete, show me:
+- The Zod validation schema.
+- The updated API route handler.
+- The curl test or test script.
+- The `SELECT` query results from the DB.
+
+Then prompt me to run the test and send you the output.
