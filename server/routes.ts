@@ -192,6 +192,168 @@ export function setupRoutes(app: Express): void {
     }
   });
 
+  // Team registration endpoint (connects frontend team forms to new UUID database)
+  app.post("/api/team-registration", async (req: Request, res: Response) => {
+    try {
+      const teamData = req.body;
+      console.log("Team registration received:", teamData);
+
+      // Map legacy event ID to UUID
+      const events = await storage.getEvents();
+      const eventSlug = getEventSlugFromLegacyId(parseInt(teamData.eventId));
+      const event = events.find(e => e.slug === eventSlug);
+      
+      if (!event) {
+        return res.status(400).json({ error: "Event not found" });
+      }
+
+      // Create registrations for each team member
+      const registrationIds = [];
+      for (const athlete of teamData.athletes) {
+        const registration = await storage.createEventRegistration({
+          eventId: event.id,
+          firstName: athlete.firstName,
+          lastName: athlete.lastName,
+          email: athlete.email,
+          phone: athlete.parentPhoneNumber,
+          parentName: athlete.parentName,
+          registrationType: 'team',
+          teamName: teamData.teamName,
+          basePrice: teamData.teamPrice.toString(),
+          finalPrice: teamData.teamPrice.toString(),
+          shirtSize: athlete.shirtSize,
+          waiverAccepted: true,
+          termsAccepted: true,
+          sessionId: req.sessionID,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent'),
+          deviceType: detectDeviceType(req.get('User-Agent'))
+        });
+        registrationIds.push(registration.id);
+      }
+
+      res.json({ 
+        success: true, 
+        message: "Team registration successful",
+        registrationIds: registrationIds,
+        teamName: teamData.teamName
+      });
+    } catch (error) {
+      console.error("Team registration error:", error);
+      res.status(500).json({ 
+        error: "Failed to process team registration",
+        userFriendlyMessage: "Unable to process team registration. Please try again."
+      });
+    }
+  });
+
+  // Individual event registration endpoint for specific events
+  app.post("/api/events/:eventId/stripe-payment-success", async (req: Request, res: Response) => {
+    try {
+      const { eventId } = req.params;
+      const paymentData = req.body;
+      
+      // Map legacy event ID to UUID
+      const events = await storage.getEvents();
+      const eventSlug = getEventSlugFromLegacyId(parseInt(eventId));
+      const event = events.find(e => e.slug === eventSlug);
+      
+      if (!event) {
+        return res.status(400).json({ error: "Event not found" });
+      }
+
+      // Create registration record
+      const registration = await storage.createEventRegistration({
+        eventId: event.id,
+        firstName: paymentData.firstName,
+        lastName: paymentData.lastName,
+        email: paymentData.email,
+        phone: paymentData.phone,
+        grade: paymentData.grade,
+        schoolName: paymentData.schoolName,
+        clubName: paymentData.clubName,
+        registrationType: paymentData.registrationType || 'individual',
+        gearSelection: paymentData.gearSelection,
+        basePrice: paymentData.basePrice?.toString() || "0",
+        finalPrice: paymentData.finalPrice?.toString() || "0",
+        waiverAccepted: paymentData.medicalReleaseAccepted || false,
+        termsAccepted: paymentData.termsAccepted || false,
+        status: 'completed',
+        sessionId: req.sessionID,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        deviceType: detectDeviceType(req.get('User-Agent'))
+      });
+
+      // Create payment record
+      if (paymentData.stripePaymentIntentId) {
+        await storage.createPayment({
+          userId: registration.userId || registration.id, // Use registration ID if no user
+          amount: paymentData.finalPrice?.toString() || "0",
+          paymentMethod: 'stripe',
+          paymentSource: 'event',
+          eventRegistrationId: registration.id,
+          stripePaymentIntentId: paymentData.stripePaymentIntentId,
+          status: 'completed',
+          paymentDate: new Date()
+        });
+      }
+
+      res.json({ 
+        success: true, 
+        registrationId: registration.id,
+        message: "Registration and payment recorded successfully"
+      });
+    } catch (error) {
+      console.error("Payment success handler error:", error);
+      res.status(500).json({ error: "Failed to process payment success" });
+    }
+  });
+
+  // Analytics tracking endpoints
+  app.post("/api/analytics/registration-start", async (req: Request, res: Response) => {
+    try {
+      const sessionData = req.body;
+      
+      await storage.createSiteSession({
+        sessionToken: sessionData.sessionId || req.sessionID,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+        deviceType: detectDeviceType(req.get('User-Agent')),
+        referrer: sessionData.referrer,
+        utmSource: sessionData.utmSource,
+        utmMedium: sessionData.utmMedium,
+        utmCampaign: sessionData.utmCampaign,
+        pagesVisited: [sessionData.currentPage],
+        pageViews: 1
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Analytics tracking error:", error);
+      res.status(500).json({ error: "Failed to track analytics" });
+    }
+  });
+
+  app.post("/api/analytics/registration-complete", async (req: Request, res: Response) => {
+    try {
+      const completionData = req.body;
+      
+      // Update existing session to mark conversion
+      await storage.updateSiteSession(req.sessionID, {
+        convertedSession: true,
+        conversionType: 'registration',
+        conversionValue: completionData.amount?.toString() || "0",
+        endedAt: new Date()
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Analytics completion error:", error);
+      res.status(500).json({ error: "Failed to track completion" });
+    }
+  });
+
   // Custom order creation endpoint
   app.post("/api/custom-orders", async (req: Request, res: Response) => {
     try {
