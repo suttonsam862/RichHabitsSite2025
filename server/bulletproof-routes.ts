@@ -1,6 +1,31 @@
 import type { Express } from "express";
 import { bulletproofRegistration } from './bulletproof-registration';
 import { z } from 'zod';
+import { randomUUID } from 'crypto';
+
+// Zod validation schemas for bulletproof endpoints
+const paymentVerificationSchema = z.object({
+  paymentIntentId: z.string().min(1, "Payment intent ID is required"),
+  forceVerification: z.boolean().optional().default(false)
+});
+
+const registrationCreationSchema = z.object({
+  firstName: z.string().min(1, "First name is required").trim(),
+  lastName: z.string().min(1, "Last name is required").trim(), 
+  email: z.string().email("Valid email is required").trim(),
+  phone: z.string().optional(),
+  age: z.string().optional(),
+  grade: z.string().optional(),
+  gender: z.string().optional(),
+  contactName: z.string().optional(),
+  tshirtSize: z.string().optional(),
+  schoolName: z.string().optional(),
+  experienceLevel: z.string().optional(),
+  clubName: z.string().optional(),
+  eventSlug: z.string().min(1, "Event slug is required"),
+  basePrice: z.union([z.string(), z.number()]).transform(val => Number(val)),
+  finalPrice: z.union([z.string(), z.number()]).transform(val => Number(val))
+});
 
 // BULLETPROOF REGISTRATION ROUTES - ZERO CORRUPTION TOLERANCE
 export function registerBulletproofRoutes(app: Express) {
@@ -8,13 +33,50 @@ export function registerBulletproofRoutes(app: Express) {
   // STEP 1: CREATE SECURE REGISTRATION WITH LOCKED PAYMENT INTENT
   app.post('/api/bulletproof/create-registration', async (req, res) => {
     try {
+      // Validate input with Zod
+      const validationResult = registrationCreationSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({
+          success: false,
+          error: 'Registration validation failed',
+          details: validationResult.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          })),
+          code: 'VALIDATION_FAILED'
+        });
+      }
+
+      const registrationData = validationResult.data;
       const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
       const userAgent = req.get('User-Agent');
       
-      console.log('Creating bulletproof registration for:', req.body.email);
+      console.log('Creating bulletproof registration for:', registrationData.email);
       
+      // Handle FREE registrations automatically
+      if (registrationData.finalPrice === 0 || registrationData.basePrice === 0) {
+        console.log('Processing FREE registration for:', registrationData.email);
+        
+        const freePaymentIntentId = `FREE_${randomUUID()}`;
+        const result = await bulletproofRegistration.createSecureRegistration(
+          { ...registrationData, isFreeRegistration: true },
+          ipAddress,
+          userAgent
+        );
+        
+        return res.json({
+          success: true,
+          isFreeRegistration: true,
+          registrationUuid: result.registration.uuid,
+          paymentIntentId: freePaymentIntentId,
+          paymentStatus: 'succeeded'
+        });
+      }
+      
+      // Handle PAID registrations with Stripe
       const result = await bulletproofRegistration.createSecureRegistration(
-        req.body,
+        registrationData,
         ipAddress,
         userAgent
       );
@@ -40,19 +102,48 @@ export function registerBulletproofRoutes(app: Express) {
   // STEP 2: VERIFY PAYMENT COMPLETION - BULLETPROOF VERIFICATION
   app.post('/api/bulletproof/verify-payment', async (req, res) => {
     try {
-      const { paymentIntentId } = req.body;
+      // Validate input with Zod
+      const validationResult = paymentVerificationSchema.safeParse(req.body);
       
-      if (!paymentIntentId) {
+      if (!validationResult.success) {
         return res.status(400).json({
           success: false,
-          error: 'Payment intent ID is required',
-          code: 'MISSING_PAYMENT_INTENT'
+          error: 'Payment verification validation failed',
+          details: validationResult.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          })),
+          code: 'VALIDATION_FAILED'
         });
       }
+
+      const { paymentIntentId, forceVerification } = validationResult.data;
       
       console.log('Verifying payment completion for:', paymentIntentId);
       
-      const result = await bulletproofRegistration.verifyPaymentCompletion(paymentIntentId);
+      // Handle FREE registrations
+      if (paymentIntentId.startsWith('FREE_')) {
+        console.log('Processing FREE registration verification for:', paymentIntentId);
+        
+        const result = await bulletproofRegistration.verifyFreeRegistration(paymentIntentId);
+        
+        return res.json({
+          success: true,
+          isFreeRegistration: true,
+          registration: {
+            uuid: result.registration.uuid,
+            firstName: result.registration.firstName,
+            lastName: result.registration.lastName,
+            email: result.registration.email,
+            eventSlug: result.registration.eventSlug,
+            paymentStatus: 'succeeded',
+            paymentCompletedAt: result.registration.paymentCompletedAt || new Date().toISOString(),
+          }
+        });
+      }
+      
+      // Handle PAID registrations with Stripe verification
+      const result = await bulletproofRegistration.verifyPaymentCompletion(paymentIntentId, forceVerification);
       
       res.json({
         success: true,
@@ -64,16 +155,34 @@ export function registerBulletproofRoutes(app: Express) {
           eventSlug: result.registration.eventSlug,
           paymentStatus: result.registration.paymentStatus,
           paymentCompletedAt: result.registration.paymentCompletedAt,
+        },
+        stripeVerification: {
+          paymentIntentId: paymentIntentId,
+          verifiedAt: new Date().toISOString(),
+          previouslyVerified: result.wasAlreadyVerified || false
         }
       });
       
     } catch (error: any) {
       console.error('Payment verification failed:', error.message);
       
+      // Provide specific error codes for different failure scenarios
+      let errorCode = 'VERIFICATION_FAILED';
+      if (error.message.includes('already verified')) {
+        errorCode = 'ALREADY_VERIFIED';
+      } else if (error.message.includes('not found')) {
+        errorCode = 'PAYMENT_INTENT_NOT_FOUND';
+      } else if (error.message.includes('not succeeded')) {
+        errorCode = 'PAYMENT_NOT_SUCCEEDED';
+      } else if (error.message.includes('race condition')) {
+        errorCode = 'RACE_CONDITION_DETECTED';
+      }
+      
       res.status(400).json({
         success: false,
         error: error.message,
-        code: 'VERIFICATION_FAILED'
+        code: errorCode,
+        timestamp: new Date().toISOString()
       });
     }
   });
