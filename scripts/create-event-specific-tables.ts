@@ -124,7 +124,7 @@ async function createEventSpecificTables() {
       console.log(`\n🔧 Creating table: ${tableName}`);
 
       // Drop and recreate table
-      await sql`DROP TABLE IF EXISTS ${sql(tableName)}`;
+      await sql(`DROP TABLE IF EXISTS "${tableName}"`);
 
       await sql(`
         CREATE TABLE "${tableName}" (
