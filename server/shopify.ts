@@ -114,6 +114,8 @@ export async function getCollectionByHandle(handle: string) {
 export async function getCollectionProducts(collectionId: string) {
   try {
     console.log(`Fetching products for collection ${collectionId} from Shopify Admin API`);
+    
+    // First get the basic products from the collection
     const response = await fetch(
       `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/collections/${collectionId}/products.json`,
       {
@@ -130,7 +132,26 @@ export async function getCollectionProducts(collectionId: string) {
 
     const data = await response.json() as { products: any[] };
     console.log(`Found ${data.products.length} products in collection`);
-    return data.products;
+    
+    // Now fetch full product details including variants for each product
+    console.log('Fetching full product details for each product...');
+    const productsWithVariants = await Promise.all(
+      data.products.map(async (product) => {
+        try {
+          console.log(`Fetching full details for product ID: ${product.id}`);
+          const fullProduct = await getProductById(product.id.toString());
+          console.log(`Full product fetched - has variants: ${!!fullProduct.variants}, variant count: ${fullProduct.variants?.length || 0}`);
+          return fullProduct;
+        } catch (error) {
+          console.error(`Error fetching full details for product ${product.id}:`, error);
+          return product; // Return original product if full fetch fails
+        }
+      })
+    );
+    
+    console.log(`Returning ${productsWithVariants.length} products with full details`);
+    
+    return productsWithVariants;
   } catch (error) {
     console.error('Error fetching collection products from Shopify:', error);
     throw error;
