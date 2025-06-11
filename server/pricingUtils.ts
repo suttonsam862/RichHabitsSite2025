@@ -40,29 +40,44 @@ export function calculateRegistrationAmount(
     throw new Error(`Pricing not found for event ${eventId}`);
   }
 
-  // National Champ Camp flexible options
-  if (eventId === 2 && (option === '1day' || option === '2day')) {
-    const flexiblePrice = pricing[option as '1day' | '2day'];
+  // Handle 1-day registrations - should be 50% of full price for all events
+  if (option === '1day' || option === 'single') {
+    // For National Champ Camp, use predefined 1-day pricing if available
+    if (eventId === 2 && pricing['1day']) {
+      return pricing['1day'];
+    }
+    // For other events, calculate 50% of full price
+    return Math.round(pricing.full * 0.5);
+  }
+
+  // Handle 2-day registrations for National Champ Camp
+  if (eventId === 2 && option === '2day') {
+    const flexiblePrice = pricing['2day'];
     if (!flexiblePrice) {
-      throw new Error(`Flexible pricing not available for option ${option}`);
+      throw new Error(`2-day pricing not available for event ${eventId}`);
     }
     
     // Validate numberOfDays matches option
-    const expectedDays = option === '1day' ? 1 : 2;
-    if (numberOfDays !== expectedDays) {
-      throw new Error(`Invalid numberOfDays ${numberOfDays} for option ${option}`);
+    if (numberOfDays !== 2) {
+      throw new Error(`Invalid numberOfDays ${numberOfDays} for 2-day option`);
     }
     
     // Validate selectedDates count matches numberOfDays
-    if (!selectedDates || selectedDates.length !== expectedDays) {
-      throw new Error(`Selected dates count ${selectedDates?.length || 0} doesn't match required days ${expectedDays}`);
+    if (!selectedDates || selectedDates.length !== 2) {
+      throw new Error(`Selected dates count ${selectedDates?.length || 0} doesn't match required days 2`);
     }
     
     return flexiblePrice;
   }
 
-  // Standard pricing for other events
-  return option === 'single' ? pricing.single : pricing.full;
+  // Standard full pricing
+  return pricing.full;
+}
+
+export function calculateTeamPrice(eventId: number, athleteCount: number, option: string = 'full'): number {
+  const individualPrice = calculateRegistrationAmount(eventId, option);
+  // Team pricing: full individual price per athlete
+  return individualPrice * athleteCount;
 }
 
 export function validateNationalChampCampRegistration(
