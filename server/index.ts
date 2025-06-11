@@ -59,9 +59,9 @@ async function startServer() {
     // Register all routes
     setupRoutes(app);
     
-    // Register practical payment verification routes
-    const { setupPracticalPaymentRoutes } = await import('./practical-payment-routes.js');
-    setupPracticalPaymentRoutes(app);
+    // Register direct payment verification routes
+    const { setupDirectPaymentRoutes } = await import('./payment-verification-direct.js');
+    setupDirectPaymentRoutes(app);
     
     // Setup legacy bridge for frontend form compatibility
     const { setupLegacyBridge } = await import('./legacy-bridge.js');
