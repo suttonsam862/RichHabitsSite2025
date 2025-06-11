@@ -51,21 +51,13 @@ if (process.env.NODE_ENV === 'development' && !isTestMode) {
 }
 
 // Helper function to get the price for an event based on option
-const getEventPrice = async (eventId: number, option: string): Promise<number> => {
+const getEventPrice = async (eventId: number, option: string, numberOfDays?: number, selectedDates?: string[]): Promise<number> => {
   try {
-    // Use correct authentic pricing - prioritize the hardcoded accurate prices
-    const priceMap: Record<number, number> = {
-      1: 24900, // Birmingham Slam Camp - $249
-      2: 29900, // National Champ Camp - $299  
-      3: 24900, // Texas Recruiting Clinic - $249
-      4: 9900   // Panther Train Tour - $99 per day
-    };
+    // Import pricing utilities to handle 1-day and team pricing correctly
+    const { calculateRegistrationAmount } = await import('./pricingUtils.js');
     
-    if (priceMap[eventId]) {
-      return priceMap[eventId]; // Already in cents
-    }
-
-    throw new Error(`No price information found for event ID ${eventId} with option ${option}`);
+    // Use the proper pricing calculation that handles 1-day registrations
+    return calculateRegistrationAmount(eventId, option, numberOfDays, selectedDates);
   } catch (error) {
     console.error('Error getting event price:', error);
     throw error;
@@ -127,9 +119,18 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         });
       }
     } else {
+      // Map event slug back to numeric ID for pricing calculation
+      const eventSlugToIdMap: Record<string, number> = {
+        'summer-wrestling-camp-2025': 1,
+        'recruiting-showcase-2025': 2, 
+        'technique-clinic-advanced': 3
+      };
+      
+      const numericEventId = eventSlugToIdMap[event.slug] || 1;
+      
       // Get calculated price only when no discount provided
-      amount = await getEventPrice(event.id, option);
-      console.log(`💰 Using calculated base price: $${amount/100} (${amount} cents) for event ${event.id}`);
+      amount = await getEventPrice(numericEventId, option, req.body.numberOfDays, req.body.selectedDates);
+      console.log(`💰 Using calculated base price: $${amount/100} (${amount} cents) for event ${numericEventId} (${option})`);
       
       if (!amount || isNaN(amount) || amount <= 0) {
         return res.status(400).json({

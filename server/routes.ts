@@ -761,13 +761,22 @@ export function setupRoutes(app: Express): void {
       let amount: number;
 
       try {
+        // Map event slug back to numeric ID for pricing calculation
+        const eventSlugToIdMap: Record<string, number> = {
+          'summer-wrestling-camp-2025': 1,
+          'recruiting-showcase-2025': 2, 
+          'technique-clinic-advanced': 3
+        };
+        
+        const numericEventId = eventSlugToIdMap[event.slug] || 1;
+        
         if (registrationType === 'team') {
           // Calculate team pricing
           const athleteCount = athletes.length || 1;
-          amount = calculateTeamPrice(Number(event.id) || 1, athleteCount, option);
+          amount = calculateTeamPrice(numericEventId, athleteCount, option);
         } else {
           // Calculate individual pricing (including 1-day)
-          amount = calculateRegistrationAmount(Number(event.id) || 1, option, numberOfDays, selectedDates);
+          amount = calculateRegistrationAmount(numericEventId, option, numberOfDays, selectedDates);
         }
 
         // Override with discounted amount if provided
