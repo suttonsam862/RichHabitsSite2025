@@ -47,12 +47,13 @@ export default function ProductDetail() {
     );
   }
 
-  const currentVariant = product.variants?.[selectedVariant] || product.variants?.[0];
+  const variants = product?.variants || [];
+  const currentVariant = variants[selectedVariant] || variants[0];
   const price = currentVariant ? parseFloat(currentVariant.price) : 0;
 
   const handleAddToCart = () => {
     // Add to cart functionality - for now just show alert
-    alert(`Added ${quantity} x ${product.title} to cart!`);
+    alert(`Added ${quantity} x ${product?.title} to cart!`);
   };
 
   return (
@@ -76,10 +77,10 @@ export default function ProductDetail() {
             {/* Product Images */}
             <motion.div {...fadeIn}>
               <div className="aspect-square bg-gray-900 rounded-2xl overflow-hidden">
-                {product.images && product.images.length > 0 ? (
+                {product?.images && product.images.length > 0 ? (
                   <img 
                     src={product.images[0].src} 
-                    alt={product.title}
+                    alt={product?.title || 'Product'}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -90,13 +91,13 @@ export default function ProductDetail() {
               </div>
               
               {/* Thumbnail images */}
-              {product.images && product.images.length > 1 && (
+              {product?.images && product.images.length > 1 && (
                 <div className="flex gap-4 mt-4">
                   {product.images.slice(1, 5).map((image: any, index: number) => (
                     <div key={index} className="w-20 h-20 bg-gray-900 rounded-lg overflow-hidden">
                       <img 
                         src={image.src} 
-                        alt={`${product.title} ${index + 2}`}
+                        alt={`${product?.title || 'Product'} ${index + 2}`}
                         className="w-full h-full object-cover"
                       />
                     </div>

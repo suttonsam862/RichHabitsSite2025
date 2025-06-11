@@ -94,7 +94,7 @@ export default function Shop() {
     queryKey: ['/api/shop/collections/limited-time-clothing']
   });
 
-  const { data: products, isLoading: productsLoading } = useQuery({
+  const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ['/api/shop/collections/limited-time-clothing/products'],
     enabled: !!collection
   });
@@ -149,7 +149,7 @@ export default function Shop() {
               </motion.div>
 
               {/* Products Grid */}
-              {products && products.length > 0 ? (
+              {Array.isArray(products) && products.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                   {products.map((product: Product, index: number) => (
                     <motion.div
