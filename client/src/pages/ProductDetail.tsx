@@ -14,13 +14,13 @@ const fadeIn = {
 };
 
 export default function ProductDetail() {
-  const { id } = useParams();
+  const { handle } = useParams();
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
   const { data: product, isLoading } = useQuery({
-    queryKey: ['/api/shop/products', id],
-    enabled: !!id
+    queryKey: ['/api/shop/products/handle', handle],
+    enabled: !!handle
   });
 
   if (isLoading) {
@@ -49,7 +49,9 @@ export default function ProductDetail() {
 
   const variants = product?.variants || [];
   const currentVariant = variants[selectedVariant] || variants[0];
-  const price = currentVariant ? parseFloat(currentVariant.price) : 0;
+  // Handle both Shopify formats: "29.99" and "$29.99"
+  const priceStr = currentVariant?.price || "0";
+  const price = parseFloat(priceStr.replace('$', '')) || 0;
 
   const handleAddToCart = () => {
     // Add to cart functionality - for now just show alert

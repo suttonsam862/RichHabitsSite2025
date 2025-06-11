@@ -80,7 +80,7 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
         
-        <Link href={`/shop/products/${product.id}`}>
+        <Link href={`/product/${product.handle || product.id}`}>
           <button className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-lg">
             View Details
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
