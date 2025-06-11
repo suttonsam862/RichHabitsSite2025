@@ -1,760 +1,730 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, index, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, timestamp, jsonb, index, uuid, decimal, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
-// Session storage table for express-session
+// =====================================================
+// RICH HABITS - SCALABLE UUID-BASED DATABASE SCHEMA
+// =====================================================
+
+// Session storage table for express-session (keep existing for compatibility)
 export const sessions = pgTable(
   "sessions",
   {
-    sid: varchar("sid").primaryKey(),
+    sid: text("sid").primaryKey(),
     sess: jsonb("sess").notNull(),
     expire: timestamp("expire").notNull(),
   },
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// Users table
+// Enums for better data consistency
+export const userRoleEnum = pgEnum('user_role', ['customer', 'coach', 'designer', 'staff', 'sales_agent', 'admin']);
+export const paymentMethodEnum = pgEnum('payment_method', ['stripe', 'cash', 'quickbooks', 'paypal']);
+export const paymentSourceEnum = pgEnum('payment_source', ['retail', 'custom', 'event']);
+export const orderStatusEnum = pgEnum('order_status', ['pending', 'processing', 'completed', 'cancelled', 'refunded']);
+export const deviceTypeEnum = pgEnum('device_type', ['mobile', 'tablet', 'desktop']);
+
+// =====================================================
+// CORE USER MANAGEMENT
+// =====================================================
+
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  username: text("username").unique(),
+  password: text("password"), // Nullable for OAuth users
   firstName: text("first_name"),
   lastName: text("last_name"),
-  isAdmin: boolean("is_admin").default(false),
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-  email: true,
-  firstName: true,
-  lastName: true
-});
-
-// Products table (for storing local cache of Shopify products)
-export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
-  shopifyId: text("shopify_id").notNull().unique(),
-  title: text("title").notNull(),
-  handle: text("handle").notNull().unique(),
-  description: text("description"),
-  productType: text("product_type"),
-  image: text("image"),
-  price: text("price"),
-  collection: text("collection"),
-  color: text("color"),
-  data: jsonb("data"), // Store the full Shopify product data
-  featured: boolean("featured").default(false),
-  availableForSale: boolean("available_for_sale").default(true),
+  phone: text("phone"),
+  dateOfBirth: timestamp("date_of_birth"),
+  
+  // Role and organization management
+  role: userRoleEnum("role").notNull().default('customer'),
+  teamId: uuid("team_id"), // Self-referencing for team/organization structure
+  organizationName: text("organization_name"), // For coaches, schools, etc.
+  
+  // Profile and preferences
+  profileImage: text("profile_image"),
+  bio: text("bio"),
+  preferences: jsonb("preferences"), // Store user preferences as JSON
+  
+  // Account status and metadata
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  lastLoginAt: timestamp("last_login_at"),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-export const insertProductSchema = createInsertSchema(products).pick({
-  shopifyId: true,
-  title: true,
-  handle: true,
-  description: true,
-  productType: true,
-  image: true,
-  price: true,
-  collection: true,
-  color: true,
-  data: true,
-  featured: true,
-  availableForSale: true
-});
+// User relations for team/organization hierarchy
+export const userRelations = relations(users, ({ one, many }) => ({
+  team: one(users, {
+    fields: [users.teamId],
+    references: [users.id],
+    relationName: "team_members"
+  }),
+  teamMembers: many(users, { relationName: "team_members" }),
+  customOrders: many(customOrders),
+  retailSales: many(retailSales),
+  payments: many(payments),
+  eventRegistrations: many(eventRegistrations),
+  siteSessions: many(siteSessions)
+}));
 
-// Collections table (for storing local cache of Shopify collections)
-export const collections = pgTable("collections", {
-  id: serial("id").primaryKey(),
-  shopifyId: text("shopify_id").notNull().unique(),
-  title: text("title").notNull(),
-  handle: text("handle").notNull().unique(),
+// =====================================================
+// CUSTOM APPAREL MANAGEMENT
+// =====================================================
+
+export const customOrders = pgTable("custom_orders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  customerId: uuid("customer_id").notNull(),
+  salesAgentId: uuid("sales_agent_id"), // Who handled the sale
+  
+  // Order details
+  orderNumber: text("order_number").notNull().unique(), // Human-readable order number
+  title: text("title").notNull(), // e.g., "Westfield High Wrestling Team Gear"
   description: text("description"),
-  image: text("image"),
-  data: jsonb("data"), // Store the full Shopify collection data
+  
+  // Gear pack and design files
+  gearPackRequests: jsonb("gear_pack_requests"), // Array of requested items
+  designFiles: jsonb("design_files"), // URLs and metadata for design files
+  itemizedRequests: jsonb("itemized_requests"), // Detailed breakdown of quantities, sizes, etc.
+  
+  // Pricing and status
+  estimatedPrice: decimal("estimated_price", { precision: 10, scale: 2 }),
+  finalPrice: decimal("final_price", { precision: 10, scale: 2 }),
+  status: orderStatusEnum("status").default('pending'),
+  
+  // External references
+  invoiceReference: text("invoice_reference"), // QuickBooks or other invoice system
+  shopifyOrderId: text("shopify_order_id"), // If processed through Shopify
+  
+  // Timeline tracking
+  estimateProvidedAt: timestamp("estimate_provided_at"),
+  approvedAt: timestamp("approved_at"),
+  completedAt: timestamp("completed_at"),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-export const insertCollectionSchema = createInsertSchema(collections).pick({
-  shopifyId: true,
-  title: true,
-  handle: true,
-  description: true,
-  image: true,
-  data: true
+export const customOrderRelations = relations(customOrders, ({ one, many }) => ({
+  customer: one(users, {
+    fields: [customOrders.customerId],
+    references: [users.id]
+  }),
+  salesAgent: one(users, {
+    fields: [customOrders.salesAgentId],
+    references: [users.id]
+  }),
+  payments: many(payments)
+}));
+
+// =====================================================
+// RETAIL SALES MANAGEMENT
+// =====================================================
+
+export const retailSales = pgTable("retail_sales", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  customerId: uuid("customer_id"),
+  salesAgentId: uuid("sales_agent_id"), // Staff member who processed sale
+  
+  // Transaction details
+  transactionNumber: text("transaction_number").notNull().unique(),
+  source: text("source").notNull(), // 'shopify' or 'pos'
+  
+  // Product information
+  productId: text("product_id"), // Shopify product ID or internal SKU
+  productTitle: text("product_title").notNull(),
+  productVariant: text("product_variant"), // Size, color, etc.
+  quantity: integer("quantity").notNull().default(1),
+  unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  
+  // Discount and tax information
+  discountCode: text("discount_code"),
+  discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }).default('0'),
+  taxAmount: decimal("tax_amount", { precision: 10, scale: 2 }).default('0'),
+  
+  // Status and external references
+  paymentStatus: orderStatusEnum("payment_status").default('pending'),
+  shopifyOrderId: text("shopify_order_id"),
+  shopifyOrderNumber: text("shopify_order_number"),
+  
+  // Fulfillment tracking
+  fulfilledAt: timestamp("fulfilled_at"),
+  trackingNumber: text("tracking_number"),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Events table
+export const retailSaleRelations = relations(retailSales, ({ one, many }) => ({
+  customer: one(users, {
+    fields: [retailSales.customerId],
+    references: [users.id]
+  }),
+  salesAgent: one(users, {
+    fields: [retailSales.salesAgentId],
+    references: [users.id]
+  }),
+  payments: many(payments)
+}));
+
+// =====================================================
+// UNIVERSAL PAYMENT SYSTEM
+// =====================================================
+
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull(),
+  
+  // Payment amount and method
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default('USD'),
+  paymentMethod: paymentMethodEnum("payment_method").notNull(),
+  paymentSource: paymentSourceEnum("payment_source").notNull(),
+  
+  // External payment references
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  stripeChargeId: text("stripe_charge_id"),
+  quickbooksTransactionId: text("quickbooks_transaction_id"),
+  paypalTransactionId: text("paypal_transaction_id"),
+  
+  // Order linkage (polymorphic relationship)
+  customOrderId: uuid("custom_order_id"), // Links to custom_orders
+  retailSaleId: uuid("retail_sale_id"), // Links to retail_sales
+  eventRegistrationId: uuid("event_registration_id"), // Links to event_registrations
+  
+  // Payment status and metadata
+  status: orderStatusEnum("status").default('pending'),
+  paymentDate: timestamp("payment_date"),
+  refundedAt: timestamp("refunded_at"),
+  refundAmount: decimal("refund_amount", { precision: 10, scale: 2 }),
+  refundReason: text("refund_reason"),
+  
+  // Additional metadata
+  metadata: jsonb("metadata"), // Store additional payment processor data
+  notes: text("notes"),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const paymentRelations = relations(payments, ({ one }) => ({
+  user: one(users, {
+    fields: [payments.userId],
+    references: [users.id]
+  }),
+  customOrder: one(customOrders, {
+    fields: [payments.customOrderId],
+    references: [customOrders.id]
+  }),
+  retailSale: one(retailSales, {
+    fields: [payments.retailSaleId],
+    references: [retailSales.id]
+  }),
+  eventRegistration: one(eventRegistrations, {
+    fields: [payments.eventRegistrationId],
+    references: [eventRegistrations.id]
+  })
+}));
+
+// =====================================================
+// EVENT MANAGEMENT SYSTEM
+// =====================================================
+
 export const events = pgTable("events", {
-  id: serial("id").primaryKey(),
-  slug: text("slug").notNull().unique(), // Text-based identifier
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(), // URL-friendly identifier
   title: text("title").notNull(),
-  category: text("category").notNull(),
-  date: text("date").notNull(),
-  time: text("time").notNull(),
+  description: text("description"),
+  category: text("category").notNull(), // 'camp', 'clinic', 'tournament', etc.
+  
+  // Event scheduling
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  timezone: text("timezone").default('America/New_York'),
   location: text("location").notNull(),
-  description: text("description").notNull(),
-  price: text("price").notNull(),
+  venue: text("venue"),
+  
+  // Registration and capacity
+  maxParticipants: integer("max_participants"),
+  currentParticipants: integer("current_participants").default(0),
+  registrationOpenDate: timestamp("registration_open_date"),
+  registrationCloseDate: timestamp("registration_close_date"),
+  
+  // Pricing
+  basePrice: decimal("base_price", { precision: 10, scale: 2 }).notNull(),
+  earlyBirdPrice: decimal("early_bird_price", { precision: 10, scale: 2 }),
+  earlyBirdDeadline: timestamp("early_bird_deadline"),
+  
+  // External integrations
   shopifyProductId: text("shopify_product_id"),
   image: text("image"),
-  maxParticipants: integer("max_participants"),
+  additionalImages: jsonb("additional_images"),
+  
+  // Event configuration
+  requiresWaiver: boolean("requires_waiver").default(true),
+  allowsTeamRegistration: boolean("allows_team_registration").default(false),
+  gearOptions: jsonb("gear_options"), // Available gear packages
+  
+  // Status and visibility
+  isActive: boolean("is_active").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-export const insertEventSchema = createInsertSchema(events).pick({
-  title: true,
-  category: true,
-  date: true,
-  time: true,
-  location: true,
-  description: true,
-  price: true,
-  shopifyProductId: true,
-  image: true,
-  maxParticipants: true
-});
+export const eventRelations = relations(events, ({ many }) => ({
+  registrations: many(eventRegistrations),
+  payments: many(eventPayments),
+  attendance: many(eventAttendance),
+  gearDistribution: many(eventGear),
+  feedback: many(eventFeedback)
+}));
 
-// Event registrations table
+// =====================================================
+// EVENT REGISTRATION SYSTEM
+// =====================================================
+
 export const eventRegistrations = pgTable("event_registrations", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull(),
-  eventSlug: text("event_slug").notNull(), // Text-based event identifier
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  contactName: text("contact_name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  tShirtSize: text("t_shirt_size"),
-  grade: text("grade"),
-  gender: text("gender"),
-  schoolName: text("school_name"),
-  clubName: text("club_name"),
-  medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
-  registrationType: text("registration_type"),
-  shopifyOrderId: text("shopify_order_id"),
-  stripePaymentIntentId: text("stripe_payment_intent_id"), // Added for Stripe integration
-  paymentStatus: text("payment_status").default("pending"), // Added for tracking payment status
-  day1: boolean("day1").default(false), // For multi-day events to track day selection
-  day2: boolean("day2").default(false), // For multi-day events to track day selection
-  day3: boolean("day3").default(false), // For multi-day events to track day selection
-  numberOfDays: integer("number_of_days"), // For National Champ Camp flexible options
-  selectedDates: text("selected_dates").array(), // For National Champ Camp flexible date selection
-  age: text("age"), // Adding this to match existing database column
-  experience: text("experience"), // Adding this to match existing database column
-  shirtSize: text("shirt_size"), // New field for shirt size selection
-  parentName: text("parent_name"), // New field for parent/guardian name
-  parentPhoneNumber: text("parent_phone_number"), // New field for parent phone
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-// Event Registration Log - Single source of truth for ALL registration attempts
-export const eventRegistrationLog = pgTable("event_registration_log", {
   id: uuid("id").primaryKey().defaultRandom(),
-  formSessionId: text("form_session_id").notNull(), // Generated at page load
-  stripePaymentIntentId: text("stripe_payment_intent_id"), // Added when checkout created
+  eventId: uuid("event_id").notNull(),
+  userId: uuid("user_id"), // Nullable for guest registrations
   
-  // Form Data - captured immediately on submission
+  // Participant information
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
-  eventSlug: text("event_slug").notNull(),
-  eventId: integer("event_id"),
-  campDate: text("camp_date"),
-  teamName: text("team_name"), // For team registrations
+  dateOfBirth: timestamp("date_of_birth"),
   
-  // Additional form fields
+  // Athletic information
   grade: text("grade"),
   schoolName: text("school_name"),
   clubName: text("club_name"),
-  tShirtSize: text("t_shirt_size"),
-  gender: text("gender"),
   experience: text("experience"),
-  registrationType: text("registration_type").notNull().default("individual"), // individual, team
+  weight: text("weight"),
   
-  // Days selection
-  day1: boolean("day1").default(false),
-  day2: boolean("day2").default(false),
-  day3: boolean("day3").default(false),
+  // Parent/Guardian information (for minors)
+  parentName: text("parent_name"),
+  parentEmail: text("parent_email"),
+  parentPhone: text("parent_phone"),
   
-  // Gear and pricing
-  gearSelection: jsonb("gear_selection"), // Store selected gear items
-  basePrice: integer("base_price").notNull(), // Price in cents before discount
+  // Registration details
+  registrationType: text("registration_type").default('individual'), // individual, team
+  teamName: text("team_name"), // For team registrations
+  selectedDays: jsonb("selected_days"), // For multi-day events
+  gearSelection: jsonb("gear_selection"), // Selected gear packages
+  shirtSize: text("shirt_size"),
+  
+  // Pricing
+  basePrice: decimal("base_price", { precision: 10, scale: 2 }).notNull(),
   discountCode: text("discount_code"),
-  discountAmount: integer("discount_amount").default(0), // Discount in cents
-  finalPrice: integer("final_price").notNull(), // Final price in cents
+  discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }).default('0'),
+  finalPrice: decimal("final_price", { precision: 10, scale: 2 }).notNull(),
   
-  // Payment tracking
-  paymentStatus: text("payment_status").notNull().default("pending"), // pending, paid, failed, cancelled
-  paymentMethod: text("payment_method"), // card, etc.
-  shopifyOrderId: text("shopify_order_id"), // Shopify order ID after successful order creation
+  // Waivers and agreements
+  waiverAccepted: boolean("waiver_accepted").default(false),
+  waiverSignedAt: timestamp("waiver_signed_at"),
+  termsAccepted: boolean("terms_accepted").default(false),
   
-  // Session and device tracking
+  // Status tracking
+  status: orderStatusEnum("status").default('pending'),
+  confirmedAt: timestamp("confirmed_at"),
+  
+  // Session tracking
+  sessionId: text("session_id"), // Browser session for tracking
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  deviceType: text("device_type"), // mobile, tablet, desktop
+  deviceType: deviceTypeEnum("device_type"),
   
-  // Recovery and integrity
-  recovered: boolean("recovered").default(false), // Used if filled via webhook repair
-  dataSource: text("data_source").notNull().default("form_submission"), // form_submission, webhook_recovery, manual
-  
-  // Timestamps
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  
-  // Validation flags
-  medicalReleaseAccepted: boolean("medical_release_accepted").default(true),
-  termsAccepted: boolean("terms_accepted").default(true)
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Consolidated complete registrations table - ONLY for paid, complete signups
-export const completeRegistrations = pgTable("complete_registrations", {
-  id: serial("id").primaryKey(),
-  // Event Information
-  eventId: integer("event_id").notNull(),
-  eventName: text("event_name").notNull(),
-  eventDate: text("event_date").notNull(),
-  eventLocation: text("event_location").notNull(),
+export const eventRegistrationRelations = relations(eventRegistrations, ({ one, many }) => ({
+  event: one(events, {
+    fields: [eventRegistrations.eventId],
+    references: [events.id]
+  }),
+  user: one(users, {
+    fields: [eventRegistrations.userId],
+    references: [users.id]
+  }),
+  payments: many(payments),
+  attendance: many(eventAttendance),
+  gearDistribution: many(eventGear)
+}));
+
+// =====================================================
+// EVENT PAYMENT TRACKING
+// =====================================================
+
+export const eventPayments = pgTable("event_payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull(),
+  registrationId: uuid("registration_id").notNull(),
+  paymentId: uuid("payment_id").notNull(), // Links to main payments table
   
-  // Camper Information
-  camperName: text("camper_name").notNull(), // firstName + lastName combined
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone").notNull(),
-  grade: text("grade").notNull(),
-  gender: text("gender").notNull(),
-  schoolName: text("school_name").notNull(),
-  clubName: text("club_name"),
-  tShirtSize: text("t_shirt_size").notNull(),
+  // Event-specific payment details
+  earlyBirdApplied: boolean("early_bird_applied").default(false),
+  teamDiscountApplied: boolean("team_discount_applied").default(false),
+  gearCost: decimal("gear_cost", { precision: 10, scale: 2 }).default('0'),
   
-  // Parent/Guardian Information
-  parentGuardianName: text("parent_guardian_name").notNull(),
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const eventPaymentRelations = relations(eventPayments, ({ one }) => ({
+  event: one(events, {
+    fields: [eventPayments.eventId],
+    references: [events.id]
+  }),
+  registration: one(eventRegistrations, {
+    fields: [eventPayments.registrationId],
+    references: [eventRegistrations.id]
+  }),
+  payment: one(payments, {
+    fields: [eventPayments.paymentId],
+    references: [payments.id]
+  })
+}));
+
+// =====================================================
+// EVENT ATTENDANCE TRACKING
+// =====================================================
+
+export const eventAttendance = pgTable("event_attendance", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull(),
+  registrationId: uuid("registration_id").notNull(),
   
-  // Registration Details
-  registrationType: text("registration_type").notNull(), // full, single
-  day1: boolean("day1").default(false),
-  day2: boolean("day2").default(false),
-  day3: boolean("day3").default(false),
-  medicalReleaseAccepted: boolean("medical_release_accepted").default(true),
+  // Check-in details
+  checkedInAt: timestamp("checked_in_at"),
+  checkedInBy: uuid("checked_in_by"), // Staff member who checked them in
+  checkInMethod: text("check_in_method"), // 'manual', 'qr_code', 'app'
   
-  // Payment Information
-  stripePaymentIntentId: text("stripe_payment_intent_id").notNull(),
-  shopifyOrderId: text("shopify_order_id"),
-  amountPaid: integer("amount_paid").notNull(), // Amount in cents
-  paymentDate: timestamp("payment_date").notNull(),
-  paymentStatus: text("payment_status").notNull().default("completed"),
+  // Session attendance for multi-day events
+  dayAttended: text("day_attended"), // 'day1', 'day2', 'day3'
+  sessionAttended: text("session_attended"), // 'morning', 'afternoon', 'evening'
   
-  // Administrative
-  source: text("source").notNull().default("website"), // website, manual, import
+  // Check-out details
+  checkedOutAt: timestamp("checked_out_at"),
+  checkedOutBy: uuid("checked_out_by"),
+  
+  // Notes and special circumstances
   notes: text("notes"),
+  lateArrival: boolean("late_arrival").default(false),
+  earlyDeparture: boolean("early_departure").default(false),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Recruiting clinic requests table for college coaches
-export const recruitingClinicRequests = pgTable("recruiting_clinic_requests", {
-  id: serial("id").primaryKey(),
+export const eventAttendanceRelations = relations(eventAttendance, ({ one }) => ({
+  event: one(events, {
+    fields: [eventAttendance.eventId],
+    references: [events.id]
+  }),
+  registration: one(eventRegistrations, {
+    fields: [eventAttendance.registrationId],
+    references: [eventRegistrations.id]
+  }),
+  checkedInByUser: one(users, {
+    fields: [eventAttendance.checkedInBy],
+    references: [users.id]
+  }),
+  checkedOutByUser: one(users, {
+    fields: [eventAttendance.checkedOutBy],
+    references: [users.id]
+  })
+}));
+
+// =====================================================
+// EVENT GEAR DISTRIBUTION
+// =====================================================
+
+export const eventGear = pgTable("event_gear", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull(),
+  registrationId: uuid("registration_id").notNull(),
   
-  // Coach Information
-  fullName: text("full_name").notNull(),
-  title: text("title").notNull(), // Head Coach, Assistant Coach, etc.
-  collegeName: text("college_name").notNull(),
-  email: text("email").notNull(),
-  cellPhone: text("cell_phone").notNull(),
-  schoolPhone: text("school_phone"),
-  schoolWebsite: text("school_website"),
+  // Gear item details
+  itemName: text("item_name").notNull(),
+  itemSku: text("item_sku"),
+  size: text("size"),
+  color: text("color"),
+  quantity: integer("quantity").default(1),
   
-  // Program Details
-  divisionLevel: text("division_level").notNull(), // D1, D2, D3, NAIA, JUCO, Other
-  conference: text("conference").notNull(),
-  numberOfAthletes: integer("number_of_athletes"),
-  areasOfInterest: text("areas_of_interest").array(), // Lightweight, Middleweight, etc.
+  // Distribution tracking
+  distributedAt: timestamp("distributed_at"),
+  distributedBy: uuid("distributed_by"), // Staff member who distributed
+  distributionMethod: text("distribution_method"), // 'pickup', 'shipped', 'event_day'
   
-  // Event Attendance
-  eventId: integer("event_id").notNull().default(2), // National Champ Camp
-  daysAttending: text("days_attending").array(), // June 5, June 6, June 7
+  // Shipping information (if applicable)
+  trackingNumber: text("tracking_number"),
+  shippedAt: timestamp("shipped_at"),
+  deliveredAt: timestamp("delivered_at"),
   
-  // Additional Information
+  // Return tracking
+  returnRequested: boolean("return_requested").default(false),
+  returnedAt: timestamp("returned_at"),
+  returnReason: text("return_reason"),
+  
+  // Status and notes
+  status: text("status").default('ordered'), // ordered, distributed, shipped, delivered, returned
   notes: text("notes"),
-  schoolLogoUrl: text("school_logo_url"),
   
-  // Administrative
-  status: text("status").notNull().default("pending"), // pending, approved, declined
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Create the base schema first
-export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).pick({
-  eventId: true,
-  firstName: true,
-  lastName: true,
-  contactName: true,
-  email: true,
-  phone: true,
-  tShirtSize: true,
-  grade: true,
-  schoolName: true,
-  clubName: true,
-  medicalReleaseAccepted: true,
-  registrationType: true,
-  shopifyOrderId: true,
-  stripePaymentIntentId: true,
-  paymentStatus: true,
-  day1: true,
-  day2: true,
-  day3: true,
-  numberOfDays: true,
-  selectedDates: true,
-  age: true,
-  experience: true
-});
+export const eventGearRelations = relations(eventGear, ({ one }) => ({
+  event: one(events, {
+    fields: [eventGear.eventId],
+    references: [events.id]
+  }),
+  registration: one(eventRegistrations, {
+    fields: [eventGear.registrationId],
+    references: [eventRegistrations.id]
+  }),
+  distributedByUser: one(users, {
+    fields: [eventGear.distributedBy],
+    references: [users.id]
+  })
+}));
 
-// Event Registration Log schema - Single source of truth for all attempts
-export const insertEventRegistrationLogSchema = createInsertSchema(eventRegistrationLog).pick({
-  formSessionId: true,
-  firstName: true,
-  lastName: true,
-  email: true,
-  phone: true,
-  eventSlug: true,
-  eventId: true,
-  campDate: true,
-  teamName: true,
-  grade: true,
-  schoolName: true,
-  clubName: true,
-  tShirtSize: true,
-  gender: true,
-  experience: true,
-  registrationType: true,
-  day1: true,
-  day2: true,
-  day3: true,
-  gearSelection: true,
-  basePrice: true,
-  discountCode: true,
-  discountAmount: true,
-  finalPrice: true,
-  paymentStatus: true,
-  ipAddress: true,
-  userAgent: true,
-  deviceType: true,
-  medicalReleaseAccepted: true,
-  termsAccepted: true
-});
+// =====================================================
+// EVENT FEEDBACK SYSTEM
+// =====================================================
 
-// Complete registrations schema - for consolidated paid signups only
-export const insertCompleteRegistrationSchema = createInsertSchema(completeRegistrations).pick({
-  eventId: true,
-  eventName: true,
-  eventDate: true,
-  eventLocation: true,
-  camperName: true,
-  firstName: true,
-  lastName: true,
-  email: true,
-  phone: true,
-  grade: true,
-  gender: true,
-  schoolName: true,
-  clubName: true,
-  tShirtSize: true,
-  parentGuardianName: true,
-  registrationType: true,
-  day1: true,
-  day2: true,
-  day3: true,
-  medicalReleaseAccepted: true,
-  stripePaymentIntentId: true,
-  shopifyOrderId: true,
-  amountPaid: true,
-  paymentDate: true,
-  paymentStatus: true,
-  source: true,
-  notes: true
-});
-
-// Type definitions
-export type EventRegistrationLog = typeof eventRegistrationLog.$inferSelect;
-export type EventRegistrationLogInsert = z.infer<typeof insertEventRegistrationLogSchema>;
-
-export type CompleteRegistration = typeof completeRegistrations.$inferSelect;
-export type CompleteRegistrationInsert = z.infer<typeof insertCompleteRegistrationSchema>;
-
-// Recruiting clinic requests schema and types
-export const insertRecruitingClinicRequestSchema = createInsertSchema(recruitingClinicRequests).pick({
-  fullName: true,
-  title: true,
-  collegeName: true,
-  email: true,
-  cellPhone: true,
-  schoolPhone: true,
-  schoolWebsite: true,
-  divisionLevel: true,
-  conference: true,
-  numberOfAthletes: true,
-  areasOfInterest: true,
-  eventId: true,
-  daysAttending: true,
-  notes: true,
-  schoolLogoUrl: true
-});
-
-export type RecruitingClinicRequest = typeof recruitingClinicRequests.$inferSelect;
-export type RecruitingClinicRequestInsert = z.infer<typeof insertRecruitingClinicRequestSchema>;
-
-// Strict validation schema for recruiting clinic requests
-export const strictRecruitingClinicRequestSchema = insertRecruitingClinicRequestSchema.extend({
-  fullName: z.string().min(1, "Full name is required"),
-  title: z.string().min(1, "Title/Position is required"),
-  collegeName: z.string().min(1, "College/University name is required"),
-  email: z.string().email("Valid email is required"),
-  cellPhone: z.string().min(1, "Cell phone is required"),
-  divisionLevel: z.string().min(1, "Division level is required"),
-  conference: z.string().min(1, "Conference is required"),
-  daysAttending: z.array(z.string()).min(1, "At least one day must be selected"),
-  areasOfInterest: z.array(z.string()).optional()
-});
-
-// Now extend the original schema with stricter validation
-export const strictEventRegistrationSchema = insertEventRegistrationSchema.extend({
-  // Make all required fields truly required with string validation
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  contactName: z.string().min(1, "Parent/Guardian name is required"),
-  email: z.string().email("Valid email is required"),
-  phone: z.string().min(1, "Phone number is required"),
-  tShirtSize: z.string().min(1, "T-shirt size is required"),
-  grade: z.string().min(1, "Grade is required"),
-  schoolName: z.string().min(1, "School name is required"),
-  // Make medicalReleaseAccepted explicitly true
-  medicalReleaseAccepted: z.boolean().refine(val => val === true, "Medical release must be accepted"),
-  // Ensure registrationType is either "full" or "single"
-  registrationType: z.enum(["full", "single"]),
-  // Make clubName optional but still validate if provided
-  clubName: z.string().optional(),
-  // Keep the rest of the fields as is
-});
-
-// Custom apparel inquiries table
-export const customApparelInquiries = pgTable("custom_apparel_inquiries", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  organizationName: text("organization_name").notNull(),
-  sport: text("sport").notNull(),
-  details: text("details").notNull(),
-  status: text("status").default("pending"),
+export const eventFeedback = pgTable("event_feedback", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull(),
+  registrationId: uuid("registration_id"), // Nullable for anonymous feedback
+  userId: uuid("user_id"), // If user is logged in
+  
+  // Feedback details
+  overallRating: integer("overall_rating"), // 1-5 scale
+  coachRating: integer("coach_rating"),
+  facilityRating: integer("facility_rating"),
+  organizationRating: integer("organization_rating"),
+  
+  // Breakout session feedback
+  breakoutSession: text("breakout_session"), // Which session they're rating
+  sessionRating: integer("session_rating"),
+  sessionFeedback: text("session_feedback"),
+  
+  // General feedback
+  whatWorkedWell: text("what_worked_well"),
+  areasForImprovement: text("areas_for_improvement"),
+  overallComments: text("overall_comments"),
+  wouldRecommend: boolean("would_recommend"),
+  likelyToReturn: boolean("likely_to_return"),
+  
+  // Feedback submission details
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  isAnonymous: boolean("is_anonymous").default(false),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-export const insertCustomApparelInquirySchema = createInsertSchema(customApparelInquiries).pick({
-  name: true,
-  email: true,
-  phone: true,
-  organizationName: true,
-  sport: true,
-  details: true
-});
+export const eventFeedbackRelations = relations(eventFeedback, ({ one }) => ({
+  event: one(events, {
+    fields: [eventFeedback.eventId],
+    references: [events.id]
+  }),
+  registration: one(eventRegistrations, {
+    fields: [eventFeedback.registrationId],
+    references: [eventRegistrations.id]
+  }),
+  user: one(users, {
+    fields: [eventFeedback.userId],
+    references: [users.id]
+  })
+}));
 
-// Contact form submissions table
-export const contactSubmissions = pgTable("contact_submissions", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  subject: text("subject").notNull(),
-  message: text("message").notNull(),
-  status: text("status").default("unread"),
-  createdAt: timestamp("created_at").defaultNow()
-});
+// =====================================================
+// SITE SESSION TRACKING
+// =====================================================
 
-export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).pick({
-  name: true,
-  email: true,
-  phone: true,
-  subject: true,
-  message: true
-});
-
-// Newsletter subscribers table
-export const newsletterSubscribers = pgTable("newsletter_subscribers", {
-  id: serial("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  status: text("status").default("active"),
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-export const insertNewsletterSubscriberSchema = createInsertSchema(newsletterSubscribers).pick({
-  email: true
-});
-
-// Collaborations table
-export const collaborations = pgTable("collaborations", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  logoSrc: text("logo_src"),
-  website: text("website").notNull(),
-  description: text("description").notNull(),
-  isComingSoon: boolean("is_coming_soon").default(false),
-  displayOrder: integer("display_order").default(0),
-  active: boolean("active").default(true),
+export const siteSessions = pgTable("site_sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id"), // Nullable for anonymous sessions
+  sessionToken: text("session_token").notNull().unique(),
+  
+  // Session details
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  deviceType: deviceTypeEnum("device_type"),
+  browserName: text("browser_name"),
+  operatingSystem: text("operating_system"),
+  
+  // Geographic information
+  country: text("country"),
+  region: text("region"),
+  city: text("city"),
+  
+  // Referrer and marketing
+  referrer: text("referrer"),
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
+  
+  // Session activity
+  startedAt: timestamp("started_at").defaultNow(),
+  endedAt: timestamp("ended_at"),
+  timeSpentSeconds: integer("time_spent_seconds").default(0),
+  pageViews: integer("page_views").default(0),
+  pagesVisited: jsonb("pages_visited"), // Array of page paths visited
+  
+  // Engagement metrics
+  bouncedSession: boolean("bounced_session").default(false), // Only viewed one page
+  convertedSession: boolean("converted_session").default(false), // Made a purchase/registration
+  conversionType: text("conversion_type"), // 'purchase', 'registration', 'contact'
+  conversionValue: decimal("conversion_value", { precision: 10, scale: 2 }),
+  
+  // Session status
+  isActive: boolean("is_active").default(true),
+  
+  // Soft delete and audit
+  isArchived: boolean("is_archived").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-export const insertCollaborationSchema = createInsertSchema(collaborations).pick({
-  name: true,
-  logoSrc: true,
-  website: true,
-  description: true,
-  isComingSoon: true,
-  displayOrder: true,
-  active: true
-});
+export const siteSessionRelations = relations(siteSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [siteSessions.userId],
+    references: [users.id]
+  })
+}));
 
-// Type definitions
-export type InsertUser = z.infer<typeof insertUserSchema>;
+// =====================================================
+// INSERT SCHEMAS AND TYPES
+// =====================================================
+
+// User schemas
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type UserInsert = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
-export type InsertProduct = z.infer<typeof insertProductSchema>;
-export type Product = typeof products.$inferSelect;
+// Custom order schemas
+export const insertCustomOrderSchema = createInsertSchema(customOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type CustomOrderInsert = z.infer<typeof insertCustomOrderSchema>;
+export type CustomOrder = typeof customOrders.$inferSelect;
 
-export type InsertCollection = z.infer<typeof insertCollectionSchema>;
-export type Collection = typeof collections.$inferSelect;
+// Retail sale schemas
+export const insertRetailSaleSchema = createInsertSchema(retailSales).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type RetailSaleInsert = z.infer<typeof insertRetailSaleSchema>;
+export type RetailSale = typeof retailSales.$inferSelect;
 
-export type InsertEvent = z.infer<typeof insertEventSchema>;
+// Payment schemas
+export const insertPaymentSchema = createInsertSchema(payments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type PaymentInsert = z.infer<typeof insertPaymentSchema>;
+export type Payment = typeof payments.$inferSelect;
+
+// Event schemas
+export const insertEventSchema = createInsertSchema(events).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type EventInsert = z.infer<typeof insertEventSchema>;
 export type Event = typeof events.$inferSelect;
 
-export type InsertEventRegistration = z.infer<typeof insertEventRegistrationSchema>;
+// Event registration schemas
+export const insertEventRegistrationSchema = createInsertSchema(eventRegistrations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type EventRegistrationInsert = z.infer<typeof insertEventRegistrationSchema>;
 export type EventRegistration = typeof eventRegistrations.$inferSelect;
 
-export type InsertCustomApparelInquiry = z.infer<typeof insertCustomApparelInquirySchema>;
-export type CustomApparelInquiry = typeof customApparelInquiries.$inferSelect;
-
-// Error logging table for payment intent failures and mobile issues
-export const errorLogs = pgTable('error_logs', {
-  id: serial('id').primaryKey(),
-  errorType: text('error_type').notNull(), // 'payment_intent_failure', 'mobile_crash', 'validation_error'
-  sessionId: text('session_id').notNull(),
-  userId: text('user_id'),
-  eventId: integer('event_id'),
-  userAgent: text('user_agent'),
-  deviceType: text('device_type'), // 'mobile', 'desktop', 'tablet'
-  errorMessage: text('error_message').notNull(),
-  errorStack: text('error_stack'),
-  requestPayload: jsonb('request_payload'), // Full request data for debugging
-  registrationData: jsonb('registration_data'), // Form data at time of error
-  timestamp: timestamp('timestamp').defaultNow().notNull(),
-  resolved: boolean('resolved').default(false),
-  notes: text('notes')
-});
-
-export const insertErrorLogSchema = createInsertSchema(errorLogs).pick({
-  errorType: true,
-  sessionId: true,
-  userId: true,
-  eventId: true,
-  userAgent: true,
-  deviceType: true,
-  errorMessage: true,
-  errorStack: true,
-  requestPayload: true,
-  registrationData: true,
-  resolved: true,
-  notes: true
-});
-
-export type ErrorLog = typeof errorLogs.$inferSelect;
-export type InsertErrorLog = z.infer<typeof insertErrorLogSchema>;
-
-export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
-export type ContactSubmission = typeof contactSubmissions.$inferSelect;
-
-export type InsertNewsletterSubscriber = z.infer<typeof insertNewsletterSubscriberSchema>;
-export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
-
-// Coaches table
-export const coaches = pgTable("coaches", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  title: text("title").notNull(),
-  bio: text("bio").notNull(),
-  image: text("image").notNull(),
-  school: text("school"),
-  schoolLogo: text("school_logo"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-export const insertCoachSchema = createInsertSchema(coaches).pick({
-  name: true,
-  title: true,
-  bio: true,
-  image: true,
-  school: true,
-  schoolLogo: true
-});
-
-// Event coaches junction table
-export const eventCoaches = pgTable("event_coaches", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
-  coachId: integer("coach_id").notNull().references(() => coaches.id, { onDelete: 'cascade' }),
-  displayOrder: integer("display_order").default(0),
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-export const insertEventCoachSchema = createInsertSchema(eventCoaches).pick({
-  eventId: true,
-  coachId: true,
-  displayOrder: true
-});
-
-export type InsertCollaboration = z.infer<typeof insertCollaborationSchema>;
-export type Collaboration = typeof collaborations.$inferSelect;
-
-export type InsertCoach = z.infer<typeof insertCoachSchema>;
-export type Coach = typeof coaches.$inferSelect;
-
-export type InsertEventCoach = z.infer<typeof insertEventCoachSchema>;
-export type EventCoach = typeof eventCoaches.$inferSelect;
-
-// Completed Event registrations table - for storing finalized/paid registrations
-export const completedEventRegistrations = pgTable("completed_event_registrations", {
-  id: serial("id").primaryKey(),
-  originalRegistrationId: integer("original_registration_id").notNull(),
-  eventId: integer("event_id").notNull(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  contactName: text("contact_name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  tShirtSize: text("t_shirt_size"),
-  grade: text("grade"),
-  gender: text("gender"),
-  schoolName: text("school_name"),
-  clubName: text("club_name"),
-  medicalReleaseAccepted: boolean("medical_release_accepted").default(false),
-  registrationType: text("registration_type"),
-  shopifyOrderId: text("shopify_order_id"),
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  day1: boolean("day1").default(false),
-  day2: boolean("day2").default(false), 
-  day3: boolean("day3").default(false),
-  age: text("age"),
-  experience: text("experience"),
-  registrationDate: timestamp("registration_date").notNull(),
-  completedDate: timestamp("completed_date").defaultNow(),
-  paymentVerified: boolean("payment_verified").default(false) // Track if payment has been verified
-});
-
-export const insertCompletedEventRegistrationSchema = createInsertSchema(completedEventRegistrations).omit({
+// Site session schemas
+export const insertSiteSessionSchema = createInsertSchema(siteSessions).omit({
   id: true,
-  completedDate: true
+  createdAt: true,
+  updatedAt: true
 });
+export type SiteSessionInsert = z.infer<typeof insertSiteSessionSchema>;
+export type SiteSession = typeof siteSessions.$inferSelect;
 
-export type InsertCompletedEventRegistration = z.infer<typeof insertCompletedEventRegistrationSchema>;
-export type CompletedEventRegistration = typeof completedEventRegistrations.$inferSelect;
-
-// Verified customer registrations table - contains only authentic customer data
-export const verifiedCustomerRegistrations = pgTable("verified_customer_registrations", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull(),
-  eventName: text("event_name").notNull(),
-  camperName: text("camper_name").notNull(),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  grade: text("grade"),
-  gender: text("gender"),
-  schoolName: text("school_name"),
-  clubName: text("club_name"),
-  registrationType: text("registration_type").notNull(),
-  amountPaid: integer("amount_paid").notNull(), // in cents
-  paymentStatus: text("payment_status").notNull(), // 'completed', 'payment_failed'
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  paymentDate: timestamp("payment_date"),
-  paymentSource: text("payment_source"), // 'stripe', 'database_verified', 'abandoned_checkout'
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-export const insertVerifiedCustomerRegistrationSchema = createInsertSchema(verifiedCustomerRegistrations).omit({
+// Event feedback schemas
+export const insertEventFeedbackSchema = createInsertSchema(eventFeedback).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
+  updatedAt: true
 });
+export type EventFeedbackInsert = z.infer<typeof insertEventFeedbackSchema>;
+export type EventFeedback = typeof eventFeedback.$inferSelect;
 
-export type VerifiedCustomerRegistration = typeof verifiedCustomerRegistrations.$inferSelect;
-export type InsertVerifiedCustomerRegistration = z.infer<typeof insertVerifiedCustomerRegistrationSchema>;
-
-// Completed registrations table - only customers who actually paid
-export const completedRegistrations = pgTable("completed_registrations", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull(),
-  eventName: text("event_name").notNull(),
-  camperName: text("camper_name").notNull(),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  grade: text("grade"),
-  gender: text("gender"),
-  schoolName: text("school_name"),
-  clubName: text("club_name"),
-  registrationType: text("registration_type").notNull(),
-  amountPaid: integer("amount_paid").notNull(), // in cents
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  paymentDate: timestamp("payment_date"),
-  paymentSource: text("payment_source"), // 'stripe', 'database_verified'
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-// Customer leads table - customers who filled forms but didn't complete payment
-export const customerLeads = pgTable("customer_leads", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull(),
-  eventName: text("event_name").notNull(),
-  camperName: text("camper_name").notNull(),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  grade: text("grade"),
-  gender: text("gender"),
-  schoolName: text("school_name"),
-  clubName: text("club_name"),
-  registrationType: text("registration_type").notNull(),
-  leadSource: text("lead_source"), // 'form_only', 'reached_checkout'
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  formCompletedDate: timestamp("form_completed_date"),
-  followUpStatus: text("follow_up_status").default('pending'), // 'pending', 'contacted', 'converted', 'declined'
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-export const insertCompletedRegistrationSchema = createInsertSchema(completedRegistrations).omit({
+// Event gear schemas
+export const insertEventGearSchema = createInsertSchema(eventGear).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
+  updatedAt: true
 });
+export type EventGearInsert = z.infer<typeof insertEventGearSchema>;
+export type EventGear = typeof eventGear.$inferSelect;
 
-export const insertCustomerLeadSchema = createInsertSchema(customerLeads).omit({
+// Event attendance schemas
+export const insertEventAttendanceSchema = createInsertSchema(eventAttendance).omit({
   id: true,
-  createdAt: true
+  createdAt: true,
+  updatedAt: true
 });
+export type EventAttendanceInsert = z.infer<typeof insertEventAttendanceSchema>;
+export type EventAttendance = typeof eventAttendance.$inferSelect;
 
-export type CompletedRegistration = typeof completedRegistrations.$inferSelect;
-export type InsertCompletedRegistration = z.infer<typeof insertCompletedRegistrationSchema>;
-
-export type CustomerLead = typeof customerLeads.$inferSelect;
-export type InsertCustomerLead = z.infer<typeof insertCustomerLeadSchema>;
+// Event payment schemas
+export const insertEventPaymentSchema = createInsertSchema(eventPayments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type EventPaymentInsert = z.infer<typeof insertEventPaymentSchema>;
+export type EventPayment = typeof eventPayments.$inferSelect;
