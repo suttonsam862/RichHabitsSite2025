@@ -27,7 +27,7 @@ export default function ProductDetail() {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading product...</p>
         </div>
       </div>
@@ -114,9 +114,9 @@ export default function ProductDetail() {
               className="space-y-6"
             >
               <div>
-                <h1 className="text-4xl font-bold mb-4">{product.title}</h1>
+                <h1 className="text-4xl font-bold mb-4">{product?.title}</h1>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="text-3xl font-bold text-red-400">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                     ${price.toFixed(2)}
                   </div>
                   <div className="flex items-center gap-1">
@@ -129,7 +129,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Description */}
-              {product.body_html && (
+              {product?.body_html && (
                 <div 
                   className="text-gray-300 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: product.body_html }}
@@ -137,17 +137,17 @@ export default function ProductDetail() {
               )}
 
               {/* Variants */}
-              {product.variants && product.variants.length > 1 && (
+              {variants && variants.length > 1 && (
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Options</h3>
                   <div className="grid grid-cols-2 gap-2">
-                    {product.variants.map((variant: any, index: number) => (
+                    {variants.map((variant: any, index: number) => (
                       <button
                         key={variant.id}
                         onClick={() => setSelectedVariant(index)}
                         className={`p-3 rounded-lg border transition-colors ${
                           selectedVariant === index
-                            ? 'border-red-500 bg-red-500/10 text-red-400'
+                            ? 'border-blue-500 bg-blue-500/10 text-blue-400'
                             : 'border-gray-700 hover:border-gray-600'
                         }`}
                       >
@@ -184,7 +184,7 @@ export default function ProductDetail() {
               <div className="space-y-4">
                 <motion.button
                   onClick={handleAddToCart}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-xl transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -201,19 +201,19 @@ export default function ProductDetail() {
               <div className="border-t border-gray-800 pt-6">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <strong className="text-red-400">Quality:</strong>
+                    <strong className="text-blue-400">Quality:</strong>
                     <p className="text-gray-400">Premium materials</p>
                   </div>
                   <div>
-                    <strong className="text-red-400">Shipping:</strong>
+                    <strong className="text-purple-400">Shipping:</strong>
                     <p className="text-gray-400">2-3 business days</p>
                   </div>
                   <div>
-                    <strong className="text-red-400">Returns:</strong>
+                    <strong className="text-emerald-400">Returns:</strong>
                     <p className="text-gray-400">30-day policy</p>
                   </div>
                   <div>
-                    <strong className="text-red-400">Support:</strong>
+                    <strong className="text-amber-400">Support:</strong>
                     <p className="text-gray-400">24/7 customer care</p>
                   </div>
                 </div>
