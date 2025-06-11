@@ -177,11 +177,20 @@ export function setupRoutes(app: Express): void {
       if (!isNaN(Number(registrationData.eventId))) {
         // Map legacy event IDs to new UUIDs
         const events = await storage.getEvents();
-        const event = events.find(e => e.slug === getEventSlugFromLegacyId(Number(registrationData.eventId)));
+        const targetSlug = getEventSlugFromLegacyId(Number(registrationData.eventId));
+        console.log(`Legacy ID ${registrationData.eventId} maps to slug: ${targetSlug}`);
+        console.log(`Available events:`, events.map(e => ({ id: e.id, slug: e.slug })));
+        
+        const event = events.find(e => e.slug === targetSlug);
         if (!event) {
-          return res.status(400).json({ error: "Event not found" });
+          console.error(`Event not found for slug: ${targetSlug}`);
+          return res.status(400).json({ 
+            error: "Event not found", 
+            debug: { requestedSlug: targetSlug, availableSlugs: events.map(e => e.slug) }
+          });
         }
         eventUuid = event.id;
+        console.log(`Mapped legacy ID ${registrationData.eventId} to UUID: ${eventUuid}`);
       }
 
       // Map frontend fields to database fields with fallbacks
