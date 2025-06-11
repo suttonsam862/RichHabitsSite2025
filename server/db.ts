@@ -2,7 +2,6 @@ import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "../shared/schema.js";
-import { supabase } from './supabase.js';
 
 // Configure WebSocket for Neon serverless
 neonConfig.webSocketConstructor = ws;
@@ -39,14 +38,9 @@ export const getDatabaseHealthStatus = async () => {
     // Check direct database connection
     const dbConnected = await checkDatabaseConnection();
     
-    // Check Supabase connection
-    const { data, error } = await supabase.from('users').select('count(*)').limit(1);
-    const supabaseConnected = !error;
-    
     return {
-      status: dbConnected && supabaseConnected ? 'healthy' : 'unhealthy',
+      status: dbConnected ? 'healthy' : 'unhealthy',
       dbConnection: dbConnected ? 'connected' : 'disconnected',
-      supabaseConnection: supabaseConnected ? 'connected' : 'disconnected',
       timestamp: new Date().toISOString()
     };
   } catch (error: any) {
