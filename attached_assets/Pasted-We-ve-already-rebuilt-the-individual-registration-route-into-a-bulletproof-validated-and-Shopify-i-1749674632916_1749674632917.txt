@@ -1,0 +1,67 @@
+We’ve already rebuilt the individual registration route into a bulletproof, validated, and Shopify-integrated system. Now we need to do the same for the team and 1-day registration flows — which are **malfunctioning in production** due to incorrect pricing, missing contact info, broken Shopify sync, and frontend/backend mismatches.
+
+Your job is to modernize and fix the **team registration flow** and ensure **1-day registrations** are treated as valid partial registrations across the system, **without touching the individual registration logic**, which is already working and must remain untouched.
+
+---
+
+### 🎯 OBJECTIVES:
+
+**1. Fix the /api/team-registration endpoint**
+- Insert a valid `teamContact` record (coach name + email) alongside the athletes.
+- Ensure that all athlete records are inserted with properly mapped fields:
+  - `tShirtSize → shirt_size`
+  - `parentName → parent_name`
+  - `parentPhoneNumber → phone`
+  - `experienceLevel → experience`
+  - `age/grade → grade`
+- Save `teamName`, `schoolName`, and `eventId` properly.
+- Make sure all team entries receive the proper `registrationType: 'team'`.
+
+**2. Ensure all team registrations correctly trigger Shopify orders**
+- Use the coach's name and email as the customer.
+- Create a single Shopify draft order with line item labeled: `"Team Registration – [Team Name]"`.
+- Quantity: number of athletes.
+- Price: total team price.
+- Save `shopifyOrderId` in one or all athlete records for traceability.
+
+**3. Enforce 1-day registration logic**
+- 1-day registrations must:
+  - Be priced at **exactly 50% of the full event fee**
+  - Transmit a selected day (`day1`, `day2`, `day3` or `selectedDates`)
+  - Trigger Shopify order with item name: `"1-Day Camp Registration – [Event Name]"`
+- Fix frontend logic if necessary so selecting "1-day" sends the correct option (`'1day'`), and day selection fields become visible and required.
+
+**4. Clean route handlers**
+- Consolidate duplicate routes for payment intent creation.
+- Keep only `/api/events/:eventId/create-payment-intent` and ensure it works for all options (full, 1-day, 2-day, team).
+- Delete or redirect legacy `/api/create-payment-intent` if still used.
+
+**5. Verify Webhook/Email Trigger**
+- Ensure the Stripe webhook is registered and live (`/api/stripe-webhook`).
+- Team and 1-day registrations must:
+  - Be marked as paid after Stripe payment
+  - Trigger confirmation email to the **coach’s email**
+  - Trigger Shopify draft order with the correct label
+
+---
+
+### 🧪 FINAL TEST:
+Once changes are made, show me:
+- A curl or JS test that submits a team registration (2 athletes, 1-day)
+- A test that creates and verifies a 1-day individual registration
+- A SELECT query showing:
+  - registrationType: 'team'
+  - price: 50% of full
+  - correct coach info saved
+  - Shopify order created
+
+---
+
+### 🚫 DO NOT:
+- Modify the `/api/event-registration` flow
+- Break the existing full individual registration route
+- Remove current email or Shopify logic for individual registrations
+
+---
+
+Are you ready? Start by loading `server/routes.ts` and `server/pricingUtils.ts`, and confirm where team and 1-day logic currently lives.
