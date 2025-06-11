@@ -898,5 +898,30 @@ export function setupRoutes(app: Express): void {
         res.status(500).json({ error: "Failed to fetch product" });
       }
     });
+
+    // Get individual product by handle
+    app.get("/api/shop/products/handle/:handle", async (req: Request, res: Response) => {
+      try {
+        const { handle } = req.params;
+        // First get all products and find by handle
+        const collections = await listCollections();
+        let foundProduct = null;
+        
+        for (const collection of collections) {
+          const products = await getCollectionProducts(collection.id);
+          foundProduct = products.find((p: any) => p.handle === handle);
+          if (foundProduct) break;
+        }
+        
+        if (!foundProduct) {
+          return res.status(404).json({ error: "Product not found" });
+        }
+        
+        res.json(foundProduct);
+      } catch (error) {
+        console.error('Error fetching product by handle:', error);
+        res.status(500).json({ error: "Failed to fetch product" });
+      }
+    });
   });
 }

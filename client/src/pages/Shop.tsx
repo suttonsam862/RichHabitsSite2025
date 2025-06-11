@@ -17,17 +17,19 @@ interface Product {
   title: string;
   handle: string;
   body_html: string;
-  images: Array<{ src: string; alt: string }>;
+  images: Array<{ src: string; alt?: string }>;
   variants: Array<{ 
     id: string; 
     title: string; 
     price: string; 
-    available: boolean 
+    available?: boolean 
   }>;
 }
 
 function ProductCard({ product }: { product: Product }) {
-  const price = product.variants?.[0]?.price ? parseFloat(product.variants[0].price) : 0;
+  // Handle both Shopify formats: "29.99" and "$29.99"
+  const priceStr = product.variants?.[0]?.price || "0";
+  const price = parseFloat(priceStr.replace('$', '')) || 0;
   const imageUrl = product.images?.[0]?.src;
 
   return (
