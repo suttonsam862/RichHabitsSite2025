@@ -762,14 +762,22 @@ export function setupRoutes(app: Express): void {
       let amount: number;
 
       try {
-        // Map event slug back to numeric ID for pricing calculation
+        // CRITICAL FIX: Map event slug back to numeric ID for pricing calculation - NO FALLBACKS
         const eventSlugToIdMap: Record<string, number> = {
           'summer-wrestling-camp-2025': 1,
           'recruiting-showcase-2025': 2, 
           'technique-clinic-advanced': 3
         };
         
-        const numericEventId = eventSlugToIdMap[event.slug] || 1;
+        const numericEventId = eventSlugToIdMap[event.slug];
+        
+        // CRITICAL: Reject payment if event slug is not mapped
+        if (!numericEventId) {
+          console.error(`CRITICAL: Event slug '${event.slug}' not found in pricing map for payment intent creation`);
+          return res.status(400).json({
+            error: `Event '${event.slug}' is not configured for payment processing`
+          });
+        }
         
         if (registrationType === 'team') {
           // Calculate team pricing

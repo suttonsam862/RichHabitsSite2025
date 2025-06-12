@@ -32,7 +32,7 @@ if (secretIsLive !== publishableIsLive) {
 // Using the latest API version and enabling live mode 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
-  apiVersion: '2025-04-30.basil'
+  apiVersion: '2025-05-28.basil'
 });
 
 // Explicitly log whether we're in live mode
@@ -119,20 +119,37 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         });
       }
     } else {
-      // Map event slug back to numeric ID for pricing calculation
+      // CRITICAL FIX: Remove fallback mapping, validate event exists in database
+      if (!event.id) {
+        console.error(`CRITICAL: Event missing ID - eventSlug: ${eventSlug}, event:`, event);
+        return res.status(400).json({
+          error: 'Event configuration error: missing event ID'
+        });
+      }
+      
+      // Map event slug back to numeric ID for pricing calculation - NO FALLBACKS
       const eventSlugToIdMap: Record<string, number> = {
         'summer-wrestling-camp-2025': 1,
         'recruiting-showcase-2025': 2, 
         'technique-clinic-advanced': 3
       };
       
-      const numericEventId = eventSlugToIdMap[event.slug] || 1;
+      const numericEventId = eventSlugToIdMap[event.slug];
+      
+      // CRITICAL: If event slug is not mapped, reject the payment
+      if (!numericEventId) {
+        console.error(`CRITICAL: Event slug '${event.slug}' not found in pricing map. Available slugs:`, Object.keys(eventSlugToIdMap));
+        return res.status(400).json({
+          error: `Event '${event.slug}' is not configured for payment processing`
+        });
+      }
       
       // Get calculated price only when no discount provided
       amount = await getEventPrice(numericEventId, option, req.body.numberOfDays, req.body.selectedDates);
       console.log(`💰 Using calculated base price: $${amount/100} (${amount} cents) for event ${numericEventId} (${option})`);
       
       if (!amount || isNaN(amount) || amount <= 0) {
+        console.error(`CRITICAL: Invalid price calculated for event ${numericEventId}: ${amount}`);
         return res.status(400).json({
           error: 'Could not determine price for the event'
         });
@@ -142,19 +159,41 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     console.log(`Using calculated price of $${amount/100} for event ${event.id} (${event.title})`);
     
     try {
-      // Include all customer registration details in the metadata
+      // CRITICAL VALIDATION: Ensure required metadata fields are present
       const customerInfo = req.body;
       
-      // Create metadata with all registration fields
+      // Validate required fields before creating payment intent
+      if (!event.id || !event.title) {
+        console.error('CRITICAL: Missing event data for PaymentIntent creation:', { eventId: event.id, eventTitle: event.title });
+        return res.status(400).json({
+          error: 'Event configuration error: missing event ID or title'
+        });
+      }
+      
+      if (!customerInfo.email) {
+        console.error('CRITICAL: Missing customer email for PaymentIntent creation');
+        return res.status(400).json({
+          error: 'Customer email is required for payment processing'
+        });
+      }
+      
+      if (!customerInfo.firstName || !customerInfo.lastName) {
+        console.error('CRITICAL: Missing customer name for PaymentIntent creation');
+        return res.status(400).json({
+          error: 'Customer first and last name are required for payment processing'
+        });
+      }
+      
+      // Create metadata with all registration fields - NO EMPTY FALLBACKS
       const metadata: Record<string, string> = {
         eventId: event.id.toString(),
         eventName: event.title,
         option,
         // Add all customer registration data from the request body
-        firstName: customerInfo.firstName || '',
-        lastName: customerInfo.lastName || '',
-        contactName: customerInfo.contactName || '',
-        email: customerInfo.email || '',
+        firstName: customerInfo.firstName,
+        lastName: customerInfo.lastName,
+        contactName: customerInfo.contactName || `${customerInfo.firstName} ${customerInfo.lastName}`,
+        email: customerInfo.email,
         phone: customerInfo.phone || '',
         tShirtSize: customerInfo.tShirtSize || '',
         grade: customerInfo.grade || '',
@@ -166,7 +205,16 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         day3: (customerInfo.day3 === true || customerInfo.day3 === 'true') ? 'true' : 'false',
       };
       
-      console.log('Creating PaymentIntent with customer metadata:', metadata);
+      // CRITICAL LOGGING: Log every PaymentIntent creation for tracking
+      console.log('🚨 PAYMENT INTENT CREATION LOG:');
+      console.log(`  Event ID: ${metadata.eventId}`);
+      console.log(`  Event Name: ${metadata.eventName}`);
+      console.log(`  Amount: $${amount/100} (${amount} cents)`);
+      console.log(`  Customer Email: ${metadata.email}`);
+      console.log(`  Customer Name: ${metadata.firstName} ${metadata.lastName}`);
+      console.log(`  Option: ${metadata.option}`);
+      console.log(`  Timestamp: ${new Date().toISOString()}`);
+      console.log('🚨 END PAYMENT INTENT CREATION LOG');
       
       // Create a PaymentIntent with the calculated amount and all customer data
       const paymentIntent = await stripe.paymentIntents.create({
@@ -657,18 +705,51 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           console.log(`Skipping verification for test payment intent ${paymentIntent.id}`);
         }
         
-        // Payment verified, now process the successful payment
+        // CRITICAL SAFEGUARD: Validate payment metadata before processing
         const eventId = Number(paymentIntent.metadata?.eventId);
+        const eventName = paymentIntent.metadata?.eventName;
         const registrationId = Number(paymentIntent.metadata?.registrationId);
+        
+        // CRITICAL: Reject payments with fake/mock event data
+        if (!eventId || isNaN(eventId)) {
+          console.error(`🚨 CRITICAL: Missing or invalid eventId in payment metadata: ${paymentIntent.metadata?.eventId}`);
+          console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+          break;
+        }
+        
+        if (!eventName || eventName === 'Advanced Technique Clinic') {
+          console.error(`🚨 CRITICAL: Invalid or mock eventName in payment metadata: ${eventName}`);
+          console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+          break;
+        }
+        
+        // Additional safeguard: Verify event exists in database
+        try {
+          const event = await storage.getEvent(eventId);
+          if (!event) {
+            console.error(`🚨 CRITICAL: Event with ID ${eventId} not found in database`);
+            console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+            break;
+          }
+          
+          // Verify event name matches database
+          if (event.title !== eventName) {
+            console.error(`🚨 CRITICAL: Event name mismatch - Database: ${event.title}, Metadata: ${eventName}`);
+            console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+            break;
+          }
+          
+          console.log(`✅ Payment metadata validated: Event ${eventId} (${eventName})`);
+        } catch (error) {
+          console.error(`🚨 CRITICAL: Error validating event ${eventId}:`, error);
+          console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+          break;
+        }
         
         if (eventId && !isNaN(eventId)) {
           try {
-            // Get the event details
+            // Get the event details (already validated above)
             const event = await storage.getEvent(eventId);
-            if (!event) {
-              console.error(`Event with ID ${eventId} not found`);
-              break;
-            }
             
             // Get registration data - either from metadata or from database
             let registrationData: any;
