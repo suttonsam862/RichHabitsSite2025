@@ -80,11 +80,12 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
         
-        <Link href={`/product/${product.handle || product.id}`}>
-          <div className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-lg cursor-pointer">
-            View Details
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </div>
+        <Link 
+          href={`/shop/${product.handle || product.id}`}
+          className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-lg cursor-pointer"
+        >
+          View Details
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     </motion.div>
@@ -176,10 +177,11 @@ export default function Shop() {
                   <p className="text-gray-400 mb-8">
                     We're working on stocking our retail collection. Check back soon!
                   </p>
-                  <Link href="/events">
-                    <a className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg">
-                      Explore Training Camps
-                    </a>
+                  <Link 
+                    href="/events"
+                    className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg"
+                  >
+                    Explore Training Camps
                   </Link>
                 </motion.div>
               )}
@@ -243,10 +245,11 @@ export default function Shop() {
             <p className="text-xl text-gray-300 mb-8">
               Gear up with our premium products and join our wrestling camps for the complete experience
             </p>
-            <Link href="/events">
-              <a className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-lg font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105">
-                View Training Camps
-              </a>
+            <Link 
+              href="/events"
+              className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-lg font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105"
+            >
+              View Training Camps
             </Link>
           </motion.div>
         </div>

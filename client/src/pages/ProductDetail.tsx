@@ -2,7 +2,21 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { ArrowLeft, ShoppingCart, Star, Minus, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface Product {
+  id: string;
+  title: string;
+  handle: string;
+  body_html: string;
+  images: Array<{ src: string; alt?: string }>;
+  variants: Array<{ 
+    id: string; 
+    title: string; 
+    price: string; 
+    available?: boolean 
+  }>;
+}
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -18,10 +32,20 @@ export default function ProductDetail() {
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const { data: product, isLoading } = useQuery({
+  const { data: product, isLoading } = useQuery<Product>({
     queryKey: [`/api/shop/products/handle/${handle}`],
     enabled: !!handle
   });
+
+  // Add document title when product loads
+  useEffect(() => {
+    if (product?.title) {
+      document.title = `${product.title} | Rich Habits`;
+    }
+    return () => {
+      document.title = 'Rich Habits';
+    };
+  }, [product?.title]);
 
   if (isLoading) {
     return (
@@ -39,8 +63,11 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Product not found</h2>
-          <Link href="/shop">
-            <a className="text-red-400 hover:text-red-300">← Back to Shop</a>
+          <Link 
+            href="/shop"
+            className="text-red-400 hover:text-red-300"
+          >
+            ← Back to Shop
           </Link>
         </div>
       </div>
@@ -63,11 +90,12 @@ export default function ProductDetail() {
       {/* Header */}
       <div className="bg-gray-900 py-4">
         <div className="container mx-auto px-6">
-          <Link href="/shop">
-            <a className="inline-flex items-center text-red-400 hover:text-red-300 transition-colors">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Shop
-            </a>
+          <Link 
+            href="/shop"
+            className="inline-flex items-center text-red-400 hover:text-red-300 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Shop
           </Link>
         </div>
       </div>
