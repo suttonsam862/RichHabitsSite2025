@@ -7,7 +7,7 @@
 
 import fetch from 'node-fetch';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:3000';
 
 async function testCollectionProducts() {
   console.log('1. Testing collection products API...');
