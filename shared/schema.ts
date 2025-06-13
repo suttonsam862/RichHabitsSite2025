@@ -440,7 +440,7 @@ export const cartItems = pgTable("cart_items", {
   vendor: text("vendor"),
   
   // Audit
-  createdAt: timestamp("created_at").defaultNow(),
+  addedAt: timestamp("added_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
@@ -779,8 +779,7 @@ export type EventPayment = typeof eventPayments.$inferSelect;
 export const insertCartItemSchema = createInsertSchema(cartItems).omit({
   id: true,
   addedAt: true,
-  updatedAt: true,
-  isArchived: true
+  updatedAt: true
 });
 export type CartItemInsert = z.infer<typeof insertCartItemSchema>;
 export type CartItem = typeof cartItems.$inferSelect;

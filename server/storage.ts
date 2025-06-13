@@ -421,7 +421,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(cartItems)
       .where(and(...whereConditions))
-      .orderBy(desc(cartItems.createdAt));
+      .orderBy(desc(cartItems.updatedAt));
   }
 
   async updateCartItem(id: string, quantity: number): Promise<CartItem | undefined> {
