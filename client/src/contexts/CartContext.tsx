@@ -210,7 +210,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
       return response.json();
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       dispatch({ type: 'UPDATE_ITEM', payload: variables });
       queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
@@ -224,7 +224,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
       return response.json();
     },
-    onSuccess: (data, id) => {
+    onSuccess: (_, id) => {
       dispatch({ type: 'REMOVE_ITEM', payload: id });
       queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
