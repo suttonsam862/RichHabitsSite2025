@@ -35,23 +35,31 @@ function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const { toast } = useToast();
 
-  // Calculate properties after hooks are called
+  // Always call hooks first, before any conditional logic
   const isValidProduct = product && product.title;
-  const needsShippingNotice = isValidProduct && (
-    product.title.toLowerCase().includes('shirt') || 
-    product.title.toLowerCase().includes('tee') ||
-    product.title.toLowerCase().includes('heavyweight') ||
-    product.title.toLowerCase().includes('cap') ||
-    product.title.toLowerCase().includes('hat')
-  );
   
-  const needsAirDryNotice = isValidProduct && (
-    product.title.toLowerCase().includes('shirt') || 
-    product.title.toLowerCase().includes('tee') ||
-    product.title.toLowerCase().includes('heavyweight')
-  );
+  // Calculate properties only if product is valid
+  const needsShippingNotice = useMemo(() => {
+    if (!isValidProduct) return false;
+    return (
+      product.title.toLowerCase().includes('shirt') || 
+      product.title.toLowerCase().includes('tee') ||
+      product.title.toLowerCase().includes('heavyweight') ||
+      product.title.toLowerCase().includes('cap') ||
+      product.title.toLowerCase().includes('hat')
+    );
+  }, [isValidProduct, product?.title]);
+  
+  const needsAirDryNotice = useMemo(() => {
+    if (!isValidProduct) return false;
+    return (
+      product.title.toLowerCase().includes('shirt') || 
+      product.title.toLowerCase().includes('tee') ||
+      product.title.toLowerCase().includes('heavyweight')
+    );
+  }, [isValidProduct, product?.title]);
 
-  // Early return after all hooks are called
+  // Return early after all hooks are called
   if (!isValidProduct) {
     return null;
   }
