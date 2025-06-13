@@ -103,7 +103,7 @@ async function startServer() {
     }
 
     // Create HTTP server with dynamic port assignment
-    const PORT = parseInt(process.env.PORT || '3000', 10);
+    const PORT = parseInt(process.env.PORT || '5000', 10);
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ Rich Habits server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
       console.log('🌐 Server address:', server.address());

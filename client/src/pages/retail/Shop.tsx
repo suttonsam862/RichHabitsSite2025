@@ -35,22 +35,26 @@ function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const { toast } = useToast();
 
-  // Ensure product exists before processing
-  if (!product || !product.title) {
+  // Calculate properties after hooks are called
+  const isValidProduct = product && product.title;
+  const needsShippingNotice = isValidProduct && (
+    product.title.toLowerCase().includes('shirt') || 
+    product.title.toLowerCase().includes('tee') ||
+    product.title.toLowerCase().includes('heavyweight') ||
+    product.title.toLowerCase().includes('cap') ||
+    product.title.toLowerCase().includes('hat')
+  );
+  
+  const needsAirDryNotice = isValidProduct && (
+    product.title.toLowerCase().includes('shirt') || 
+    product.title.toLowerCase().includes('tee') ||
+    product.title.toLowerCase().includes('heavyweight')
+  );
+
+  // Early return after all hooks are called
+  if (!isValidProduct) {
     return null;
   }
-
-  // Check if this product needs shipping notice
-  const needsShippingNotice = product.title.toLowerCase().includes('shirt') || 
-                             product.title.toLowerCase().includes('tee') ||
-                             product.title.toLowerCase().includes('heavyweight') ||
-                             product.title.toLowerCase().includes('cap') ||
-                             product.title.toLowerCase().includes('hat');
-  
-  // Check if this product needs air dry notice (shirts only)
-  const needsAirDryNotice = product.title.toLowerCase().includes('shirt') || 
-                           product.title.toLowerCase().includes('tee') ||
-                           product.title.toLowerCase().includes('heavyweight');
 
   const handleQuickAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation to product detail
