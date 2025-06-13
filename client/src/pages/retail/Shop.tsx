@@ -26,6 +26,13 @@ interface Product {
   }>;
 }
 
+interface Collection {
+  id: string;
+  handle: string;
+  title: string;
+  description?: string;
+}
+
 function ProductCard({ product }: { product: Product }) {
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = product.variants?.[0]?.price || "0";
@@ -93,9 +100,19 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function Shop() {
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ['/api/shop/products']
+  const { data: collections = [], isLoading: collectionsLoading } = useQuery<Collection[]>({
+    queryKey: ['/api/shop/collections']
   });
+
+  // Get the first available collection or use a specific collection
+  const firstCollection = collections[0];
+  
+  const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
+    queryKey: [`/api/shop/collections/${firstCollection?.handle}/products`],
+    enabled: !!firstCollection?.handle
+  });
+
+  const isLoading = collectionsLoading || productsLoading;
 
   return (
     <div className="min-h-screen bg-black text-white">
