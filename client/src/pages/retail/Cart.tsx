@@ -28,21 +28,9 @@ export default function Cart() {
   const queryClient = useQueryClient();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  // Fetch cart items from localStorage
+  // Fetch cart items from server
   const { data: cartData, isLoading } = useQuery<CartResponse>({
     queryKey: ["/api/cart"],
-    queryFn: () => {
-      const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const subtotal = localCart.reduce((sum: number, item: any) => sum + (parseFloat(item.price) * item.quantity), 0);
-      const itemCount = localCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
-      
-      return {
-        success: true,
-        cartItems: localCart,
-        subtotal: subtotal.toFixed(2),
-        itemCount
-      };
-    },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,
   });

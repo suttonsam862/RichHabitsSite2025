@@ -245,26 +245,89 @@ export function setupRetailRoutes(app: Express): void {
     }
   });
 
-  // Get cart items - simplified to prevent crashes
+  // Get cart items - session-based storage
   app.get("/api/cart", async (req: Request, res: Response) => {
-    res.json({
-      success: true,
-      cartItems: [],
-      subtotal: "0.00",
-      itemCount: 0
-    });
+    try {
+      const cartItems = (req.session as any).cart || [];
+      const subtotal = cartItems.reduce((sum: number, item: any) => 
+        sum + (parseFloat(item.price) * item.quantity), 0
+      );
+      const itemCount = cartItems.reduce((sum: number, item: any) => 
+        sum + item.quantity, 0
+      );
+
+      res.json({
+        success: true,
+        cartItems,
+        subtotal: subtotal.toFixed(2),
+        itemCount
+      });
+    } catch (error) {
+      console.error("Cart fetch error:", error);
+      res.status(500).json({ error: "Failed to fetch cart" });
+    }
   });
 
-  // Add item to cart - simplified to prevent crashes
+  // Add item to cart - session-based storage with duplicate handling
   app.post("/api/cart/add", async (req: Request, res: Response) => {
-    res.json({
-      success: true,
-      message: "Item added to cart",
-      cartItem: {
-        id: "temp-" + Date.now(),
-        ...req.body
+    try {
+      const validationResult = addToCartSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid cart item data",
+          details: validationResult.error.issues
+        });
       }
-    });
+
+      const itemData = validationResult.data;
+      
+      // Initialize cart if not exists
+      if (!req.session.cart) {
+        req.session.cart = [];
+      }
+
+      // Check if item already exists (same product + variant)
+      const existingItemIndex = req.session.cart.findIndex((item: any) => 
+        item.shopifyProductId === itemData.shopifyProductId && 
+        item.shopifyVariantId === itemData.shopifyVariantId
+      );
+
+      const cartItem = {
+        id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        sessionId: req.sessionID,
+        shopifyProductId: itemData.shopifyProductId,
+        shopifyVariantId: itemData.shopifyVariantId,
+        productHandle: itemData.productHandle,
+        productTitle: itemData.productTitle,
+        variantTitle: itemData.variantTitle || 'Default',
+        price: itemData.price.toString(),
+        quantity: itemData.quantity,
+        productImage: itemData.productImage || '',
+        productType: itemData.productType || 'Product',
+        vendor: itemData.vendor || 'Rich Habits',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (existingItemIndex >= 0) {
+        // Update existing item quantity
+        req.session.cart[existingItemIndex].quantity += itemData.quantity;
+        req.session.cart[existingItemIndex].updatedAt = new Date().toISOString();
+      } else {
+        // Add new item
+        req.session.cart.push(cartItem);
+      }
+
+      res.json({
+        success: true,
+        message: "Item added to cart",
+        cartItem
+      });
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      res.status(500).json({ error: "Failed to add item to cart" });
+    }
   });
 
   // Simplified cart endpoints to prevent crashes
