@@ -193,11 +193,11 @@ export const payments = pgTable("payments", {
   paymentMethod: paymentMethodEnum("payment_method").notNull(),
   paymentSource: paymentSourceEnum("payment_source").notNull(),
   
-  // External payment references
-  stripePaymentIntentId: text("stripe_payment_intent_id"),
-  stripeChargeId: text("stripe_charge_id"),
-  quickbooksTransactionId: text("quickbooks_transaction_id"),
-  paypalTransactionId: text("paypal_transaction_id"),
+  // External payment references - unique constraints prevent duplicate processing
+  stripePaymentIntentId: text("stripe_payment_intent_id").unique(),
+  stripeChargeId: text("stripe_charge_id").unique(),
+  quickbooksTransactionId: text("quickbooks_transaction_id").unique(),
+  paypalTransactionId: text("paypal_transaction_id").unique(),
   
   // Order linkage (polymorphic relationship)
   customOrderId: uuid("custom_order_id"), // Links to custom_orders

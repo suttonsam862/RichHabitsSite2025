@@ -379,21 +379,14 @@ export class DatabaseStorage implements IStorage {
 
   // Cart methods
   async addToCart(cartItem: CartItemInsert): Promise<CartItem> {
-    // Check if item already exists in cart (simplified query)
-    const whereConditions = [
-      eq(cartItems.sessionId, cartItem.sessionId),
-      eq(cartItems.shopifyProductId, cartItem.shopifyProductId),
-      eq(cartItems.shopifyVariantId, cartItem.shopifyVariantId)
-    ];
-
-    if (cartItem.userId) {
-      whereConditions.push(eq(cartItems.userId, cartItem.userId));
-    }
-
+    // Check if item already exists in cart
     const existingItem = await db
       .select()
       .from(cartItems)
-      .where(and(...whereConditions))
+      .where(and(
+        eq(cartItems.sessionId, cartItem.sessionId),
+        eq(cartItems.shopifyVariantId, cartItem.shopifyVariantId)
+      ))
       .limit(1);
 
     if (existingItem.length > 0) {

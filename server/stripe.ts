@@ -712,6 +712,13 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           console.log(`Skipping verification for test payment intent ${paymentIntent.id}`);
         }
         
+        // CRITICAL SAFEGUARD: Check for duplicate payment processing
+        const existingPayment = await storage.getPaymentByStripeId(paymentIntent.id);
+        if (existingPayment) {
+          console.log(`Payment ${paymentIntent.id} already processed - skipping duplicate webhook`);
+          break;
+        }
+        
         // CRITICAL SAFEGUARD: Validate payment metadata before processing
         const eventId = paymentIntent.metadata?.eventId;
         const eventName = paymentIntent.metadata?.eventName;
