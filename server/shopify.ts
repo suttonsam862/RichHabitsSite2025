@@ -98,6 +98,29 @@ export async function listCollections() {
   }
 }
 
+// Function to get product by handle
+export async function getProductByHandle(handle: string) {
+  try {
+    console.log(`Fetching product with handle "${handle}" from Shopify Admin API`);
+    
+    // First, list all products to find the one with matching handle
+    const products = await listProducts();
+    const product = products.find(prod => prod.handle === handle);
+    
+    if (!product) {
+      console.error(`Product with handle "${handle}" not found`);
+      return null;
+    }
+    
+    // Get full product details including variants
+    const fullProduct = await getProductById(product.id.toString());
+    return fullProduct;
+  } catch (error) {
+    console.error(`Error fetching product by handle "${handle}":`, error);
+    throw error;
+  }
+}
+
 // Function to get collection by handle
 export async function getCollectionByHandle(handle: string) {
   try {

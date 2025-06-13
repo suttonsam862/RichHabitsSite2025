@@ -35,6 +35,7 @@ interface Product {
   }>;
   product_type: string;
   tags: string[];
+  vendor?: string;
 }
 
 const fadeIn = {
@@ -170,7 +171,7 @@ export default function ProductDetail() {
         productTitle: product.title,
         variantTitle: currentVariant.title,
         price: price,
-        compareAtPrice: compareAtPrice,
+        compareAtPrice: compareAtPrice ?? undefined,
         quantity: quantity,
         productImage: displayImage?.src || '',
         productType: product.product_type,

@@ -1,6 +1,6 @@
 import express from "express";
 import session from "express-session";
-import { setupRoutes } from "./routes";
+import { setupRoutes } from "./routes/index.js";
 import { setupVite } from "./vite";
 import { checkDatabaseConnection } from "./db";
 import path from "path";
