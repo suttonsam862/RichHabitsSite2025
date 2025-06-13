@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { ArrowLeft, ShoppingCart, Star, Minus, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useCart } from "../contexts/CartContext";
+import { useToast } from "../hooks/use-toast";
 
 interface ProductVariant {
   id: string;
@@ -50,6 +52,8 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: [`/api/shop/products/handle/${handle}`],
@@ -150,38 +154,40 @@ export default function ProductDetail() {
 
   const handleAddToCart = async () => {
     if (!currentVariant || !isRetailProduct) {
-      alert('This item cannot be added to cart');
+      toast({
+        title: "Cannot Add to Cart",
+        description: "This item cannot be added to cart",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
-      // Add to cart via API
-      const response = await fetch('/api/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          shopifyProductId: product.id,
-          shopifyVariantId: currentVariant.id,
-          productHandle: product.handle,
-          productTitle: product.title,
-          variantTitle: currentVariant.title,
-          quantity: quantity,
-          price: price,
-          image: displayImage?.src || '',
-          available: currentVariant.available
-        }),
+      await addToCart({
+        shopifyProductId: product.id,
+        shopifyVariantId: currentVariant.id,
+        productHandle: product.handle,
+        productTitle: product.title,
+        variantTitle: currentVariant.title,
+        price: price,
+        compareAtPrice: compareAtPrice,
+        quantity: quantity,
+        productImage: displayImage?.src || '',
+        productType: product.product_type,
+        vendor: product.vendor
       });
 
-      if (response.ok) {
-        alert(`Added ${quantity} x ${product?.title} (${currentVariant.title}) to cart!`);
-      } else {
-        throw new Error('Failed to add to cart');
-      }
+      toast({
+        title: "Added to Cart",
+        description: `${quantity} x ${product?.title} (${currentVariant.title}) added to cart!`,
+      });
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add item to cart');
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart",
+        variant: "destructive",
+      });
     }
   };
 

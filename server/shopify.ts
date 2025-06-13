@@ -681,7 +681,7 @@ export async function createEventRegistrationCheckout(
   // First get the event details from the database if possible
   try {
     const storage = await import('./storage').then(m => m.storage);
-    const event = await storage.getEvent(parseInt(eventId));
+    const event = await storage.getEvent(String(eventId));
     if (event && event.title) {
       eventName = event.title;
       console.log(`Retrieved event name from database: "${eventName}" for event ID ${eventId}`);
