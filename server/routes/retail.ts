@@ -139,11 +139,14 @@ export function setupRetailRoutes(app: Express): void {
   // Shop-prefixed product routes for frontend compatibility
   app.get("/api/shop/products", async (req: Request, res: Response) => {
     try {
+      console.log('Fetching products for shop page...');
       const products = await listProducts();
+      console.log(`Successfully fetched ${products.length} products for shop page`);
       res.json(products);
     } catch (error) {
       console.error("Failed to fetch products:", error);
-      res.status(500).json({ error: "Failed to fetch products" });
+      // Return empty array instead of error to prevent frontend crashes
+      res.json([]);
     }
   });
 
