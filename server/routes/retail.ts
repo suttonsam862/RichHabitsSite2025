@@ -18,9 +18,20 @@ const addToCartSchema = z.object({
   vendor: z.string().optional()
 });
 
+// Legacy cart item schema for checkout compatibility
+const legacyCartItemSchema = z.object({
+  variantId: z.string().min(1, "Variant ID is required"),
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  productHandle: z.string().optional(),
+  productTitle: z.string().optional(),
+  variantTitle: z.string().optional(),
+  price: z.string().optional(),
+  image: z.string().optional()
+});
+
 // Cart checkout validation schema
 const cartCheckoutSchema = z.object({
-  items: z.array(cartItemSchema).min(1, "Cart must contain at least one item"),
+  items: z.array(legacyCartItemSchema).min(1, "Cart must contain at least one item"),
   customerInfo: z.object({
     email: z.string().email("Valid email is required"),
     firstName: z.string().min(1, "First name is required"),
@@ -234,10 +245,36 @@ export function setupRetailRoutes(app: Express): void {
     }
   });
 
-  // Add to cart validation endpoint
+  // Get cart items
+  app.get("/api/cart", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.sessionID;
+      const userId = undefined; // Guest users only for now
+
+      const items = await storage.getCartItems(sessionId, userId);
+      const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.price.toString()) * item.quantity), 0);
+      const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({
+        success: true,
+        cartItems: items,
+        subtotal: subtotal.toFixed(2),
+        itemCount
+      });
+
+    } catch (error) {
+      console.error("Get cart error:", error);
+      res.status(500).json({ 
+        error: "Failed to get cart items",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Add item to cart
   app.post("/api/cart/add", async (req: Request, res: Response) => {
     try {
-      const validationResult = cartItemSchema.safeParse(req.body);
+      const validationResult = addToCartSchema.safeParse(req.body);
       
       if (!validationResult.success) {
         return res.status(400).json({ 
@@ -250,28 +287,123 @@ export function setupRetailRoutes(app: Express): void {
       }
 
       const item = validationResult.data;
+      const sessionId = req.sessionID;
+      const userId = undefined; // Guest users only for now
 
-      // Validate variant exists (this would query Shopify)
-      // For now, we'll assume the variant is valid
-      
-      res.json({
-        success: true,
-        message: "Item added to cart",
-        item: {
-          variantId: item.variantId,
-          quantity: item.quantity,
+      // Check if item already exists in cart
+      const existingItems = await storage.getCartItems(sessionId, userId);
+      const existingItem = existingItems.find(cartItem => 
+        cartItem.shopifyVariantId === item.shopifyVariantId
+      );
+
+      let cartItem;
+      if (existingItem) {
+        // Update quantity of existing item
+        const newQuantity = existingItem.quantity + item.quantity;
+        cartItem = await storage.updateCartItem(existingItem.id, newQuantity);
+      } else {
+        // Add new item to cart
+        cartItem = await storage.addToCart({
+          sessionId,
+          userId,
+          shopifyProductId: item.shopifyProductId,
+          shopifyVariantId: item.shopifyVariantId,
           productHandle: item.productHandle,
           productTitle: item.productTitle,
           variantTitle: item.variantTitle,
-          price: item.price,
-          image: item.image
-        }
+          price: item.price.toString(),
+          compareAtPrice: item.compareAtPrice?.toString(),
+          quantity: item.quantity,
+          productImage: item.productImage,
+          productType: item.productType,
+          vendor: item.vendor
+        });
+      }
+
+      res.json({
+        success: true,
+        message: "Item added to cart",
+        cartItem
       });
 
     } catch (error) {
       console.error("Add to cart error:", error);
       res.status(500).json({ 
         error: "Failed to add item to cart",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Update cart item quantity
+  app.put("/api/cart/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { quantity } = req.body;
+
+      if (!quantity || quantity < 0) {
+        return res.status(400).json({ error: "Valid quantity is required" });
+      }
+
+      const updatedItem = await storage.updateCartItem(id, quantity);
+      
+      res.json({
+        success: true,
+        message: "Cart item updated",
+        cartItem: updatedItem
+      });
+
+    } catch (error) {
+      console.error("Update cart item error:", error);
+      res.status(500).json({ 
+        error: "Failed to update cart item",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Remove item from cart
+  app.delete("/api/cart/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      
+      const success = await storage.removeFromCart(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Cart item not found" });
+      }
+
+      res.json({
+        success: true,
+        message: "Item removed from cart"
+      });
+
+    } catch (error) {
+      console.error("Remove cart item error:", error);
+      res.status(500).json({ 
+        error: "Failed to remove cart item",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Clear cart
+  app.delete("/api/cart", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.sessionID;
+      const userId = undefined; // Guest users only for now
+      
+      const success = await storage.clearCart(sessionId, userId);
+      
+      res.json({
+        success: true,
+        message: "Cart cleared"
+      });
+
+    } catch (error) {
+      console.error("Clear cart error:", error);
+      res.status(500).json({ 
+        error: "Failed to clear cart",
         message: error instanceof Error ? error.message : "Unknown error"
       });
     }
