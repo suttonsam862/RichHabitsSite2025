@@ -162,8 +162,9 @@ export async function getProductsInSalesChannel() {
 // Helper function to fetch products by collection ID
 async function fetchCollectionProductsById(collectionId: string) {
   try {
+    // Fetch products in collection with all fields including variants and options
     const response = await fetch(
-      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/collections/${collectionId}/products.json`,
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/collections/${collectionId}/products.json?fields=id,title,handle,body_html,images,variants,options,product_type,tags,vendor,published_at`,
       {
         headers: {
           'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
@@ -185,13 +186,41 @@ async function fetchCollectionProductsById(collectionId: string) {
     
     console.log(`Found ${data.products.length} products in retail collection`);
     
-    return data.products.map(product => ({
-      ...product,
-      variants: (product.variants || []).map((variant: any) => ({
-        ...variant,
-        inventory_quantity: variant.inventory_quantity || 0
-      }))
-    }));
+    // Process each product to ensure complete variant and option data
+    const processedProducts = await Promise.all(
+      data.products.map(async (product) => {
+        try {
+          // If the product doesn't have complete data, fetch it individually
+          if (!product.variants || !product.options || product.variants.length === 0) {
+            console.log(`Fetching complete data for product ${product.id} - ${product.title}`);
+            const fullProduct = await getProductById(product.id.toString());
+            return {
+              ...fullProduct,
+              variants: (fullProduct.variants || []).map((variant: any) => ({
+                ...variant,
+                available: variant.inventory_quantity > 0 || variant.inventory_policy === 'continue',
+                inventory_quantity: variant.inventory_quantity || 0
+              }))
+            };
+          }
+          
+          // Product already has complete data
+          return {
+            ...product,
+            variants: (product.variants || []).map((variant: any) => ({
+              ...variant,
+              available: variant.inventory_quantity > 0 || variant.inventory_policy === 'continue',
+              inventory_quantity: variant.inventory_quantity || 0
+            }))
+          };
+        } catch (error) {
+          console.error(`Error processing product ${product.id}:`, error);
+          return product; // Return original product if processing fails
+        }
+      })
+    );
+    
+    return processedProducts;
   } catch (error) {
     console.error('Error fetching collection products by ID:', error);
     throw error;

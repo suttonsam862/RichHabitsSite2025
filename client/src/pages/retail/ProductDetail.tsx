@@ -406,8 +406,22 @@ export default function ProductDetail() {
                   </div>
                   <div className="flex justify-between sm:block">
                     <strong className="text-purple-400">Shipping:</strong>
-                    <p className="text-gray-400 sm:mt-1">2-3 business days</p>
+                    <p className="text-gray-400 sm:mt-1">
+                      {(product?.title?.toLowerCase().includes('heavyweight') || 
+                        product?.title?.toLowerCase().includes('tee') ||
+                        product?.title?.toLowerCase().includes('cap') ||
+                        product?.title?.toLowerCase().includes('hat'))
+                        ? 'Ships June 25th' 
+                        : '2-3 business days'
+                      }
+                    </p>
                   </div>
+                  {product?.title?.toLowerCase().includes('heavyweight') && (
+                    <div className="flex justify-between sm:block">
+                      <strong className="text-green-400">Care:</strong>
+                      <p className="text-gray-400 sm:mt-1">Air dry recommended</p>
+                    </div>
+                  )}
                   <div className="flex justify-between sm:block">
                     <strong className="text-emerald-400">Returns:</strong>
                     <p className="text-gray-400 sm:mt-1">30-day policy</p>
