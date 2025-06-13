@@ -128,6 +128,7 @@ Rich Habits is a comprehensive e-commerce and event management platform for wres
 
 Changelog:
 - June 13, 2025. Initial setup
+- June 13, 2025. Fixed React hooks error and implemented complete add-to-cart functionality with localStorage-based storage, product card buttons, and cart page display
 
 ## User Preferences
 

@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { ShoppingCart, Star, ArrowRight } from "lucide-react";
+import { ShoppingCart, Star, ArrowRight, Plus } from "lucide-react";
 import { useMemo } from "react";
+import { useCart } from "../../contexts/CartContext";
+import { useToast } from "../../hooks/use-toast";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -30,6 +32,9 @@ interface Product {
 }
 
 function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+
   // Ensure product exists before processing
   if (!product || !product.title) {
     return null;
@@ -46,6 +51,48 @@ function ProductCard({ product }: { product: Product }) {
   const needsAirDryNotice = product.title.toLowerCase().includes('shirt') || 
                            product.title.toLowerCase().includes('tee') ||
                            product.title.toLowerCase().includes('heavyweight');
+
+  const handleQuickAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to product detail
+    e.stopPropagation();
+
+    try {
+      const defaultVariant = product.variants?.[0];
+      if (!defaultVariant) {
+        toast({
+          title: "Error",
+          description: "Product has no available variants",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await addToCart({
+        shopifyProductId: product.id,
+        shopifyVariantId: defaultVariant.id,
+        productHandle: product.handle,
+        productTitle: product.title,
+        variantTitle: defaultVariant.title || 'Default',
+        price: parseFloat(defaultVariant.price.replace('$', '')),
+        quantity: 1,
+        productImage: product.images?.[0]?.src || '',
+        productType: 'Product',
+        vendor: 'Rich Habits'
+      });
+
+      toast({
+        title: "Added to Cart",
+        description: `${product.title} added to cart!`,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart",
+        variant: "destructive",
+      });
+    }
+  };
   
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = product.variants?.[0]?.price || "0";
@@ -122,13 +169,22 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        <Link 
-          href={`/shop/${product.handle || product.id}`}
-          className="w-full font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white hover:shadow-lg cursor-pointer"
-        >
-          View Details
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </Link>
+        <div className="flex gap-2">
+          <button
+            onClick={handleQuickAddToCart}
+            className="flex-shrink-0 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold p-3 rounded-xl transition-all duration-300 hover:shadow-lg group"
+            title="Add to Cart"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+          <Link 
+            href={`/shop/${product.handle || product.id}`}
+            className="flex-1 font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white hover:shadow-lg cursor-pointer"
+          >
+            View Details
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
       </div>
     </motion.div>
   );

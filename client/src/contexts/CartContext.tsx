@@ -156,10 +156,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const queryClient = useQueryClient();
 
-  // Fetch cart data
+  // Fetch cart data from localStorage instead of API for immediate functionality
   const { data: cartData, isLoading } = useQuery({
     queryKey: ['/api/cart'],
+    queryFn: () => {
+      // Get cart from localStorage for immediate functionality
+      const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const subtotal = localCart.reduce((sum: number, item: any) => sum + (parseFloat(item.price) * item.quantity), 0);
+      const itemCount = localCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+      
+      return {
+        success: true,
+        cartItems: localCart,
+        subtotal: subtotal.toFixed(2),
+        itemCount
+      };
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true,
+    refetchInterval: 1000, // Refresh every second to catch localStorage changes
   });
 
   // Update state when cart data changes
@@ -184,67 +199,73 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: isLoading });
   }, [isLoading]);
 
-  // Add to cart mutation - simplified to prevent crashes
+  // Add to cart mutation - handles duplicate variants properly
   const addToCartMutation = useMutation({
     mutationFn: async (product: any) => {
-      // Store in localStorage to prevent server crashes
-      const cartItem = {
-        id: `item-${Date.now()}`,
-        sessionId: 'local-session',
-        userId: undefined,
-        shopifyProductId: product.shopifyProductId,
-        shopifyVariantId: product.shopifyVariantId,
-        productHandle: product.productHandle,
-        productTitle: product.productTitle,
-        variantTitle: product.variantTitle,
-        price: product.price.toString(),
-        compareAtPrice: product.compareAtPrice?.toString(),
-        quantity: product.quantity || 1,
-        productImage: product.productImage,
-        productType: product.productType,
-        vendor: product.vendor,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      
-      // Get existing cart items from localStorage
       const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      existingCart.push(cartItem);
-      localStorage.setItem('cart', JSON.stringify(existingCart));
       
-      return { success: true, cartItem };
-    },
-    onSuccess: (data) => {
-      if (data.success && data.cartItem) {
-        dispatch({ type: 'ADD_ITEM', payload: data.cartItem });
-        // Update cart count immediately
-        const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const itemCount = existingCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
-        const subtotal = existingCart.reduce((sum: number, item: any) => sum + (parseFloat(item.price) * item.quantity), 0);
-        dispatch({ 
-          type: 'SET_CART', 
-          payload: { 
-            items: existingCart, 
-            subtotal, 
-            itemCount 
-          }
-        });
+      // Check if item already exists (same product + variant)
+      const existingItemIndex = existingCart.findIndex((item: any) => 
+        item.shopifyProductId === product.shopifyProductId && 
+        item.shopifyVariantId === product.shopifyVariantId
+      );
+      
+      if (existingItemIndex >= 0) {
+        // Update existing item quantity
+        existingCart[existingItemIndex].quantity += product.quantity || 1;
+        existingCart[existingItemIndex].updatedAt = new Date().toISOString();
+      } else {
+        // Add new item
+        const cartItem = {
+          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          sessionId: 'local-session',
+          userId: undefined,
+          shopifyProductId: product.shopifyProductId,
+          shopifyVariantId: product.shopifyVariantId,
+          productHandle: product.productHandle,
+          productTitle: product.productTitle,
+          variantTitle: product.variantTitle || 'Default',
+          price: product.price.toString(),
+          compareAtPrice: product.compareAtPrice?.toString(),
+          quantity: product.quantity || 1,
+          productImage: product.productImage,
+          productType: product.productType,
+          vendor: product.vendor,
+          available: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        existingCart.push(cartItem);
       }
+      
+      localStorage.setItem('cart', JSON.stringify(existingCart));
+      return { success: true, cart: existingCart };
+    },
+    onSuccess: () => {
+      // Invalidate queries to refresh cart data
+      queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
   });
 
   // Update quantity mutation
   const updateQuantityMutation = useMutation({
     mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
-      const response = await fetch(`/api/cart/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity }),
-      });
-      return response.json();
+      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const itemIndex = existingCart.findIndex((item: any) => item.id === id);
+      
+      if (itemIndex >= 0) {
+        if (quantity <= 0) {
+          existingCart.splice(itemIndex, 1);
+        } else {
+          existingCart[itemIndex].quantity = quantity;
+          existingCart[itemIndex].updatedAt = new Date().toISOString();
+        }
+        localStorage.setItem('cart', JSON.stringify(existingCart));
+      }
+      
+      return { success: true };
     },
-    onSuccess: (_, variables) => {
-      dispatch({ type: 'UPDATE_ITEM', payload: variables });
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
   });
@@ -252,13 +273,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Remove from cart mutation
   const removeFromCartMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/cart/${id}`, {
-        method: 'DELETE',
-      });
-      return response.json();
+      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const filteredCart = existingCart.filter((item: any) => item.id !== id);
+      localStorage.setItem('cart', JSON.stringify(filteredCart));
+      return { success: true };
     },
-    onSuccess: (_, id) => {
-      dispatch({ type: 'REMOVE_ITEM', payload: id });
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
   });
@@ -266,13 +286,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Clear cart mutation
   const clearCartMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/cart', {
-        method: 'DELETE',
-      });
-      return response.json();
+      localStorage.removeItem('cart');
+      return { success: true };
     },
     onSuccess: () => {
-      dispatch({ type: 'CLEAR_CART' });
       queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
   });

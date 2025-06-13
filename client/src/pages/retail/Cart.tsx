@@ -28,22 +28,42 @@ export default function Cart() {
   const queryClient = useQueryClient();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  // Fetch cart items
+  // Fetch cart items from localStorage
   const { data: cartData, isLoading } = useQuery<CartResponse>({
     queryKey: ["/api/cart"],
+    queryFn: () => {
+      const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const subtotal = localCart.reduce((sum: number, item: any) => sum + (parseFloat(item.price) * item.quantity), 0);
+      const itemCount = localCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+      
+      return {
+        success: true,
+        cartItems: localCart,
+        subtotal: subtotal.toFixed(2),
+        itemCount
+      };
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true,
   });
 
   // Update cart item quantity
   const updateQuantityMutation = useMutation({
     mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
-      const response = await fetch(`/api/cart/${itemId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity }),
-      });
-      if (!response.ok) throw new Error('Failed to update item');
-      return response.json();
+      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const itemIndex = existingCart.findIndex((item: any) => item.id === itemId);
+      
+      if (itemIndex >= 0) {
+        if (quantity <= 0) {
+          existingCart.splice(itemIndex, 1);
+        } else {
+          existingCart[itemIndex].quantity = quantity;
+          existingCart[itemIndex].updatedAt = new Date().toISOString();
+        }
+        localStorage.setItem('cart', JSON.stringify(existingCart));
+      }
+      
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
@@ -53,11 +73,10 @@ export default function Cart() {
   // Remove item from cart
   const removeItemMutation = useMutation({
     mutationFn: async (itemId: string) => {
-      const response = await fetch(`/api/cart/${itemId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to remove item');
-      return response.json();
+      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const filteredCart = existingCart.filter((item: any) => item.id !== itemId);
+      localStorage.setItem('cart', JSON.stringify(filteredCart));
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
