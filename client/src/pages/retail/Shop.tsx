@@ -69,8 +69,9 @@ function ProductCard({ product }: { product: Product }) {
   const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
   const price = parseFloat(priceStr.replace('$', '')) || 0;
   const imageUrl = product.images?.[0]?.src;
-  const inventoryQuantity = selectedVariant?.inventory_quantity || 0;
-  const isInStock = inventoryQuantity > 0;
+  
+  // Format price for display
+  const formattedPrice = price > 0 ? `$${price.toFixed(2)}` : 'Price unavailable';
 
   return (
     <motion.div
@@ -111,7 +112,7 @@ function ProductCard({ product }: { product: Product }) {
         
         <div className="flex items-center justify-between mb-4">
           <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            ${price.toFixed(2)}
+            {formattedPrice}
           </div>
           <div className="flex items-center gap-1">
             {[...Array(5)].map((_, i) => (
@@ -157,8 +158,8 @@ function ProductCard({ product }: { product: Product }) {
                     <SelectValue placeholder="Select color" />
                   </SelectTrigger>
                   <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={color} value={color}>{color}</SelectItem>
+                    {colors.map((color, index) => (
+                      <SelectItem key={`color-${index}`} value={color}>{color}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -167,31 +168,12 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        {/* Inventory Status */}
-        <div className="mb-4">
-          {isInStock ? (
-            <div className="flex items-center gap-2 text-green-400 text-sm">
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-              <span>{inventoryQuantity} in stock</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 text-red-400 text-sm">
-              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-              <span>Out of stock</span>
-            </div>
-          )}
-        </div>
-        
         <Link 
           href={`/shop/${product.handle || product.id}`}
-          className={`w-full font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group ${
-            isInStock 
-              ? 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white hover:shadow-lg cursor-pointer' 
-              : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-          }`}
+          className="w-full font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white hover:shadow-lg cursor-pointer"
         >
-          {isInStock ? 'View Details' : 'Out of Stock'}
-          {isInStock && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+          View Details
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     </motion.div>
