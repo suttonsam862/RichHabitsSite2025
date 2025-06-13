@@ -331,4 +331,74 @@ export function setupEventRoutes(app: Express): void {
       });
     }
   });
+
+  // Stripe payment intent creation endpoint - bulletproof security
+  app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
+    try {
+      const { eventId, registrationData, amount } = req.body;
+
+      // Validate event exists in database - NO FALLBACKS
+      const event = await storage.getEventBySlug(eventId);
+      if (!event) {
+        console.error(`Payment intent creation failed: Event not found for ID: ${eventId}`);
+        return res.status(400).json({ 
+          error: "Event not found", 
+          eventId 
+        });
+      }
+
+      // Validate amount matches event pricing
+      const eventBasePrice = parseFloat(event.basePrice);
+      const requestedAmount = parseFloat(amount);
+      
+      if (requestedAmount < eventBasePrice) {
+        console.error(`Payment amount ${requestedAmount} is less than event base price ${eventBasePrice}`);
+        return res.status(400).json({
+          error: "Invalid payment amount",
+          eventPrice: eventBasePrice,
+          requestedAmount
+        });
+      }
+
+      // Create Stripe payment intent with secure metadata
+      const { stripe } = await import("../stripe.js");
+      
+      try {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(requestedAmount * 100), // Convert to cents
+          currency: 'usd',
+          metadata: {
+            eventId: event.id,
+            eventSlug: event.slug,
+            eventTitle: event.title,
+            customerEmail: registrationData.email,
+            customerName: `${registrationData.firstName} ${registrationData.lastName}`,
+            registrationType: registrationData.registrationType || 'individual'
+          }
+        });
+        
+        if (!paymentIntent || !paymentIntent.client_secret) {
+          throw new Error('Invalid payment intent response from Stripe');
+        }
+
+        res.json({
+          clientSecret: paymentIntent.client_secret,
+          paymentIntentId: paymentIntent.id,
+          amount: requestedAmount,
+          eventId: event.id,
+          eventTitle: event.title
+        });
+      } catch (stripeError) {
+        console.error("Stripe payment intent creation failed:", stripeError);
+        throw stripeError;
+      }
+
+    } catch (error) {
+      console.error("Payment intent creation error:", error);
+      res.status(500).json({ 
+        error: "Payment intent creation failed",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
 }

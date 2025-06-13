@@ -3,7 +3,7 @@ import { useRoute, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { CollegeCoachRegistrationForm } from "../components/forms/CollegeCoachRegistrationForm";
+import { CollegeCoachRegistrationForm } from "../../components/forms/CollegeCoachRegistrationForm";
 
 // Event data (in production this would be fetched from API)
 const events = [
