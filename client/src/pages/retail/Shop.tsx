@@ -48,47 +48,55 @@ function ProductCard({ product }: { product: Product }) {
                           product.title.toLowerCase().includes('hat') ||
                           product.title.toLowerCase().includes('apparel');
   
-  // Extract unique sizes and colors from variants
-  const { sizes, colors } = (() => {
-    const sizeOptions: string[] = [];
-    const colorOptions: string[] = [];
-    
-    if (product.variants && product.variants.length > 0) {
-      product.variants.forEach(v => {
-        const title = (v.title || '').toLowerCase();
-        
-        // Extract size - handle common formats like "S", "M", "L", "XL", "XXL", "Small", "Medium", etc.
-        if (title.includes('xs') || title.includes('x-small') || title === 'xs') sizeOptions.push('XS');
-        else if ((title.includes('small') && !title.includes('x-small')) || title === 's') sizeOptions.push('S');
-        else if (title.includes('medium') || title.includes(' m ') || title === 'm' || title.includes('md')) sizeOptions.push('M');
-        else if (title.includes('large') && !title.includes('x-large') && !title.includes('xx-large') || title === 'l') sizeOptions.push('L');
-        else if (title.includes('x-large') || title.includes('xl') || title === 'xl') sizeOptions.push('XL');
-        else if (title.includes('xx-large') || title.includes('2xl') || title === 'xxl') sizeOptions.push('XXL');
-        else if (title.includes('3xl') || title.includes('xxxl')) sizeOptions.push('3XL');
-        
-        // Extract color - handle more color variations
-        if (title.includes('black') || title.includes('blk')) colorOptions.push('Black');
-        else if (title.includes('white') || title.includes('wht')) colorOptions.push('White');
-        else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
-        else if (title.includes('blue') || title.includes('blu')) colorOptions.push('Blue');
-        else if (title.includes('red') || title.includes('crimson')) colorOptions.push('Red');
-        else if (title.includes('green') || title.includes('grn')) colorOptions.push('Green');
-        else if (title.includes('navy')) colorOptions.push('Navy');
-        else if (title.includes('orange') || title.includes('org')) colorOptions.push('Orange');
-        else if (title.includes('purple') || title.includes('purp')) colorOptions.push('Purple');
-        else if (title.includes('yellow') || title.includes('gold')) colorOptions.push('Yellow');
-        else if (title.includes('pink')) colorOptions.push('Pink');
-        else if (title.includes('brown')) colorOptions.push('Brown');
-        else if (title.includes('tan') || title.includes('beige')) colorOptions.push('Tan');
-        else if (title.includes('mint')) colorOptions.push('Mint');
-      });
-    }
-    
-    return {
-      sizes: [...new Set(sizeOptions)],
-      colors: [...new Set(colorOptions)]
-    };
-  })();
+  // Check if this product needs shipping notice
+  const needsShippingNotice = product.title.toLowerCase().includes('shirt') || 
+                             product.title.toLowerCase().includes('tee') ||
+                             product.title.toLowerCase().includes('heavyweight') ||
+                             product.title.toLowerCase().includes('cap') ||
+                             product.title.toLowerCase().includes('hat');
+  
+  // Check if this product needs air dry notice (shirts only)
+  const needsAirDryNotice = product.title.toLowerCase().includes('shirt') || 
+                           product.title.toLowerCase().includes('tee') ||
+                           product.title.toLowerCase().includes('heavyweight');
+  
+  // Extract unique sizes and colors from variants - moved outside conditional to avoid hook issues
+  const sizeOptions: string[] = [];
+  const colorOptions: string[] = [];
+  
+  if (product.variants && product.variants.length > 0) {
+    product.variants.forEach(v => {
+      const title = (v.title || '').toLowerCase();
+      
+      // Extract size - handle common formats like "S", "M", "L", "XL", "XXL", "Small", "Medium", etc.
+      if (title.includes('xs') || title.includes('x-small') || title === 'xs') sizeOptions.push('XS');
+      else if ((title.includes('small') && !title.includes('x-small')) || title === 's') sizeOptions.push('S');
+      else if (title.includes('medium') || title.includes(' m ') || title === 'm' || title.includes('md')) sizeOptions.push('M');
+      else if (title.includes('large') && !title.includes('x-large') && !title.includes('xx-large') || title === 'l') sizeOptions.push('L');
+      else if (title.includes('x-large') || title.includes('xl') || title === 'xl') sizeOptions.push('XL');
+      else if (title.includes('xx-large') || title.includes('2xl') || title === 'xxl') sizeOptions.push('XXL');
+      else if (title.includes('3xl') || title.includes('xxxl')) sizeOptions.push('3XL');
+      
+      // Extract color - handle more color variations
+      if (title.includes('black') || title.includes('blk')) colorOptions.push('Black');
+      else if (title.includes('white') || title.includes('wht')) colorOptions.push('White');
+      else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
+      else if (title.includes('blue') || title.includes('blu')) colorOptions.push('Blue');
+      else if (title.includes('red') || title.includes('crimson')) colorOptions.push('Red');
+      else if (title.includes('green') || title.includes('grn')) colorOptions.push('Green');
+      else if (title.includes('navy')) colorOptions.push('Navy');
+      else if (title.includes('orange') || title.includes('org')) colorOptions.push('Orange');
+      else if (title.includes('purple') || title.includes('purp')) colorOptions.push('Purple');
+      else if (title.includes('yellow') || title.includes('gold')) colorOptions.push('Yellow');
+      else if (title.includes('pink')) colorOptions.push('Pink');
+      else if (title.includes('brown')) colorOptions.push('Brown');
+      else if (title.includes('tan') || title.includes('beige')) colorOptions.push('Tan');
+      else if (title.includes('mint')) colorOptions.push('Mint');
+    });
+  }
+  
+  const sizes = [...new Set(sizeOptions)];
+  const colors = [...new Set(colorOptions)];
   
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
@@ -189,6 +197,22 @@ function ProductCard({ product }: { product: Product }) {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Product Information Messages */}
+        {(needsShippingNotice || needsAirDryNotice) && (
+          <div className="mb-4 space-y-2">
+            {needsShippingNotice && (
+              <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-3">
+                <p className="text-blue-300 text-sm font-medium">📦 Ships starting June 25th</p>
+              </div>
+            )}
+            {needsAirDryNotice && (
+              <div className="bg-green-900/30 border border-green-700 rounded-lg p-3">
+                <p className="text-green-300 text-sm font-medium">🌬️ Air dry recommended for best results</p>
               </div>
             )}
           </div>
