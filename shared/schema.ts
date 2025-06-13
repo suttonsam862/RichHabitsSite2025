@@ -414,6 +414,44 @@ export const eventPaymentRelations = relations(eventPayments, ({ one }) => ({
 }));
 
 // =====================================================
+// SHOPPING CART SYSTEM
+// =====================================================
+
+export const cartItems = pgTable("cart_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sessionId: text("session_id").notNull(), // Browser session for guest users
+  userId: uuid("user_id"), // Nullable for guest users
+  
+  // Shopify product details
+  shopifyProductId: text("shopify_product_id").notNull(),
+  shopifyVariantId: text("shopify_variant_id").notNull(),
+  productHandle: text("product_handle").notNull(),
+  productTitle: text("product_title").notNull(),
+  variantTitle: text("variant_title"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  compareAtPrice: decimal("compare_at_price", { precision: 10, scale: 2 }),
+  
+  // Cart specific
+  quantity: integer("quantity").notNull().default(1),
+  
+  // Product metadata
+  productImage: text("product_image"),
+  productType: text("product_type"),
+  vendor: text("vendor"),
+  
+  // Audit
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const cartItemRelations = relations(cartItems, ({ one }) => ({
+  user: one(users, {
+    fields: [cartItems.userId],
+    references: [users.id]
+  })
+}));
+
+// =====================================================
 // EVENT ATTENDANCE TRACKING
 // =====================================================
 
@@ -732,3 +770,12 @@ export const insertEventPaymentSchema = createInsertSchema(eventPayments).omit({
 });
 export type EventPaymentInsert = z.infer<typeof insertEventPaymentSchema>;
 export type EventPayment = typeof eventPayments.$inferSelect;
+
+// Cart item schemas
+export const insertCartItemSchema = createInsertSchema(cartItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type CartItemInsert = z.infer<typeof insertCartItemSchema>;
+export type CartItem = typeof cartItems.$inferSelect;

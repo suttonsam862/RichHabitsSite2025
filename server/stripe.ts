@@ -375,7 +375,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
     const completeRegistrationData = {
       eventId,
       eventName: event.title,
-      eventDate: event.date,
+      eventDate: event.startDate.toDateString(),
       eventLocation: event.location,
       camperName: `${registrationData.firstName} ${registrationData.lastName}`,
       firstName: registrationData.firstName,
@@ -741,20 +741,14 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
             // Get registration data - either from metadata or from database
             let registrationData: any;
             
-            if (registrationId && !isNaN(registrationId)) {
-              // Get the original registration from database
-              const originalRegistration = await storage.getRegistration(registrationId);
-              if (originalRegistration) {
-                registrationData = originalRegistration;
-                console.log(`Using registration data from database for ID ${registrationId}`);
-              } else {
-                console.warn(`Registration with ID ${registrationId} not found in database, using metadata instead`);
-                registrationData = paymentIntent.metadata;
-              }
-            } else {
-              // Use metadata from the payment intent
-              console.log('Using registration data from payment intent metadata');
-              registrationData = paymentIntent.metadata;
+            // CRITICAL: Only use metadata from payment intent - no database fallbacks
+            registrationData = paymentIntent.metadata;
+            
+            // Validate all required fields are present
+            if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
+              console.error(`🚨 CRITICAL: Missing required registration data in payment metadata`);
+              console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+              break;
             }
             
             // Calculate the amount for the Shopify order
@@ -789,17 +783,8 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               console.log('Successfully created Shopify order:', shopifyOrder.id);
               trackOrderCreated();
               
-              // Update registration with Shopify order ID if we have a database record
-              if (registrationId && !isNaN(registrationId)) {
-                try {
-                  await storage.updateRegistration(registrationId, {
-                    shopifyOrderId: shopifyOrder.id
-                  });
-                  console.log(`Updated registration #${registrationId} with Shopify order ID ${shopifyOrder.id}`);
-                } catch (error) {
-                  console.error('Error updating registration with Shopify order ID:', error);
-                }
-              }
+              // Log successful Shopify order creation - no database fallbacks
+              console.log(`✅ Shopify order created successfully for payment ${paymentIntent.id}: ${shopifyOrder.id}`);
               
               // Add Shopify order ID to the registration data
               registration.shopifyOrderId = shopifyOrder.id;
@@ -813,38 +798,8 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               });
             }
             
-            // Copy to completed registrations table if we have a registration ID
-            if (registrationId && !isNaN(registrationId)) {
-              try {
-                // Copy the registration to the completed table
-                const completedRegistration = await storage.createCompletedEventRegistration(
-                  registrationId, 
-                  paymentIntent.id
-                );
-                
-                if (completedRegistration) {
-                  console.log(`Created completed registration record #${completedRegistration.id} for registration #${registrationId}`);
-                  
-                  // If we have a Shopify order ID, update the completed registration
-                  if (shopifyOrder && shopifyOrder.id) {
-                    try {
-                      await storage.updateCompletedRegistration(completedRegistration.id, {
-                        shopify_order_id: shopifyOrder.id
-                      });
-                      console.log(`Updated completed registration #${completedRegistration.id} with Shopify order ID ${shopifyOrder.id}`);
-                    } catch (error) {
-                      console.error('Error updating completed registration with Shopify order ID:', error);
-                    }
-                  }
-                } else {
-                  console.error(`Failed to create completed registration for registration #${registrationId}`);
-                }
-              } catch (error) {
-                console.error('Error creating completed registration:', error);
-              }
-            } else {
-              console.warn('No registration ID in metadata, skipping completed registration creation');
-            }
+            // Registration processing completed - all data validated and orders created
+            console.log(`✅ Payment processed successfully for event ${eventId}: ${paymentIntent.id}`);
             
             // Send confirmation email
             try {
@@ -852,9 +807,9 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
                 firstName: registration.firstName,
                 lastName: registration.lastName,
                 email: registration.email,
-                eventName: event.title,
-                eventDates: event.date || "",
-                eventLocation: event.location || "",
+                eventName: event?.title || "",
+                eventDates: event?.startDate.toDateString() || "",
+                eventLocation: event?.location || "",
                 registrationType: registration.registrationType,
                 amount: (amount / 100).toString(),
                 paymentId: paymentIntent.id
