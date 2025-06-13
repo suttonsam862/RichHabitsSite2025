@@ -40,26 +40,30 @@ function ProductCard({ product }: { product: Product }) {
                           product.title.toLowerCase().includes('pullover');
   
   // Extract unique sizes and colors from variants
-  const sizes = [...new Set(product.variants?.map(v => {
-    const title = v.title.toLowerCase();
-    if (title.includes('small') || title.includes('xs')) return 'XS';
-    if (title.includes('medium') || title.includes('md')) return 'M';
-    if (title.includes('large') && !title.includes('x-large')) return 'L';
-    if (title.includes('x-large') || title.includes('xl')) return 'XL';
-    if (title.includes('xx-large') || title.includes('2xl')) return 'XXL';
-    return null;
-  }).filter(Boolean))];
+  const sizeOptions: string[] = [];
+  const colorOptions: string[] = [];
   
-  const colors = [...new Set(product.variants?.map(v => {
+  product.variants?.forEach(v => {
     const title = v.title.toLowerCase();
-    if (title.includes('black')) return 'Black';
-    if (title.includes('white')) return 'White';
-    if (title.includes('gray') || title.includes('grey')) return 'Gray';
-    if (title.includes('blue')) return 'Blue';
-    if (title.includes('red')) return 'Red';
-    if (title.includes('green')) return 'Green';
-    return null;
-  }).filter(Boolean))];
+    
+    // Extract size
+    if (title.includes('small') || title.includes('xs')) sizeOptions.push('XS');
+    else if (title.includes('medium') || title.includes('md')) sizeOptions.push('M');
+    else if (title.includes('large') && !title.includes('x-large')) sizeOptions.push('L');
+    else if (title.includes('x-large') || title.includes('xl')) sizeOptions.push('XL');
+    else if (title.includes('xx-large') || title.includes('2xl')) sizeOptions.push('XXL');
+    
+    // Extract color
+    if (title.includes('black')) colorOptions.push('Black');
+    else if (title.includes('white')) colorOptions.push('White');
+    else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
+    else if (title.includes('blue')) colorOptions.push('Blue');
+    else if (title.includes('red')) colorOptions.push('Red');
+    else if (title.includes('green')) colorOptions.push('Green');
+  });
+  
+  const sizes = [...new Set(sizeOptions)];
+  const colors = [...new Set(colorOptions)];
   
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
@@ -132,8 +136,8 @@ function ProductCard({ product }: { product: Product }) {
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
                   <SelectContent>
-                    {sizes.map((size) => (
-                      <SelectItem key={size} value={size}>{size}</SelectItem>
+                    {sizes.map((size, index) => (
+                      <SelectItem key={`size-${index}`} value={size}>{size}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

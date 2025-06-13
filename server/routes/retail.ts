@@ -1,6 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
-import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts } from "../shopify.js";
+import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts, getProductsInSalesChannel } from "../shopify.js";
 
 // Cart item validation schema
 const cartItemSchema = z.object({
