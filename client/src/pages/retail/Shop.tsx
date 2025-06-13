@@ -22,7 +22,9 @@ interface Product {
     id: string; 
     title: string; 
     price: string; 
-    available?: boolean 
+    available?: boolean;
+    inventory_quantity?: number;
+    inventory_item_id?: string;
   }>;
 }
 
@@ -38,6 +40,8 @@ function ProductCard({ product }: { product: Product }) {
   const priceStr = product.variants?.[0]?.price || "0";
   const price = parseFloat(priceStr.replace('$', '')) || 0;
   const imageUrl = product.images?.[0]?.src;
+  const inventoryQuantity = product.variants?.[0]?.inventory_quantity || 0;
+  const isInStock = inventoryQuantity > 0;
 
   return (
     <motion.div
@@ -87,12 +91,31 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
         
+        {/* Inventory Status */}
+        <div className="mb-4">
+          {isInStock ? (
+            <div className="flex items-center gap-2 text-green-400 text-sm">
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <span>{inventoryQuantity} in stock</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-red-400 text-sm">
+              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+              <span>Out of stock</span>
+            </div>
+          )}
+        </div>
+        
         <Link 
           href={`/shop/${product.handle || product.id}`}
-          className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-lg cursor-pointer"
+          className={`w-full font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group ${
+            isInStock 
+              ? 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white hover:shadow-lg cursor-pointer' 
+              : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+          }`}
         >
-          View Details
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          {isInStock ? 'View Details' : 'Out of Stock'}
+          {isInStock && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
         </Link>
       </div>
     </motion.div>

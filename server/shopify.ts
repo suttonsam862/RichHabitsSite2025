@@ -44,12 +44,92 @@ export async function getProductById(productId: string) {
   }
 }
 
-// Function to list products using Admin API
+// Function to get sales channels
+export async function getSalesChannels() {
+  try {
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/publications.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { publications: any[] };
+    return data.publications;
+  } catch (error) {
+    console.error('Error fetching sales channels from Shopify:', error);
+    throw error;
+  }
+}
+
+// Function to get inventory levels for a variant
+export async function getInventoryLevel(inventoryItemId: string, locationId: string) {
+  try {
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/inventory_levels.json?inventory_item_ids=${inventoryItemId}&location_ids=${locationId}`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { inventory_levels: any[] };
+    return data.inventory_levels[0]?.available || 0;
+  } catch (error) {
+    console.error('Error fetching inventory level from Shopify:', error);
+    return 0;
+  }
+}
+
+// Function to get locations
+export async function getLocations() {
+  try {
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/locations.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { locations: any[] };
+    return data.locations;
+  } catch (error) {
+    console.error('Error fetching locations from Shopify:', error);
+    throw error;
+  }
+}
+
+// Function to list products using Admin API with sales channel filtering and inventory
 export async function listProducts() {
   try {
     console.log('Fetching products from Shopify Admin API');
+    
+    // Get all locations first
+    const locations = await getLocations();
+    const primaryLocation = locations.find(loc => loc.primary) || locations[0];
+    
     const response = await fetch(
-      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=250&status=active`,
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=250&status=active&published_status=published`,
       {
         headers: {
           'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
@@ -64,7 +144,31 @@ export async function listProducts() {
 
     const data = await response.json() as { products: any[] };
     console.log(`Found ${data.products.length} products`);
-    return data.products;
+    
+    // Enhance products with inventory data
+    const enhancedProducts = await Promise.all(
+      data.products.map(async (product) => {
+        const enhancedVariants = await Promise.all(
+          product.variants.map(async (variant: any) => {
+            if (variant.inventory_item_id && primaryLocation) {
+              const inventory = await getInventoryLevel(variant.inventory_item_id, primaryLocation.id);
+              return {
+                ...variant,
+                inventory_quantity: inventory
+              };
+            }
+            return variant;
+          })
+        );
+        
+        return {
+          ...product,
+          variants: enhancedVariants
+        };
+      })
+    );
+    
+    return enhancedProducts;
   } catch (error) {
     console.error('Error listing products from Shopify:', error);
     throw error;
