@@ -672,6 +672,115 @@ export function setupRoutes(app: Express): void {
     }
   });
 
+  // Shopping cart endpoints
+  app.post("/api/cart/add", async (req: Request, res: Response) => {
+    try {
+      const { shopifyProductId, shopifyVariantId, productHandle, productTitle, variantTitle, price, compareAtPrice, quantity = 1, productImage, productType, vendor } = req.body;
+      const sessionId = req.sessionID;
+
+      if (!shopifyProductId || !shopifyVariantId || !productHandle || !productTitle || !price) {
+        return res.status(400).json({ error: "Missing required product information" });
+      }
+
+      const cartItem = await storage.addToCart({
+        sessionId,
+        userId: req.user?.id, // If user is logged in
+        shopifyProductId,
+        shopifyVariantId,
+        productHandle,
+        productTitle,
+        variantTitle,
+        price: price.toString(),
+        compareAtPrice: compareAtPrice?.toString(),
+        quantity,
+        productImage,
+        productType,
+        vendor
+      });
+
+      res.json({ success: true, cartItem });
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      res.status(500).json({ error: "Failed to add item to cart" });
+    }
+  });
+
+  app.get("/api/cart", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.sessionID;
+      const userId = req.user?.id;
+
+      const cartItems = await storage.getCartItems(sessionId, userId);
+      
+      // Calculate totals
+      const subtotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+      const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+      res.json({ 
+        success: true, 
+        cartItems, 
+        subtotal: subtotal.toFixed(2),
+        itemCount 
+      });
+    } catch (error) {
+      console.error("Get cart error:", error);
+      res.status(500).json({ error: "Failed to get cart items" });
+    }
+  });
+
+  app.put("/api/cart/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { quantity } = req.body;
+
+      if (quantity < 0) {
+        return res.status(400).json({ error: "Quantity cannot be negative" });
+      }
+
+      const updatedItem = await storage.updateCartItem(id, quantity);
+      
+      if (!updatedItem && quantity > 0) {
+        return res.status(404).json({ error: "Cart item not found" });
+      }
+
+      res.json({ success: true, cartItem: updatedItem });
+    } catch (error) {
+      console.error("Update cart item error:", error);
+      res.status(500).json({ error: "Failed to update cart item" });
+    }
+  });
+
+  app.delete("/api/cart/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      const success = await storage.removeFromCart(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Cart item not found" });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Remove from cart error:", error);
+      res.status(500).json({ error: "Failed to remove item from cart" });
+    }
+  });
+
+  app.delete("/api/cart", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.sessionID;
+      const userId = req.user?.id;
+
+      const success = await storage.clearCart(sessionId, userId);
+      
+      res.json({ success });
+    } catch (error) {
+      console.error("Clear cart error:", error);
+      res.status(500).json({ error: "Failed to clear cart" });
+    }
+  });
+
   // Custom order creation endpoint
   app.post("/api/custom-orders", async (req: Request, res: Response) => {
     try {
