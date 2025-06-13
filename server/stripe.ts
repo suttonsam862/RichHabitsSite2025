@@ -266,6 +266,20 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid event ID' });
     }
 
+    // CRITICAL: Prevent duplicate payment processing
+    if (paymentIntentId && !freeRegistration) {
+      // Check if this payment intent has already been processed
+      const existingPayment = await storage.getPaymentByStripeId(paymentIntentId);
+      if (existingPayment) {
+        console.log(`⚠️ Payment intent ${paymentIntentId} already processed. Returning existing registration.`);
+        return res.status(409).json({ 
+          error: "Payment already processed",
+          registrationId: existingPayment.eventRegistrationId,
+          message: "This payment has already been processed successfully."
+        });
+      }
+    }
+
     // Handle free registration case (100% discount)
     let paymentIntent: any;
     

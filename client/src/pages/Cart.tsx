@@ -91,15 +91,21 @@ export default function Cart() {
   };
 
   const handleCheckout = async () => {
+    // Prevent double-clicks and multiple checkout attempts
+    if (isCheckingOut || checkoutMutation.isPending) {
+      return;
+    }
+    
     setIsCheckingOut(true);
     try {
       await checkoutMutation.mutateAsync();
     } catch (error) {
       console.error('Checkout error:', error);
       alert('Failed to proceed to checkout. Please try again.');
-    } finally {
       setIsCheckingOut(false);
     }
+    // Note: setIsCheckingOut(false) is intentionally omitted on success 
+    // since we redirect to Shopify, preventing any UI state reset
   };
 
   if (isLoading) {

@@ -162,20 +162,46 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   const params = new URLSearchParams(window.location.search);
   const option = params.get('option') || sessionStorage.getItem('registration_option') || 'full';
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isPaymentCompleted, setIsPaymentCompleted] = useState(false);
+  const [paymentAttempted, setPaymentAttempted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [discountCode, setDiscountCode] = useState<string>('');
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const [discount, setDiscount] = useState<{ valid: boolean; amount: number; finalPrice?: number; code: string } | null>(null);
   const { toast } = useToast();
 
+  // Check for already completed payment on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentSucceeded = urlParams.get('payment_intent_status') === 'succeeded';
+    const paymentIntentId = urlParams.get('payment_intent');
+    
+    if (paymentSucceeded && paymentIntentId) {
+      setIsPaymentCompleted(true);
+      toast({
+        title: "Payment Already Completed",
+        description: "Your payment has already been processed. Redirecting to confirmation...",
+      });
+      setTimeout(() => {
+        window.location.href = `/event-registration/${eventId}?paymentSuccess=true&paymentIntentId=${paymentIntentId}`;
+      }, 2000);
+    }
+  }, [eventId, toast]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent multiple submissions
+    if (isProcessing || isPaymentCompleted || paymentAttempted) {
+      return;
+    }
 
     if (!stripe || !elements) {
       return;
     }
 
     setIsProcessing(true);
+    setPaymentAttempted(true);
     setError(null);
 
     try {
@@ -233,6 +259,8 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         });
 
         if (registrationResponse.ok) {
+          setIsPaymentCompleted(true);
+          
           // Clear all session storage data
           const fields = [
             'firstName', 'lastName', 'contactName', 'email', 
@@ -244,8 +272,15 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
             sessionStorage.removeItem(`registration_${field}`);
           });
           
+          toast({
+            title: "Registration Complete!",
+            description: "Your payment was successful and registration is confirmed. Redirecting...",
+          });
+          
           // Redirect to registration page with success confirmation
-          window.location.href = `/event-registration/${eventId}?paymentSuccess=true`;
+          setTimeout(() => {
+            window.location.href = `/event-registration/${eventId}?paymentSuccess=true&paymentIntentId=${paymentIntent.id}`;
+          }, 2000);
         } else {
           // Payment succeeded but registration recording failed
           toast({
