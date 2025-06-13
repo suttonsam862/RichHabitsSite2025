@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
+import { useCart } from "../../contexts/CartContext";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
+  const { state } = useCart();
 
   // Track scroll position to change header style when scrolled
   useEffect(() => {
@@ -73,17 +75,28 @@ export function Header() {
             </ul>
           </nav>
           
-          <motion.button
-            className={`p-2 rounded-full transition-all duration-300 ${
-              scrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-800 hover:bg-white/20'
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            aria-label="Shopping Cart"
-          >
-            <ShoppingCart size={20} />
-          </motion.button>
+          <Link href="/cart">
+            <motion.div
+              className={`relative p-2 rounded-full transition-all duration-300 cursor-pointer ${
+                scrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-800 hover:bg-white/20'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              aria-label="Shopping Cart"
+            >
+              <ShoppingCart size={20} />
+              {state.itemCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold"
+                >
+                  {state.itemCount > 99 ? '99+' : state.itemCount}
+                </motion.span>
+              )}
+            </motion.div>
+          </Link>
         </div>
       </div>
       {/* Subtle sky accent line */}

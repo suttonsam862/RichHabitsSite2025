@@ -781,6 +781,37 @@ export function setupRoutes(app: Express): void {
     }
   });
 
+  app.post("/api/cart/checkout", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.sessionID;
+      const userId = req.user?.id;
+
+      // Get cart items
+      const cartItems = await storage.getCartItems(sessionId, userId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ error: "Cart is empty" });
+      }
+
+      // Create Shopify checkout
+      const { createShopifyCheckout } = await import('./shopify.js');
+      
+      const checkoutUrl = await createShopifyCheckout(cartItems);
+      
+      if (!checkoutUrl) {
+        return res.status(500).json({ error: "Failed to create checkout" });
+      }
+
+      res.json({ 
+        success: true, 
+        checkoutUrl: checkoutUrl
+      });
+    } catch (error) {
+      console.error("Cart checkout error:", error);
+      res.status(500).json({ error: "Failed to create checkout" });
+    }
+  });
+
   // Custom order creation endpoint
   app.post("/api/custom-orders", async (req: Request, res: Response) => {
     try {
