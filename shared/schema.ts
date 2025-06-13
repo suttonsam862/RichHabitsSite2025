@@ -778,8 +778,9 @@ export type EventPayment = typeof eventPayments.$inferSelect;
 // Cart item schemas
 export const insertCartItemSchema = createInsertSchema(cartItems).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true
+  addedAt: true,
+  updatedAt: true,
+  isArchived: true
 });
 export type CartItemInsert = z.infer<typeof insertCartItemSchema>;
 export type CartItem = typeof cartItems.$inferSelect;

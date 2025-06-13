@@ -919,7 +919,7 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
           description: "Paid via Stripe",
           value_type: "fixed_amount",
           value: "0.00",
-          amount: "0.00"
+          amount: 0.00
         }
       }
     };

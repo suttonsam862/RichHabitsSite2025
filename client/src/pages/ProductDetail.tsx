@@ -275,7 +275,7 @@ export default function ProductDetail() {
               {/* Product Options */}
               {product?.options && product.options.length > 0 && (
                 <div className="space-y-4">
-                  {product.options.map((option, optionIndex) => (
+                  {product.options.map((option) => (
                     <div key={option.name}>
                       <h3 className="text-lg font-semibold mb-3">{option.name}</h3>
                       <div className="flex flex-wrap gap-2">

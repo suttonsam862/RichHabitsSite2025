@@ -1,186 +1,296 @@
-import { useCart } from '@/contexts/CartContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
-import { Link } from 'wouter';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft, ExternalLink } from "lucide-react";
+import { Link } from "wouter";
+
+interface CartItem {
+  id: string;
+  shopifyProductId: string;
+  shopifyVariantId: string;
+  productHandle: string;
+  productTitle: string;
+  variantTitle: string;
+  price: string;
+  quantity: number;
+  productImage?: string;
+  available: boolean;
+}
+
+interface CartResponse {
+  success: boolean;
+  cartItems: CartItem[];
+  subtotal: string;
+  itemCount: number;
+}
 
 export default function Cart() {
-  const { state, updateQuantity, removeFromCart, clearCart } = useCart();
+  const queryClient = useQueryClient();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  if (state.isLoading) {
+  // Fetch cart items
+  const { data: cartData, isLoading } = useQuery<CartResponse>({
+    queryKey: ["/api/cart"],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Update cart item quantity
+  const updateQuantityMutation = useMutation({
+    mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
+      const response = await fetch(`/api/cart/${itemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity }),
+      });
+      if (!response.ok) throw new Error('Failed to update item');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+  });
+
+  // Remove item from cart
+  const removeItemMutation = useMutation({
+    mutationFn: async (itemId: string) => {
+      const response = await fetch(`/api/cart/${itemId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to remove item');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+  });
+
+  // Checkout mutation
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/cart/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) throw new Error('Failed to create checkout');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    },
+  });
+
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    updateQuantityMutation.mutate({ itemId, quantity: newQuantity });
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    removeItemMutation.mutate(itemId);
+  };
+
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    try {
+      await checkoutMutation.mutateAsync();
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to proceed to checkout. Please try again.');
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
-          <div className="animate-pulse">
-            <div className="h-32 bg-gray-200 rounded mb-4"></div>
-            <div className="h-32 bg-gray-200 rounded mb-4"></div>
-          </div>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <ShoppingCart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+          <div className="text-xl">Loading cart...</div>
         </div>
       </div>
     );
   }
 
-  if (state.items.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <ShoppingBag className="w-24 h-24 mx-auto text-gray-300 mb-6" />
-          <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
-          <p className="text-gray-600 mb-8">Looks like you haven't added anything to your cart yet.</p>
-          <Link href="/shop">
-            <Button size="lg">
-              Continue Shopping
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const handleQuantityChange = async (id: string, newQuantity: number) => {
-    if (newQuantity < 1) {
-      await removeFromCart(id);
-    } else {
-      await updateQuantity(id, newQuantity);
-    }
-  };
-
-  const handleRemoveItem = async (id: string) => {
-    await removeFromCart(id);
-  };
-
-  const handleClearCart = async () => {
-    if (confirm('Are you sure you want to clear your cart?')) {
-      await clearCart();
-    }
-  };
+  const cartItems = cartData?.cartItems || [];
+  const subtotal = parseFloat(cartData?.subtotal || "0");
+  const shipping = subtotal >= 75 ? 0 : 10;
+  const total = subtotal + shipping;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Shopping Cart ({state.itemCount} items)</h1>
-          <Button variant="outline" onClick={handleClearCart}>
-            Clear Cart
-          </Button>
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <header className="border-b border-gray-800 py-6">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between">
+            <Link href="/products" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+              Continue Shopping
+            </Link>
+            <h1 className="text-2xl font-bold">Shopping Cart</h1>
+            <div className="w-24"></div>
+          </div>
         </div>
+      </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            {state.items.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
+      <div className="container mx-auto px-6 py-8">
+        {cartItems.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16"
+          >
+            <ShoppingCart className="w-24 h-24 mx-auto mb-6 text-gray-600" />
+            <h2 className="text-2xl font-semibold mb-4">Your cart is empty</h2>
+            <p className="text-gray-400 mb-8">Add some products to get started</p>
+            <Link
+              href="/products"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 inline-block"
+            >
+              Shop Products
+            </Link>
+          </motion.div>
+        ) : (
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Cart Items */}
+            <div className="lg:col-span-2">
+              <h2 className="text-xl font-semibold mb-6">
+                Cart Items ({cartItems.length})
+              </h2>
+              
+              <div className="space-y-6">
+                {cartItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-gray-900 rounded-2xl p-6 flex gap-6"
+                  >
                     {/* Product Image */}
-                    {item.productImage && (
-                      <div className="w-20 h-20 flex-shrink-0">
+                    <div className="w-24 h-24 bg-gray-800 rounded-xl overflow-hidden flex-shrink-0">
+                      {item.productImage ? (
                         <img
                           src={item.productImage}
                           alt={item.productTitle}
-                          className="w-full h-full object-cover rounded"
+                          className="w-full h-full object-cover"
                         />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ShoppingCart className="w-8 h-8 text-gray-600" />
+                        </div>
+                      )}
+                    </div>
 
                     {/* Product Details */}
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{item.productTitle}</h3>
+                      <h3 className="font-semibold text-lg mb-1">{item.productTitle}</h3>
                       {item.variantTitle && (
-                        <p className="text-gray-600">{item.variantTitle}</p>
+                        <p className="text-gray-400 mb-2">{item.variantTitle}</p>
                       )}
-                      {item.vendor && (
-                        <p className="text-sm text-gray-500">{item.vendor}</p>
+                      <p className="text-xl font-bold text-blue-400">
+                        ${parseFloat(item.price).toFixed(2)}
+                      </p>
+                    </div>
+
+                    {/* Quantity Controls */}
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                        disabled={item.quantity <= 1 || updateQuantityMutation.isPending}
+                        className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      
+                      <span className="w-12 text-center font-semibold">
+                        {item.quantity}
+                      </span>
+                      
+                      <button
+                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        disabled={!item.available || updateQuantityMutation.isPending}
+                        className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                      
+                      <button
+                        onClick={() => handleRemoveItem(item.id)}
+                        disabled={removeItemMutation.isPending}
+                        className="ml-4 p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-gray-900 rounded-2xl p-6 sticky top-6"
+              >
+                <h3 className="text-xl font-semibold mb-6">Order Summary</h3>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Subtotal</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Shipping</span>
+                    <span>
+                      {shipping === 0 ? (
+                        <span className="text-green-400">Free</span>
+                      ) : (
+                        `$${shipping.toFixed(2)}`
                       )}
-
-                      <div className="flex items-center justify-between mt-4">
-                        {/* Quantity Controls */}
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                          >
-                            <Minus className="w-4 h-4" />
-                          </Button>
-                          <span className="w-12 text-center font-medium">{item.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                          >
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        </div>
-
-                        {/* Price and Remove */}
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <p className="font-semibold">
-                              ${(parseFloat(item.price) * item.quantity).toFixed(2)}
-                            </p>
-                            {item.compareAtPrice && parseFloat(item.compareAtPrice) > parseFloat(item.price) && (
-                              <p className="text-sm text-gray-500 line-through">
-                                ${(parseFloat(item.compareAtPrice) * item.quantity).toFixed(2)}
-                              </p>
-                            )}
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRemoveItem(item.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
+                    </span>
+                  </div>
+                  
+                  {subtotal < 75 && (
+                    <div className="text-sm text-gray-400 bg-gray-800 p-3 rounded-lg">
+                      Add ${(75 - subtotal).toFixed(2)} more for free shipping
+                    </div>
+                  )}
+                  
+                  <div className="border-t border-gray-700 pt-4">
+                    <div className="flex justify-between text-xl font-semibold">
+                      <span>Total</span>
+                      <span>${total.toFixed(2)}</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-4">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span>Subtotal ({state.itemCount} items)</span>
-                  <span className="font-medium">${state.subtotal.toFixed(2)}</span>
                 </div>
+
+                <button
+                  onClick={handleCheckout}
+                  disabled={cartItems.length === 0 || isCheckingOut || checkoutMutation.isPending}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-gray-700 disabled:to-gray-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+                >
+                  {isCheckingOut || checkoutMutation.isPending ? (
+                    <>Processing...</>
+                  ) : (
+                    <>
+                      <ExternalLink className="w-5 h-5" />
+                      Proceed to Shopify Checkout
+                    </>
+                  )}
+                </button>
                 
-                <div className="border-t pt-4">
-                  <div className="flex justify-between font-semibold text-lg">
-                    <span>Total</span>
-                    <span>${state.subtotal.toFixed(2)}</span>
-                  </div>
+                <div className="text-sm text-gray-400 text-center mt-4">
+                  Secure checkout powered by Shopify
                 </div>
-
-                <Button className="w-full" size="lg">
-                  Proceed to Checkout
-                </Button>
-
-                <div className="text-center">
-                  <Link href="/shop">
-                    <Button variant="outline" className="w-full">
-                      Continue Shopping
-                    </Button>
-                  </Link>
-                </div>
-
-                <div className="text-xs text-gray-500 text-center">
-                  Shipping and taxes calculated at checkout
-                </div>
-              </CardContent>
-            </Card>
+              </motion.div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
