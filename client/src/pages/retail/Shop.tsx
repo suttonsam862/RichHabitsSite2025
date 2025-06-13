@@ -38,33 +38,49 @@ function ProductCard({ product }: { product: Product }) {
   
   // Check if this is a shirt/apparel product that needs size/color selection
   const isApparelProduct = product.title.toLowerCase().includes('shirt') || 
+                          product.title.toLowerCase().includes('tee') ||
+                          product.title.toLowerCase().includes('t-shirt') ||
                           product.title.toLowerCase().includes('hoodie') ||
                           product.title.toLowerCase().includes('jacket') ||
-                          product.title.toLowerCase().includes('pullover');
+                          product.title.toLowerCase().includes('pullover') ||
+                          product.title.toLowerCase().includes('heavyweight') ||
+                          product.title.toLowerCase().includes('cap') ||
+                          product.title.toLowerCase().includes('hat') ||
+                          product.title.toLowerCase().includes('apparel');
   
-  // Extract unique sizes and colors from variants - moved to useMemo equivalent
+  // Extract unique sizes and colors from variants
   const { sizes, colors } = (() => {
     const sizeOptions: string[] = [];
     const colorOptions: string[] = [];
     
     if (product.variants && product.variants.length > 0) {
       product.variants.forEach(v => {
-        const title = v.title.toLowerCase();
+        const title = (v.title || '').toLowerCase();
         
-        // Extract size
-        if (title.includes('small') || title.includes('xs')) sizeOptions.push('XS');
-        else if (title.includes('medium') || title.includes('md')) sizeOptions.push('M');
-        else if (title.includes('large') && !title.includes('x-large')) sizeOptions.push('L');
-        else if (title.includes('x-large') || title.includes('xl')) sizeOptions.push('XL');
-        else if (title.includes('xx-large') || title.includes('2xl')) sizeOptions.push('XXL');
+        // Extract size - handle common formats like "S", "M", "L", "XL", "XXL", "Small", "Medium", etc.
+        if (title.includes('xs') || title.includes('x-small') || title === 'xs') sizeOptions.push('XS');
+        else if ((title.includes('small') && !title.includes('x-small')) || title === 's') sizeOptions.push('S');
+        else if (title.includes('medium') || title.includes(' m ') || title === 'm' || title.includes('md')) sizeOptions.push('M');
+        else if (title.includes('large') && !title.includes('x-large') && !title.includes('xx-large') || title === 'l') sizeOptions.push('L');
+        else if (title.includes('x-large') || title.includes('xl') || title === 'xl') sizeOptions.push('XL');
+        else if (title.includes('xx-large') || title.includes('2xl') || title === 'xxl') sizeOptions.push('XXL');
+        else if (title.includes('3xl') || title.includes('xxxl')) sizeOptions.push('3XL');
         
-        // Extract color
-        if (title.includes('black')) colorOptions.push('Black');
-        else if (title.includes('white')) colorOptions.push('White');
+        // Extract color - handle more color variations
+        if (title.includes('black') || title.includes('blk')) colorOptions.push('Black');
+        else if (title.includes('white') || title.includes('wht')) colorOptions.push('White');
         else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
-        else if (title.includes('blue')) colorOptions.push('Blue');
-        else if (title.includes('red')) colorOptions.push('Red');
-        else if (title.includes('green')) colorOptions.push('Green');
+        else if (title.includes('blue') || title.includes('blu')) colorOptions.push('Blue');
+        else if (title.includes('red') || title.includes('crimson')) colorOptions.push('Red');
+        else if (title.includes('green') || title.includes('grn')) colorOptions.push('Green');
+        else if (title.includes('navy')) colorOptions.push('Navy');
+        else if (title.includes('orange') || title.includes('org')) colorOptions.push('Orange');
+        else if (title.includes('purple') || title.includes('purp')) colorOptions.push('Purple');
+        else if (title.includes('yellow') || title.includes('gold')) colorOptions.push('Yellow');
+        else if (title.includes('pink')) colorOptions.push('Pink');
+        else if (title.includes('brown')) colorOptions.push('Brown');
+        else if (title.includes('tan') || title.includes('beige')) colorOptions.push('Tan');
+        else if (title.includes('mint')) colorOptions.push('Mint');
       });
     }
     
@@ -76,11 +92,12 @@ function ProductCard({ product }: { product: Product }) {
   
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
-  const price = parseFloat(priceStr.replace('$', '')) || 0;
+  const price = parseFloat(typeof priceStr === 'string' ? priceStr.replace('$', '') : String(priceStr).replace('$', '')) || 0;
   const imageUrl = product.images?.[0]?.src;
   
-  // Format price for display
-  const formattedPrice = price > 0 ? `$${price.toFixed(2)}` : 'Price unavailable';
+  // Format price for display - show actual price or first variant price
+  const displayPrice = price > 0 ? price : (product.variants?.[0] ? parseFloat(String(product.variants[0].price).replace('$', '')) : 0);
+  const formattedPrice = displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : 'Contact for pricing';
 
   return (
     <motion.div
