@@ -119,7 +119,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         });
       }
     } else {
-      // CRITICAL FIX: Validate event exists and has valid ID
+      // CRITICAL FIX: Validate event exists and has valid UUID
       if (!event.id) {
         console.error(`CRITICAL: Event missing ID - eventSlug: ${eventSlug}, event:`, event);
         return res.status(400).json({
@@ -127,15 +127,21 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         });
       }
       
-      // Use the event ID directly from database - NO FALLBACK MAPPING
-      const eventId = parseInt(event.id);
+      // Use event's base price directly from database - NO LEGACY PRICING CALCULATIONS
+      const basePrice = parseFloat(event.basePrice) || 0;
+      if (basePrice <= 0) {
+        console.error(`CRITICAL: Invalid base price for event ${event.id}: ${basePrice}`);
+        return res.status(400).json({
+          error: 'Event pricing configuration error'
+        });
+      }
       
-      // Get calculated price only when no discount provided
-      amount = await getEventPrice(eventId, option, req.body.numberOfDays, req.body.selectedDates);
-      console.log(`💰 Using calculated base price: $${amount/100} (${amount} cents) for event ${eventId} (${option})`);
+      // Convert to cents for Stripe
+      amount = Math.round(basePrice * 100);
+      console.log(`💰 Using event base price: $${basePrice} (${amount} cents) for event ${event.id} (${option})`);
       
       if (!amount || isNaN(amount) || amount <= 0) {
-        console.error(`CRITICAL: Invalid price calculated for event ${eventId}: ${amount}`);
+        console.error(`CRITICAL: Invalid amount calculated for event ${event.id}: ${amount}`);
         return res.status(400).json({
           error: 'Could not determine price for the event'
         });
@@ -693,13 +699,12 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         }
         
         // CRITICAL SAFEGUARD: Validate payment metadata before processing
-        const eventId = Number(paymentIntent.metadata?.eventId);
+        const eventId = paymentIntent.metadata?.eventId;
         const eventName = paymentIntent.metadata?.eventName;
-        const registrationId = Number(paymentIntent.metadata?.registrationId);
         
-        // CRITICAL: Reject payments with fake/mock event data
-        if (!eventId || isNaN(eventId)) {
-          console.error(`🚨 CRITICAL: Missing or invalid eventId in payment metadata: ${paymentIntent.metadata?.eventId}`);
+        // CRITICAL: Reject payments with missing event UUID
+        if (!eventId) {
+          console.error(`🚨 CRITICAL: Missing eventId in payment metadata`);
           console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
           break;
         }
@@ -710,18 +715,19 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           break;
         }
         
-        // Additional safeguard: Verify event exists in database
+        // Additional safeguard: Verify event exists in database using UUID
+        let validatedEvent;
         try {
-          const event = await storage.getEvent(eventId.toString());
-          if (!event) {
-            console.error(`🚨 CRITICAL: Event with ID ${eventId} not found in database`);
+          validatedEvent = await storage.getEvent(eventId);
+          if (!validatedEvent) {
+            console.error(`🚨 CRITICAL: Event with UUID ${eventId} not found in database`);
             console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
             break;
           }
           
           // Verify event name matches database
-          if (event.title !== eventName) {
-            console.error(`🚨 CRITICAL: Event name mismatch - Database: ${event.title}, Metadata: ${eventName}`);
+          if (validatedEvent.title !== eventName) {
+            console.error(`🚨 CRITICAL: Event name mismatch - Database: ${validatedEvent.title}, Metadata: ${eventName}`);
             console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
             break;
           }
@@ -733,95 +739,102 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           break;
         }
         
-        if (eventId && !isNaN(eventId)) {
-          try {
-            // Get the event details (already validated above)
-            const event = await storage.getEvent(eventId.toString());
-            
-            // Get registration data - either from metadata or from database
-            let registrationData: any;
-            
-            // CRITICAL: Only use metadata from payment intent - no database fallbacks
-            registrationData = paymentIntent.metadata;
-            
-            // Validate all required fields are present
-            if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
-              console.error(`🚨 CRITICAL: Missing required registration data in payment metadata`);
-              console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
-              break;
-            }
-            
-            // Calculate the amount for the Shopify order
-            const option = registrationData.option || registrationData.registrationType || 'full';
-            const amount = await getEventPrice(eventId, option);
-            
-            // Extract full registration information
-            const registration = {
-              eventId: eventId,
-              firstName: registrationData.firstName,
-              lastName: registrationData.lastName,
-              contactName: registrationData.contactName,
-              email: registrationData.email,
-              phone: registrationData.phone,
-              tShirtSize: registrationData.tShirtSize,
-              grade: registrationData.grade,
-              schoolName: registrationData.schoolName,
-              clubName: registrationData.clubName,
-              registrationType: registrationData.registrationType || option,
-              day1: registrationData.day1 === 'true' || registrationData.day1 === true,
-              day2: registrationData.day2 === 'true' || registrationData.day2 === true,
-              day3: registrationData.day3 === 'true' || registrationData.day3 === true,
-              shopifyOrderId: '',
-              stripePaymentIntentId: paymentIntent.id
-            };
-            
-            // Create Shopify order from the registration data
-            console.log('Creating Shopify order with registration data:', registration);
-            const shopifyOrder = await createShopifyOrderFromRegistration(registration, event, amount / 100);
-            
-            if (shopifyOrder) {
-              console.log('Successfully created Shopify order:', shopifyOrder.id);
-              trackOrderCreated();
-              
-              // Log successful Shopify order creation - no database fallbacks
-              console.log(`✅ Shopify order created successfully for payment ${paymentIntent.id}: ${shopifyOrder.id}`);
-              
-              // Add Shopify order ID to the registration data
-              registration.shopifyOrderId = shopifyOrder.id;
-            } else {
-              console.error('Failed to create Shopify order from registration data');
-              trackOrderFailed();
-              logCriticalFailure('shopify', 'Order creation failed', { 
-                paymentIntentId: paymentIntent.id, 
-                eventId, 
-                registrationData: registration 
-              });
-            }
-            
-            // Registration processing completed - all data validated and orders created
-            console.log(`✅ Payment processed successfully for event ${eventId}: ${paymentIntent.id}`);
-            
-            // Send confirmation email
-            try {
-              await sendRegistrationConfirmationEmail({
-                firstName: registration.firstName,
-                lastName: registration.lastName,
-                email: registration.email,
-                eventName: event?.title || "",
-                eventDates: event?.startDate.toDateString() || "",
-                eventLocation: event?.location || "",
-                registrationType: registration.registrationType,
-                amount: (amount / 100).toString(),
-                paymentId: paymentIntent.id
-              });
-            } catch (error) {
-              console.error('Error sending confirmation email:', error);
-            }
-          } catch (error) {
-            console.error('Error processing payment success:', error);
+        // Process the validated payment
+        try {
+          // Get registration data - CRITICAL: Only use metadata from payment intent
+          const registrationData = paymentIntent.metadata;
+          
+          // Validate all required fields are present
+          if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
+            console.error(`🚨 CRITICAL: Missing required registration data in payment metadata`);
+            console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
+            break;
           }
-        } else {
-          console.warn('Missing event ID in payment intent metadata:', paymentIntent.metadata);
+          
+          // Extract full registration information from metadata
+          const registration = {
+            eventId: eventId,
+            firstName: registrationData.firstName,
+            lastName: registrationData.lastName,
+            contactName: registrationData.contactName || `${registrationData.firstName} ${registrationData.lastName}`,
+            email: registrationData.email,
+            phone: registrationData.phone || '',
+            tShirtSize: registrationData.tShirtSize || '',
+            grade: registrationData.grade || '',
+            schoolName: registrationData.schoolName || '',
+            clubName: registrationData.clubName || '',
+            registrationType: registrationData.option || 'individual',
+            day1: registrationData.day1 === 'true' || registrationData.day1 === true,
+            day2: registrationData.day2 === 'true' || registrationData.day2 === true,
+            day3: registrationData.day3 === 'true' || registrationData.day3 === true,
+            stripePaymentIntentId: paymentIntent.id
+          };
+          
+          // Create registration record in database
+          const dbRegistration = await storage.createEventRegistration({
+            eventId: eventId,
+            firstName: registration.firstName,
+            lastName: registration.lastName,
+            email: registration.email,
+            phone: registration.phone || null,
+            grade: registration.grade || null,
+            shirtSize: registration.tShirtSize || null,
+            parentName: registration.contactName || null,
+            schoolName: registration.schoolName || null,
+            clubName: registration.clubName || null,
+            registrationType: registration.registrationType,
+            basePrice: (paymentIntent.amount / 100).toString(),
+            finalPrice: (paymentIntent.amount / 100).toString(),
+            waiverAccepted: true,
+            termsAccepted: true,
+            status: 'completed',
+            stripePaymentIntentId: paymentIntent.id
+          });
+          
+          // Create Shopify order from the registration data
+          console.log('Creating Shopify order with registration data:', registration);
+          const shopifyOrder = await createShopifyOrderFromRegistration(registration, validatedEvent, paymentIntent.amount / 100);
+          
+          if (shopifyOrder) {
+            console.log('Successfully created Shopify order:', shopifyOrder.id);
+            trackOrderCreated();
+            
+            // Update registration with Shopify order ID
+            await storage.updateEventRegistration(dbRegistration.id, {
+              shopifyOrderId: shopifyOrder.id.toString()
+            });
+            
+            console.log(`✅ Shopify order created successfully for payment ${paymentIntent.id}: ${shopifyOrder.id}`);
+          } else {
+            console.error('Failed to create Shopify order from registration data');
+            trackOrderFailed();
+            logCriticalFailure('shopify', 'Order creation failed', { 
+              paymentIntentId: paymentIntent.id, 
+              eventId, 
+              registrationData: registration 
+            });
+          }
+          
+          console.log(`✅ Payment processed successfully for event ${eventId}: ${paymentIntent.id}`);
+          
+          // Send confirmation email
+          try {
+            await sendRegistrationConfirmationEmail({
+              firstName: registration.firstName,
+              lastName: registration.lastName,
+              email: registration.email,
+              eventName: validatedEvent.title,
+              eventDates: validatedEvent.startDate.toDateString(),
+              eventLocation: validatedEvent.location || "",
+              registrationType: registration.registrationType,
+              amount: (paymentIntent.amount / 100).toString(),
+              paymentId: paymentIntent.id
+            });
+          } catch (error) {
+            console.error('Error sending confirmation email:', error);
+          }
+        } catch (error) {
+          console.error('Error processing payment success:', error);
         }
         break;
       case 'payment_intent.payment_failed':

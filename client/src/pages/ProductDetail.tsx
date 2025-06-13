@@ -4,18 +4,35 @@ import { useParams, Link } from "wouter";
 import { ArrowLeft, ShoppingCart, Star, Minus, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 
+interface ProductVariant {
+  id: string;
+  title: string;
+  price: string;
+  available: boolean;
+  inventory_quantity: number;
+  compare_at_price?: string;
+  featured_image?: {
+    src: string;
+    alt?: string;
+  } | null;
+  option1?: string;
+  option2?: string;
+  option3?: string;
+}
+
 interface Product {
   id: string;
   title: string;
   handle: string;
   body_html: string;
   images: Array<{ src: string; alt?: string }>;
-  variants: Array<{ 
-    id: string; 
-    title: string; 
-    price: string; 
-    available?: boolean 
+  variants: ProductVariant[];
+  options: Array<{
+    name: string;
+    values: string[];
   }>;
+  product_type: string;
+  tags: string[];
 }
 
 const fadeIn = {
@@ -31,11 +48,28 @@ export default function ProductDetail() {
   const { handle } = useParams();
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: [`/api/shop/products/handle/${handle}`],
     enabled: !!handle
   });
+
+  // Initialize selected options when product loads
+  useEffect(() => {
+    if (product?.variants?.[0] && product?.options) {
+      const initialOptions: Record<string, string> = {};
+      product.options.forEach((option, index) => {
+        const optionKey = `option${index + 1}` as keyof ProductVariant;
+        const variantValue = product.variants[0][optionKey];
+        if (variantValue && typeof variantValue === 'string') {
+          initialOptions[option.name] = variantValue;
+        }
+      });
+      setSelectedOptions(initialOptions);
+    }
+  }, [product]);
 
   // Add document title when product loads
   useEffect(() => {
@@ -46,6 +80,33 @@ export default function ProductDetail() {
       document.title = 'Rich Habits';
     };
   }, [product?.title]);
+
+  // Handle variant selection based on options
+  const handleOptionChange = (optionName: string, value: string) => {
+    const newOptions = { ...selectedOptions, [optionName]: value };
+    setSelectedOptions(newOptions);
+
+    // Find matching variant
+    const matchingVariantIndex = product?.variants.findIndex(variant => {
+      return product.options.every((option, index) => {
+        const optionKey = `option${index + 1}` as keyof ProductVariant;
+        return variant[optionKey] === newOptions[option.name];
+      });
+    });
+
+    if (matchingVariantIndex !== undefined && matchingVariantIndex >= 0) {
+      setSelectedVariant(matchingVariantIndex);
+      
+      // Update image if variant has featured image
+      const variant = product?.variants[matchingVariantIndex];
+      if (variant?.featured_image?.src && product?.images) {
+        const imageIndex = product.images.findIndex(img => img.src === variant.featured_image?.src);
+        if (imageIndex >= 0) {
+          setCurrentImage(imageIndex);
+        }
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -79,10 +140,49 @@ export default function ProductDetail() {
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = currentVariant?.price || "0";
   const price = parseFloat(priceStr.replace('$', '')) || 0;
+  const compareAtPrice = currentVariant?.compare_at_price ? parseFloat(currentVariant.compare_at_price.replace('$', '')) : null;
+  
+  // Determine if this is a retail product (not an event)
+  const isRetailProduct = !product?.tags?.includes('event') && product?.product_type !== 'Event Registration';
+  
+  // Get current display image
+  const displayImage = product?.images?.[currentImage] || product?.images?.[0];
 
-  const handleAddToCart = () => {
-    // Add to cart functionality - for now just show alert
-    alert(`Added ${quantity} x ${product?.title} to cart!`);
+  const handleAddToCart = async () => {
+    if (!currentVariant || !isRetailProduct) {
+      alert('This item cannot be added to cart');
+      return;
+    }
+
+    try {
+      // Add to cart via API
+      const response = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          shopifyProductId: product.id,
+          shopifyVariantId: currentVariant.id,
+          productHandle: product.handle,
+          productTitle: product.title,
+          variantTitle: currentVariant.title,
+          quantity: quantity,
+          price: price,
+          image: displayImage?.src || '',
+          available: currentVariant.available
+        }),
+      });
+
+      if (response.ok) {
+        alert(`Added ${quantity} x ${product?.title} (${currentVariant.title}) to cart!`);
+      } else {
+        throw new Error('Failed to add to cart');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add item to cart');
+    }
   };
 
   return (
@@ -107,10 +207,10 @@ export default function ProductDetail() {
             {/* Product Images */}
             <motion.div {...fadeIn}>
               <div className="aspect-square bg-gray-900 rounded-2xl overflow-hidden">
-                {product?.images && product.images.length > 0 ? (
+                {displayImage ? (
                   <img 
-                    src={product.images[0].src} 
-                    alt={product?.title || 'Product'}
+                    src={displayImage.src} 
+                    alt={displayImage.alt || product?.title || 'Product'}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -123,14 +223,20 @@ export default function ProductDetail() {
               {/* Thumbnail images */}
               {product?.images && product.images.length > 1 && (
                 <div className="flex gap-4 mt-4">
-                  {product.images.slice(1, 5).map((image: any, index: number) => (
-                    <div key={index} className="w-20 h-20 bg-gray-900 rounded-lg overflow-hidden">
+                  {product.images.map((image: any, index: number) => (
+                    <button
+                      key={index} 
+                      onClick={() => setCurrentImage(index)}
+                      className={`w-20 h-20 bg-gray-900 rounded-lg overflow-hidden border-2 transition-colors ${
+                        currentImage === index ? 'border-blue-500' : 'border-transparent hover:border-gray-600'
+                      }`}
+                    >
                       <img 
                         src={image.src} 
-                        alt={`${product?.title || 'Product'} ${index + 2}`}
+                        alt={`${product?.title || 'Product'} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
