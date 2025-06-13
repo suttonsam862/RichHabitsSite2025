@@ -104,12 +104,9 @@ export default function Shop() {
     queryKey: ['/api/shop/collections']
   });
 
-  // Get the first available collection or use a specific collection
-  const firstCollection = collections[0];
-  
-  const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
-    queryKey: [`/api/shop/collections/${firstCollection?.handle}/products`],
-    enabled: !!firstCollection?.handle
+  // Get all products directly from the products endpoint to avoid hook issues
+  const { data: allProducts = [], isLoading: productsLoading } = useQuery<Product[]>({
+    queryKey: ['/api/products']
   });
 
   const isLoading = collectionsLoading || productsLoading;
@@ -162,9 +159,9 @@ export default function Shop() {
               </motion.div>
 
               {/* Products Grid */}
-              {Array.isArray(products) && products.length > 0 ? (
+              {Array.isArray(allProducts) && allProducts.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {products.map((product: Product, index: number) => (
+                  {allProducts.map((product: Product, index: number) => (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}

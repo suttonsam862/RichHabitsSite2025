@@ -49,7 +49,7 @@ export async function listProducts() {
   try {
     console.log('Fetching products from Shopify Admin API');
     const response = await fetch(
-      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=10`,
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=250`,
       {
         headers: {
           'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
