@@ -441,17 +441,20 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(cartItems)
       .where(eq(cartItems.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async clearCart(sessionId: string, userId?: string): Promise<boolean> {
+    const whereConditions = [eq(cartItems.sessionId, sessionId)];
+    
+    if (userId) {
+      whereConditions.push(eq(cartItems.userId, userId));
+    }
+
     const result = await db
       .delete(cartItems)
-      .where(and(
-        eq(cartItems.sessionId, sessionId),
-        userId ? eq(cartItems.userId, userId) : eq(cartItems.userId, null)
-      ));
-    return result.rowCount > 0;
+      .where(and(...whereConditions));
+    return (result.rowCount || 0) > 0;
   }
 }
 

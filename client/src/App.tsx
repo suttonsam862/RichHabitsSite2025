@@ -4,6 +4,7 @@ import { Footer } from "./components/layout/Footer";
 import MaintenanceBanner from "./components/layout/MaintenanceBanner";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { CartProvider } from "./contexts/CartContext";
 
 // Page imports
 import Home from "./pages/Home";
@@ -16,6 +17,7 @@ import TeamRegistration from "./pages/TeamRegistration";
 import StripeCheckout from "./pages/StripeCheckout";
 import CustomApparel from "./pages/CustomApparel";
 import Contact from "./pages/Contact";
+import Cart from "./pages/Cart";
 import NotFound from "./pages/not-found";
 
 function Router() {
@@ -24,6 +26,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/shop" component={Shop} />
       <Route path="/shop/:handle" component={ProductDetail} />
+      <Route path="/cart" component={Cart} />
       <Route path="/events" component={Events} />
       <Route path="/events/:id" component={EventDetail} />
       <Route path="/register/:id" component={EventRegistration} />
@@ -46,15 +49,17 @@ function App() {
   
   return (
     <TooltipProvider>
-      <div className="flex flex-col min-h-screen">
-        {!isSpecialPage && <MaintenanceBanner />}
-        {!isSpecialPage && <Header />}
-        <main className={`flex-grow ${!isSpecialPage ? 'pt-16' : ''}`}>
-          <Router />
-        </main>
-        {!isSpecialPage && <Footer />}
-        <Toaster />
-      </div>
+      <CartProvider>
+        <div className="flex flex-col min-h-screen">
+          {!isSpecialPage && <MaintenanceBanner />}
+          {!isSpecialPage && <Header />}
+          <main className={`flex-grow ${!isSpecialPage ? 'pt-16' : ''}`}>
+            <Router />
+          </main>
+          {!isSpecialPage && <Footer />}
+          <Toaster />
+        </div>
+      </CartProvider>
     </TooltipProvider>
   );
 }
