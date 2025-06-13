@@ -150,8 +150,8 @@ export default function ProductDetail() {
   // Determine if this is a retail product (not an event)
   const isRetailProduct = !product?.tags?.includes('event') && product?.product_type !== 'Event Registration';
   
-  // Check availability using correct Shopify property
-  const isInStock = currentVariant?.available === true;
+  // Check availability using correct Shopify property - fix for "Out of Stock" issue
+  const isInStock = currentVariant?.available !== false && (currentVariant?.inventory_quantity > 0 || currentVariant?.inventory_quantity === undefined);
   
   // Get current display image
   const displayImage = product?.images?.[currentImage] || product?.images?.[0];
@@ -284,21 +284,21 @@ export default function ProductDetail() {
                 />
               )}
 
-              {/* Product Options */}
+              {/* Product Options - Enhanced for Shopify Integration */}
               {product?.options && product.options.length > 0 && (
-                <div className="space-y-4">
+                <div className="space-y-4 md:space-y-6">
                   {product.options.map((option) => (
                     <div key={option.name}>
-                      <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3">{option.name}</h3>
-                      <div className="flex flex-wrap gap-2">
+                      <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3 text-white">{option.name}</h3>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
                         {option.values.map((value) => (
                           <button
                             key={value}
                             onClick={() => handleOptionChange(option.name, value)}
-                            className={`px-3 py-2 md:px-4 rounded-lg border transition-colors text-sm md:text-base ${
+                            className={`px-2 py-2 md:px-3 md:py-2 lg:px-4 lg:py-3 rounded-lg border transition-all duration-200 text-xs sm:text-sm md:text-base font-medium ${
                               selectedOptions[option.name] === value
-                                ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                                : 'border-gray-700 hover:border-gray-600 text-gray-300'
+                                ? 'border-blue-500 bg-blue-500/20 text-blue-300 shadow-lg shadow-blue-500/25'
+                                : 'border-gray-600 hover:border-gray-500 text-gray-300 hover:bg-gray-800/50'
                             }`}
                           >
                             {value}
@@ -307,6 +307,28 @@ export default function ProductDetail() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Shipping and Care Information for Shirts/Hats */}
+              {(product?.title?.toLowerCase().includes('shirt') ||
+                product?.title?.toLowerCase().includes('tee') ||
+                product?.title?.toLowerCase().includes('heavyweight') ||
+                product?.title?.toLowerCase().includes('cap') ||
+                product?.title?.toLowerCase().includes('hat')) && (
+                <div className="space-y-3 bg-gray-900/50 rounded-lg p-4 md:p-6">
+                  <div className="flex items-center gap-2 text-blue-300">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-sm md:text-base font-medium">Ships starting June 25th</span>
+                  </div>
+                  {(product?.title?.toLowerCase().includes('shirt') ||
+                    product?.title?.toLowerCase().includes('tee') ||
+                    product?.title?.toLowerCase().includes('heavyweight')) && (
+                    <div className="flex items-center gap-2 text-green-300">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span className="text-sm md:text-base font-medium">Air dry recommended for best results</span>
+                    </div>
+                  )}
                 </div>
               )}
 

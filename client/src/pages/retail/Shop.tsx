@@ -2,8 +2,6 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { ShoppingCart, Star, ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -31,23 +29,6 @@ interface Product {
 }
 
 function ProductCard({ product }: { product: Product }) {
-  // Always call useState at the top level with a safe default
-  const [selectedVariant, setSelectedVariant] = useState(() => 
-    product.variants && product.variants.length > 0 ? product.variants[0] : null
-  );
-  
-  // Check if this is a shirt/apparel product that needs size/color selection
-  const isApparelProduct = product.title.toLowerCase().includes('shirt') || 
-                          product.title.toLowerCase().includes('tee') ||
-                          product.title.toLowerCase().includes('t-shirt') ||
-                          product.title.toLowerCase().includes('hoodie') ||
-                          product.title.toLowerCase().includes('jacket') ||
-                          product.title.toLowerCase().includes('pullover') ||
-                          product.title.toLowerCase().includes('heavyweight') ||
-                          product.title.toLowerCase().includes('cap') ||
-                          product.title.toLowerCase().includes('hat') ||
-                          product.title.toLowerCase().includes('apparel');
-  
   // Check if this product needs shipping notice
   const needsShippingNotice = product.title.toLowerCase().includes('shirt') || 
                              product.title.toLowerCase().includes('tee') ||
@@ -60,46 +41,8 @@ function ProductCard({ product }: { product: Product }) {
                            product.title.toLowerCase().includes('tee') ||
                            product.title.toLowerCase().includes('heavyweight');
   
-  // Extract unique sizes and colors from variants - moved outside conditional to avoid hook issues
-  const sizeOptions: string[] = [];
-  const colorOptions: string[] = [];
-  
-  if (product.variants && product.variants.length > 0) {
-    product.variants.forEach(v => {
-      const title = (v.title || '').toLowerCase();
-      
-      // Extract size - handle common formats like "S", "M", "L", "XL", "XXL", "Small", "Medium", etc.
-      if (title.includes('xs') || title.includes('x-small') || title === 'xs') sizeOptions.push('XS');
-      else if ((title.includes('small') && !title.includes('x-small')) || title === 's') sizeOptions.push('S');
-      else if (title.includes('medium') || title.includes(' m ') || title === 'm' || title.includes('md')) sizeOptions.push('M');
-      else if (title.includes('large') && !title.includes('x-large') && !title.includes('xx-large') || title === 'l') sizeOptions.push('L');
-      else if (title.includes('x-large') || title.includes('xl') || title === 'xl') sizeOptions.push('XL');
-      else if (title.includes('xx-large') || title.includes('2xl') || title === 'xxl') sizeOptions.push('XXL');
-      else if (title.includes('3xl') || title.includes('xxxl')) sizeOptions.push('3XL');
-      
-      // Extract color - handle more color variations
-      if (title.includes('black') || title.includes('blk')) colorOptions.push('Black');
-      else if (title.includes('white') || title.includes('wht')) colorOptions.push('White');
-      else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
-      else if (title.includes('blue') || title.includes('blu')) colorOptions.push('Blue');
-      else if (title.includes('red') || title.includes('crimson')) colorOptions.push('Red');
-      else if (title.includes('green') || title.includes('grn')) colorOptions.push('Green');
-      else if (title.includes('navy')) colorOptions.push('Navy');
-      else if (title.includes('orange') || title.includes('org')) colorOptions.push('Orange');
-      else if (title.includes('purple') || title.includes('purp')) colorOptions.push('Purple');
-      else if (title.includes('yellow') || title.includes('gold')) colorOptions.push('Yellow');
-      else if (title.includes('pink')) colorOptions.push('Pink');
-      else if (title.includes('brown')) colorOptions.push('Brown');
-      else if (title.includes('tan') || title.includes('beige')) colorOptions.push('Tan');
-      else if (title.includes('mint')) colorOptions.push('Mint');
-    });
-  }
-  
-  const sizes = [...new Set(sizeOptions)];
-  const colors = [...new Set(colorOptions)];
-  
   // Handle both Shopify formats: "29.99" and "$29.99"
-  const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
+  const priceStr = product.variants?.[0]?.price || "0";
   const price = parseFloat(typeof priceStr === 'string' ? priceStr.replace('$', '') : String(priceStr).replace('$', '')) || 0;
   const imageUrl = product.images?.[0]?.src;
   
@@ -155,52 +98,7 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
         
-        {/* Size and Color Selection for Apparel */}
-        {isApparelProduct && (sizes.length > 0 || colors.length > 0) && (
-          <div className="mb-4 space-y-3">
-            {sizes.length > 0 && (
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Size</label>
-                <Select onValueChange={(value) => {
-                  const variant = product.variants?.find(v => 
-                    v.title.toLowerCase().includes(value.toLowerCase())
-                  );
-                  if (variant) setSelectedVariant(variant);
-                }}>
-                  <SelectTrigger className="w-full bg-gray-800 border-gray-600 text-white">
-                    <SelectValue placeholder="Select size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sizes.map((size, index) => (
-                      <SelectItem key={`size-${index}`} value={size}>{size}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-            
-            {colors.length > 0 && (
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Color</label>
-                <Select onValueChange={(value) => {
-                  const variant = product.variants?.find(v => 
-                    v.title.toLowerCase().includes(value.toLowerCase())
-                  );
-                  if (variant) setSelectedVariant(variant);
-                }}>
-                  <SelectTrigger className="w-full bg-gray-800 border-gray-600 text-white">
-                    <SelectValue placeholder="Select color" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color, index) => (
-                      <SelectItem key={`color-${index}`} value={color}>{color}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-        )}
+
         
         {/* Product Information Messages */}
         {(needsShippingNotice || needsAirDryNotice) && (
