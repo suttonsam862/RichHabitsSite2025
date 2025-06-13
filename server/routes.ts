@@ -871,22 +871,15 @@ export function setupRoutes(app: Express): void {
       let amount: number;
 
       try {
-        // CRITICAL FIX: Map event slug back to numeric ID for pricing calculation - NO FALLBACKS
-        const eventSlugToIdMap: Record<string, number> = {
-          'summer-wrestling-camp-2025': 1,
-          'recruiting-showcase-2025': 2, 
-          'technique-clinic-advanced': 3
-        };
-        
-        const numericEventId = eventSlugToIdMap[event.slug];
-        
-        // CRITICAL: Reject payment if event slug is not mapped
-        if (!numericEventId) {
-          console.error(`CRITICAL: Event slug '${event.slug}' not found in pricing map for payment intent creation`);
+        // CRITICAL SECURITY: Only process payments for events that exist in database with valid numeric IDs
+        if (!event.id || isNaN(parseInt(event.id))) {
+          console.error(`CRITICAL SECURITY: Event missing valid numeric ID - eventId: ${eventId}, event.id: ${event.id}`);
           return res.status(400).json({
-            error: `Event '${event.slug}' is not configured for payment processing`
+            error: 'Event is not configured for payment processing - missing valid ID'
           });
         }
+        
+        const numericEventId = parseInt(event.id);
         
         if (registrationType === 'team') {
           // Calculate team pricing
@@ -913,21 +906,92 @@ export function setupRoutes(app: Express): void {
         });
       }
 
-      // Import Stripe functionality
-      const { createPaymentIntent } = await import('./stripe.js');
-      
-      // Create payment intent using existing Stripe logic
-      const mockReq = {
-        ...req,
-        params: { eventSlug: event.slug },
-        body: {
-          ...req.body,
-          option,
-          discountedAmount: discountedAmount !== null && discountedAmount !== undefined ? discountedAmount : undefined
+      // CRITICAL SECURITY: Create payment intent directly with validated event data - NO MOCK REQUESTS
+      try {
+        // Validate required metadata fields are present
+        const customerInfo = req.body;
+        
+        if (!event.id || !event.title) {
+          console.error('CRITICAL: Missing event data for PaymentIntent creation:', { eventId: event.id, eventTitle: event.title });
+          return res.status(400).json({
+            error: 'Event configuration error: missing event ID or title'
+          });
         }
-      };
+        
+        if (!customerInfo.email) {
+          console.error('CRITICAL: Missing customer email for PaymentIntent creation');
+          return res.status(400).json({
+            error: 'Customer email is required for payment processing'
+          });
+        }
+        
+        if (!customerInfo.firstName || !customerInfo.lastName) {
+          console.error('CRITICAL: Missing customer name for PaymentIntent creation');
+          return res.status(400).json({
+            error: 'Customer first and last name are required for payment processing'
+          });
+        }
+        
+        // Create metadata with all registration fields - NO EMPTY FALLBACKS
+        const metadata: Record<string, string> = {
+          eventId: event.id.toString(),
+          eventName: event.title,
+          option,
+          firstName: customerInfo.firstName,
+          lastName: customerInfo.lastName,
+          contactName: customerInfo.contactName || `${customerInfo.firstName} ${customerInfo.lastName}`,
+          email: customerInfo.email,
+          phone: customerInfo.phone || '',
+          tShirtSize: customerInfo.tShirtSize || '',
+          grade: customerInfo.grade || '',
+          schoolName: customerInfo.schoolName || '',
+          clubName: customerInfo.clubName || '',
+          day1: (customerInfo.day1 === true || customerInfo.day1 === 'true') ? 'true' : 'false',
+          day2: (customerInfo.day2 === true || customerInfo.day2 === 'true') ? 'true' : 'false',
+          day3: (customerInfo.day3 === true || customerInfo.day3 === 'true') ? 'true' : 'false',
+        };
+        
+        // Import Stripe functionality
+        const { stripe } = await import('./stripe.js');
+        
+        // CRITICAL LOGGING: Log every PaymentIntent creation for tracking
+        console.log('🚨 PAYMENT INTENT CREATION LOG:');
+        console.log(`  Event ID: ${metadata.eventId}`);
+        console.log(`  Event Name: ${metadata.eventName}`);
+        console.log(`  Amount: $${amount/100} (${amount} cents)`);
+        console.log(`  Customer Email: ${metadata.email}`);
+        console.log(`  Customer Name: ${metadata.firstName} ${metadata.lastName}`);
+        console.log(`  Option: ${metadata.option}`);
+        console.log(`  Timestamp: ${new Date().toISOString()}`);
+        console.log('🚨 END PAYMENT INTENT CREATION LOG');
+        
+        // Create PaymentIntent directly with validated data
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount,
+          currency: 'usd',
+          metadata,
+          automatic_payment_methods: {
+            enabled: true,
+          },
+        });
 
-      await createPaymentIntent(mockReq, res);
+        const clientSecret = paymentIntent.client_secret;
+        
+        if (!clientSecret) {
+          throw new Error('Failed to get client secret from payment intent');
+        }
+        
+        res.json({
+          clientSecret,
+          amount: amount / 100, // Convert back to dollars for display
+        });
+        
+      } catch (stripeError) {
+        console.error('Stripe error creating payment intent:', stripeError);
+        return res.status(400).json({
+          error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe',
+        });
+      }
 
     } catch (error) {
       console.error("Payment intent creation error:", error);

@@ -30,7 +30,7 @@ if (secretIsLive !== publishableIsLive) {
 
 // Initialize Stripe with the secret key
 // Using the latest API version and enabling live mode 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
   apiVersion: '2025-05-28.basil'
 });
