@@ -379,84 +379,115 @@ export class DatabaseStorage implements IStorage {
 
   // Cart methods
   async addToCart(cartItem: CartItemInsert): Promise<CartItem> {
-    // Check if item already exists in cart
-    const existingItem = await db
-      .select()
-      .from(cartItems)
-      .where(and(
-        eq(cartItems.sessionId, cartItem.sessionId),
-        eq(cartItems.shopifyVariantId, cartItem.shopifyVariantId)
-      ))
-      .limit(1);
+    try {
+      // Check if item already exists in cart
+      const existingItem = await db
+        .select()
+        .from(cartItems)
+        .where(and(
+          eq(cartItems.sessionId, cartItem.sessionId),
+          eq(cartItems.shopifyVariantId, cartItem.shopifyVariantId)
+        ))
+        .limit(1);
 
-    if (existingItem.length > 0) {
-      // Update quantity if item exists
-      const [updated] = await db
-        .update(cartItems)
-        .set({ 
-          quantity: existingItem[0].quantity + (cartItem.quantity || 1),
+      if (existingItem.length > 0) {
+        // Update quantity if item exists
+        const [updated] = await db
+          .update(cartItems)
+          .set({ 
+            quantity: existingItem[0].quantity + (cartItem.quantity || 1),
+            updatedAt: new Date()
+          })
+          .where(eq(cartItems.id, existingItem[0].id))
+          .returning();
+        return updated;
+      } else {
+        // Insert new item with proper validation
+        const insertData = {
+          ...cartItem,
+          addedAt: new Date(),
           updatedAt: new Date()
-        })
-        .where(eq(cartItems.id, existingItem[0].id))
-        .returning();
-      return updated;
-    } else {
-      // Insert new item
-      const [newItem] = await db
-        .insert(cartItems)
-        .values(cartItem)
-        .returning();
-      return newItem;
+        };
+        
+        const [newItem] = await db
+          .insert(cartItems)
+          .values(insertData)
+          .returning();
+        return newItem;
+      }
+    } catch (error) {
+      console.error('Error in addToCart:', error);
+      throw new Error('Failed to add item to cart');
     }
   }
 
   async getCartItems(sessionId: string, userId?: string): Promise<CartItem[]> {
-    const whereConditions = [eq(cartItems.sessionId, sessionId)];
-    
-    if (userId) {
-      whereConditions.push(eq(cartItems.userId, userId));
-    }
+    try {
+      const whereConditions = [eq(cartItems.sessionId, sessionId)];
+      
+      if (userId) {
+        whereConditions.push(eq(cartItems.userId, userId));
+      }
 
-    return await db
-      .select()
-      .from(cartItems)
-      .where(and(...whereConditions))
-      .orderBy(desc(cartItems.updatedAt));
+      return await db
+        .select()
+        .from(cartItems)
+        .where(and(...whereConditions))
+        .orderBy(desc(cartItems.updatedAt));
+    } catch (error) {
+      console.error('Error in getCartItems:', error);
+      return [];
+    }
   }
 
   async updateCartItem(id: string, quantity: number): Promise<CartItem | undefined> {
-    if (quantity <= 0) {
-      // Remove item if quantity is 0 or negative
-      await db.delete(cartItems).where(eq(cartItems.id, id));
+    try {
+      if (quantity <= 0) {
+        // Remove item if quantity is 0 or negative
+        await db.delete(cartItems).where(eq(cartItems.id, id));
+        return undefined;
+      }
+
+      const [updated] = await db
+        .update(cartItems)
+        .set({ quantity, updatedAt: new Date() })
+        .where(eq(cartItems.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error('Error in updateCartItem:', error);
       return undefined;
     }
-
-    const [updated] = await db
-      .update(cartItems)
-      .set({ quantity, updatedAt: new Date() })
-      .where(eq(cartItems.id, id))
-      .returning();
-    return updated;
   }
 
   async removeFromCart(id: string): Promise<boolean> {
-    const result = await db
-      .delete(cartItems)
-      .where(eq(cartItems.id, id));
-    return (result.rowCount || 0) > 0;
+    try {
+      const result = await db
+        .delete(cartItems)
+        .where(eq(cartItems.id, id));
+      return (result.rowCount || 0) > 0;
+    } catch (error) {
+      console.error('Error in removeFromCart:', error);
+      return false;
+    }
   }
 
   async clearCart(sessionId: string, userId?: string): Promise<boolean> {
-    const whereConditions = [eq(cartItems.sessionId, sessionId)];
-    
-    if (userId) {
-      whereConditions.push(eq(cartItems.userId, userId));
-    }
+    try {
+      const whereConditions = [eq(cartItems.sessionId, sessionId)];
+      
+      if (userId) {
+        whereConditions.push(eq(cartItems.userId, userId));
+      }
 
-    const result = await db
-      .delete(cartItems)
-      .where(and(...whereConditions));
-    return (result.rowCount || 0) > 0;
+      const result = await db
+        .delete(cartItems)
+        .where(and(...whereConditions));
+      return (result.rowCount || 0) > 0;
+    } catch (error) {
+      console.error('Error in clearCart:', error);
+      return false;
+    }
   }
 }
 

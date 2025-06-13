@@ -290,35 +290,22 @@ export function setupRetailRoutes(app: Express): void {
       const sessionId = req.sessionID;
       const userId = undefined; // Guest users only for now
 
-      // Check if item already exists in cart
-      const existingItems = await storage.getCartItems(sessionId, userId);
-      const existingItem = existingItems.find(cartItem => 
-        cartItem.shopifyVariantId === item.shopifyVariantId
-      );
-
-      let cartItem;
-      if (existingItem) {
-        // Update quantity of existing item
-        const newQuantity = existingItem.quantity + item.quantity;
-        cartItem = await storage.updateCartItem(existingItem.id, newQuantity);
-      } else {
-        // Add new item to cart
-        cartItem = await storage.addToCart({
-          sessionId,
-          userId,
-          shopifyProductId: item.shopifyProductId,
-          shopifyVariantId: item.shopifyVariantId,
-          productHandle: item.productHandle,
-          productTitle: item.productTitle,
-          variantTitle: item.variantTitle,
-          price: item.price.toString(),
-          compareAtPrice: item.compareAtPrice?.toString(),
-          quantity: item.quantity,
-          productImage: item.productImage,
-          productType: item.productType,
-          vendor: item.vendor
-        });
-      }
+      // Add new item to cart directly (simplified to prevent crashes)
+      const cartItem = await storage.addToCart({
+        sessionId,
+        userId,
+        shopifyProductId: item.shopifyProductId,
+        shopifyVariantId: item.shopifyVariantId,
+        productHandle: item.productHandle,
+        productTitle: item.productTitle,
+        variantTitle: item.variantTitle || '',
+        price: item.price.toString(),
+        compareAtPrice: item.compareAtPrice?.toString(),
+        quantity: item.quantity,
+        productImage: item.productImage,
+        productType: item.productType,
+        vendor: item.vendor
+      });
 
       res.json({
         success: true,
