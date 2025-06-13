@@ -1063,6 +1063,52 @@ export async function createShopifyDraftOrder(params: ShopifyDraftOrderParams) {
   }
 }
 
+// Create Shopify checkout for cart items
+export async function createShopifyCheckout(cartItems: any[]) {
+  try {
+    if (!SHOPIFY_ACCESS_TOKEN || !SHOPIFY_STORE_DOMAIN) {
+      console.error('Shopify credentials not configured');
+      return null;
+    }
+
+    // Build line items array from cart
+    const lineItems = cartItems.map(item => ({
+      variant_id: item.shopifyVariantId.replace('gid://shopify/ProductVariant/', ''),
+      quantity: item.quantity
+    }));
+
+    // Create checkout via Shopify Admin API
+    const checkoutPayload = {
+      checkout: {
+        line_items: lineItems
+      }
+    };
+
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/checkouts.json`,
+      {
+        method: 'POST',
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkoutPayload)
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify checkout creation failed: ${response.status}`);
+    }
+
+    const data = await response.json() as { checkout: { web_url: string } };
+    return data.checkout.web_url;
+
+  } catch (error) {
+    console.error('Error creating Shopify checkout:', error);
+    return null;
+  }
+}
+
 // Maps for Shopify product and variant IDs related to events
 // Note: These IDs need to be manually updated when the corresponding products are created in Shopify
 // For Storefront API, variant IDs need to be in Shopify Global ID format (gid://shopify/ProductVariant/{id})

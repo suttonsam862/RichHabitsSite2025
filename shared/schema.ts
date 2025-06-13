@@ -613,6 +613,10 @@ export const eventFeedbackRelations = relations(eventFeedback, ({ one }) => ({
 }));
 
 // =====================================================
+// SHOPPING CART SYSTEM (removing duplicate - using existing definition)
+// =====================================================
+
+// =====================================================
 // SITE SESSION TRACKING
 // =====================================================
 
