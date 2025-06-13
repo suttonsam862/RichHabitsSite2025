@@ -150,6 +150,9 @@ export default function ProductDetail() {
   // Determine if this is a retail product (not an event)
   const isRetailProduct = !product?.tags?.includes('event') && product?.product_type !== 'Event Registration';
   
+  // Check availability using correct Shopify property
+  const isInStock = currentVariant?.available === true;
+  
   // Get current display image
   const displayImage = product?.images?.[currentImage] || product?.images?.[0];
 
@@ -208,11 +211,11 @@ export default function ProductDetail() {
       </div>
 
       {/* Product Detail */}
-      <div className="py-16">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12">
+      <div className="py-8 md:py-16">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Product Images */}
-            <motion.div {...fadeIn}>
+            <motion.div {...fadeIn} className="order-1">
               <div className="aspect-square bg-gray-900 rounded-2xl overflow-hidden">
                 {displayImage ? (
                   <img 
@@ -227,24 +230,26 @@ export default function ProductDetail() {
                 )}
               </div>
               
-              {/* Thumbnail images */}
+              {/* Thumbnail images - Mobile: Horizontal scroll, Desktop: Grid */}
               {product?.images && product.images.length > 1 && (
-                <div className="flex gap-4 mt-4">
-                  {product.images.map((image: any, index: number) => (
-                    <button
-                      key={index} 
-                      onClick={() => setCurrentImage(index)}
-                      className={`w-20 h-20 bg-gray-900 rounded-lg overflow-hidden border-2 transition-colors ${
-                        currentImage === index ? 'border-blue-500' : 'border-transparent hover:border-gray-600'
-                      }`}
-                    >
-                      <img 
-                        src={image.src} 
-                        alt={`${product?.title || 'Product'} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
+                <div className="mt-4 overflow-x-auto">
+                  <div className="flex gap-2 md:gap-4 min-w-max md:min-w-0">
+                    {product.images.map((image: any, index: number) => (
+                      <button
+                        key={index} 
+                        onClick={() => setCurrentImage(index)}
+                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 bg-gray-900 rounded-lg overflow-hidden border-2 transition-colors ${
+                          currentImage === index ? 'border-blue-500' : 'border-transparent hover:border-gray-600'
+                        }`}
+                      >
+                        <img 
+                          src={image.src} 
+                          alt={`${product?.title || 'Product'} ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </motion.div>
@@ -254,12 +259,12 @@ export default function ProductDetail() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="space-y-6"
+              className="order-2 space-y-4 md:space-y-6"
             >
               <div>
-                <h1 className="text-4xl font-bold mb-4">{product?.title}</h1>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">{product?.title}</h1>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
+                  <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                     ${price.toFixed(2)}
                   </div>
                   <div className="flex items-center gap-1">
@@ -284,16 +289,16 @@ export default function ProductDetail() {
                 <div className="space-y-4">
                   {product.options.map((option) => (
                     <div key={option.name}>
-                      <h3 className="text-lg font-semibold mb-3">{option.name}</h3>
+                      <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3">{option.name}</h3>
                       <div className="flex flex-wrap gap-2">
                         {option.values.map((value) => (
                           <button
                             key={value}
                             onClick={() => handleOptionChange(option.name, value)}
-                            className={`px-4 py-2 rounded-lg border transition-colors ${
+                            className={`px-3 py-2 md:px-4 rounded-lg border transition-colors text-sm md:text-base ${
                               selectedOptions[option.name] === value
                                 ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                                : 'border-gray-700 hover:border-gray-600'
+                                : 'border-gray-700 hover:border-gray-600 text-gray-300'
                             }`}
                           >
                             {value}
@@ -309,13 +314,13 @@ export default function ProductDetail() {
               {currentVariant && (
                 <div className="flex items-center gap-2">
                   <div className={`w-3 h-3 rounded-full ${
-                    currentVariant.available ? 'bg-green-500' : 'bg-red-500'
+                    isInStock ? 'bg-green-500' : 'bg-red-500'
                   }`}></div>
                   <span className={`text-sm ${
-                    currentVariant.available ? 'text-green-400' : 'text-red-400'
+                    isInStock ? 'text-green-400' : 'text-red-400'
                   }`}>
-                    {currentVariant.available 
-                      ? `In Stock (${currentVariant.inventory_quantity || 0} available)` 
+                    {isInStock 
+                      ? `In Stock (${currentVariant.inventory_quantity || 'Available'})` 
                       : 'Out of Stock'
                     }
                   </span>
@@ -324,19 +329,21 @@ export default function ProductDetail() {
 
               {/* Quantity */}
               <div>
-                <h3 className="text-lg font-semibold mb-3">Quantity</h3>
+                <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Quantity</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border border-gray-700 rounded-lg">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-2 hover:bg-gray-800 rounded-l-lg"
+                      className="p-2 hover:bg-gray-800 rounded-l-lg transition-colors"
+                      disabled={quantity <= 1}
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="px-4 py-2 min-w-[60px] text-center">{quantity}</span>
+                    <span className="px-3 md:px-4 py-2 min-w-[50px] md:min-w-[60px] text-center text-sm md:text-base">{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="p-2 hover:bg-gray-800 rounded-r-lg"
+                      className="p-2 hover:bg-gray-800 rounded-r-lg transition-colors"
+                      disabled={!isInStock}
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -349,17 +356,17 @@ export default function ProductDetail() {
                 <div className="space-y-4">
                   <motion.button
                     onClick={handleAddToCart}
-                    disabled={!currentVariant?.available}
-                    className={`w-full font-semibold py-4 px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
-                      currentVariant?.available
+                    disabled={!isInStock}
+                    className={`w-full font-semibold py-3 md:py-4 px-6 md:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                      isInStock
                         ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white hover:shadow-lg'
                         : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                     }`}
-                    whileHover={currentVariant?.available ? { scale: 1.02 } : {}}
-                    whileTap={currentVariant?.available ? { scale: 0.98 } : {}}
+                    whileHover={isInStock ? { scale: 1.02 } : {}}
+                    whileTap={isInStock ? { scale: 0.98 } : {}}
                   >
                     <ShoppingCart className="w-5 h-5" />
-                    {currentVariant?.available 
+                    {isInStock 
                       ? `Add to Cart - $${(price * quantity).toFixed(2)}`
                       : 'Out of Stock'
                     }
@@ -372,7 +379,7 @@ export default function ProductDetail() {
                     </div>
                   )}
                   
-                  <div className="text-sm text-gray-400 text-center">
+                  <div className="text-xs md:text-sm text-gray-400 text-center">
                     Free shipping on orders over $75
                   </div>
                 </div>
@@ -383,7 +390,7 @@ export default function ProductDetail() {
                 <div className="space-y-4">
                   <Link
                     href={`/events/${product.handle}`}
-                    className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg"
+                    className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-semibold py-3 md:py-4 px-6 md:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg"
                   >
                     Register for Event - ${price.toFixed(2)}
                   </Link>
@@ -391,23 +398,23 @@ export default function ProductDetail() {
               )}
 
               {/* Product Features */}
-              <div className="border-t border-gray-800 pt-6">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
+              <div className="border-t border-gray-800 pt-4 md:pt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-xs md:text-sm">
+                  <div className="flex justify-between sm:block">
                     <strong className="text-blue-400">Quality:</strong>
-                    <p className="text-gray-400">Premium materials</p>
+                    <p className="text-gray-400 sm:mt-1">Premium materials</p>
                   </div>
-                  <div>
+                  <div className="flex justify-between sm:block">
                     <strong className="text-purple-400">Shipping:</strong>
-                    <p className="text-gray-400">2-3 business days</p>
+                    <p className="text-gray-400 sm:mt-1">2-3 business days</p>
                   </div>
-                  <div>
+                  <div className="flex justify-between sm:block">
                     <strong className="text-emerald-400">Returns:</strong>
-                    <p className="text-gray-400">30-day policy</p>
+                    <p className="text-gray-400 sm:mt-1">30-day policy</p>
                   </div>
-                  <div>
+                  <div className="flex justify-between sm:block">
                     <strong className="text-amber-400">Support:</strong>
-                    <p className="text-gray-400">24/7 customer care</p>
+                    <p className="text-gray-400 sm:mt-1">24/7 customer care</p>
                   </div>
                 </div>
               </div>

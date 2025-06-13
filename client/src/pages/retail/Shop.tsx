@@ -31,8 +31,10 @@ interface Product {
 }
 
 function ProductCard({ product }: { product: Product }) {
-  // Always call useState at the top level
-  const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0]);
+  // Always call useState at the top level with a safe default
+  const [selectedVariant, setSelectedVariant] = useState(() => 
+    product.variants && product.variants.length > 0 ? product.variants[0] : null
+  );
   
   // Check if this is a shirt/apparel product that needs size/color selection
   const isApparelProduct = product.title.toLowerCase().includes('shirt') || 
@@ -45,24 +47,26 @@ function ProductCard({ product }: { product: Product }) {
     const sizeOptions: string[] = [];
     const colorOptions: string[] = [];
     
-    product.variants?.forEach(v => {
-      const title = v.title.toLowerCase();
-      
-      // Extract size
-      if (title.includes('small') || title.includes('xs')) sizeOptions.push('XS');
-      else if (title.includes('medium') || title.includes('md')) sizeOptions.push('M');
-      else if (title.includes('large') && !title.includes('x-large')) sizeOptions.push('L');
-      else if (title.includes('x-large') || title.includes('xl')) sizeOptions.push('XL');
-      else if (title.includes('xx-large') || title.includes('2xl')) sizeOptions.push('XXL');
-      
-      // Extract color
-      if (title.includes('black')) colorOptions.push('Black');
-      else if (title.includes('white')) colorOptions.push('White');
-      else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
-      else if (title.includes('blue')) colorOptions.push('Blue');
-      else if (title.includes('red')) colorOptions.push('Red');
-      else if (title.includes('green')) colorOptions.push('Green');
-    });
+    if (product.variants && product.variants.length > 0) {
+      product.variants.forEach(v => {
+        const title = v.title.toLowerCase();
+        
+        // Extract size
+        if (title.includes('small') || title.includes('xs')) sizeOptions.push('XS');
+        else if (title.includes('medium') || title.includes('md')) sizeOptions.push('M');
+        else if (title.includes('large') && !title.includes('x-large')) sizeOptions.push('L');
+        else if (title.includes('x-large') || title.includes('xl')) sizeOptions.push('XL');
+        else if (title.includes('xx-large') || title.includes('2xl')) sizeOptions.push('XXL');
+        
+        // Extract color
+        if (title.includes('black')) colorOptions.push('Black');
+        else if (title.includes('white')) colorOptions.push('White');
+        else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
+        else if (title.includes('blue')) colorOptions.push('Blue');
+        else if (title.includes('red')) colorOptions.push('Red');
+        else if (title.includes('green')) colorOptions.push('Green');
+      });
+    }
     
     return {
       sizes: [...new Set(sizeOptions)],
