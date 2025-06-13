@@ -31,6 +31,7 @@ interface Product {
 }
 
 function ProductCard({ product }: { product: Product }) {
+  // Always call useState at the top level
   const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0]);
   
   // Check if this is a shirt/apparel product that needs size/color selection
@@ -39,31 +40,35 @@ function ProductCard({ product }: { product: Product }) {
                           product.title.toLowerCase().includes('jacket') ||
                           product.title.toLowerCase().includes('pullover');
   
-  // Extract unique sizes and colors from variants
-  const sizeOptions: string[] = [];
-  const colorOptions: string[] = [];
-  
-  product.variants?.forEach(v => {
-    const title = v.title.toLowerCase();
+  // Extract unique sizes and colors from variants - moved to useMemo equivalent
+  const { sizes, colors } = (() => {
+    const sizeOptions: string[] = [];
+    const colorOptions: string[] = [];
     
-    // Extract size
-    if (title.includes('small') || title.includes('xs')) sizeOptions.push('XS');
-    else if (title.includes('medium') || title.includes('md')) sizeOptions.push('M');
-    else if (title.includes('large') && !title.includes('x-large')) sizeOptions.push('L');
-    else if (title.includes('x-large') || title.includes('xl')) sizeOptions.push('XL');
-    else if (title.includes('xx-large') || title.includes('2xl')) sizeOptions.push('XXL');
+    product.variants?.forEach(v => {
+      const title = v.title.toLowerCase();
+      
+      // Extract size
+      if (title.includes('small') || title.includes('xs')) sizeOptions.push('XS');
+      else if (title.includes('medium') || title.includes('md')) sizeOptions.push('M');
+      else if (title.includes('large') && !title.includes('x-large')) sizeOptions.push('L');
+      else if (title.includes('x-large') || title.includes('xl')) sizeOptions.push('XL');
+      else if (title.includes('xx-large') || title.includes('2xl')) sizeOptions.push('XXL');
+      
+      // Extract color
+      if (title.includes('black')) colorOptions.push('Black');
+      else if (title.includes('white')) colorOptions.push('White');
+      else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
+      else if (title.includes('blue')) colorOptions.push('Blue');
+      else if (title.includes('red')) colorOptions.push('Red');
+      else if (title.includes('green')) colorOptions.push('Green');
+    });
     
-    // Extract color
-    if (title.includes('black')) colorOptions.push('Black');
-    else if (title.includes('white')) colorOptions.push('White');
-    else if (title.includes('gray') || title.includes('grey')) colorOptions.push('Gray');
-    else if (title.includes('blue')) colorOptions.push('Blue');
-    else if (title.includes('red')) colorOptions.push('Red');
-    else if (title.includes('green')) colorOptions.push('Green');
-  });
-  
-  const sizes = [...new Set(sizeOptions)];
-  const colors = [...new Set(colorOptions)];
+    return {
+      sizes: [...new Set(sizeOptions)],
+      colors: [...new Set(colorOptions)]
+    };
+  })();
   
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
