@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -38,38 +39,52 @@ export function Header() {
           />
         </Link>
 
-        <nav>
-          <ul className="flex space-x-8">
-            {[
-              { path: '/', label: 'Home' },
-              { path: '/events', label: 'Events' },
-              { path: '/shop', label: 'Shop' },
-              { path: '/custom-apparel', label: 'Custom Apparel' },
-              { path: '/contact', label: 'Contact' }
-            ].map(({ path, label }) => (
-              <li key={path}>
-                <Link href={path}>
-                  <motion.span
-                    className={`cursor-pointer relative ${
-                      scrolled ? 'text-gray-800' : 'text-gray-800'
-                    } ${location === path ? 'font-medium' : ''}`}
-                    style={{ fontFamily: "'Sanchez', serif" }}
-                    whileHover={{ color: '#0369a1' }} // subtle sky blue on hover
-                    transition={{ duration: 0.2 }}
-                  >
-                    {label}
-                    {location === path && (
-                      <motion.span 
-                        className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-200 opacity-70"
-                        layoutId="underline"
-                      />
-                    )}
-                  </motion.span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex items-center space-x-6">
+          <nav>
+            <ul className="flex space-x-8">
+              {[
+                { path: '/', label: 'Home' },
+                { path: '/events', label: 'Events' },
+                { path: '/shop', label: 'Shop' },
+                { path: '/custom-apparel', label: 'Custom Apparel' },
+                { path: '/contact', label: 'Contact' }
+              ].map(({ path, label }) => (
+                <li key={path}>
+                  <Link href={path}>
+                    <motion.span
+                      className={`cursor-pointer relative font-bold ${
+                        scrolled ? 'text-gray-800' : 'text-gray-800'
+                      } ${location === path ? 'font-bold' : ''}`}
+                      style={{ fontFamily: "'Poppins', sans-serif" }}
+                      whileHover={{ color: '#0369a1' }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {label}
+                      {location === path && (
+                        <motion.span 
+                          className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-200 opacity-70"
+                          layoutId="underline"
+                        />
+                      )}
+                    </motion.span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          
+          <motion.button
+            className={`p-2 rounded-full transition-all duration-300 ${
+              scrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-800 hover:bg-white/20'
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            aria-label="Shopping Cart"
+          >
+            <ShoppingCart size={20} />
+          </motion.button>
+        </div>
       </div>
       {/* Subtle sky accent line */}
       <div className={`absolute bottom-0 left-0 w-full h-px bg-sky-200 opacity-30 ${scrolled ? 'opacity-100' : 'opacity-30'}`}></div>
