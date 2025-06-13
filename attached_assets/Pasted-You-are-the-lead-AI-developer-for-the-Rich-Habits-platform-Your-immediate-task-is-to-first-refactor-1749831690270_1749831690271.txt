@@ -1,0 +1,104 @@
+You are the lead AI developer for the Rich Habits platform. Your immediate task is to first refactor the codebase to better align with the company’s structure: retail (Shopify) and event registration (Stripe + internal DB).
+
+---
+
+## 🧱 PHASE 1 – REFACTOR CODEBASE FOR BUSINESS LOGIC
+
+Reorganize the codebase for clarity and future scalability by:
+
+✅ 1. Directory Structure
+- Group all **retail** logic under `/retail` or `/shopify` folders:
+  - Product display components
+  - Cart context and page
+  - Shopify API integrations
+  - Retail-only checkout
+- Group all **event registration** logic under `/events`:
+  - Registration forms
+  - Payment creation
+  - Webhook handlers
+  - Stripe intent metadata and validations
+- Group **shared systems** (auth, UI components, utils, DB, etc.)
+
+✅ 2. Server File Cleanups
+- Extract event registration routes into `server/routes/events.ts`
+- Extract retail cart + checkout routes into `server/routes/retail.ts`
+- Remove duplicated fallback logic or unclear ID mappings
+
+✅ 3. Improve File Naming & Route Definitions
+- Ensure routes like `/shop/:handle` and `/register/:slug` are clearly defined and documented
+- Add comments to clarify which routes support Shopify vs Stripe
+
+✅ 4. Global UX Consistency
+- Centralize `document.title` handling
+- Standardize toast feedback (success, errors, empty cart, etc.)
+- Ensure context providers (auth, cart) are wrapped once at the app root
+
+---
+
+## 🛠️ PHASE 2 – IMPLEMENT ALL FLAGGED FIXES FROM AUDIT
+
+Address the following flagged issues:
+
+✅ 1. **Remove ALL fallback logic**
+- Eliminate `eventSlugToIdMap || 1` or any use of fallback event names
+- Ensure all pricing, payment, and registration logic relies on real event records
+
+✅ 2. **Fix Product Detail Routing**
+- Route should be `/shop/:handle` (not `/shop/product/:handle`)
+- Match `<Link>` targets to the correct route
+- Confirm `/shop/:handle` dynamically loads the product with correct image and pricing
+
+✅ 3. **Implement Product Detail Routing**
+- Add a `<Route path="/shop/:handle" component={ProductDetail} />` if not already present
+
+✅ 4. **Fix Cart Page Link and Button**
+- Fix “Continue Shopping” link on `/cart` to point to `/shop` (not `/products`)
+- Ensure the cart badge reflects accurate item count in header
+
+✅ 5. **Fix Cart Checkout Endpoint**
+- Ensure POST `/api/cart/checkout` creates a valid Shopify checkout or draft order
+- Validate variant IDs and quantities
+- Return a working `checkoutUrl`
+
+✅ 6. **Variant Image Switching**
+- Ensure selecting a variant (e.g., color) updates the main product image
+- Fallback to first product image if variant has none
+- Use Shopify’s `variant.image` properly
+
+✅ 7. **Remove Unused/Mock Event Logic**
+- Delete any use of `mockEvent`, `fakeEvent`, or `defaultEventName`
+- Log and reject any payment that lacks a verified `eventId` in the DB
+
+✅ 8. **User Management Panel**
+- If missing, implement an `/admin/users` view
+- Include buttons: Edit, View, Reset Password (functional)
+- Ensure list loads via JWT auth, not session
+- Secure API with proper auth middleware
+
+✅ 9. **Enable JWT Auth**
+- Issue JWT on login
+- Store token securely
+- Protect all admin routes using Authorization headers
+
+✅ 10. **Confirm All Stripe Payments are Secure**
+- Ensure webhook fails if eventId or registrationId is missing
+- Confirm `shopifyOrderId` is stored for all event payments
+- Ensure duplicate webhooks are ignored (idempotent)
+
+---
+
+## 💾 AFTER FIXES
+- Confirm `/shop` shows retail products with working add-to-cart
+- Confirm `/cart` shows accurate cart and performs checkout
+- Confirm `/register/:slug` leads to event registration and triggers real payment + order
+- Confirm Stripe charges are tied to actual event IDs and metadata
+- Confirm Shopify draft orders are created with correct product/variant details
+
+---
+
+Start by:
+1. Refactoring the server routes into `/routes/events.ts` and `/routes/retail.ts`
+2. Removing fallback `eventId || 1` from all pricing/payment functions
+3. Updating router to support `/shop/:handle` and dynamic product loading
+
+Then proceed to fix all flagged items above.
