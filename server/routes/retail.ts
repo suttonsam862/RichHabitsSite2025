@@ -1,6 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
-import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle } from "../shopify.js";
+import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts } from "../shopify.js";
 
 // Cart item validation schema
 const cartItemSchema = z.object({
@@ -100,8 +100,8 @@ export function setupRetailRoutes(app: Express): void {
   // Shopify Products endpoints
   app.get("/api/products", async (req: Request, res: Response) => {
     try {
-      // Get all products from the main collection
-      const products = await getCollectionProducts('all');
+      // Get all products directly from Shopify
+      const products = await listProducts();
       res.json(products);
     } catch (error) {
       console.error("Failed to fetch products:", error);
@@ -139,7 +139,7 @@ export function setupRetailRoutes(app: Express): void {
   // Shop-prefixed product routes for frontend compatibility
   app.get("/api/shop/products", async (req: Request, res: Response) => {
     try {
-      const products = await getCollectionProducts('all');
+      const products = await listProducts();
       res.json(products);
     } catch (error) {
       console.error("Failed to fetch products:", error);

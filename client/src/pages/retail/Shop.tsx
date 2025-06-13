@@ -93,16 +93,9 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function Shop() {
-  const { data: collection, isLoading: collectionLoading } = useQuery({
-    queryKey: ['/api/shop/collections/limited-time-clothing']
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['/api/shop/products']
   });
-
-  const { data: products = [], isLoading: productsLoading } = useQuery({
-    queryKey: ['/api/shop/collections/limited-time-clothing/products'],
-    enabled: !!collection
-  });
-
-  const isLoading = collectionLoading || productsLoading;
 
   return (
     <div className="min-h-screen bg-black text-white">
