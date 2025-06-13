@@ -283,12 +283,12 @@ export function setupRetailRoutes(app: Express): void {
       const itemData = validationResult.data;
       
       // Initialize cart if not exists
-      if (!req.session.cart) {
-        req.session.cart = [];
+      if (!(req.session as any).cart) {
+        (req.session as any).cart = [];
       }
 
       // Check if item already exists (same product + variant)
-      const existingItemIndex = req.session.cart.findIndex((item: any) => 
+      const existingItemIndex = (req.session as any).cart.findIndex((item: any) => 
         item.shopifyProductId === itemData.shopifyProductId && 
         item.shopifyVariantId === itemData.shopifyVariantId
       );
@@ -312,11 +312,11 @@ export function setupRetailRoutes(app: Express): void {
 
       if (existingItemIndex >= 0) {
         // Update existing item quantity
-        req.session.cart[existingItemIndex].quantity += itemData.quantity;
-        req.session.cart[existingItemIndex].updatedAt = new Date().toISOString();
+        (req.session as any).cart[existingItemIndex].quantity += itemData.quantity;
+        (req.session as any).cart[existingItemIndex].updatedAt = new Date().toISOString();
       } else {
         // Add new item
-        req.session.cart.push(cartItem);
+        (req.session as any).cart.push(cartItem);
       }
 
       res.json({

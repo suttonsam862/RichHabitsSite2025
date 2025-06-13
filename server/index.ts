@@ -35,7 +35,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET || 'rich-habits-dev-secret-key',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Enable sessions for anonymous users (needed for cart)
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,

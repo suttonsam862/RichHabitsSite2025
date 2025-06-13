@@ -156,25 +156,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const queryClient = useQueryClient();
 
-  // Fetch cart data from localStorage instead of API for immediate functionality
+  // Fetch cart data from server API
   const { data: cartData, isLoading } = useQuery({
     queryKey: ['/api/cart'],
-    queryFn: () => {
-      // Get cart from localStorage for immediate functionality
-      const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const subtotal = localCart.reduce((sum: number, item: any) => sum + (parseFloat(item.price) * item.quantity), 0);
-      const itemCount = localCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
-      
-      return {
-        success: true,
-        cartItems: localCart,
-        subtotal: subtotal.toFixed(2),
-        itemCount
-      };
-    },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,
-    refetchInterval: 1000, // Refresh every second to catch localStorage changes
   });
 
   // Update state when cart data changes
@@ -199,50 +185,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: isLoading });
   }, [isLoading]);
 
-  // Add to cart mutation - handles duplicate variants properly
+  // Add to cart mutation - uses server API
   const addToCartMutation = useMutation({
     mutationFn: async (product: any) => {
-      const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const response = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
       
-      // Check if item already exists (same product + variant)
-      const existingItemIndex = existingCart.findIndex((item: any) => 
-        item.shopifyProductId === product.shopifyProductId && 
-        item.shopifyVariantId === product.shopifyVariantId
-      );
-      
-      if (existingItemIndex >= 0) {
-        // Update existing item quantity
-        existingCart[existingItemIndex].quantity += product.quantity || 1;
-        existingCart[existingItemIndex].updatedAt = new Date().toISOString();
-      } else {
-        // Add new item
-        const cartItem = {
-          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          sessionId: 'local-session',
-          userId: undefined,
-          shopifyProductId: product.shopifyProductId,
-          shopifyVariantId: product.shopifyVariantId,
-          productHandle: product.productHandle,
-          productTitle: product.productTitle,
-          variantTitle: product.variantTitle || 'Default',
-          price: product.price.toString(),
-          compareAtPrice: product.compareAtPrice?.toString(),
-          quantity: product.quantity || 1,
-          productImage: product.productImage,
-          productType: product.productType,
-          vendor: product.vendor,
-          available: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        existingCart.push(cartItem);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to add item to cart');
       }
       
-      localStorage.setItem('cart', JSON.stringify(existingCart));
-      return { success: true, cart: existingCart };
+      return response.json();
     },
     onSuccess: () => {
-      // Invalidate queries to refresh cart data
       queryClient.invalidateQueries({ queryKey: ['/api/cart'] });
     },
   });
