@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { ArrowLeft, ShoppingCart, Star, Minus, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useCart } from "../contexts/CartContext";
-import { useToast } from "../hooks/use-toast";
+import { useCart } from "../../contexts/CartContext";
+import { useToast } from "../../hooks/use-toast";
 
 interface ProductVariant {
   id: string;

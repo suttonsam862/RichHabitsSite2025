@@ -130,7 +130,7 @@ export default function Cart() {
       <header className="border-b border-gray-800 py-6">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
-            <Link href="/products" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+            <Link href="/shop" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
               Continue Shopping
             </Link>
@@ -151,7 +151,7 @@ export default function Cart() {
             <h2 className="text-2xl font-semibold mb-4">Your cart is empty</h2>
             <p className="text-gray-400 mb-8">Add some products to get started</p>
             <Link
-              href="/products"
+              href="/shop"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 inline-block"
             >
               Shop Products

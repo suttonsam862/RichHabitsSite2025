@@ -6,19 +6,23 @@ import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { CartProvider } from "./contexts/CartContext";
 
-// Page imports
+// Page imports - organized by business logic
 import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Events from "./pages/EventsSimple";
-import EventDetail from "./pages/EventDetail";
-import EventRegistration from "./pages/EventRegistration";
-import TeamRegistration from "./pages/TeamRegistration";
-import StripeCheckout from "./pages/StripeCheckout";
 import CustomApparel from "./pages/CustomApparel";
 import Contact from "./pages/Contact";
-import Cart from "./pages/Cart";
 import NotFound from "./pages/not-found";
+
+// Retail pages (Shopify integration)
+import Shop from "./pages/retail/Shop";
+import ProductDetail from "./pages/retail/ProductDetail";
+import Cart from "./pages/retail/Cart";
+
+// Event pages (Stripe + internal DB)
+import Events from "./pages/events/EventsSimple";
+import EventDetail from "./pages/events/EventDetail";
+import EventRegistration from "./pages/events/EventRegistration";
+import TeamRegistration from "./pages/events/TeamRegistration";
+import StripeCheckout from "./pages/events/StripeCheckout";
 
 function Router() {
   return (
