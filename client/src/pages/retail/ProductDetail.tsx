@@ -307,6 +307,31 @@ export default function ProductDetail() {
                       </div>
                     </div>
                   ))}
+                  
+                  {/* Add Size options for shirts if not already present in Shopify options */}
+                  {(product?.title?.toLowerCase().includes('shirt') ||
+                    product?.title?.toLowerCase().includes('tee') ||
+                    product?.title?.toLowerCase().includes('heavyweight')) &&
+                    !product.options.some(opt => opt.name.toLowerCase().includes('size')) && (
+                    <div>
+                      <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3 text-white">Size</h3>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+                        {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                          <button
+                            key={size}
+                            onClick={() => handleOptionChange('Size', size)}
+                            className={`px-2 py-2 md:px-3 md:py-2 lg:px-4 lg:py-3 rounded-lg border transition-all duration-200 text-xs sm:text-sm md:text-base font-medium ${
+                              selectedOptions['Size'] === size
+                                ? 'border-blue-500 bg-blue-500/20 text-blue-300 shadow-lg shadow-blue-500/25'
+                                : 'border-gray-600 hover:border-gray-500 text-gray-300 hover:bg-gray-800/50'
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
