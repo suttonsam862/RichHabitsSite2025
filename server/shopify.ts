@@ -176,12 +176,18 @@ async function fetchCollectionProductsById(collectionId: string) {
       throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json() as { products: any[] };
+    const data = await response.json() as { products?: any[] };
+    
+    if (!data.products || !Array.isArray(data.products)) {
+      console.log('No products found in collection or invalid response structure');
+      return [];
+    }
+    
     console.log(`Found ${data.products.length} products in retail collection`);
     
     return data.products.map(product => ({
       ...product,
-      variants: product.variants.map((variant: any) => ({
+      variants: (product.variants || []).map((variant: any) => ({
         ...variant,
         inventory_quantity: variant.inventory_quantity || 0
       }))

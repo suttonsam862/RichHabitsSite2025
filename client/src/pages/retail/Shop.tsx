@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { ShoppingCart, Star, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -28,19 +30,42 @@ interface Product {
   }>;
 }
 
-interface Collection {
-  id: string;
-  handle: string;
-  title: string;
-  description?: string;
-}
-
 function ProductCard({ product }: { product: Product }) {
+  const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0]);
+  
+  // Check if this is a shirt/apparel product that needs size/color selection
+  const isApparelProduct = product.title.toLowerCase().includes('shirt') || 
+                          product.title.toLowerCase().includes('hoodie') ||
+                          product.title.toLowerCase().includes('jacket') ||
+                          product.title.toLowerCase().includes('pullover');
+  
+  // Extract unique sizes and colors from variants
+  const sizes = [...new Set(product.variants?.map(v => {
+    const title = v.title.toLowerCase();
+    if (title.includes('small') || title.includes('xs')) return 'XS';
+    if (title.includes('medium') || title.includes('md')) return 'M';
+    if (title.includes('large') && !title.includes('x-large')) return 'L';
+    if (title.includes('x-large') || title.includes('xl')) return 'XL';
+    if (title.includes('xx-large') || title.includes('2xl')) return 'XXL';
+    return null;
+  }).filter(Boolean))];
+  
+  const colors = [...new Set(product.variants?.map(v => {
+    const title = v.title.toLowerCase();
+    if (title.includes('black')) return 'Black';
+    if (title.includes('white')) return 'White';
+    if (title.includes('gray') || title.includes('grey')) return 'Gray';
+    if (title.includes('blue')) return 'Blue';
+    if (title.includes('red')) return 'Red';
+    if (title.includes('green')) return 'Green';
+    return null;
+  }).filter(Boolean))];
+  
   // Handle both Shopify formats: "29.99" and "$29.99"
-  const priceStr = product.variants?.[0]?.price || "0";
+  const priceStr = selectedVariant?.price || product.variants?.[0]?.price || "0";
   const price = parseFloat(priceStr.replace('$', '')) || 0;
   const imageUrl = product.images?.[0]?.src;
-  const inventoryQuantity = product.variants?.[0]?.inventory_quantity || 0;
+  const inventoryQuantity = selectedVariant?.inventory_quantity || 0;
   const isInStock = inventoryQuantity > 0;
 
   return (
@@ -91,6 +116,53 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
         
+        {/* Size and Color Selection for Apparel */}
+        {isApparelProduct && (sizes.length > 0 || colors.length > 0) && (
+          <div className="mb-4 space-y-3">
+            {sizes.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Size</label>
+                <Select onValueChange={(value) => {
+                  const variant = product.variants?.find(v => 
+                    v.title.toLowerCase().includes(value.toLowerCase())
+                  );
+                  if (variant) setSelectedVariant(variant);
+                }}>
+                  <SelectTrigger className="w-full bg-gray-800 border-gray-600 text-white">
+                    <SelectValue placeholder="Select size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sizes.map((size) => (
+                      <SelectItem key={size} value={size}>{size}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            {colors.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Color</label>
+                <Select onValueChange={(value) => {
+                  const variant = product.variants?.find(v => 
+                    v.title.toLowerCase().includes(value.toLowerCase())
+                  );
+                  if (variant) setSelectedVariant(variant);
+                }}>
+                  <SelectTrigger className="w-full bg-gray-800 border-gray-600 text-white">
+                    <SelectValue placeholder="Select color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colors.map((color) => (
+                      <SelectItem key={color} value={color}>{color}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Inventory Status */}
         <div className="mb-4">
           {isInStock ? (
@@ -123,16 +195,10 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function Shop() {
-  const { data: collections = [], isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ['/api/shop/collections']
-  });
-
-  // Get all products directly from the products endpoint to avoid hook issues
-  const { data: allProducts = [], isLoading: productsLoading } = useQuery<Product[]>({
+  // Get only retail collection products from the sales channel
+  const { data: retailProducts = [], isLoading } = useQuery<Product[]>({
     queryKey: ['/api/products']
   });
-
-  const isLoading = collectionsLoading || productsLoading;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -182,9 +248,9 @@ export default function Shop() {
               </motion.div>
 
               {/* Products Grid */}
-              {Array.isArray(allProducts) && allProducts.length > 0 ? (
+              {Array.isArray(retailProducts) && retailProducts.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {allProducts.map((product: Product, index: number) => (
+                  {retailProducts.map((product: Product, index: number) => (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}

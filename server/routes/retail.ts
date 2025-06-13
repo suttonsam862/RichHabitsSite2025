@@ -101,12 +101,12 @@ export function setupRetailRoutes(app: Express): void {
   // Shopify Products endpoints
   app.get("/api/products", async (req: Request, res: Response) => {
     try {
-      // Get all products directly from Shopify
-      const products = await listProducts();
+      // Get only retail collection products from sales channel
+      const products = await getProductsInSalesChannel();
       res.json(products);
     } catch (error) {
-      console.error("Failed to fetch products:", error);
-      res.status(500).json({ error: "Failed to fetch products" });
+      console.error("Failed to fetch retail collection products:", error);
+      res.status(500).json({ error: "Failed to fetch retail collection products" });
     }
   });
 
