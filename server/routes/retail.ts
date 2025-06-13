@@ -1,16 +1,21 @@
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
 import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts, getProductsInSalesChannel } from "../shopify.js";
+import { storage } from "../storage.js";
 
 // Cart item validation schema
-const cartItemSchema = z.object({
-  variantId: z.string().min(1, "Variant ID is required"),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
-  productHandle: z.string().optional(),
-  productTitle: z.string().optional(),
+const addToCartSchema = z.object({
+  shopifyProductId: z.string().min(1, "Product ID is required"),
+  shopifyVariantId: z.string().min(1, "Variant ID is required"),
+  productHandle: z.string().min(1, "Product handle is required"),
+  productTitle: z.string().min(1, "Product title is required"),
   variantTitle: z.string().optional(),
-  price: z.string().optional(),
-  image: z.string().optional()
+  price: z.number().min(0, "Price must be non-negative"),
+  compareAtPrice: z.number().optional(),
+  quantity: z.number().min(1, "Quantity must be at least 1").optional().default(1),
+  productImage: z.string().optional(),
+  productType: z.string().optional(),
+  vendor: z.string().optional()
 });
 
 // Cart checkout validation schema

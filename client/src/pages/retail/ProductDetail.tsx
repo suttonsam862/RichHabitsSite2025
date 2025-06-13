@@ -151,13 +151,13 @@ export default function ProductDetail() {
   const isRetailProduct = !product?.tags?.includes('event') && product?.product_type !== 'Event Registration';
   
   // Check availability using correct Shopify property - fix for "Out of Stock" issue
-  const isInStock = currentVariant?.available !== false && (currentVariant?.inventory_quantity > 0 || currentVariant?.inventory_quantity === undefined);
+  const isInStock = currentVariant?.available !== false && (currentVariant?.inventory_quantity === undefined || currentVariant?.inventory_quantity > 0);
   
   // Get current display image
   const displayImage = product?.images?.[currentImage] || product?.images?.[0];
 
   const handleAddToCart = async () => {
-    if (!currentVariant || !isRetailProduct) {
+    if (!isRetailProduct) {
       toast({
         title: "Cannot Add to Cart",
         description: "This item cannot be added to cart",
@@ -166,15 +166,57 @@ export default function ProductDetail() {
       return;
     }
 
+    // Ensure we have a valid variant selected
+    let variantToAdd = currentVariant;
+    
+    // If no variant is selected or we need to find one based on options, find the matching variant
+    if (!variantToAdd || Object.keys(selectedOptions).length > 0) {
+      variantToAdd = product?.variants.find(variant => {
+        return product.options.every((option, index) => {
+          const optionKey = `option${index + 1}` as keyof ProductVariant;
+          const selectedValue = selectedOptions[option.name];
+          return !selectedValue || variant[optionKey] === selectedValue;
+        });
+      }) || product?.variants[0];
+    }
+
+    if (!variantToAdd) {
+      toast({
+        title: "Selection Required",
+        description: "Please select all required options",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check stock for selected variant
+    const variantInStock = variantToAdd.available !== false && 
+                          (variantToAdd.inventory_quantity === undefined || variantToAdd.inventory_quantity > 0);
+    
+    if (!variantInStock) {
+      toast({
+        title: "Out of Stock",
+        description: "This variant is currently out of stock",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      // Create variant title from selected options
+      const selectedOptionsText = Object.entries(selectedOptions)
+        .map(([key, value]) => value)
+        .filter(Boolean)
+        .join(' / ') || variantToAdd.title;
+
       await addToCart({
         shopifyProductId: product.id,
-        shopifyVariantId: currentVariant.id,
+        shopifyVariantId: variantToAdd.id,
         productHandle: product.handle,
         productTitle: product.title,
-        variantTitle: currentVariant.title,
-        price: price,
-        compareAtPrice: compareAtPrice ?? undefined,
+        variantTitle: selectedOptionsText,
+        price: parseFloat(variantToAdd.price.replace('$', '')),
+        compareAtPrice: variantToAdd.compare_at_price ? parseFloat(variantToAdd.compare_at_price.replace('$', '')) : undefined,
         quantity: quantity,
         productImage: displayImage?.src || '',
         productType: product.product_type,
@@ -183,7 +225,7 @@ export default function ProductDetail() {
 
       toast({
         title: "Added to Cart",
-        description: `${quantity} x ${product?.title} (${currentVariant.title}) added to cart!`,
+        description: `${quantity} x ${product?.title} (${selectedOptionsText}) added to cart!`,
       });
     } catch (error) {
       console.error('Error adding to cart:', error);
