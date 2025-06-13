@@ -119,7 +119,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         });
       }
     } else {
-      // CRITICAL FIX: Remove fallback mapping, validate event exists in database
+      // CRITICAL FIX: Validate event exists and has valid ID
       if (!event.id) {
         console.error(`CRITICAL: Event missing ID - eventSlug: ${eventSlug}, event:`, event);
         return res.status(400).json({
@@ -127,29 +127,15 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
         });
       }
       
-      // Map event slug back to numeric ID for pricing calculation - NO FALLBACKS
-      const eventSlugToIdMap: Record<string, number> = {
-        'summer-wrestling-camp-2025': 1,
-        'recruiting-showcase-2025': 2, 
-        'technique-clinic-advanced': 3
-      };
-      
-      const numericEventId = eventSlugToIdMap[event.slug];
-      
-      // CRITICAL: If event slug is not mapped, reject the payment
-      if (!numericEventId) {
-        console.error(`CRITICAL: Event slug '${event.slug}' not found in pricing map. Available slugs:`, Object.keys(eventSlugToIdMap));
-        return res.status(400).json({
-          error: `Event '${event.slug}' is not configured for payment processing`
-        });
-      }
+      // Use the event ID directly from database - NO FALLBACK MAPPING
+      const eventId = parseInt(event.id);
       
       // Get calculated price only when no discount provided
-      amount = await getEventPrice(numericEventId, option, req.body.numberOfDays, req.body.selectedDates);
-      console.log(`💰 Using calculated base price: $${amount/100} (${amount} cents) for event ${numericEventId} (${option})`);
+      amount = await getEventPrice(eventId, option, req.body.numberOfDays, req.body.selectedDates);
+      console.log(`💰 Using calculated base price: $${amount/100} (${amount} cents) for event ${eventId} (${option})`);
       
       if (!amount || isNaN(amount) || amount <= 0) {
-        console.error(`CRITICAL: Invalid price calculated for event ${numericEventId}: ${amount}`);
+        console.error(`CRITICAL: Invalid price calculated for event ${eventId}: ${amount}`);
         return res.status(400).json({
           error: 'Could not determine price for the event'
         });
@@ -333,7 +319,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
     }
 
     // Get the event details from database
-    const event = await storage.getEvent(eventId);
+    const event = await storage.getEvent(eventId.toString());
     if (!event) {
       return res.status(404).json({ error: `Event with ID ${eventId} not found` });
     }
@@ -429,7 +415,6 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       grade: registrationData.grade || null,
       schoolName: registrationData.schoolName || null,
       clubName: registrationData.clubName || null,
-      // experience: registrationData.experience || null, // Field not available in current schema
       medicalReleaseAccepted: registrationData.medicalReleaseAccepted || true,
       registrationType: registrationData.registrationType || 'individual',
       paymentStatus: 'paid',
@@ -437,7 +422,9 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       gender: registrationData.gender || null,
       day1: registrationData.day1 || false,
       day2: registrationData.day2 || false,
-      day3: registrationData.day3 || false
+      day3: registrationData.day3 || false,
+      basePrice: (amount / 100).toString(),
+      finalPrice: (amount / 100).toString()
     };
 
     const completeRegistration = await storage.createEventRegistration(eventRegistrationData);
@@ -449,7 +436,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       lastName: registrationData.lastName,
       email: registrationData.email,
       eventName: event.title,
-      eventDates: event.date,
+      eventDates: event.startDate.toDateString(),
       eventLocation: event.location,
       registrationType: registrationData.registrationType,
       amount: (paymentIntent.amount / 100).toFixed(2), // Convert cents to dollars
@@ -717,15 +704,15 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           break;
         }
         
-        if (!eventName || eventName === 'Advanced Technique Clinic') {
-          console.error(`🚨 CRITICAL: Invalid or mock eventName in payment metadata: ${eventName}`);
+        if (!eventName) {
+          console.error(`🚨 CRITICAL: Missing eventName in payment metadata`);
           console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
           break;
         }
         
         // Additional safeguard: Verify event exists in database
         try {
-          const event = await storage.getEvent(eventId);
+          const event = await storage.getEvent(eventId.toString());
           if (!event) {
             console.error(`🚨 CRITICAL: Event with ID ${eventId} not found in database`);
             console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
@@ -749,7 +736,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         if (eventId && !isNaN(eventId)) {
           try {
             // Get the event details (already validated above)
-            const event = await storage.getEvent(eventId);
+            const event = await storage.getEvent(eventId.toString());
             
             // Get registration data - either from metadata or from database
             let registrationData: any;
@@ -777,15 +764,15 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
             // Extract full registration information
             const registration = {
               eventId: eventId,
-              firstName: registrationData.firstName || 'Not provided',
-              lastName: registrationData.lastName || 'Not provided',
-              contactName: registrationData.contactName || 'Not provided',
-              email: registrationData.email || 'Not provided',
-              phone: registrationData.phone || 'Not provided',
-              tShirtSize: registrationData.tShirtSize || 'Not provided',
-              grade: registrationData.grade || 'Not provided',
-              schoolName: registrationData.schoolName || 'Not provided',
-              clubName: registrationData.clubName || 'Not provided',
+              firstName: registrationData.firstName,
+              lastName: registrationData.lastName,
+              contactName: registrationData.contactName,
+              email: registrationData.email,
+              phone: registrationData.phone,
+              tShirtSize: registrationData.tShirtSize,
+              grade: registrationData.grade,
+              schoolName: registrationData.schoolName,
+              clubName: registrationData.clubName,
               registrationType: registrationData.registrationType || option,
               day1: registrationData.day1 === 'true' || registrationData.day1 === true,
               day2: registrationData.day2 === 'true' || registrationData.day2 === true,
