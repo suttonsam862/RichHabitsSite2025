@@ -122,44 +122,73 @@ export async function getLocations() {
 // Function to get products available on the sales channel (online store)
 export async function getProductsInSalesChannel() {
   try {
-    console.log('Fetching products from collections available on sales channel');
+    console.log('Fetching products from Retail Collection (sales channel)');
     
-    // Get all collections first
+    // Get all collections first to find the retail collection
     const collections = await listCollections();
+    console.log('Available collections:', collections.map(c => ({ title: c.title, handle: c.handle, id: c.id })));
     
-    // Get products from the "Retail Collection" which is included in sales channel
+    // Find the retail collection - it should be the one with 2 products based on your admin image
     const retailCollection = collections.find(collection => 
-      collection.title === 'Retail Collection' || 
-      collection.handle === 'retail-collection'
+      collection.title.toLowerCase().includes('retail')
     );
     
     if (!retailCollection) {
-      console.log('Retail Collection not found, falling back to all published products');
-      return await getAllProducts();
-    }
-    
-    console.log('Found Retail Collection, fetching its products');
-    
-    // Get products from the retail collection
-    try {
-      const products = await getCollectionProducts(retailCollection.handle);
-      console.log(`Found ${products.length} products in Retail Collection`);
+      console.log('Retail Collection not found by title, trying by handle patterns');
+      // Try common handle patterns for retail collection
+      const possibleRetailCollection = collections.find(collection => 
+        collection.handle === 'retail-collection' ||
+        collection.handle === 'limited-time-clothing' ||
+        collection.handle.includes('retail')
+      );
       
-      return products.map(product => ({
-        ...product,
-        variants: product.variants.map((variant: any) => ({
-          ...variant,
-          inventory_quantity: variant.inventory_quantity || 0
-        }))
-      }));
-    } catch (error) {
-      console.log('Error fetching collection products, falling back to all published products');
-      return await getAllProducts();
+      if (!possibleRetailCollection) {
+        console.log('No retail collection found, showing only published products');
+        return await getAllProducts();
+      }
+      
+      console.log(`Using collection: ${possibleRetailCollection.title} (${possibleRetailCollection.handle})`);
+      return await fetchCollectionProductsById(possibleRetailCollection.id);
     }
+    
+    console.log(`Found Retail Collection: ${retailCollection.title} (${retailCollection.handle})`);
+    return await fetchCollectionProductsById(retailCollection.id);
   } catch (error) {
     console.error('Error getting products from sales channel:', error);
-    // Fallback to all published products
     return await getAllProducts();
+  }
+}
+
+// Helper function to fetch products by collection ID
+async function fetchCollectionProductsById(collectionId: string) {
+  try {
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/collections/${collectionId}/products.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json() as { products: any[] };
+    console.log(`Found ${data.products.length} products in retail collection`);
+    
+    return data.products.map(product => ({
+      ...product,
+      variants: product.variants.map((variant: any) => ({
+        ...variant,
+        inventory_quantity: variant.inventory_quantity || 0
+      }))
+    }));
+  } catch (error) {
+    console.error('Error fetching collection products by ID:', error);
+    throw error;
   }
 }
 
