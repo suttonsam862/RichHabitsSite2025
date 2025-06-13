@@ -3,10 +3,10 @@ import { z } from "zod";
 import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts, getProductsInSalesChannel } from "../shopify.js";
 import { storage } from "../storage.js";
 
-// Cart item validation schema
+// Cart item validation schema - handles both string and numeric IDs from Shopify
 const addToCartSchema = z.object({
-  shopifyProductId: z.string().min(1, "Product ID is required"),
-  shopifyVariantId: z.string().min(1, "Variant ID is required"),
+  shopifyProductId: z.union([z.string(), z.number()]).transform(String),
+  shopifyVariantId: z.union([z.string(), z.number()]).transform(String),
   productHandle: z.string().min(1, "Product handle is required"),
   productTitle: z.string().min(1, "Product title is required"),
   variantTitle: z.string().optional(),

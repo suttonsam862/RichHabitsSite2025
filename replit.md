@@ -129,6 +129,7 @@ Rich Habits is a comprehensive e-commerce and event management platform for wres
 Changelog:
 - June 13, 2025. Initial setup
 - June 13, 2025. Fixed React hooks error and implemented complete add-to-cart functionality with localStorage-based storage, product card buttons, and cart page display
+- June 13, 2025. Fixed React hooks error in Shop component and implemented server-side cart functionality with session persistence, proper Shopify ID validation, and complete cart page integration
 
 ## User Preferences
 
