@@ -29,7 +29,7 @@ const cartCheckoutSchema = z.object({
  * All product browsing, cart management, and retail checkout functionality
  */
 export function setupRetailRoutes(app: Express): void {
-  // Shopify Collections endpoints
+  // Shopify Collections endpoints (with both /api/collections and /api/shop/collections for compatibility)
   app.get("/api/collections", async (req: Request, res: Response) => {
     try {
       const collections = await listCollections();
@@ -54,6 +54,40 @@ export function setupRetailRoutes(app: Express): void {
   });
 
   app.get("/api/collections/:handle/products", async (req: Request, res: Response) => {
+    try {
+      const products = await getCollectionProducts(req.params.handle);
+      res.json(products);
+    } catch (error) {
+      console.error("Failed to fetch collection products:", error);
+      res.status(500).json({ error: "Failed to fetch collection products" });
+    }
+  });
+
+  // Shop-prefixed routes for frontend compatibility
+  app.get("/api/shop/collections", async (req: Request, res: Response) => {
+    try {
+      const collections = await listCollections();
+      res.json(collections);
+    } catch (error) {
+      console.error("Failed to fetch collections:", error);
+      res.status(500).json({ error: "Failed to fetch collections" });
+    }
+  });
+
+  app.get("/api/shop/collections/:handle", async (req: Request, res: Response) => {
+    try {
+      const collection = await getCollectionByHandle(req.params.handle);
+      if (!collection) {
+        return res.status(404).json({ error: "Collection not found" });
+      }
+      res.json(collection);
+    } catch (error) {
+      console.error("Failed to fetch collection:", error);
+      res.status(500).json({ error: "Failed to fetch collection" });
+    }
+  });
+
+  app.get("/api/shop/collections/:handle/products", async (req: Request, res: Response) => {
     try {
       const products = await getCollectionProducts(req.params.handle);
       res.json(products);
@@ -90,6 +124,43 @@ export function setupRetailRoutes(app: Express): void {
 
   // Product by handle endpoint - for /shop/:handle routing
   app.get("/api/products/handle/:handle", async (req: Request, res: Response) => {
+    try {
+      const product = await getProductByHandle(req.params.handle);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      res.json(product);
+    } catch (error) {
+      console.error("Failed to fetch product by handle:", error);
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
+
+  // Shop-prefixed product routes for frontend compatibility
+  app.get("/api/shop/products", async (req: Request, res: Response) => {
+    try {
+      const products = await getCollectionProducts('all');
+      res.json(products);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/shop/products/:id", async (req: Request, res: Response) => {
+    try {
+      const product = await getProductById(req.params.id);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      res.json(product);
+    } catch (error) {
+      console.error("Failed to fetch product:", error);
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
+
+  app.get("/api/shop/products/handle/:handle", async (req: Request, res: Response) => {
     try {
       const product = await getProductByHandle(req.params.handle);
       if (!product) {
