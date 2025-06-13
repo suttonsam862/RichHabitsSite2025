@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { ShoppingCart, Star, ArrowRight } from "lucide-react";
+import { useMemo } from "react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -29,6 +30,11 @@ interface Product {
 }
 
 function ProductCard({ product }: { product: Product }) {
+  // Ensure product exists before processing
+  if (!product || !product.title) {
+    return null;
+  }
+
   // Check if this product needs shipping notice
   const needsShippingNotice = product.title.toLowerCase().includes('shirt') || 
                              product.title.toLowerCase().includes('tee') ||
@@ -131,8 +137,15 @@ function ProductCard({ product }: { product: Product }) {
 export default function Shop() {
   // Get only retail collection products from the sales channel
   const { data: retailProducts = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/products']
+    queryKey: ['/api/products'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1
   });
+
+  // Memoize product processing to prevent hook order issues
+  const products = useMemo(() => {
+    return Array.isArray(retailProducts) ? retailProducts : [];
+  }, [retailProducts]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -160,62 +173,62 @@ export default function Shop() {
       {/* Collection Section */}
       <div className="py-16">
         <div className="container mx-auto px-6">
-          {isLoading ? (
+          {/* Collection Header - always render */}
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <h2 className="text-4xl font-bold mb-4">Retail Collection</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Discover our premium selection of wrestling apparel and accessories, 
+              designed for athletes who demand the best in quality and performance.
+            </p>
+          </motion.div>
+
+          {/* Content based on loading state */}
+          {isLoading && (
             <div className="text-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
               <p className="text-gray-400">Loading products...</p>
             </div>
-          ) : (
-            <>
-              {/* Collection Header */}
-              <motion.div 
-                className="text-center mb-16"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <h2 className="text-4xl font-bold mb-4">Retail Collection</h2>
-                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                  Discover our premium selection of wrestling apparel and accessories, 
-                  designed for athletes who demand the best in quality and performance.
-                </p>
-              </motion.div>
+          )}
 
-              {/* Products Grid */}
-              {Array.isArray(retailProducts) && retailProducts.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {retailProducts.map((product: Product, index: number) => (
-                    <motion.div
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.1 * index }}
-                    >
-                      <ProductCard product={product} />
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <motion.div 
-                  className="text-center py-20"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
+          {!isLoading && products.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {products.map((product: Product, index: number) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 * index }}
                 >
-                  <ShoppingCart className="w-16 h-16 text-gray-600 mx-auto mb-6" />
-                  <h3 className="text-2xl font-bold mb-4">No Products Available</h3>
-                  <p className="text-gray-400 mb-8">
-                    We're working on stocking our retail collection. Check back soon!
-                  </p>
-                  <Link 
-                    href="/events"
-                    className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg"
-                  >
-                    Explore Training Camps
-                  </Link>
+                  <ProductCard product={product} />
                 </motion.div>
-              )}
-            </>
+              ))}
+            </div>
+          )}
+
+          {!isLoading && products.length === 0 && (
+            <motion.div 
+              className="text-center py-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <ShoppingCart className="w-16 h-16 text-gray-600 mx-auto mb-6" />
+              <h3 className="text-2xl font-bold mb-4">No Products Available</h3>
+              <p className="text-gray-400 mb-8">
+                We're working on stocking our retail collection. Check back soon!
+              </p>
+              <Link 
+                href="/events"
+                className="inline-block bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg"
+              >
+                Explore Training Camps
+              </Link>
+            </motion.div>
           )}
         </div>
       </div>

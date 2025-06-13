@@ -164,16 +164,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Update state when cart data changes
   useEffect(() => {
-    if (cartData && (cartData as any).success) {
+    if (cartData && typeof cartData === 'object' && 'success' in cartData) {
       const data = cartData as any;
-      dispatch({
-        type: 'SET_CART',
-        payload: {
-          items: data.cartItems || [],
-          subtotal: parseFloat(data.subtotal || '0'),
-          itemCount: data.itemCount || 0,
-        },
-      });
+      if (data.success) {
+        dispatch({
+          type: 'SET_CART',
+          payload: {
+            items: Array.isArray(data.cartItems) ? data.cartItems : [],
+            subtotal: parseFloat(data.subtotal || '0'),
+            itemCount: data.itemCount || 0,
+          },
+        });
+      }
     }
   }, [cartData]);
 
