@@ -119,17 +119,55 @@ export async function getLocations() {
   }
 }
 
-// Function to list products using Admin API with sales channel filtering and inventory
-export async function listProducts() {
+// Function to get products available on the sales channel (online store)
+export async function getProductsInSalesChannel() {
   try {
-    console.log('Fetching products from Shopify Admin API');
+    console.log('Fetching products from collections available on sales channel');
     
-    // Get all locations first
-    const locations = await getLocations();
-    const primaryLocation = locations.find(loc => loc.primary) || locations[0];
+    // Get all collections first
+    const collections = await listCollections();
     
+    // Get products from the "Retail Collection" which is included in sales channel
+    const retailCollection = collections.find(collection => 
+      collection.title === 'Retail Collection' || 
+      collection.handle === 'retail-collection'
+    );
+    
+    if (!retailCollection) {
+      console.log('Retail Collection not found, falling back to all published products');
+      return await getAllProducts();
+    }
+    
+    console.log('Found Retail Collection, fetching its products');
+    
+    // Get products from the retail collection
+    try {
+      const products = await getCollectionProducts(retailCollection.handle);
+      console.log(`Found ${products.length} products in Retail Collection`);
+      
+      return products.map(product => ({
+        ...product,
+        variants: product.variants.map((variant: any) => ({
+          ...variant,
+          inventory_quantity: variant.inventory_quantity || 0
+        }))
+      }));
+    } catch (error) {
+      console.log('Error fetching collection products, falling back to all published products');
+      return await getAllProducts();
+    }
+  } catch (error) {
+    console.error('Error getting products from sales channel:', error);
+    // Fallback to all published products
+    return await getAllProducts();
+  }
+}
+
+// Function to get all products (fallback)
+export async function getAllProducts() {
+  try {
     const response = await fetch(
-      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=250&status=active&published_status=published`,
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/products.json?limit=250&status=active&published_status=published&fields=id,title,handle,body_html,images,variants,published_at`,
       {
         headers: {
           'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN as string,
@@ -143,36 +181,22 @@ export async function listProducts() {
     }
 
     const data = await response.json() as { products: any[] };
-    console.log(`Found ${data.products.length} products`);
-    
-    // Enhance products with inventory data
-    const enhancedProducts = await Promise.all(
-      data.products.map(async (product) => {
-        const enhancedVariants = await Promise.all(
-          product.variants.map(async (variant: any) => {
-            if (variant.inventory_item_id && primaryLocation) {
-              const inventory = await getInventoryLevel(variant.inventory_item_id, primaryLocation.id);
-              return {
-                ...variant,
-                inventory_quantity: inventory
-              };
-            }
-            return variant;
-          })
-        );
-        
-        return {
-          ...product,
-          variants: enhancedVariants
-        };
-      })
-    );
-    
-    return enhancedProducts;
+    return data.products.map(product => ({
+      ...product,
+      variants: product.variants.map((variant: any) => ({
+        ...variant,
+        inventory_quantity: variant.inventory_quantity || 0
+      }))
+    }));
   } catch (error) {
-    console.error('Error listing products from Shopify:', error);
+    console.error('Error fetching all products:', error);
     throw error;
   }
+}
+
+// Function to list products using Admin API with sales channel filtering and inventory
+export async function listProducts() {
+  return await getProductsInSalesChannel();
 }
 
 // Function to list all collections using Admin API
