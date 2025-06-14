@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Container } from '@/components/layout/Container';
+import Container from '../layout/Container';
 
 export default function CustomApparelShowcase() {
   const [selectedCategory, setSelectedCategory] = useState('all');

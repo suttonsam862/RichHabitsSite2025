@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Users, Star, ChevronLeft, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Container } from '@/components/layout/Container';
+import { Calendar, MapPin } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import Container from '../../components/layout/Container';
 import { useQuery } from '@tanstack/react-query';
 
 interface Event {

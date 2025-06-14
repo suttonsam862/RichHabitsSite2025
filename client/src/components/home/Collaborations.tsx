@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Container } from '@/components/layout/Container';
+import Container from '../layout/Container';
 
 export default function Collaborations() {
   const collaborations = [

@@ -14,7 +14,6 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 
 // Initialize Stripe with proper key handling
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 
-                             import.meta.env.STRIPE_PUBLISHABLE_KEY || 
                              'pk_live_51RK25mBIRPjPy7BLnnfk9W4NLtkhEARrXCYY7yn2lAryA1jBPSkK7pU9ILCf1sJL0YVbrdd1mTcsYTot04uuIVav00HVWDloOE';
 
 console.log('Stripe key available:', !!stripePublishableKey, stripePublishableKey.substring(0, 10) + '...');
