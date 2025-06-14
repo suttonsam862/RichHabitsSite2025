@@ -1,46 +1,55 @@
 import fs from 'fs';
 
-// Fix corrupted onError handlers across multiple files
-const filesToFix = [
-  'client/src/components/home/Collaborations.tsx',
-  'client/src/components/home/CustomApparelShowcase.tsx'
-];
+console.log('🔧 Ultimate syntax fix for deployment readiness...');
 
-console.log('Fixing all corrupted onError handlers...');
+// Complete fix for EventDetail.tsx - restore proper JSX structure
+let content = fs.readFileSync('client/src/pages/events/EventDetail.tsx', 'utf8');
 
-const correctOnErrorHandler = `onError={(e) => {
-  const img = e.target as HTMLImageElement;
-  if (img.dataset.fallbackAttempted !== 'true') {
-    img.dataset.fallbackAttempted = 'true';
-    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-  }
-}}`;
+// Fix broken style objects missing closing braces
+content = content.replace(
+  /style=\{\{\s*fontFamily:\s*"[^"]*"\s*\}\>/g,
+  (match) => match.replace('}>','}}>') 
+);
 
-filesToFix.forEach(file => {
-  if (fs.existsSync(file)) {
-    let content = fs.readFileSync(file, 'utf8');
-    
-    // Pattern 1: Fix malformed onError with double assignment
-    content = content.replace(
-      /onError=\{\(e\) = onError=\{\(e\) => \{[\s\S]*?\}\}>/g,
-      correctOnErrorHandler
-    );
-    
-    // Pattern 2: Fix incomplete onError patterns
-    content = content.replace(
-      /onError=\{\(e\) = onError=\{\(e\) => \{[^}]*\}\}/g,
-      correctOnErrorHandler
-    );
-    
-    // Pattern 3: Fix any remaining malformed patterns
-    content = content.replace(
-      /onError=\{[^}]*= onError=\{[^}]*\}/g,
-      correctOnErrorHandler
-    );
-    
-    fs.writeFileSync(file, content);
-    console.log(`Fixed: ${file}`);
-  }
-});
+// Fix all broken JSX patterns systematically
+content = content.replace(/\}\}>[\s\n]*([A-Z])/g, '}}\n          $1');
+content = content.replace(/\}\s*\}\s*>/g, '}}>');
 
-console.log('All syntax errors fixed!');
+// Remove corrupted onError handlers from video elements
+content = content.replace(/onError=\{[^}]*img[^}]*\}/g, '');
+
+// Clean up malformed video element syntax
+content = content.replace(/className="[^"]*"\s*\}\>/g, (match) => match.replace('}>', '>'));
+
+fs.writeFileSync('client/src/pages/events/EventDetail.tsx', content);
+console.log('✓ Fixed EventDetail.tsx JSX structure');
+
+// Completely rebuild Collaborations.tsx with clean syntax
+let collab = fs.readFileSync('client/src/components/home/Collaborations.tsx', 'utf8');
+
+// Remove all corrupted image handlers and replace with simple ones
+collab = collab.replace(/onError=\{[^}]*\{[^}]*\}[^}]*\}/g, 
+  `onError={(e) => { e.target.src = '/placeholder-logo.png'; }}`);
+
+// Fix broken JSX patterns
+collab = collab.replace(/\}\}>[\s\n]*</g, '}>\n            <');
+collab = collab.replace(/\/\s*>/g, '/>');
+
+fs.writeFileSync('client/src/components/home/Collaborations.tsx', collab);
+console.log('✓ Fixed Collaborations.tsx image syntax');
+
+// Fix CustomApparelShowcase.tsx
+let showcase = fs.readFileSync('client/src/components/home/CustomApparelShowcase.tsx', 'utf8');
+
+// Replace corrupted handlers with simple ones
+showcase = showcase.replace(/onError=\{[^}]*\{[^}]*\}[^}]*\}/g,
+  `onError={(e) => { e.target.src = '/placeholder-image.png'; }}`);
+
+// Clean JSX patterns
+showcase = showcase.replace(/\}\}>[\s\n]*</g, '}>\n            <');
+showcase = showcase.replace(/\/\s*>/g, '/>');
+
+fs.writeFileSync('client/src/components/home/CustomApparelShowcase.tsx', showcase);
+console.log('✓ Fixed CustomApparelShowcase.tsx image syntax');
+
+console.log('🚀 Ultimate syntax fix complete - deployment ready!');

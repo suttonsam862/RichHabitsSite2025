@@ -389,8 +389,8 @@ export default function EventDetail() {
               color: '#ffffff'
             }}
             transition={{ duration: 0.2 }}
-            style={{ fontFamily: "'Sanchez', serif" }}>
-            Back to Events
+            style={{ fontFamily: "'Sanchez', serif" }}
+          Back to Events
           </motion.span>
         </Link>
       </div>
@@ -411,8 +411,7 @@ export default function EventDetail() {
             muted
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            }>
+            className="absolute inset-0 w-full h-full object-cover">
             <source src="/videos/events-hero.webm" type="video/webm" />
             <source src="/videos/events-hero.mp4" type="video/mp4" />
           </video>
@@ -427,7 +426,7 @@ export default function EventDetail() {
               playsInline
               preload="metadata"
               className="absolute inset-0 w-full h-full object-cover z-0"
-              }>
+              >
               <source src="/videos/national-champ-hero.webm" type="video/webm" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70 z-10"></div>
@@ -441,8 +440,7 @@ export default function EventDetail() {
             muted
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            }>
+            className="absolute inset-0 w-full h-full object-cover">
             <source src="/panther-train-tour.webm" type="video/webm" />
           </video>
         )}
@@ -456,7 +454,7 @@ export default function EventDetail() {
               playsInline
               preload="metadata"
               className="absolute inset-0 w-full h-full object-cover z-0"
-              }>
+              >
               <source src="/videos/events-hero.webm" type="video/webm" />
               <source src="/videos/events-hero.mp4" type="video/mp4" />
             </video>
@@ -1128,8 +1126,8 @@ export default function EventDetail() {
                           }
               <h2 
                 className="text-3xl mb-6"
-                style={{ fontFamily: "'Bodoni FLF', serif" }}>
-                What's Included
+                style={{ fontFamily: "'Bodoni FLF', serif" }}
+          What's Included
               </h2>
               <ul className="list-none mb-12">
                 {event.benefits.map((benefit: string, index: number) => (
@@ -1151,8 +1149,8 @@ export default function EventDetail() {
                 <div className="mb-12">
                   <h2 
                     className="text-3xl mb-6"
-                    style={{ fontFamily: "'Bodoni FLF', serif" }}>
-                    Camp Logistics
+                    style={{ fontFamily: "'Bodoni FLF', serif" }}
+          Camp Logistics
                   </h2>
                   
                   {/* Location */}
@@ -1263,16 +1261,16 @@ Camp Gear
               <div className="border border-gray-200 p-8 mb-8">
                 <h3 
                   className="text-2xl mb-6"
-                  style={{ fontFamily: "'Bodoni FLF', serif" }}>
-                  Event Details
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}
+          Event Details
                 </h3>
                 
                 <div className="space-y-4 mb-8">
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}>
-                      Date
+                      style={{ fontFamily: "'Sanchez', serif" }}
+          Date
                     </p>
                     <p 
                       className="text-gray-700"
@@ -1284,8 +1282,8 @@ Camp Gear
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}>
-                      Location
+                      style={{ fontFamily: "'Sanchez', serif" }}
+          Location
                     </p>
                     <p 
                       className="text-gray-700"
@@ -1297,8 +1295,8 @@ Camp Gear
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}>
-                      Price
+                      style={{ fontFamily: "'Sanchez', serif" }}
+          Price
                     </p>
                     <div 
                       className="text-gray-700"
@@ -1328,21 +1326,21 @@ Camp Gear
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}>
-                      Capacity
+                      style={{ fontFamily: "'Sanchez', serif" }}
+          Capacity
                     </p>
                     <p 
                       className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                      Limited to {event.capacity} wrestlers
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+          Limited to {event.capacity} wrestlers
                     </p>
                   </div>
                   
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}>
-                      Age Group
+                      style={{ fontFamily: "'Sanchez', serif" }}
+          Age Group
                     </p>
                     <p 
                       className="text-gray-700"
@@ -1360,8 +1358,8 @@ Camp Gear
                       y: -2
 
                     transition={{ duration: 0.2 }}
-                    style={{ fontFamily: "'Sanchez', serif" }}>
-                    Register Now
+                    style={{ fontFamily: "'Sanchez', serif" }}
+          Register Now
                   </motion.span>
                 </Link>
               </div>
@@ -1369,13 +1367,13 @@ Camp Gear
               <div className="border border-gray-200 p-8">
                 <h3 
                   className="text-xl mb-6"
-                  style={{ fontFamily: "'Bodoni FLF', serif" }}>
-                  Questions?
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}
+          Questions?
                 </h3>
                 <p 
                   className="text-gray-700 mb-6"
-                  style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                  Contact us for more information about this event.
+                  style={{ fontFamily: "'Didact Gothic', sans-serif" }}
+          Contact us for more information about this event.
                 </p>
                 <Link href="/contact">
                   <motion.span
@@ -1384,8 +1382,8 @@ Camp Gear
                       backgroundColor: '#f3f4f6'
 
                     transition={{ duration: 0.2 }}
-                    style={{ fontFamily: "'Sanchez', serif" }}>
-                    Contact Us
+                    style={{ fontFamily: "'Sanchez', serif" }}
+          Contact Us
                   </motion.span>
                 </Link>
               </div>

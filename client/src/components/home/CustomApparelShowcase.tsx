@@ -56,19 +56,14 @@ export function CustomApparelShowcase() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}>
-              <div className="bg-[#111] rounded-lg shadow-xl overflow-hidden p-6 mb-8">
+              transition={{ duration: 0.4 }>
+            <div className="bg-[#111] rounded-lg shadow-xl overflow-hidden p-6 mb-8">
                 <div className="flex items-center justify-center mb-6">
                   <img 
                     src={planetTShirt} 
                     alt="10th Planet Birmingham Logo" 
                     className="h-32 object-contain"
-                    onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                    onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                   />
@@ -86,12 +81,7 @@ export function CustomApparelShowcase() {
                       src={planetTShirt} 
                       alt="10th Planet T-Shirt" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />
@@ -108,12 +98,7 @@ export function CustomApparelShowcase() {
                       src={planetCrewneck} 
                       alt="10th Planet Crewneck" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />
@@ -130,12 +115,7 @@ export function CustomApparelShowcase() {
                       src={planetSweats} 
                       alt="10th Planet Sweatpants" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />
@@ -152,12 +132,7 @@ export function CustomApparelShowcase() {
                       src={planetShorts} 
                       alt="10th Planet Shorts" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />
@@ -225,12 +200,7 @@ export function CustomApparelShowcase() {
                       src={singletOne} 
                       alt="Wrestling singlet design" 
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />
@@ -240,12 +210,7 @@ export function CustomApparelShowcase() {
                       src={femaleWrestler} 
                       alt="Female wrestler in Rich Habits gear" 
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />
@@ -257,21 +222,11 @@ export function CustomApparelShowcase() {
                       src={singletTwo} 
                       alt="Team singlet design" 
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}} 
                       alt="Championship moment in Rich Habits gear" 
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-image.png';
-    }
+                      onError={(e) => { e.target.src = '/placeholder-image.png'; }}
   }}}
 
                     />

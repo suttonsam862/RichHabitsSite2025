@@ -38,12 +38,7 @@ const FruitGallery = () => {
         src="/images/fruits/fruit-gallery.png" 
         alt="Exotic fruits from Fruit Hunters" 
         className="w-full rounded-lg shadow-md"
-        onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-logo.png';
-    }
+        onError={(e) => { e.target.src = '/placeholder-logo.png'; }}
   }}}
 
       />
@@ -112,21 +107,11 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
               src="/images/fruit-hunters-logo-black.svg"
               alt="Fruit Hunters Logo" 
               className="max-h-full max-w-full object-contain"
-              onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-logo.png';
-    }
+              onError={(e) => { e.target.src = '/placeholder-logo.png'; }}
   }}} 
               alt={name} 
               className="max-h-full max-w-full object-contain" 
-              onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = '/placeholder-logo.png';
-    }
+              onError={(e) => { e.target.src = '/placeholder-logo.png'; }}
   }}}
 
             />
@@ -216,7 +201,7 @@ export function Collaborations() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            viewport={{ once: true }}>
+            viewport={{ once: true }>
             <h2 className="text-3xl font-serif font-semibold mb-4 group">
               <AnimatedUnderline>
                 Our Collaborations
