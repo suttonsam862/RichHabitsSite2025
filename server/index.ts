@@ -42,34 +42,36 @@ async function startServer() {
   try {
     console.log("🧠 Starting Rich Habits server...");
 
-    // Setup high-priority static file serving with explicit routes
+    // Critical fix: Setup static file serving with highest priority
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
     
-    if (process.env.NODE_ENV === "production") {
-      const distPublicPath = path.resolve(process.cwd(), "dist/public");
-      console.log("📦 Production: Serving static files from", distPublicPath);
-      
-      // High priority static routes
-      app.use('/images', express.static(path.join(distPublicPath, 'images')));
-      app.use('/assets', express.static(path.join(distPublicPath, 'assets')));
-      app.use('/videos', express.static(path.join(distPublicPath, 'videos')));
-      app.use('/designs', express.static(path.join(distPublicPath, 'designs')));
-      app.use(express.static(distPublicPath));
-      app.use('/assets', express.static(attachedAssetsPath));
-      console.log("📦 Production: Serving assets from", attachedAssetsPath);
-    } else {
-      console.log("🛠️ Development: Serving static files from", publicPath);
-      
-      // High priority static routes BEFORE any other middleware
-      app.use('/images', express.static(path.join(publicPath, 'images')));
-      app.use('/assets', express.static(path.join(publicPath, 'assets')));
-      app.use('/videos', express.static(path.join(publicPath, 'videos')));
-      app.use('/designs', express.static(path.join(publicPath, 'designs')));
-      app.use(express.static(publicPath));
-      app.use('/assets', express.static(attachedAssetsPath));
-      console.log("🛠️ Development: Serving assets from", attachedAssetsPath);
-    }
+    // Direct file serving routes that bypass all middleware
+    app.get(/.*\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i, (req, res, next) => {
+      const filePath = path.join(publicPath, req.path);
+      console.log(`Direct image request: ${req.path} -> ${filePath}`);
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.log(`File not found: ${filePath}`);
+          next();
+        }
+      });
+    });
+    
+    // Directory-specific routes
+    app.use('/images', express.static(path.join(publicPath, 'images')));
+    app.use('/assets', express.static(path.join(publicPath, 'assets')));
+    app.use('/videos', express.static(path.join(publicPath, 'videos')));
+    app.use('/designs', express.static(path.join(publicPath, 'designs')));
+    app.use('/coaches', express.static(path.join(publicPath, 'coaches')));
+    app.use('/events', express.static(path.join(publicPath, 'events')));
+    
+    // General static serving as fallback
+    app.use(express.static(publicPath));
+    app.use('/assets', express.static(attachedAssetsPath));
+    
+    console.log(`Static files configured from: ${publicPath}`);
+    console.log(`Assets configured from: ${attachedAssetsPath}`);
 
     console.log("📡 Testing database connection...");
     try {
@@ -116,19 +118,21 @@ async function startServer() {
       );
     });
 
-    // Setup Vite dev middleware with static file protection
-    if (process.env.NODE_ENV !== "production") {
-      // Force static file handling before Vite can intercept
-      app.use((req, res, next) => {
-        const isStaticFile = req.url.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm|woff|woff2|ttf|eot|css|js|json)$/i);
-        if (isStaticFile) {
-          console.log(`🖼️ Static file request: ${req.url}`);
-        }
-        next();
-      });
-      
+    // Setup Vite dev middleware - DISABLE to test static file serving
+    if (process.env.NODE_ENV !== "production" && process.env.DISABLE_VITE !== "true") {
       await setupVite(app, server);
       console.log("✅ Vite dev server active");
+    } else if (process.env.DISABLE_VITE === "true") {
+      console.log("⚠️ Vite disabled - serving static files only");
+      
+      // Serve client index.html for all non-API routes
+      app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api/')) return next();
+        if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i)) return next();
+        
+        const indexPath = path.resolve(process.cwd(), "client/index.html");
+        res.sendFile(indexPath);
+      });
     }
 
     server.on("error", (err: any) => {
