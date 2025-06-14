@@ -147,19 +147,20 @@ async function startServer() {
       );
     });
 
-    // Setup Vite dev middleware - DISABLE to test static file serving
-    if (process.env.NODE_ENV !== "production" && process.env.DISABLE_VITE !== "true") {
+    // Setup Vite dev middleware
+    if (process.env.NODE_ENV !== "production") {
+      console.log("🔧 Setting up Vite development server...");
       await setupVite(app, server);
       console.log("✅ Vite dev server active");
-    } else if (process.env.DISABLE_VITE === "true") {
-      console.log("⚠️ Vite disabled - serving static files only");
+    } else {
+      console.log("📦 Production mode - serving static files");
       
-      // Serve client index.html for all non-API routes
+      // Serve client index.html for all non-API routes in production
       app.get('*', (req, res, next) => {
         if (req.path.startsWith('/api/')) return next();
         if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i)) return next();
         
-        const indexPath = path.resolve(process.cwd(), "client/index.html");
+        const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
         res.sendFile(indexPath);
       });
     }
