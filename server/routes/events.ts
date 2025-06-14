@@ -401,4 +401,87 @@ export function setupEventRoutes(app: Express): void {
       });
     }
   });
+
+  // Event-specific payment intent creation endpoint that frontend expects
+  app.post("/api/events/:eventId/create-payment-intent", async (req: Request, res: Response) => {
+    try {
+      const eventId = req.params.eventId;
+      const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
+
+      // Validate event exists
+      const event = await storage.getEventBySlug(eventId);
+      if (!event) {
+        return res.status(404).json({ 
+          error: "Event not found", 
+          eventId 
+        });
+      }
+
+      // Validate registration data
+      if (!registrationData || !registrationData.email || !registrationData.firstName || !registrationData.lastName) {
+        return res.status(400).json({
+          error: "Missing required registration data",
+          required: ["email", "firstName", "lastName"]
+        });
+      }
+
+      // Calculate amount (use discounted amount if provided, otherwise calculate from event pricing)
+      let amount: number;
+      if (discountedAmount !== undefined && discountedAmount >= 0) {
+        amount = discountedAmount;
+      } else {
+        // Calculate price based on event and option
+        const basePrice = parseFloat(event.basePrice || "0");
+        amount = option === "1day" ? basePrice * 0.5 : basePrice;
+      }
+
+      // Handle free registrations
+      if (amount === 0) {
+        return res.json({
+          clientSecret: 'free_registration',
+          amount: 0,
+          eventId: event.id,
+          eventTitle: event.title,
+          isFreeRegistration: true
+        });
+      }
+
+      // Create Stripe payment intent
+      const { stripe } = await import("../stripe.js");
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: 'usd',
+        metadata: {
+          eventId: event.id,
+          eventSlug: event.slug,
+          eventTitle: event.title,
+          customerEmail: registrationData.email,
+          customerName: `${registrationData.firstName} ${registrationData.lastName}`,
+          registrationType: 'individual',
+          option: option,
+          discountCode: discountCode || ''
+        }
+      });
+
+      if (!paymentIntent || !paymentIntent.client_secret) {
+        throw new Error('Invalid payment intent response from Stripe');
+      }
+
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+        amount: amount,
+        eventId: event.id,
+        eventTitle: event.title
+      });
+
+    } catch (error) {
+      console.error("Payment intent creation error:", error);
+      res.status(500).json({ 
+        error: "Payment intent creation failed",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
 }
