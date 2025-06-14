@@ -50,7 +50,7 @@ export function SlamCampVideo() {
               viewport={{ once: true }}
               className="relative h-[500px] bg-black rounded-lg overflow-hidden"
               style={{ 
-                background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url("/assets/DSC09374--.JPG")',
+                background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5))',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
@@ -60,7 +60,7 @@ export function SlamCampVideo() {
               {/* Static image background instead of problematic video */}
               <div className="absolute inset-0 z-0 bg-black">
                 <img 
-                  src="/assets/DSC09374--.JPG" 
+                  src="/assets/DSC09374--.JPG" onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIyMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CaXJtaW5naGFtIFNsYW0gQ2FtcDwvdGV4dD48L3N2Zz4="; }} 
                   className="w-full h-full object-cover"
                   alt="Birmingham Slam Camp"
                   loading="lazy"
