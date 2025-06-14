@@ -46,14 +46,28 @@ async function startServer() {
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
     
-    // Direct file serving routes that bypass all middleware
-    app.get(/.*\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i, (req, res, next) => {
+    // Priority static file routes that execute BEFORE any other middleware
+    app.get('/Cursive-Logo.webp', (req, res) => {
+      const filePath = path.join(publicPath, 'Cursive-Logo.webp');
+      res.sendFile(filePath);
+    });
+    
+    app.get('/images/*', (req, res) => {
       const filePath = path.join(publicPath, req.path);
-      console.log(`Direct image request: ${req.path} -> ${filePath}`);
+      res.sendFile(filePath);
+    });
+    
+    app.get('/assets/*', (req, res) => {
+      const filePath = path.join(publicPath, req.path);
+      res.sendFile(filePath);
+    });
+    
+    // Generic image file handler
+    app.get(/.*\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i, (req, res) => {
+      const filePath = path.join(publicPath, req.path);
       res.sendFile(filePath, (err) => {
         if (err) {
-          console.log(`File not found: ${filePath}`);
-          next();
+          res.status(404).send('Image not found');
         }
       });
     });
