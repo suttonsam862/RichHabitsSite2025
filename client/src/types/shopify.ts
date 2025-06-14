@@ -1,34 +1,30 @@
-// Product interfaces
-export interface Product {
-  id: string;
-  title: string;
-  handle: string;
-  description?: string;
-  productType?: string;
-  image: string | null;
-  imageAlt?: string | null;
-  images?: ProductImage[];
-  price: string;
-  currencyCode?: string;
-  color?: string;
-  availableForSale: boolean;
-  variants: ProductVariant[];
-  options?: ProductOption[];
-  collection?: string;
-}
+// Comprehensive Shopify type definitions with bulletproof image support
 
-export interface ProductImage {
-  url: string;
+export interface ShopifyImage {
+  src?: string;
+  url?: string;
+  originalSrc?: string;
+  alt?: string;
   altText?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface ProductVariant {
   id: string;
   title: string;
   price: string;
-  currencyCode?: string;
-  availableForSale: boolean;
-  options?: Record<string, string>;
+  available: boolean;
+  inventory_quantity?: number;
+  compare_at_price?: string;
+  // Support both featured_image and image properties
+  featured_image?: ShopifyImage | null;
+  image?: ShopifyImage;
+  option1?: string;
+  option2?: string;
+  option3?: string;
+  weight?: number;
+  sku?: string;
 }
 
 export interface ProductOption {
@@ -36,87 +32,61 @@ export interface ProductOption {
   values: string[];
 }
 
-// Collection interfaces
-export interface Collection {
+export interface Product {
   id: string;
   title: string;
   handle: string;
+  body_html?: string;
   description?: string;
-  image: string | null;
-  imageAlt?: string | null;
+  images: ShopifyImage[];
+  variants: ProductVariant[];
+  options?: ProductOption[];
+  product_type?: string;
+  tags?: string[];
+  vendor?: string;
+  created_at?: string;
+  updated_at?: string;
+  published_at?: string;
+  status?: string;
 }
 
-// Checkout interfaces
-export interface Checkout {
+export interface Collection {
   id: string;
-  webUrl: string;
-  lineItems?: CheckoutLineItem[];
-  subtotalPrice?: string;
-  totalPrice?: string;
-}
-
-export interface CheckoutLineItem {
-  id: string;
+  handle: string;
   title: string;
-  variant: ProductVariant;
+  description?: string;
+  image?: ShopifyImage;
+  products?: Product[];
+}
+
+// Cart item with robust image handling
+export interface CartItem {
+  shopifyProductId: string;
+  shopifyVariantId: string;
+  productHandle: string;
+  productTitle: string;
+  variantTitle: string;
+  price: number;
+  compareAtPrice?: number;
   quantity: number;
+  productImage: string; // Always resolved to a valid URL or placeholder
+  productType?: string;
+  vendor?: string;
 }
 
-// Customer interfaces
-export interface Customer {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  orders?: Order[];
+// Shopify API response types
+export interface ShopifyProductResponse {
+  product: Product;
 }
 
-export interface Order {
-  id: string;
-  orderNumber: string;
-  processedAt: string;
-  statusUrl: string;
-  totalPrice: string;
-  lineItems: OrderLineItem[];
+export interface ShopifyProductsResponse {
+  products: Product[];
 }
 
-export interface OrderLineItem {
-  title: string;
-  quantity: number;
-  variant: {
-    title: string;
-    price: string;
-  };
+export interface ShopifyCollectionResponse {
+  collection: Collection;
 }
 
-// Event Registration interfaces
-export interface EventRegistration {
-  eventId: string;
-  name: string;
-  email: string;
-  phone?: string;
-  age?: string;
-  experience?: string;
-  paymentSuccess: boolean;
-  checkoutUrl?: string;
-}
-
-// Custom Apparel interfaces
-export interface CustomApparelInquiry {
-  name: string;
-  email: string;
-  organizationName: string;
-  sport: string;
-  details: string;
-  phone?: string;
-}
-
-// Contact Form interfaces
-export interface ContactFormData {
-  name: string;
-  email: string;
-  phone?: string;
-  subject: string;
-  message: string;
+export interface ShopifyCollectionsResponse {
+  collections: Collection[];
 }

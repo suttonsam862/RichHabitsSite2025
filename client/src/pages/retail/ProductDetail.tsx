@@ -6,53 +6,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
 import { ShopifyImage, getShopifyImageUrl } from "../../components/ui/robust-image";
-
-interface ProductVariant {
-  id: string;
-  title: string;
-  price: string;
-  available: boolean;
-  inventory_quantity: number;
-  compare_at_price?: string;
-  featured_image?: {
-    src?: string;
-    url?: string;
-    originalSrc?: string;
-    alt?: string;
-    altText?: string;
-  } | null;
-  image?: {
-    src?: string;
-    url?: string;
-    originalSrc?: string;
-    alt?: string;
-    altText?: string;
-  };
-  option1?: string;
-  option2?: string;
-  option3?: string;
-}
-
-interface Product {
-  id: string;
-  title: string;
-  handle: string;
-  body_html: string;
-  images: Array<{ 
-    src?: string; 
-    url?: string; 
-    originalSrc?: string; 
-    alt?: string; 
-  }>;
-  variants: ProductVariant[];
-  options: Array<{
-    name: string;
-    values: string[];
-  }>;
-  product_type: string;
-  tags: string[];
-  vendor?: string;
-}
+import { Product, ProductVariant } from "../../types/shopify";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -168,9 +122,6 @@ export default function ProductDetail() {
   
   // Check availability using correct Shopify property - fix for "Out of Stock" issue
   const isInStock = currentVariant?.available !== false && (currentVariant?.inventory_quantity === undefined || currentVariant?.inventory_quantity > 0);
-  
-  // Get current display image
-  const displayImage = product?.images?.[currentImage] || product?.images?.[0];
 
   const handleAddToCart = async () => {
     if (!isRetailProduct) {
@@ -277,6 +228,7 @@ export default function ProductDetail() {
               <div className="aspect-square rounded-2xl overflow-hidden">
                 <ShopifyImage 
                   product={product}
+                  variant={currentVariant}
                   imageIndex={currentImage}
                   className="w-full h-full"
                 />
