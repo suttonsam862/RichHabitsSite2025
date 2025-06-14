@@ -703,7 +703,13 @@ export default function EventDetail() {
                           src={regDetails.stickerImage}
                           alt={regDetails.stickerAlt}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
+                          onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}
@@ -890,7 +896,13 @@ export default function EventDetail() {
                     src={event.id === 1 ? "@assets/C7QSGoxXUAEZ06-.webp" : event.id === 2 ? "/national-champ-hero.png" : selectedImage}
                     alt={event.title}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
+                    onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                       e.currentTarget.style.display = 'none';
                       e.currentTarget.nextElementSibling?.classList.remove('hidden');
                     }}
@@ -909,7 +921,13 @@ export default function EventDetail() {
                       src="/images/gallery/training-session-1.webp"
                       alt="Training Session"
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
+                      onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
                       }}
@@ -927,7 +945,13 @@ export default function EventDetail() {
                       src="/images/gallery/instruction-demo.webp"
                       alt="Instruction Demo"
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
+                      onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
                       }}
@@ -945,7 +969,13 @@ export default function EventDetail() {
                       src="/images/gallery/group-photo.webp"
                       alt="Group Photo"
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
+                      onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
                       }}
@@ -1151,7 +1181,13 @@ export default function EventDetail() {
                               src={coach.image} 
                               alt={coach.name}
                               className="w-full h-full object-cover"
-                              onError={(e) => {
+                              onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                                 // Fallback to initials if image fails to load
                                 e.currentTarget.style.display = 'none';
                                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
@@ -1196,7 +1232,13 @@ export default function EventDetail() {
                           src="/images/fruits/0E28DDF2-9BF4-4256-BE3B-E3D1367A5740_1_102_o.jpeg"
                           alt="Exotic Fruit"
                           className="w-full h-full object-cover"
-                          onError={(e) => {
+                          onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}
@@ -1211,7 +1253,13 @@ export default function EventDetail() {
                           src="/images/fruits/10F83FC8-8626-4870-BBD7-8A2205E5ADD1_1_102_o.jpeg"
                           alt="Premium Nutrition"
                           className="w-full h-full object-cover"
-                          onError={(e) => {
+                          onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}
@@ -1226,7 +1274,13 @@ export default function EventDetail() {
                           src="/images/fruits/50C705BD-6E71-453B-A059-36DF8A4A5E04_1_102_o.jpeg"
                           alt="Athletic Performance"
                           className="w-full h-full object-cover"
-                          onError={(e) => {
+                          onError={(e) = onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}> {
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}

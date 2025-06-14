@@ -130,27 +130,57 @@ export default function EventsSimple() {
                       <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center space-x-1">
                         {/* Oklahoma logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
-                          <img src="/oklahoma-logo.webp" alt="OU" className="w-full h-full object-contain" />
+                          <img src="/oklahoma-logo.webp" alt="OU" className="w-full h-full object-contain" / onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}>
                         </div>
                         
                         {/* Pittsburgh logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
-                          <img src="/pitt-logo.webp" alt="Pitt" className="w-full h-full object-contain" />
+                          <img src="/pitt-logo.webp" alt="Pitt" className="w-full h-full object-contain" / onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}>
                         </div>
                         
                         {/* Brown logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
-                          <img src="/brown-logo.webp" alt="Brown" className="w-full h-full object-contain" />
+                          <img src="/brown-logo.webp" alt="Brown" className="w-full h-full object-contain" / onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}>
                         </div>
                         
                         {/* George Mason logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
-                          <img src="/george-mason-logo.webp" alt="George Mason" className="w-full h-full object-contain" />
+                          <img src="/george-mason-logo.webp" alt="George Mason" className="w-full h-full object-contain" / onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}>
                         </div>
                         
                         {/* Tarleton State logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
-                          <img src="/tarleton-logo.webp" alt="Tarleton State" className="w-full h-full object-contain" />
+                          <img src="/tarleton-logo.webp" alt="Tarleton State" className="w-full h-full object-contain" / onError={(e) => {
+        const img = e.target as HTMLImageElement;
+        if (img.dataset.fallbackAttempted !== 'true') {
+          img.dataset.fallbackAttempted = 'true';
+          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+        }
+      }}>
                         </div>
                       </div>
                     </div>

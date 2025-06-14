@@ -60,7 +60,14 @@ export function SlamCampVideo() {
               {/* Static image background instead of problematic video */}
               <div className="absolute inset-0 z-0 bg-black">
                 <img 
-                  src="/assets/DSC09374--.JPG" onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIyMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CaXJtaW5naGFtIFNsYW0gQ2FtcDwvdGV4dD48L3N2Zz4="; }} 
+                  src="/assets/DSC09374--.JPG" 
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    if (img.dataset.fallbackAttempted !== 'true') {
+                      img.dataset.fallbackAttempted = 'true';
+                      img.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIyMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CaXJtaW5naGFtIFNsYW0gQ2FtcDwvdGV4dD48L3N2Zz4=";
+                    }
+                  }} 
                   className="w-full h-full object-cover"
                   alt="Birmingham Slam Camp"
                   loading="lazy"
