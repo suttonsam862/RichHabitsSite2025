@@ -12,8 +12,14 @@ import { Link } from 'wouter';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-// Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+// Initialize Stripe with proper key handling
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 
+                             import.meta.env.STRIPE_PUBLISHABLE_KEY || 
+                             'pk_live_51RK25mBIRPjPy7BLnnfk9W4NLtkhEARrXCYY7yn2lAryA1jBPSkK7pU9ILCf1sJL0YVbrdd1mTcsYTot04uuIVav00HVWDloOE';
+
+console.log('Stripe key available:', !!stripePublishableKey, stripePublishableKey.substring(0, 10) + '...');
+
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -53,8 +59,8 @@ function CheckoutForm({ totalAmount, cartItems }: CheckoutFormProps) {
 
     if (!stripe || !elements) {
       toast({
-        title: "Payment Error",
-        description: "Stripe is not loaded. Please refresh and try again.",
+        title: "Payment System Unavailable",
+        description: "Payment processing is temporarily unavailable. Please try again later.",
         variant: "destructive",
       });
       return;
@@ -416,13 +422,19 @@ export default function Cart() {
                     </div>
 
                     <div className="mt-8">
-                      <Elements stripe={stripePromise}>
-                        <CheckoutForm
-                          totalAmount={state.subtotal}
-                          cartItems={state.items}
-                        />
-                      </Elements>
-                    </div>
+                      {stripePromise ? (
+                        <Elements stripe={stripePromise}>
+                          <CheckoutForm
+                            totalAmount={state.subtotal}
+                            cartItems={state.items}
+                          />
+                        </Elements>
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-gray-400 mb-4">Payment processing is temporarily unavailable</p>
+                          <p className="text-sm text-gray-500">Please try again later or contact support</p>
+                        </div>
+                      )}
                   </CardContent>
                 </Card>
               </motion.div>
