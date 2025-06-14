@@ -1,0 +1,104 @@
+2025-06-14 15:18:02.75
+a653ffaf
+System
+starting up user application
+2025-06-14 15:18:03.09
+a653ffaf
+System
+forwarding local port 5000 to external port 80 (mapped as 1104)
+2025-06-14 15:18:03.10
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:03.12
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:03.14
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:03.21
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:03.30
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:03.61
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:04.06
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:04.89
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:05.08
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:05.85
+a653ffaf
+User
+Stripe live mode: true
+2025-06-14 15:18:05.85
+a653ffaf
+User
+Shopify environment vars: SHOPIFY_STORE_DOMAIN: Set SHOPIFY_API_KEY: Set SHOPIFY_ACCESS_TOKEN: Set SHOPIFY_STOREFRONT_TOKEN: Set
+2025-06-14 15:18:05.85
+a653ffaf
+User
+Production: Serving static files from: /home/runner/workspace/dist/public
+2025-06-14 15:18:05.85
+a653ffaf
+User
+Warning: connect.session() MemoryStore is not
+2025-06-14 15:18:05.85
+a653ffaf
+User
+designed for a production environment, as it will leak
+2025-06-14 15:18:05.85
+a653ffaf
+User
+memory, and will not scale past a single process.
+2025-06-14 15:18:05.85
+a653ffaf
+User
+Setting up application...
+2025-06-14 15:18:05.85
+a653ffaf
+User
+Testing database connection...
+2025-06-14 15:18:06.04
+a653ffaf
+System
+error proxying request error=dial tcp 127.0.0.1:5000: connect: connection refused
+2025-06-14 15:18:06.38
+a653ffaf
+User
+Database connection successful: { now: 2025-06-14T20:18:06.363Z }
+2025-06-14 15:18:06.38
+a653ffaf
+User
+✅ Database connection verified
+2025-06-14 15:18:06.39
+a653ffaf
+User
+Setting up legacy bridge for frontend form compatibility...
+2025-06-14 15:18:06.39
+a653ffaf
+User
+✅ Legacy bridge endpoints registered for frontend compatibility
+2025-06-14 15:18:06.41
+a653ffaf
+User
+✅ Rich Habits server running on port 5000 in production mode
+2025-06-14 15:18:06.41
+a653ffaf
+User
+🌐 Server address: { address: '0.0.0.0', family: 'IPv4', port: 5000 }
