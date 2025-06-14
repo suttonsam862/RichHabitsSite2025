@@ -14,18 +14,6 @@
   </head>
   <body>
     <div id="root"></div>
-    
-    <!-- Direct test to verify JavaScript execution -->
-    <script>
-      console.log("=== BASIC JS EXECUTING ===");
-      document.body.style.background = 'purple';
-      setTimeout(() => {
-        document.body.innerHTML = '<div style="color:white;font-size:40px;padding:50px;text-align:center;font-family:Arial;">✅ JAVASCRIPT IS WORKING<br>React loading next...</div>';
-      }, 1000);
-    </script>
-    
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>
