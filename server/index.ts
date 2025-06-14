@@ -20,10 +20,20 @@ if (process.env.NODE_ENV === "production") {
   const distPublicPath = path.resolve(process.cwd(), "dist/public");
   console.log("📦 Production: Serving static files from", distPublicPath);
   app.use(express.static(distPublicPath));
+  
+  // Serve attached assets for production
+  const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
+  app.use('/assets', express.static(attachedAssetsPath));
+  console.log("📦 Production: Serving assets from", attachedAssetsPath);
 } else {
   const publicPath = path.resolve(process.cwd(), "public");
   console.log("🛠️ Development: Serving static files from", publicPath);
   app.use(express.static(publicPath));
+  
+  // Serve attached assets for development
+  const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
+  app.use('/assets', express.static(attachedAssetsPath));
+  console.log("🛠️ Development: Serving assets from", attachedAssetsPath);
 }
 
 // Session middleware

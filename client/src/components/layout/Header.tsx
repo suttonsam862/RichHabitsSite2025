@@ -47,6 +47,10 @@ export function Header() {
             className="h-6 md:h-8 w-auto cursor-pointer"
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.2 }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgMTAwIDQwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmMzMzMzMiLz48dGV4dCB4PSI1MCIgeT0iMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlJIPC90ZXh0Pjwvc3ZnPg==';
+            }}
           />
         </Link>
 
