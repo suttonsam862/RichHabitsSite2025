@@ -16,6 +16,10 @@ export interface CartItem {
   productImage?: string;
   productType?: string;
   vendor?: string;
+  // Enhanced variant details for retail products
+  selectedSize?: string;
+  selectedColor?: string;
+  variantOptions?: { [key: string]: string }; // Generic option storage
   createdAt: string;
   updatedAt: string;
 }
@@ -144,10 +148,14 @@ interface CartContextType {
     productImage?: string;
     productType?: string;
     vendor?: string;
+    selectedSize?: string;
+    selectedColor?: string;
+    variantOptions?: { [key: string]: string };
   }) => Promise<void>;
   updateQuantity: (id: string, quantity: number) => Promise<void>;
   removeFromCart: (id: string) => Promise<void>;
   clearCart: () => Promise<void>;
+  checkout: () => Promise<{ clientSecret: string; paymentIntentId: string }>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -253,6 +261,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
+  // Checkout mutation
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/cart/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: state.items })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create checkout');
+      }
+      
+      return response.json();
+    },
+  });
+
   const addToCart = async (product: any) => {
     await addToCartMutation.mutateAsync(product);
   };
@@ -269,6 +295,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     await clearCartMutation.mutateAsync();
   };
 
+  const checkout = async () => {
+    const result = await checkoutMutation.mutateAsync();
+    return result;
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -277,6 +308,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         removeFromCart,
         clearCart,
+        checkout,
       }}
     >
       {children}

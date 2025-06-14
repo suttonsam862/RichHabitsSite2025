@@ -1,0 +1,68 @@
+Fix and complete the retail cart and checkout experience.
+
+Right now:
+- Add to Cart button only shows a red circle in the header
+- Size and color selections are not being tracked or stored
+- Checkout does not charge the user
+- No Shopify order is created for retail products
+
+---
+
+✅ OBJECTIVES:
+
+1. ✅ Add Correct Variant to Cart
+- When a user selects a size and color, determine the matching Shopify variant
+- On "Add to Cart" click, store:
+  - product ID
+  - variant ID
+  - size, color
+  - price
+  - quantity
+- Use React Context or backend storage to keep the cart across pages
+
+2. ✅ Build Cart Checkout Flow
+- On `/cart`, compile all retail items into a Stripe PaymentIntent
+- Send POST to `/api/cart/checkout`
+- Validate total price and variant integrity on backend
+- Create PaymentIntent for total cart amount
+- Return `clientSecret` to frontend for Stripe checkout
+- After success, call Shopify Admin API to create a **draft order**
+  - Each line item = variant ID + quantity
+
+3. ✅ Update "Add to Cart" UX
+- Show toast on success (“Added Medium Black Tee to cart”)
+- Update cart badge immediately
+- If size or color is missing, disable button or show error
+
+4. ✅ Improve Cart Page
+- Show each item’s:
+  - name, image, selected size/color, price, quantity
+- Allow removal or quantity update
+- “Checkout” button triggers Stripe flow, then confirms and redirects
+
+5. ✅ Shopify Draft Order Submission
+- Use `createShopifyOrderFromCart(cartItems)`
+- Send variant IDs and quantities from cart
+- Tag orders as “Retail” or “Shop Purchase”
+- Store `shopifyOrderId` in cart confirmation metadata
+
+---
+
+✅ FILES TO UPDATE
+- `client/src/pages/ProductDetail.tsx` — fix variant selection + add to cart
+- `client/src/context/CartContext.tsx` — store variant ID, size, color
+- `client/src/pages/Cart.tsx` — build Stripe checkout form
+- `server/routes.ts` — implement `/api/cart/checkout`:
+  - Validate items
+  - Create PaymentIntent
+  - Create Shopify order
+- `server/shopify.ts` — createShopifyOrderFromCart(items)
+
+---
+
+Begin by:
+1. Fixing variant selection in `ProductDetail.tsx`
+2. Updating cart context to store selected variant info
+3. Implementing `/api/cart/checkout` to compile cart and create Stripe payment + Shopify draft order
+
+This system must mirror the working event signup architecture but be scoped only to retail products.

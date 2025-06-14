@@ -63,7 +63,7 @@ export default function ProductDetail() {
 
     // Find matching variant
     const matchingVariantIndex = product?.variants.findIndex(variant => {
-      return product.options.every((option, index) => {
+      return product?.options?.every((option, index) => {
         const optionKey = `option${index + 1}` as keyof ProductVariant;
         return variant[optionKey] === newOptions[option.name];
       });
@@ -139,7 +139,7 @@ export default function ProductDetail() {
     // If no variant is selected or we need to find one based on options, find the matching variant
     if (!variantToAdd || Object.keys(selectedOptions).length > 0) {
       variantToAdd = product?.variants.find(variant => {
-        return product.options.every((option, index) => {
+        return product?.options?.every((option, index) => {
           const optionKey = `option${index + 1}` as keyof ProductVariant;
           const selectedValue = selectedOptions[option.name];
           return !selectedValue || variant[optionKey] === selectedValue;
@@ -176,6 +176,10 @@ export default function ProductDetail() {
         .filter(Boolean)
         .join(' / ') || variantToAdd.title;
 
+      // Extract size and color from selected options
+      const selectedSize = selectedOptions['Size'] || selectedOptions['size'] || undefined;
+      const selectedColor = selectedOptions['Color'] || selectedOptions['color'] || selectedOptions['Colour'] || undefined;
+
       await addToCart({
         shopifyProductId: product.id,
         shopifyVariantId: variantToAdd.id,
@@ -187,7 +191,10 @@ export default function ProductDetail() {
         quantity: quantity,
         productImage: getShopifyImageUrl(product, variantToAdd),
         productType: product.product_type,
-        vendor: product.vendor
+        vendor: product.vendor,
+        selectedSize,
+        selectedColor,
+        variantOptions: selectedOptions
       });
 
       toast({
