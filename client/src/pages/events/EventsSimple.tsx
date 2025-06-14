@@ -141,7 +141,7 @@ export default function EventsSimple() {
                                 img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
                               }
                             }}
-                          />
+    />
                         </div>
                         
                         {/* Pittsburgh logo */}
@@ -155,8 +155,7 @@ export default function EventsSimple() {
         }
       }}
     />
-      }}>
-                        </div>
+</div>
                         
                         {/* Brown logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
@@ -169,8 +168,7 @@ export default function EventsSimple() {
         }
       }}
     />
-      }}>
-                        </div>
+</div>
                         
                         {/* George Mason logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
@@ -183,8 +181,7 @@ export default function EventsSimple() {
         }
       }}
     />
-      }}>
-                        </div>
+</div>
                         
                         {/* Tarleton State logo */}
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-0.5">
@@ -197,8 +194,7 @@ export default function EventsSimple() {
         }
       }}
     />
-      }}>
-                        </div>
+</div>
                       </div>
                     </div>
                   )}

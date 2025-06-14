@@ -324,7 +324,7 @@ export default function EventDetail() {
               image: "/images/coaches/michael-mcgee.jpg"
             }
           ];
-          setEvent({);
+          setEvent(foundEvent);
         } else if (eventId === 2) {
           // National Champ Camp coaches
           const realCoaches = [
@@ -347,7 +347,7 @@ export default function EventDetail() {
               image: "/images/coaches/jason-nolf.webp"
             }
           ];
-          setEvent({);
+          setEvent(foundEvent);
         } else {
           setEvent(foundEvent);
         }
@@ -373,14 +373,12 @@ export default function EventDetail() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 pt-16">
         <h1 
           className="text-3xl mb-4"
-          style={{ fontFamily: "'Bodoni FLF', serif" }}
-        >
+          style={{ fontFamily: "'Bodoni FLF', serif" }}>
           Event Not Found
         </h1>
         <p 
           className="text-gray-600 mb-8"
-          style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-        >
+          style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
           The event you are looking for does not exist.
         </p>
         <Link href="/events">
@@ -389,10 +387,9 @@ export default function EventDetail() {
             whileHover={{ 
               backgroundColor: '#1f2937', 
               color: '#ffffff'
-            }}
+
             transition={{ duration: 0.2 }}
-            style={{ fontFamily: "'Sanchez', serif" }}
-          >
+            style={{ fontFamily: "'Sanchez', serif" }}>
             Back to Events
           </motion.span>
         </Link>
@@ -418,14 +415,13 @@ export default function EventDetail() {
             onError={(e) => {
               console.log('Video failed, hiding element');
               e.currentTarget.style.display = 'none';
-            }}
+
             onLoadStart={() => {
               // Prevent memory issues
               if (isMobile()) {
                 return false;
               }
-            }}
-          >
+            }}>
             <source src="/videos/events-hero.webm" type="video/webm" />
             <source src="/videos/events-hero.mp4" type="video/mp4" />
           </video>
@@ -443,8 +439,7 @@ export default function EventDetail() {
               onError={(e) => {
                 console.log('Video failed, hiding element');
                 e.currentTarget.style.display = 'none';
-              }}
-            >
+              }}>
               <source src="/videos/national-champ-hero.webm" type="video/webm" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70 z-10"></div>
@@ -462,8 +457,7 @@ export default function EventDetail() {
             onError={(e) => {
               console.log('Video failed, hiding element');
               e.currentTarget.style.display = 'none';
-            }}
-          >
+            }}>
             <source src="/panther-train-tour.webm" type="video/webm" />
           </video>
         )}
@@ -480,8 +474,7 @@ export default function EventDetail() {
               onError={(e) => {
                 console.log('Video failed, hiding element');
                 e.currentTarget.style.display = 'none';
-              }}
-            >
+              }}>
               <source src="/videos/events-hero.webm" type="video/webm" />
               <source src="/videos/events-hero.mp4" type="video/mp4" />
             </video>
@@ -709,8 +702,7 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-                          }}
+
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
                           Venue
@@ -900,11 +892,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                       e.currentTarget.style.display = 'none';
                       e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                    }}
+
                   />
                   <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                     <span className="text-gray-600">Gallery Image</span>
@@ -926,11 +918,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                      }}
+
                     />
                     <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                       <span className="text-gray-600 text-sm">Training</span>
@@ -951,11 +943,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                      }}
+
                     />
                     <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                       <span className="text-gray-600 text-sm">Demo</span>
@@ -976,11 +968,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                      }}
+
                     />
                     <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                       <span className="text-gray-600 text-sm">Group</span>
@@ -1189,12 +1181,12 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                                 // Fallback to initials if image fails to load
                                 e.currentTarget.style.display = 'none';
                                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                              }}
+
                             />
                           ) : null}
                           <div className={`w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ${coach.image ? 'hidden' : ''}`}>
@@ -1241,11 +1233,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                          }}
+
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                           <span className="text-gray-600 text-xs">Exotic Fruit</span>
@@ -1263,11 +1255,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                          }}
+
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                           <span className="text-gray-600 text-xs">Premium Nutrition</span>
@@ -1285,11 +1277,11 @@ export default function EventDetail() {
           img.dataset.fallbackAttempted = 'true';
           img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
         }
-      }}
-  }}
+
+
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                          }}
+
                         />
                         <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
                           <span className="text-gray-600 text-xs">Athletic Performance</span>
@@ -1320,8 +1312,7 @@ export default function EventDetail() {
               {/* Benefits */}
               <h2 
                 className="text-3xl mb-6"
-                style={{ fontFamily: "'Bodoni FLF', serif" }}
-              >
+                style={{ fontFamily: "'Bodoni FLF', serif" }}>
                 What's Included
               </h2>
               <ul className="list-none mb-12">
@@ -1332,8 +1323,7 @@ export default function EventDetail() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.1 }}
-                    style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                  >
+                    style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                     <span className="absolute left-0 top-2 w-2 h-2 bg-sky-200"></span>
                     {benefit}
                   </motion.li>
@@ -1345,73 +1335,72 @@ export default function EventDetail() {
                 <div className="mb-12">
                   <h2 
                     className="text-3xl mb-6"
-                    style={{ fontFamily: "'Bodoni FLF', serif" }}
-                  >
+                    style={{ fontFamily: "'Bodoni FLF', serif" }}>
                     Camp Logistics
                   </h2>
                   
                   {/* Location */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
-                      Camp Location
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif"
+Camp Location
                     </h3>
                     <div className="bg-gray-50 p-4 rounded border-l-4 border-blue-500">
-                      <p className="font-medium mb-1" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                        {event.logistics.location.address}
+                      <p className="font-medium mb-1" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.location.address}
                       </p>
-                      <p className="text-gray-600 text-sm" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                        {event.logistics.location.note}
+                      <p className="text-gray-600 text-sm" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.location.note}
                       </p>
                     </div>
                   </div>
                   
                   {/* Check-In */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
-                      Check-In & Registration
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif"
+Check-In & Registration
                     </h3>
                     <div className="bg-gray-50 p-4 rounded">
-                      <p className="mb-2" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                        {event.logistics.checkin.time}
+                      <p className="mb-2" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.checkin.time}
                       </p>
-                      <p className="text-gray-600 text-sm" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                        {event.logistics.checkin.requirement}
+                      <p className="text-gray-600 text-sm" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.checkin.requirement}
                       </p>
                     </div>
                   </div>
                   
                   {/* Daily Schedule */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
-                      Daily Schedule
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif"
+Daily Schedule
                     </h3>
                     <div className="bg-gray-50 p-4 rounded">
                       {event.logistics.schedule.map((item, index) => (
                         <div key={index} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
-                          <span className="font-medium" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                            {item.time}
+                          <span className="font-medium" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{item.time}
                           </span>
-                          <span className="text-gray-600" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                            {item.activity}
+                          <span className="text-gray-600" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{item.activity}
                           </span>
                         </div>
                       ))}
                     </div>
-                    <p className="text-sm text-gray-600 mt-2" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                      {event.logistics.parents}
+                    <p className="text-sm text-gray-600 mt-2" style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.parents}
                     </p>
                   </div>
                   
                   {/* What to Bring */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
-                      What to Bring
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif"
+What to Bring
                     </h3>
                     <div className="bg-gray-50 p-4 rounded">
                       <ul className="list-none space-y-2">
                         {event.logistics.toBring.map((item, index) => (
-                          <li key={index} className="flex items-center" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                            <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                          <li key={index} className="flex items-center" style={{ fontFamily: "'Didact Gothic', sans-serif"
+<span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
                             {item}
                           </li>
                         ))}
@@ -1421,24 +1410,24 @@ export default function EventDetail() {
                   
                   {/* Parents Welcome */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
-                      Parents Welcome
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif"
+Parents Welcome
                     </h3>
                     <div className="bg-blue-50 p-4 rounded border-l-4 border-blue-500">
-                      <p style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                        {event.logistics.parents}
+                      <p style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.parents}
                       </p>
                     </div>
                   </div>
                   
                   {/* Camp Gear */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif" }}>
-                      Camp Gear
+                    <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "'Sanchez', serif"
+Camp Gear
                     </h3>
                     <div className="bg-gray-50 p-4 rounded">
-                      <p style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                        {event.logistics.gear}
+                      <p style={{ fontFamily: "'Didact Gothic', sans-serif"
+{event.logistics.gear}
                       </p>
                     </div>
                   </div>
@@ -1458,8 +1447,7 @@ export default function EventDetail() {
               <div className="border border-gray-200 p-8 mb-8">
                 <h3 
                   className="text-2xl mb-6"
-                  style={{ fontFamily: "'Bodoni FLF', serif" }}
-                >
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}>
                   Event Details
                 </h3>
                 
@@ -1467,14 +1455,12 @@ export default function EventDetail() {
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}
-                    >
+                      style={{ fontFamily: "'Sanchez', serif" }}>
                       Date
                     </p>
                     <p 
                       className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                    >
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                       {event.date}
                     </p>
                   </div>
@@ -1482,14 +1468,12 @@ export default function EventDetail() {
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}
-                    >
+                      style={{ fontFamily: "'Sanchez', serif" }}>
                       Location
                     </p>
                     <p 
                       className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                    >
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                       {event.location}
                     </p>
                   </div>
@@ -1497,14 +1481,12 @@ export default function EventDetail() {
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}
-                    >
+                      style={{ fontFamily: "'Sanchez', serif" }}>
                       Price
                     </p>
                     <div 
                       className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                    >
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                       {/* Show price drop for National Champ Camp */}
                       {event.originalPrice ? (
                         <div className="space-y-1">
@@ -1530,14 +1512,12 @@ export default function EventDetail() {
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}
-                    >
+                      style={{ fontFamily: "'Sanchez', serif" }}>
                       Capacity
                     </p>
                     <p 
                       className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                    >
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                       Limited to {event.capacity} wrestlers
                     </p>
                   </div>
@@ -1545,14 +1525,12 @@ export default function EventDetail() {
                   <div>
                     <p 
                       className="font-medium mb-1"
-                      style={{ fontFamily: "'Sanchez', serif" }}
-                    >
+                      style={{ fontFamily: "'Sanchez', serif" }}>
                       Age Group
                     </p>
                     <p 
                       className="text-gray-700"
-                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                    >
+                      style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                       {event.ageGroup}
                     </p>
                   </div>
@@ -1564,10 +1542,9 @@ export default function EventDetail() {
                     whileHover={{ 
                       backgroundColor: '#111827',
                       y: -2
-                    }}
+
                     transition={{ duration: 0.2 }}
-                    style={{ fontFamily: "'Sanchez', serif" }}
-                  >
+                    style={{ fontFamily: "'Sanchez', serif" }}>
                     Register Now
                   </motion.span>
                 </Link>
@@ -1576,14 +1553,12 @@ export default function EventDetail() {
               <div className="border border-gray-200 p-8">
                 <h3 
                   className="text-xl mb-6"
-                  style={{ fontFamily: "'Bodoni FLF', serif" }}
-                >
+                  style={{ fontFamily: "'Bodoni FLF', serif" }}>
                   Questions?
                 </h3>
                 <p 
                   className="text-gray-700 mb-6"
-                  style={{ fontFamily: "'Didact Gothic', sans-serif" }}
-                >
+                  style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
                   Contact us for more information about this event.
                 </p>
                 <Link href="/contact">
@@ -1591,10 +1566,9 @@ export default function EventDetail() {
                     className="inline-block border border-gray-900 px-6 py-3 text-gray-900 cursor-pointer"
                     whileHover={{ 
                       backgroundColor: '#f3f4f6'
-                    }}
+
                     transition={{ duration: 0.2 }}
-                    style={{ fontFamily: "'Sanchez', serif" }}
-                  >
+                    style={{ fontFamily: "'Sanchez', serif" }}>
                     Contact Us
                   </motion.span>
                 </Link>
