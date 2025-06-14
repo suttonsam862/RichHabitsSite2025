@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart } from 'lucide-react';
 
 interface RobustImageProps {
   src?: string;
   alt: string;
   className?: string;
-  fallbackIcon?: React.ReactNode;
+  fallbackSrc?: string;
+  decorative?: boolean;
   onError?: () => void;
   onLoad?: () => void;
 }
@@ -14,16 +14,19 @@ export const RobustImage: React.FC<RobustImageProps> = ({
   src,
   alt,
   className = '',
-  fallbackIcon,
+  fallbackSrc = '/images/placeholder.svg',
+  decorative = false,
   onError,
   onLoad
 }) => {
   const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
   const [currentSrc, setCurrentSrc] = useState<string | undefined>(src);
+  const [hasTriedFallback, setHasTriedFallback] = useState(false);
 
   useEffect(() => {
     setCurrentSrc(src);
-    setImageState('loading');
+    setImageState(src ? 'loading' : 'error');
+    setHasTriedFallback(false);
   }, [src]);
 
   const handleImageLoad = () => {
@@ -32,26 +35,34 @@ export const RobustImage: React.FC<RobustImageProps> = ({
   };
 
   const handleImageError = () => {
-    setImageState('error');
     onError?.();
     
-    // Try alternative image properties if available
-    if (currentSrc && currentSrc.includes('?')) {
-      // Remove query parameters and try again
-      const baseUrl = currentSrc.split('?')[0];
-      if (baseUrl !== currentSrc) {
-        setCurrentSrc(baseUrl);
-        setImageState('loading');
-        return;
-      }
+    // Try fallback if we haven't already and currentSrc is not the fallback
+    if (!hasTriedFallback && currentSrc !== fallbackSrc && fallbackSrc) {
+      setCurrentSrc(fallbackSrc);
+      setHasTriedFallback(true);
+      setImageState('loading');
+      return;
     }
+    
+    setImageState('error');
   };
 
-  // Show fallback if no src or error state
-  if (!currentSrc || imageState === 'error') {
+  // Show fallback placeholder if no src or final error state
+  if (!currentSrc || (imageState === 'error' && hasTriedFallback)) {
     return (
-      <div className={`flex items-center justify-center text-gray-500 bg-gradient-to-br from-gray-800 to-gray-700 ${className}`}>
-        {fallbackIcon || <ShoppingCart className="w-16 h-16" />}
+      <div 
+        className={`flex items-center justify-center text-gray-500 bg-gradient-to-br from-gray-800 to-gray-700 ${className}`}
+        role={decorative ? undefined : "img"}
+        aria-label={decorative ? undefined : alt}
+        aria-hidden={decorative}
+      >
+        <img 
+          src={fallbackSrc} 
+          alt={decorative ? "" : alt}
+          className="w-full h-full object-cover opacity-50"
+          aria-hidden={decorative}
+        />
       </div>
     );
   }
@@ -59,19 +70,20 @@ export const RobustImage: React.FC<RobustImageProps> = ({
   return (
     <div className={`relative ${className}`}>
       {imageState === 'loading' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-700">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-700 z-10">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
         </div>
       )}
       <img
         src={currentSrc}
-        alt={alt}
+        alt={decorative ? "" : alt}
         className={`w-full h-full object-cover transition-opacity duration-300 ${
           imageState === 'loaded' ? 'opacity-100' : 'opacity-0'
         }`}
         onLoad={handleImageLoad}
         onError={handleImageError}
         loading="lazy"
+        aria-hidden={decorative}
       />
     </div>
   );
@@ -79,40 +91,110 @@ export const RobustImage: React.FC<RobustImageProps> = ({
 
 // Shopify-specific image component that handles multiple image property formats
 interface ShopifyImageProps {
-  product: {
+  product?: {
     images?: Array<{ 
       src?: string; 
       url?: string; 
       originalSrc?: string; 
       alt?: string; 
+      altText?: string;
     }>;
     title: string;
   };
+  variant?: {
+    image?: {
+      src?: string;
+      url?: string; 
+      originalSrc?: string;
+      alt?: string;
+      altText?: string;
+    };
+  };
   className?: string;
   imageIndex?: number;
+  decorative?: boolean;
 }
 
 export const ShopifyImage: React.FC<ShopifyImageProps> = ({
   product,
+  variant,
   className = '',
-  imageIndex = 0
+  imageIndex = 0,
+  decorative = false
 }) => {
-  const image = product.images?.[imageIndex];
+  // Image fallback priority as specified:
+  // 1. variant.image.src
+  // 2. variant.image.url  
+  // 3. variant.image.originalSrc
+  // 4. product.images[0].src
+  // 5. placeholder.png (handled by RobustImage)
   
-  // Try multiple Shopify image property formats
-  const getImageUrl = () => {
-    if (!image) return undefined;
-    return image.src || image.url || image.originalSrc;
+  const getImageUrl = (): string | undefined => {
+    // Priority 1-3: Try variant image properties
+    if (variant?.image) {
+      const variantImage = variant.image;
+      if (variantImage.src) return variantImage.src;
+      if (variantImage.url) return variantImage.url;
+      if (variantImage.originalSrc) return variantImage.originalSrc;
+    }
+    
+    // Priority 4: Try product images
+    const productImage = product?.images?.[imageIndex];
+    if (productImage) {
+      if (productImage.src) return productImage.src;
+      if (productImage.url) return productImage.url;
+      if (productImage.originalSrc) return productImage.originalSrc;
+    }
+    
+    return undefined;
+  };
+
+  const getAltText = (): string => {
+    // Try variant image alt text first
+    if (variant?.image?.alt) return variant.image.alt;
+    if (variant?.image?.altText) return variant.image.altText;
+    
+    // Try product image alt text
+    const productImage = product?.images?.[imageIndex];
+    if (productImage?.alt) return productImage.alt;
+    if (productImage?.altText) return productImage.altText;
+    
+    // Fallback to product title
+    return product?.title || 'Product image';
   };
 
   const imageUrl = getImageUrl();
-  const altText = image?.alt || product.title || 'Product image';
+  const altText = getAltText();
 
   return (
     <RobustImage
       src={imageUrl}
       alt={altText}
       className={className}
+      decorative={decorative}
     />
   );
+};
+
+// Helper function to get the best image URL for cart items
+export const getShopifyImageUrl = (
+  product?: { images?: Array<{ src?: string; url?: string; originalSrc?: string; }> },
+  variant?: { image?: { src?: string; url?: string; originalSrc?: string; } }
+): string => {
+  // Same priority as ShopifyImage component
+  if (variant?.image) {
+    const variantImage = variant.image;
+    if (variantImage.src) return variantImage.src;
+    if (variantImage.url) return variantImage.url;
+    if (variantImage.originalSrc) return variantImage.originalSrc;
+  }
+  
+  const productImage = product?.images?.[0];
+  if (productImage) {
+    if (productImage.src) return productImage.src;
+    if (productImage.url) return productImage.url;
+    if (productImage.originalSrc) return productImage.originalSrc;
+  }
+  
+  return '/images/placeholder.svg';
 };

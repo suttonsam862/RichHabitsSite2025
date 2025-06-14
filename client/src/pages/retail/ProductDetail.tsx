@@ -5,7 +5,7 @@ import { ArrowLeft, ShoppingCart, Star, Minus, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
-import { ShopifyImage } from "../../components/ui/robust-image";
+import { ShopifyImage, getShopifyImageUrl } from "../../components/ui/robust-image";
 
 interface ProductVariant {
   id: string;
@@ -15,9 +15,19 @@ interface ProductVariant {
   inventory_quantity: number;
   compare_at_price?: string;
   featured_image?: {
-    src: string;
+    src?: string;
+    url?: string;
+    originalSrc?: string;
     alt?: string;
+    altText?: string;
   } | null;
+  image?: {
+    src?: string;
+    url?: string;
+    originalSrc?: string;
+    alt?: string;
+    altText?: string;
+  };
   option1?: string;
   option2?: string;
   option3?: string;
@@ -224,7 +234,7 @@ export default function ProductDetail() {
         price: parseFloat(variantToAdd.price.replace('$', '')),
         compareAtPrice: variantToAdd.compare_at_price ? parseFloat(variantToAdd.compare_at_price.replace('$', '')) : undefined,
         quantity: quantity,
-        productImage: (displayImage?.src || displayImage?.url || displayImage?.originalSrc) || '',
+        productImage: getShopifyImageUrl(product, variantToAdd),
         productType: product.product_type,
         vendor: product.vendor
       });

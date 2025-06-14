@@ -5,7 +5,7 @@ import { ShoppingCart, Star, ArrowRight, Plus } from "lucide-react";
 import { useMemo } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
-import { ShopifyImage } from "../../components/ui/robust-image";
+import { ShopifyImage, getShopifyImageUrl } from "../../components/ui/robust-image";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -93,7 +93,7 @@ function ProductCard({ product }: { product: Product }) {
         variantTitle: defaultVariant.title || 'Default',
         price: parseFloat(defaultVariant.price.replace('$', '')),
         quantity: 1,
-        productImage: (product.images?.[0]?.src || product.images?.[0]?.url || product.images?.[0]?.originalSrc) || '',
+        productImage: getShopifyImageUrl(product),
         productType: 'Product',
         vendor: 'Rich Habits'
       });

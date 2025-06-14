@@ -1,0 +1,70 @@
+None of the images across the site were loading due to inconsistencies in how Shopify image properties were accessed and a lack of error handling. Fix this by implementing a bulletproof image loading system.
+
+---
+
+✅ OBJECTIVES:
+
+1. **Create a Robust Image Component**
+- File: `client/src/components/ui/robust-image.tsx`
+- Accept props: `src`, `alt`, optional fallback image
+- Handle all Shopify image fields: `src`, `url`, `originalSrc`
+- Add loading spinner state
+- Add fallback image if load fails (e.g. `public/images/placeholder.png`)
+- Lazy load images for performance (`loading="lazy"`)
+
+2. **Replace All Image Tags in Retail Pages**
+- File: `client/src/pages/retail/Shop.tsx`
+- Replace any usage of `<img src={product.images?.[0]?.src} />` with `<RobustImage />`
+- Ensure fallback and alt text are passed correctly
+
+- File: `client/src/pages/retail/ProductDetail.tsx`
+- Update all `<img>` tags for main and thumbnail images to use the robust image component
+- Ensure selected variant images update the correct `src`
+- Confirm product variant image switching logic works with new component
+
+3. **Update Cart Image Logic**
+- Anywhere a product image is added to the cart (Shop or ProductDetail), ensure the correct `image.src` is passed using the robust component logic
+
+4. **Fix TypeScript Interfaces**
+- Update Product and Variant interfaces to include all possible Shopify image keys:
+  - `src`, `url`, `originalSrc`, `altText`
+- Ensure components using image data do not throw TS errors
+
+5. **Accessibility**
+- Every image must have valid `alt` text or default to product title
+- Add `aria-hidden="true"` on purely decorative images
+- Use `role="img"` and `aria-label` where needed
+
+---
+
+✅ FILES TO MODIFY OR CREATE:
+- `client/src/components/ui/robust-image.tsx` (create)
+- `client/src/pages/retail/Shop.tsx` (update image logic)
+- `client/src/pages/retail/ProductDetail.tsx` (update main image + thumbnails)
+- `client/types/shopify.d.ts` or wherever Product types are defined (extend image fields)
+- Optionally add `public/images/placeholder.png` as a fallback
+
+---
+
+✅ IMAGE FALLBACK PRIORITY:
+1. `variant.image.src`
+2. `variant.image.url`
+3. `variant.image.originalSrc`
+4. `product.images[0].src`
+5. `placeholder.png`
+
+---
+
+✅ VISUAL & UX REQUIREMENTS:
+- No broken images (404)
+- Placeholder shown on error
+- Spinner shown on load
+- Image switches correctly when a user selects a variant
+- Cart uses accurate image when items are added
+
+---
+
+Begin by:
+1. Creating `robust-image.tsx`
+2. Replacing image logic in `Shop.tsx` and `ProductDetail.tsx`
+3. Updating image handling in cart logic and types
