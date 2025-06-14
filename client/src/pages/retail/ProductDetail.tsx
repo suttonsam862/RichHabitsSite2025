@@ -211,7 +211,7 @@ export default function ProductDetail() {
     try {
       // Create variant title from selected options
       const selectedOptionsText = Object.entries(selectedOptions)
-        .map(([key, value]) => value)
+        .map(([, value]) => value)
         .filter(Boolean)
         .join(' / ') || variantToAdd.title;
 
@@ -224,7 +224,7 @@ export default function ProductDetail() {
         price: parseFloat(variantToAdd.price.replace('$', '')),
         compareAtPrice: variantToAdd.compare_at_price ? parseFloat(variantToAdd.compare_at_price.replace('$', '')) : undefined,
         quantity: quantity,
-        productImage: displayImage?.src || '',
+        productImage: (displayImage?.src || displayImage?.url || displayImage?.originalSrc) || '',
         productType: product.product_type,
         vendor: product.vendor
       });
@@ -276,18 +276,18 @@ export default function ProductDetail() {
               {product?.images && product.images.length > 1 && (
                 <div className="mt-4 overflow-x-auto">
                   <div className="flex gap-2 md:gap-4 min-w-max md:min-w-0">
-                    {product.images.map((image: any, index: number) => (
+                    {product.images.map((_, index: number) => (
                       <button
                         key={index} 
                         onClick={() => setCurrentImage(index)}
-                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 bg-gray-900 rounded-lg overflow-hidden border-2 transition-colors ${
+                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-colors ${
                           currentImage === index ? 'border-blue-500' : 'border-transparent hover:border-gray-600'
                         }`}
                       >
-                        <img 
-                          src={image.src} 
-                          alt={`${product?.title || 'Product'} ${index + 1}`}
-                          className="w-full h-full object-cover"
+                        <ShopifyImage 
+                          product={product}
+                          imageIndex={index}
+                          className="w-full h-full"
                         />
                       </button>
                     ))}
