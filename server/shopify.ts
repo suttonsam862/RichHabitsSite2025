@@ -1381,3 +1381,108 @@ export const EVENT_PRODUCTS = {
     }
   }
 };
+// Function to create a Shopify order from cart items (for Stripe checkout integration)
+export async function createShopifyOrderFromCart(cartItems: any[], customer: any, paymentIntentId: string) {
+  try {
+    console.log("Creating Shopify order from cart items:", {
+      itemCount: cartItems.length,
+      customer: customer.email,
+      paymentIntentId
+    });
+
+    // Calculate total price from cart items
+    const subtotal = cartItems.reduce((sum, item) => {
+      const price = typeof item.price === "string" ? parseFloat(item.price.replace("$", "")) : item.price;
+      return sum + (price * item.quantity);
+    }, 0);
+
+    // Build line items for Shopify order
+    const lineItems = cartItems.map(item => ({
+      variant_id: parseInt(item.shopifyVariantId),
+      quantity: item.quantity,
+      properties: [
+        ...(item.selectedSize ? [{ name: "Size", value: item.selectedSize }] : []),
+        ...(item.selectedColor ? [{ name: "Color", value: item.selectedColor }] : []),
+        ...(item.variantOptions ? Object.entries(item.variantOptions).map(([key, value]) => ({ name: key, value })) : []),
+        { name: "Payment Intent ID", value: paymentIntentId }
+      ]
+    }));
+
+    // Create the order using Admin API
+    const orderData = {
+      order: {
+        line_items: lineItems,
+        customer: {
+          first_name: customer.firstName,
+          last_name: customer.lastName,
+          email: customer.email,
+          phone: customer.phone || ""
+        },
+        financial_status: "paid",
+        fulfillment_status: null,
+        note: `Online retail order - Payment Intent: ${paymentIntentId}`,
+        tags: "Online Order, Rich Habits Retail, Stripe Payment",
+        note_attributes: [
+          { name: "Payment Method", value: "Stripe" },
+          { name: "Payment Intent ID", value: paymentIntentId },
+          { name: "Order Source", value: "Rich Habits Website" }
+        ],
+        transactions: [
+          {
+            kind: "sale",
+            status: "success",
+            amount: subtotal.toFixed(2),
+            currency: "USD",
+            gateway: "stripe",
+            source_name: "web"
+          }
+        ]
+      }
+    };
+
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2023-10/orders.json`,
+      {
+        method: "POST",
+        headers: {
+          "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN as string,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error creating Shopify order:", errorText);
+      throw new Error(`Failed to create Shopify order: ${response.status} ${response.statusText}`);
+    }
+
+    const orderResponse = await response.json() as {
+      order: {
+        id: number;
+        order_number: number;
+        total_price: string;
+        name: string;
+      }
+    };
+
+    console.log("Successfully created Shopify order:", {
+      orderId: orderResponse.order.id,
+      orderNumber: orderResponse.order.order_number,
+      totalPrice: orderResponse.order.total_price
+    });
+
+    return {
+      success: true,
+      order: orderResponse.order,
+      orderId: orderResponse.order.id,
+      orderNumber: orderResponse.order.order_number,
+      totalPrice: orderResponse.order.total_price
+    };
+
+  } catch (error) {
+    console.error("Error creating Shopify order from cart:", error);
+    throw error;
+  }
+}

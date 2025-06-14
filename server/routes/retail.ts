@@ -5,7 +5,7 @@ import { storage } from "../storage.js";
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2024-06-20',
 });
 
 // Enhanced cart item validation schema with variant selection tracking
@@ -235,28 +235,55 @@ export function setupRetailRoutes(app: Express): void {
 
       const { items, customerInfo } = validationResult.data;
 
-      // Validate all variant IDs exist and are valid
-      const validatedItems = [];
-      for (const item of items) {
-        // Here we would validate the variant exists in Shopify
-        // For now, we'll trust the frontend validation
-        validatedItems.push({
-          variantId: item.variantId,
-          quantity: item.quantity
+      // Calculate total amount from cart items
+      const totalAmount = items.reduce((sum, item) => {
+        const price = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : parseFloat(item.price);
+        return sum + (price * item.quantity);
+      }, 0);
+
+      // Convert to cents for Stripe
+      const amountInCents = Math.round(totalAmount * 100);
+
+      if (amountInCents <= 0) {
+        return res.status(400).json({
+          error: "Invalid amount",
+          message: "Cart total must be greater than $0"
         });
       }
 
-      // Create Shopify checkout URL
-      // This would integrate with Shopify's Storefront API or Admin API
-      // For now, we'll return a mock checkout URL structure
-      const checkoutUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/cart/${validatedItems.map(item => `${item.variantId}:${item.quantity}`).join(',')}`;
+      // Create Stripe PaymentIntent
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: 'usd',
+        metadata: {
+          type: 'retail_cart_checkout',
+          item_count: items.length.toString(),
+          customer_email: customerInfo?.email || 'guest',
+          cart_items: JSON.stringify(items.map(item => ({
+            productId: item.shopifyProductId,
+            variantId: item.shopifyVariantId,
+            title: item.productTitle,
+            quantity: item.quantity,
+            price: item.price
+          })))
+        },
+        description: `Rich Habits Retail Order - ${items.length} item(s)`,
+        receipt_email: customerInfo?.email
+      });
+
+      console.log('Created PaymentIntent for cart checkout:', {
+        paymentIntentId: paymentIntent.id,
+        amount: totalAmount,
+        itemCount: items.length,
+        customerEmail: customerInfo?.email
+      });
 
       res.json({
         success: true,
-        checkoutUrl,
-        message: "Checkout created successfully",
-        itemCount: validatedItems.length,
-        totalQuantity: validatedItems.reduce((sum, item) => sum + item.quantity, 0)
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+        amount: totalAmount,
+        message: "Payment intent created successfully"
       });
 
     } catch (error) {
