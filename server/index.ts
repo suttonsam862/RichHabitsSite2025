@@ -109,7 +109,7 @@ async function startServer() {
         dbConnected ? "✅ Database connected" : "❌ Database connection failed",
       );
     } catch (err) {
-      console.error("❌ Error testing database:", err);
+      console.error("❌ Database connection failed, continuing with server startup:", err.message);
     }
 
     // Register app routes
@@ -147,7 +147,7 @@ async function startServer() {
       );
     });
 
-    // Setup Vite dev middleware
+    // Setup Vite dev middleware after server starts
     if (process.env.NODE_ENV !== "production") {
       console.log("🔧 Setting up Vite development server...");
       await setupVite(app, server);
