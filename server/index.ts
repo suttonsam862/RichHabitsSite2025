@@ -46,20 +46,35 @@ async function startServer() {
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
     
-    // Priority static file routes that execute BEFORE any other middleware
-    app.get('/Cursive-Logo.webp', (req, res) => {
+    // Bulletproof static file routes with comprehensive error handling
+    app.get("/Cursive-Logo.webp", (req, res) => {
       const filePath = path.join(publicPath, 'Cursive-Logo.webp');
-      res.sendFile(filePath);
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.log('Logo file not found, serving fallback');
+          res.status(404).send('Logo not found');
+        }
+      });
     });
     
-    app.get('/images/*', (req, res) => {
+    app.get("/images/*", (req, res) => {
       const filePath = path.join(publicPath, req.path);
-      res.sendFile(filePath);
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.log(`Image not found: ${req.path}`);
+          res.status(404).send('Image not found');
+        }
+      });
     });
     
-    app.get('/assets/*', (req, res) => {
+    app.get("/assets/*", (req, res) => {
       const filePath = path.join(publicPath, req.path);
-      res.sendFile(filePath);
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.log(`Asset not found: ${req.path}`);
+          res.status(404).send('Asset not found');
+        }
+      });
     });
     
     // Generic image file handler
