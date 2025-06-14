@@ -1,139 +1,119 @@
 import express from "express";
 import session from "express-session";
+import path from "path";
+import { fileURLToPath } from "url";
 import { setupRoutes } from "./routes/index.js";
 import { setupVite } from "./vite";
 import { checkDatabaseConnection } from "./db";
-import path from "path";
-import { fileURLToPath } from "url";
 
 // Create Express application
 const app = express();
-
-// Configure Express middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Get the current file directory in ESM
+// Get current directory in ESM context
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files
-if (process.env.NODE_ENV === 'production') {
-  // In production, serve built client files
-  const distPublicPath = path.resolve(process.cwd(), 'dist/public');
-  console.log('Production: Serving static files from:', distPublicPath);
+// Static file serving
+if (process.env.NODE_ENV === "production") {
+  const distPublicPath = path.resolve(process.cwd(), "dist/public");
+  console.log("📦 Production: Serving static files from", distPublicPath);
   app.use(express.static(distPublicPath));
 } else {
-  // In development, serve public directory
-  const publicPath = path.resolve(process.cwd(), 'public');
-  console.log('Development: Serving static files from:', publicPath);
+  const publicPath = path.resolve(process.cwd(), "public");
+  console.log("🛠️ Development: Serving static files from", publicPath);
   app.use(express.static(publicPath));
 }
 
-// Configure session middleware
+// Session middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'rich-habits-dev-secret-key',
+    secret: process.env.SESSION_SECRET || "rich-habits-dev-secret-key",
     resave: false,
-    saveUninitialized: true, // Enable sessions for anonymous users (needed for cart)
+    saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
     },
-  })
+  }),
 );
 
-// Add global error handlers
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+// Global error handling
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
-
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
   process.exit(1);
 });
 
-// Start the server
 async function startServer() {
   try {
-    console.log("Setting up application...");
+    console.log("🧠 Starting Rich Habits server...");
 
-    // Test database connection
-    console.log('Testing database connection...');
+    console.log("📡 Testing database connection...");
     try {
       const dbConnected = await checkDatabaseConnection();
-      if (!dbConnected) {
-        console.error('Database connection failed - starting anyway');
-      } else {
-        console.log('✅ Database connection verified');
-      }
-    } catch (error) {
-      console.error('Database setup error:', error);
+      console.log(
+        dbConnected ? "✅ Database connected" : "❌ Database connection failed",
+      );
+    } catch (err) {
+      console.error("❌ Error testing database:", err);
     }
 
-    // Register all routes
+    // Register app routes
     setupRoutes(app);
-    
-    // Register direct payment verification routes
-    const { setupDirectPaymentRoutes } = await import('./payment-verification-direct.js');
+
+    // Import on-demand modules
+    const { setupDirectPaymentRoutes } = await import(
+      "./payment-verification-direct.js"
+    );
     setupDirectPaymentRoutes(app);
-    
-    // Setup legacy bridge for frontend form compatibility
-    const { setupLegacyBridge } = await import('./legacy-bridge.js');
+
+    const { setupLegacyBridge } = await import("./legacy-bridge.js");
     setupLegacyBridge(app);
 
-    // Catch-all handler for client-side routing in production
-    if (process.env.NODE_ENV === 'production') {
-      app.get('*', (req, res, next) => {
-        // Skip API routes - let them return 404 if not found
-        if (req.path.startsWith('/api/')) {
-          return next();
-        }
-        
-        // Serve React app for all other routes
-        const indexPath = path.resolve(process.cwd(), 'dist/public/index.html');
+    // Catch-all for client routes (after all APIs)
+    if (process.env.NODE_ENV === "production") {
+      app.get("*", (req, res, next) => {
+        if (req.path.startsWith("/api/")) return next();
+        const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
         res.sendFile(indexPath, (err) => {
           if (err) {
-            console.error('Error serving index.html:', err);
-            res.status(500).send('Internal Server Error');
+            console.error("❌ Failed to serve index.html:", err);
+            res.status(500).send("Internal Server Error");
           }
         });
       });
     }
 
-    // Create HTTP server with dynamic port assignment
-    const PORT = parseInt(process.env.PORT || '5000', 10);
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`✅ Rich Habits server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
-      console.log('🌐 Server address:', server.address());
-      
-      // Add a small delay to ensure server is fully ready
-      setTimeout(() => {
-        console.log('🚀 Server is ready to accept connections');
-      }, 1000);
+    const PORT = parseInt(process.env.PORT || "5000", 10);
+    const server = app.listen(PORT, "0.0.0.0", () => {
+      console.log(
+        `✅ Rich Habits server running on http://0.0.0.0:${PORT} (${process.env.NODE_ENV || "development"})`,
+      );
     });
 
-    // Setup Vite only in development
-    if (process.env.NODE_ENV !== 'production') {
+    // Setup Vite dev middleware
+    if (process.env.NODE_ENV !== "production") {
       await setupVite(app, server);
-      console.log("✅ Vite development server ready");
+      console.log("✅ Vite dev server active");
     }
 
-    // Error handling
-    server.on('error', (error: any) => {
-      if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use`);
+    server.on("error", (err: any) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(`❌ Port ${PORT} already in use`);
       } else {
-        console.error('Server error:', error);
+        console.error("❌ Server error:", err);
       }
     });
-
-  } catch (error) {
-    console.error('Failed to start server:', error);
+  } catch (err) {
+    console.error("❌ Fatal error during startup:", err);
     process.exit(1);
   }
 }
 
-// Start the server
+// Start it
 startServer();

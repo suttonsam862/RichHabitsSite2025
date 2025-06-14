@@ -435,6 +435,7 @@ export default function Cart() {
                           <p className="text-sm text-gray-500">Please try again later or contact support</p>
                         </div>
                       )}
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
