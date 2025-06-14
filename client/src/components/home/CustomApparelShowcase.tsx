@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Container from '../layout/Container';
 
 export default function CustomApparelShowcase() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory] = useState('all');
 
   const apparelItems = [
     {

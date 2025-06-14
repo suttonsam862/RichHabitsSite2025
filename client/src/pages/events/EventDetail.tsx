@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { Calendar, MapPin } from 'lucide-react';
+import { Calendar, MapPin, ChevronLeft, Star, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import Container from '../../components/layout/Container';
 import { useQuery } from '@tanstack/react-query';
@@ -40,7 +40,7 @@ export default function EventDetail() {
     enabled: !!slug
   });
 
-  const currentEvent = event || mockEvents.find(e => e.slug === slug);
+  const currentEvent = (event || mockEvents.find(e => e.slug === slug)) as Event | undefined;
 
   if (!currentEvent) {
     return (
@@ -74,7 +74,7 @@ export default function EventDetail() {
             </div>
             
             <div className="grid grid-cols-4 gap-2">
-              {currentEvent.images.map((image, index) => (
+              {currentEvent.images.map((image: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
@@ -118,7 +118,7 @@ export default function EventDetail() {
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4">What's Included</h3>
               <ul className="space-y-2">
-                {currentEvent.features.map((feature, index) => (
+                {currentEvent.features.map((feature: string, index: number) => (
                   <li key={index} className="flex items-center">
                     <Star className="w-4 h-4 text-yellow-500 mr-3" />
                     {feature}
