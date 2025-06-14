@@ -135,6 +135,7 @@ Changelog:
 - June 14, 2025. Fixed production asset loading issues by implementing robust image error handling, fallback placeholders, and proper server static file serving configuration for deployment readiness
 - June 14, 2025. Fixed critical image loading failure across entire site by reordering server middleware - static file serving now happens before other middleware that was intercepting image requests
 - June 14, 2025. Resolved catastrophic JSX syntax corruption caused by automated image protection script - restored EventDetail.tsx, Collaborations.tsx, and CustomApparelShowcase.tsx from clean state, created missing Container component, enabling successful deployment build
+- June 14, 2025. Fixed deployment syntax errors by correcting duplicate onError prop declarations across multiple files (ApparelShowcase.tsx, FeaturedProducts.tsx, FloatingSchoolLogos.tsx, CampSlideshow.tsx, GallerySection.tsx, Testimonials.tsx) - build process now completes without JavaScript/TypeScript parsing errors
 
 ## User Preferences
 
