@@ -1,10 +1,6 @@
 import { Link } from "wouter";
-import { AnimatedUnderline } from "@/components/ui/animated-underline";
-import { Container } from "@/components/ui/container";
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { fetchFeaturedProducts } from "@/lib/shopify";
-import { Product } from "@/types/shopify";
+import Container from "../layout/Container";
 
 // Define type for the static products
 interface StaticProduct {
@@ -67,25 +63,18 @@ const staticProducts: StaticProduct[] = [
 ];
 
 export function FeaturedProducts() {
-  const { data: shopifyProducts, isLoading, error } = useQuery<Product[]>({
-    queryKey: ['/api/products/featured'],
-    staleTime: 60 * 1000, // 1 minute
-  });
-
-  // Use static products if data is loading or there was an error
-  const products: (Product | StaticProduct)[] = shopifyProducts || staticProducts;
+  // Use static products for now
+  const products: StaticProduct[] = staticProducts;
 
   return (
     <section className="py-20 bg-white">
       <Container>
-        <h2 className="text-3xl font-serif font-semibold mb-12 group">
-          <AnimatedUnderline>
-            Featured Products
-          </AnimatedUnderline>
+        <h2 className="text-3xl font-serif font-semibold mb-12">
+          Featured Products
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product: Product | StaticProduct, index: number) => (
+          {products.map((product: StaticProduct, index: number) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, y: 20 }}

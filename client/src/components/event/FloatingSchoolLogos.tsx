@@ -106,8 +106,7 @@ const FloatingSchoolLogos: React.FC<FloatingSchoolLogosProps> = ({ logos }) => {
             newVy = Math.abs(logo.vy) * damping;
           }
           
-          // Slight acceleration effect to create more natural movement
-          const accelerationFactor = 0.01;
+          // Natural movement parameters
           const maxSpeed = 0.8;
           
           // Randomly adjust velocity slightly for more natural movement
