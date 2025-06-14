@@ -5,6 +5,7 @@ import { ShoppingCart, Star, ArrowRight, Plus } from "lucide-react";
 import { useMemo } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
+import { ShopifyImage } from "../../components/ui/robust-image";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -20,7 +21,12 @@ interface Product {
   title: string;
   handle: string;
   body_html: string;
-  images: Array<{ src: string; alt?: string }>;
+  images: Array<{ 
+    src?: string; 
+    url?: string; 
+    originalSrc?: string; 
+    alt?: string; 
+  }>;
   variants: Array<{ 
     id: string; 
     title: string; 
@@ -87,7 +93,7 @@ function ProductCard({ product }: { product: Product }) {
         variantTitle: defaultVariant.title || 'Default',
         price: parseFloat(defaultVariant.price.replace('$', '')),
         quantity: 1,
-        productImage: product.images?.[0]?.src || '',
+        productImage: (product.images?.[0]?.src || product.images?.[0]?.url || product.images?.[0]?.originalSrc) || '',
         productType: 'Product',
         vendor: 'Rich Habits'
       });
@@ -109,7 +115,6 @@ function ProductCard({ product }: { product: Product }) {
   // Handle both Shopify formats: "29.99" and "$29.99"
   const priceStr = product.variants?.[0]?.price || "0";
   const price = parseFloat(typeof priceStr === 'string' ? priceStr.replace('$', '') : String(priceStr).replace('$', '')) || 0;
-  const imageUrl = product.images?.[0]?.src;
   
   // Format price for display - show actual price or first variant price
   const displayPrice = price > 0 ? price : (product.variants?.[0] ? parseFloat(String(product.variants[0].price).replace('$', '')) : 0);
@@ -123,18 +128,11 @@ function ProductCard({ product }: { product: Product }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="aspect-square bg-gradient-to-br from-gray-800 to-gray-700 overflow-hidden relative">
-        {imageUrl ? (
-          <img 
-            src={imageUrl} 
-            alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500">
-            <ShoppingCart className="w-16 h-16" />
-          </div>
-        )}
+      <div className="aspect-square overflow-hidden relative">
+        <ShopifyImage 
+          product={product}
+          className="w-full h-full group-hover:scale-105 transition-transform duration-500"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
       

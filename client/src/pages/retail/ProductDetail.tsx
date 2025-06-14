@@ -5,6 +5,7 @@ import { ArrowLeft, ShoppingCart, Star, Minus, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
+import { ShopifyImage } from "../../components/ui/robust-image";
 
 interface ProductVariant {
   id: string;
@@ -27,7 +28,12 @@ interface Product {
   title: string;
   handle: string;
   body_html: string;
-  images: Array<{ src: string; alt?: string }>;
+  images: Array<{ 
+    src?: string; 
+    url?: string; 
+    originalSrc?: string; 
+    alt?: string; 
+  }>;
   variants: ProductVariant[];
   options: Array<{
     name: string;
@@ -258,18 +264,12 @@ export default function ProductDetail() {
           <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Product Images */}
             <motion.div {...fadeIn} className="order-1">
-              <div className="aspect-square bg-gray-900 rounded-2xl overflow-hidden">
-                {displayImage ? (
-                  <img 
-                    src={displayImage.src} 
-                    alt={displayImage.alt || product?.title || 'Product'}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    <ShoppingCart className="w-24 h-24" />
-                  </div>
-                )}
+              <div className="aspect-square rounded-2xl overflow-hidden">
+                <ShopifyImage 
+                  product={product}
+                  imageIndex={currentImage}
+                  className="w-full h-full"
+                />
               </div>
               
               {/* Thumbnail images - Mobile: Horizontal scroll, Desktop: Grid */}
