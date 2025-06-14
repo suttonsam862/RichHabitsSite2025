@@ -64,13 +64,13 @@ export function CustomApparelShowcase() {
                     src={planetTShirt} 
                     alt="10th Planet Birmingham Logo" 
                     className="h-32 object-contain"
-                    onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                    onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                       const img = e.target as HTMLImageElement;
                       if (img.dataset.fallbackAttempted !== 'true') {
                         img.dataset.fallbackAttempted = 'true';
@@ -92,13 +92,13 @@ export function CustomApparelShowcase() {
                       src={planetTShirt} 
                       alt="10th Planet T-Shirt" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -119,13 +119,13 @@ export function CustomApparelShowcase() {
                       src={planetCrewneck} 
                       alt="10th Planet Crewneck" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -146,13 +146,13 @@ export function CustomApparelShowcase() {
                       src={planetSweats} 
                       alt="10th Planet Sweatpants" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -173,13 +173,13 @@ export function CustomApparelShowcase() {
                       src={planetShorts} 
                       alt="10th Planet Shorts" 
                       className="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -251,13 +251,13 @@ export function CustomApparelShowcase() {
                       src={singletOne} 
                       alt="Wrestling singlet design" 
                       className="w-full h-full object-cover"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -271,13 +271,13 @@ export function CustomApparelShowcase() {
                       src={femaleWrestler} 
                       alt="Female wrestler in Rich Habits gear" 
                       className="w-full h-full object-cover"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -293,13 +293,13 @@ export function CustomApparelShowcase() {
                       src={singletTwo} 
                       alt="Team singlet design" 
                       className="w-full h-full object-cover"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
@@ -312,13 +312,13 @@ export function CustomApparelShowcase() {
                       src={championMoment} 
                       alt="Championship moment in Rich Habits gear" 
                       className="w-full h-full object-cover"
-                      onError={(e) = onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}> {
+                      onError={(e) => {
+  const img = e.target as HTMLImageElement;
+  if (img.dataset.fallbackAttempted !== 'true') {
+    img.dataset.fallbackAttempted = 'true';
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
+  }
+}} {
                         const img = e.target as HTMLImageElement;
                         if (img.dataset.fallbackAttempted !== 'true') {
                           img.dataset.fallbackAttempted = 'true';
