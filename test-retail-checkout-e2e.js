@@ -401,13 +401,9 @@ async function runEndToEndValidation() {
 }
 
 // Run the validation
-if (require.main === module) {
-  runEndToEndValidation()
-    .then(() => process.exit(0))
-    .catch(error => {
-      console.error('❌ Validation failed:', error);
-      process.exit(1);
-    });
-}
-
-module.exports = { runEndToEndValidation };
+runEndToEndValidation()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error('❌ Validation failed:', error);
+    process.exit(1);
+  });
