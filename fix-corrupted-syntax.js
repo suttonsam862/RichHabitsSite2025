@@ -1,34 +1,43 @@
 import fs from 'fs';
 
-// Fix all corrupted onError handlers in EventDetail.tsx
-const file = 'client/src/pages/events/EventDetail.tsx';
-let content = fs.readFileSync(file, 'utf8');
+console.log('🔧 Fixing all corrupted img element syntax...');
 
-console.log('Fixing corrupted onError handlers...');
+// Complete fix for EventDetail.tsx
+let content = fs.readFileSync('client/src/pages/events/EventDetail.tsx', 'utf8');
 
-// Replace all malformed onError patterns
-content = content.replace(
-  /onError=\{\(e\) = onError=\{\(e\) => \{[^}]*\}\}/g,
-  `onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-    }
-  }}`
-);
+// Fix all corrupted img elements with malformed closing syntax
+content = content.replace(/className="[^"]*"\s*\}\s*>/g, (match) => {
+  const className = match.match(/className="([^"]*)"/)[1];
+  return `className="${className}" />`;
+});
 
-// Fix any remaining syntax issues with corrupted handlers
-content = content.replace(
-  /onError=\{\(e\) = onError=\{\(e\) => \{[\s\S]*?\}\}>/g,
-  `onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    if (img.dataset.fallbackAttempted !== 'true') {
-      img.dataset.fallbackAttempted = 'true';
-      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-    }
-  }}`
-);
+// Remove any stray closing braces in img tags
+content = content.replace(/<img([^>]*)\s*\}\s*>/g, '<img$1 />');
 
-fs.writeFileSync(file, content);
-console.log('Fixed corrupted syntax in EventDetail.tsx');
+// Fix broken img tag patterns
+content = content.replace(/\s*\}\s*>\s*<img/g, ' />\n                    <img');
+
+fs.writeFileSync('client/src/pages/events/EventDetail.tsx', content);
+console.log('✓ Fixed EventDetail.tsx img elements');
+
+// Fix Collaborations.tsx
+let collab = fs.readFileSync('client/src/components/home/Collaborations.tsx', 'utf8');
+collab = collab.replace(/className="[^"]*"\s*\}\s*>/g, (match) => {
+  const className = match.match(/className="([^"]*)"/)[1];
+  return `className="${className}" />`;
+});
+collab = collab.replace(/<img([^>]*)\s*\}\s*>/g, '<img$1 />');
+fs.writeFileSync('client/src/components/home/Collaborations.tsx', collab);
+console.log('✓ Fixed Collaborations.tsx img elements');
+
+// Fix CustomApparelShowcase.tsx
+let showcase = fs.readFileSync('client/src/components/home/CustomApparelShowcase.tsx', 'utf8');
+showcase = showcase.replace(/className="[^"]*"\s*\}\s*>/g, (match) => {
+  const className = match.match(/className="([^"]*)"/)[1];
+  return `className="${className}" />`;
+});
+showcase = showcase.replace(/<img([^>]*)\s*\}\s*>/g, '<img$1 />');
+fs.writeFileSync('client/src/components/home/CustomApparelShowcase.tsx', showcase);
+console.log('✓ Fixed CustomApparelShowcase.tsx img elements');
+
+console.log('🚀 All corrupted img syntax fixed - deployment ready!');

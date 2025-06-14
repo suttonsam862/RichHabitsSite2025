@@ -389,8 +389,8 @@ export default function EventDetail() {
               color: '#ffffff'
             }}
             transition={{ duration: 0.2 }}
-            style={{ fontFamily: "'Sanchez', serif" }}
-          Back to Events
+            style={{ fontFamily: "'Sanchez', serif" }}>
+            Back to Events
           </motion.span>
         </Link>
       </div>
@@ -676,7 +676,7 @@ export default function EventDetail() {
                           src={regDetails.stickerImage}
                           alt={regDetails.stickerAlt}
                           className="w-full h-full object-cover"
-                          }
+                        />
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
                       </div>
                       {/* Sticker shadow */}
@@ -855,20 +855,15 @@ export default function EventDetail() {
                     src={event.id === 1 ? "@assets/C7QSGoxXUAEZ06-.webp" : event.id === 2 ? "/national-champ-hero.png" : selectedImage}
                     alt={event.title}
                     className="w-full h-full object-cover"
-                    }
-                  >
+                  />
                     <img
                       src="/images/gallery/training-session-1.webp"
                       alt="Training Session"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      }
-                  >
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
                     <img
                       src="/images/gallery/instruction-demo.webp"
                       alt="Instruction Demo"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      }
-                  >
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
                     <img
                       src="/images/gallery/group-photo.webp"
                       alt="Group Photo"
@@ -1068,7 +1063,7 @@ export default function EventDetail() {
                               alt={coach.name}
                               className="w-full h-full object-cover"
                               }
-                          <div className={`w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ${coach.image ? 'hidden' : ''}`}>
+                          <div className={`w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ${coach.image ? 'hidden' : ''}` />
                             <span className="text-white text-3xl font-bold">
                               {coach.name.split(' ').map((n: string) => n[0]).join('')}
                             </span>
