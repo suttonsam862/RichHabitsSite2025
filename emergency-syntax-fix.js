@@ -1,42 +1,53 @@
 import fs from 'fs';
 
-// Emergency syntax fix for deployment-blocking errors
-const files = [
-  'client/src/components/home/Collaborations.tsx',
-  'client/src/components/home/CustomApparelShowcase.tsx',
-  'client/src/pages/events/EventDetail.tsx'
-];
+console.log('🔧 Emergency syntax fix for deployment...');
 
-console.log('🔧 Emergency syntax repair for deployment...');
+// Complete fix for EventDetail.tsx - most critical
+let content = fs.readFileSync('client/src/pages/events/EventDetail.tsx', 'utf8');
 
-files.forEach(file => {
-  if (fs.existsSync(file)) {
-    let content = fs.readFileSync(file, 'utf8');
-    
-    // Remove all corrupted onError patterns and replace with clean handlers
-    content = content.replace(
-      /onError=\{[^}]*\{[^}]*\{[^}]*\}/g,
-      `onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-      }}`
-    );
-    
-    // Fix malformed JSX patterns
-    content = content.replace(/\}\}\s*\{/g, '}}');
-    content = content.replace(/\s*\.\.\.[^}]*\}/g, '');
-    content = content.replace(/Cannot find name 'e'/g, '');
-    
-    // Clean up any stray brackets
-    content = content.replace(/\}\}\}+/g, '}}');
-    content = content.replace(/\{\{\{+/g, '{{');
-    
-    fs.writeFileSync(file, content);
-    console.log(`✓ Fixed: ${file}`);
-  }
-});
+// Remove all corrupted onError handlers that were added to video elements
+content = content.replace(/onError=\{[^}]*\{[^}]*img[^}]*\}[^}]*\}/g, '');
 
-console.log('🚀 Emergency syntax repair complete!');
+// Fix broken JSX structures
+content = content.replace(/\}\}>[\s\n]*<source/g, '>\n            <source');
+content = content.replace(/\}\}>[\s\n]*<\/video>/g, '>\n          </video>');
+
+// Clean up malformed closing tags
+content = content.replace(/\}\}\s*\/>/g, '/>');
+content = content.replace(/\/\s*>/g, '/>');
+
+// Fix specific broken patterns
+content = content.replace(/\}\}\}>[\s\n]*</g, '}>\n            <');
+
+fs.writeFileSync('client/src/pages/events/EventDetail.tsx', content);
+console.log('✓ Fixed EventDetail.tsx structure');
+
+// Fix Collaborations.tsx
+let collab = fs.readFileSync('client/src/components/home/Collaborations.tsx', 'utf8');
+collab = collab.replace(/onError=\{[^}]*\{[^}]*img[^}]*\}[^}]*\}/g, 
+  `onError={(e) => {
+    const img = e.target as HTMLImageElement;
+    if (img.dataset.fallbackAttempted !== 'true') {
+      img.dataset.fallbackAttempted = 'true';
+      img.src = '/placeholder-logo.png';
+    }
+  }}`);
+collab = collab.replace(/\/\s*>/g, '/>');
+fs.writeFileSync('client/src/components/home/Collaborations.tsx', collab);
+console.log('✓ Fixed Collaborations.tsx');
+
+// Fix CustomApparelShowcase.tsx
+let showcase = fs.readFileSync('client/src/components/home/CustomApparelShowcase.tsx', 'utf8');
+showcase = showcase.replace(/onError=\{[^}]*\{[^}]*img[^}]*\}[^}]*\}/g,
+  `onError={(e) => {
+    const img = e.target as HTMLImageElement;
+    if (img.dataset.fallbackAttempted !== 'true') {
+      img.dataset.fallbackAttempted = 'true';
+      img.src = '/placeholder-image.png';
+    }
+  }}`);
+showcase = showcase.replace(/\/\s*>/g, '/>');
+fs.writeFileSync('client/src/components/home/CustomApparelShowcase.tsx', showcase);
+console.log('✓ Fixed CustomApparelShowcase.tsx');
+
+console.log('🚀 Emergency syntax fix complete!');

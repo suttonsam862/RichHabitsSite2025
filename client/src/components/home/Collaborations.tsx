@@ -39,18 +39,12 @@ const FruitGallery = () => {
         alt="Exotic fruits from Fruit Hunters" 
         className="w-full rounded-lg shadow-md"
         onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
+    const img = e.target as HTMLImageElement;
+    if (img.dataset.fallbackAttempted !== 'true') {
+      img.dataset.fallbackAttempted = 'true';
+      img.src = '/placeholder-logo.png';
+    }
+  }}}
 
       />
     </div>
@@ -119,38 +113,21 @@ const CollaborationCard: React.FC<CollaborationProps> = ({
               alt="Fruit Hunters Logo" 
               className="max-h-full max-w-full object-contain"
               onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgMTIwIDQwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iNDAiIGZpbGw9IiMyMjIiLz48dGV4dCB4PSI2MCIgeT0iMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZydWl0IEh1bnRlcnM8L3RleHQ+PC9zdmc+';
-
-            />
-          </div>
-        ) : logoSrc ? (
-          <div className="h-24 flex items-center justify-center mb-4">
-            <img 
-              src={logoSrc} 
+    const img = e.target as HTMLImageElement;
+    if (img.dataset.fallbackAttempted !== 'true') {
+      img.dataset.fallbackAttempted = 'true';
+      img.src = '/placeholder-logo.png';
+    }
+  }}} 
               alt={name} 
               className="max-h-full max-w-full object-contain" 
               onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
+    const img = e.target as HTMLImageElement;
+    if (img.dataset.fallbackAttempted !== 'true') {
+      img.dataset.fallbackAttempted = 'true';
+      img.src = '/placeholder-logo.png';
+    }
+  }}}
 
             />
           </div>

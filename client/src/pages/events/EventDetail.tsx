@@ -387,7 +387,7 @@ export default function EventDetail() {
             whileHover={{ 
               backgroundColor: '#1f2937', 
               color: '#ffffff'
-
+            }}
             transition={{ duration: 0.2 }}
             style={{ fontFamily: "'Sanchez', serif" }}>
             Back to Events
@@ -412,16 +412,7 @@ export default function EventDetail() {
             playsInline
             preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => {
-              console.log('Video failed, hiding element');
-              e.currentTarget.style.display = 'none';
-
-            onLoadStart={() => {
-              // Prevent memory issues
-              if (isMobile()) {
-                return false;
-              }
-            }}>
+            }>
             <source src="/videos/events-hero.webm" type="video/webm" />
             <source src="/videos/events-hero.mp4" type="video/mp4" />
           </video>
@@ -436,10 +427,7 @@ export default function EventDetail() {
               playsInline
               preload="metadata"
               className="absolute inset-0 w-full h-full object-cover z-0"
-              onError={(e) => {
-                console.log('Video failed, hiding element');
-                e.currentTarget.style.display = 'none';
-              }}>
+              }>
               <source src="/videos/national-champ-hero.webm" type="video/webm" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-800/50 to-blue-700/70 z-10"></div>
@@ -454,10 +442,7 @@ export default function EventDetail() {
             playsInline
             preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => {
-              console.log('Video failed, hiding element');
-              e.currentTarget.style.display = 'none';
-            }}>
+            }>
             <source src="/panther-train-tour.webm" type="video/webm" />
           </video>
         )}
@@ -471,10 +456,7 @@ export default function EventDetail() {
               playsInline
               preload="metadata"
               className="absolute inset-0 w-full h-full object-cover z-0"
-              onError={(e) => {
-                console.log('Video failed, hiding element');
-                e.currentTarget.style.display = 'none';
-              }}>
+              }>
               <source src="/videos/events-hero.webm" type="video/webm" />
               <source src="/videos/events-hero.mp4" type="video/mp4" />
             </video>
@@ -696,18 +678,7 @@ export default function EventDetail() {
                           src={regDetails.stickerImage}
                           alt={regDetails.stickerAlt}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-                        />
-                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
-                          Venue
-                        </div>
-                        {/* Sticker-style border effect */}
+                          }
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
                       </div>
                       {/* Sticker shadow */}
@@ -886,102 +857,25 @@ export default function EventDetail() {
                     src={event.id === 1 ? "@assets/C7QSGoxXUAEZ06-.webp" : event.id === 2 ? "/national-champ-hero.png" : selectedImage}
                     alt={event.title}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                  />
-                  <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                    <span className="text-gray-600">Gallery Image</span>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  <div 
-                    className="aspect-[4/3] overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedImage("/images/gallery/training-session-1.webp")}
+                    }
                   >
                     <img
                       src="/images/gallery/training-session-1.webp"
                       alt="Training Session"
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                    />
-                    <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-sm">Training</span>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className="aspect-[4/3] overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedImage("/images/gallery/instruction-demo.webp")}
+                      }
                   >
                     <img
                       src="/images/gallery/instruction-demo.webp"
                       alt="Instruction Demo"
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                    />
-                    <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-sm">Demo</span>
-                    </div>
-                  </div>
-
-                  <div 
-                    className="aspect-[4/3] overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedImage("/images/gallery/group-photo.webp")}
+                      }
                   >
                     <img
                       src="/images/gallery/group-photo.webp"
                       alt="Group Photo"
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                    />
-                    <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 text-sm">Group</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Jason Nolf Highlights for National Champ Camp */}
+                      }
               {event.id === 2 && (
                 <div className="mb-16">
                   <h3 className="text-2xl mb-6 title-font">Featured Clinician Highlights</h3>
@@ -1175,20 +1069,7 @@ export default function EventDetail() {
                               src={coach.image} 
                               alt={coach.name}
                               className="w-full h-full object-cover"
-                              onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                                // Fallback to initials if image fails to load
-                                e.currentTarget.style.display = 'none';
-                                e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                            />
-                          ) : null}
+                              }
                           <div className={`w-full h-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center ${coach.image ? 'hidden' : ''}`}>
                             <span className="text-white text-3xl font-bold">
                               {coach.name.split(' ').map((n: string) => n[0]).join('')}
@@ -1227,34 +1108,7 @@ export default function EventDetail() {
                           src="/images/fruits/0E28DDF2-9BF4-4256-BE3B-E3D1367A5740_1_102_o.jpeg"
                           alt="Exotic Fruit"
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                        />
-                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xs">Exotic Fruit</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex-1 relative overflow-hidden bg-gray-100">
-                        <img 
-                          src="/images/fruits/10F83FC8-8626-4870-BBD7-8A2205E5ADD1_1_102_o.jpeg"
-                          alt="Premium Nutrition"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
+                          }
 
 
                             e.currentTarget.style.display = 'none';
@@ -1271,45 +1125,7 @@ export default function EventDetail() {
                           src="/images/fruits/50C705BD-6E71-453B-A059-36DF8A4A5E04_1_102_o.jpeg"
                           alt="Athletic Performance"
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (img.dataset.fallbackAttempted !== 'true') {
-          img.dataset.fallbackAttempted = 'true';
-          img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
-        }
-
-
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
-
-                        />
-                        <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 text-xs">Athletic Performance</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="order-1 lg:order-2">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4 title-font">Peak Performance Nutrition</h3>
-                    <p className="text-gray-600 mb-6 subtitle-font leading-relaxed">
-                      Every athlete at our wrestling camps receives daily fresh exotic fruit packs meticulously designed for optimal nutrition, energy, and recovery. Our partnership with Fruit Hunters ensures premium quality fruits that fuel championship performance.
-                    </p>
-                    <div className="text-center lg:text-left">
-                      <a 
-                        href="https://fruithunters.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-block px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition duration-300"
-                      >
-                        Learn About Nutrition
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Benefits */}
+                          }
               <h2 
                 className="text-3xl mb-6"
                 style={{ fontFamily: "'Bodoni FLF', serif" }}>
