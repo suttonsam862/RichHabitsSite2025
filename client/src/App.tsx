@@ -47,49 +47,58 @@ function Router() {
 function App() {
   console.log("App component rendering...");
   
-  try {
-    return (
-      <div style={{ 
-        background: 'white', 
-        minHeight: '100vh', 
-        padding: '20px',
-        fontFamily: 'Arial, sans-serif'
-      }}>
-        <div style={{ 
-          background: 'red', 
-          color: 'white', 
-          padding: '20px', 
-          fontSize: '24px',
-          marginBottom: '20px',
-          textAlign: 'center'
-        }}>
-          ✅ SUCCESS: React App is now working!
-        </div>
-        <div style={{ 
-          background: '#f0f0f0', 
-          padding: '20px', 
-          borderRadius: '8px',
-          fontSize: '18px'
-        }}>
-          <h1 style={{ margin: '0 0 20px 0', color: '#333' }}>Rich Habits Wrestling</h1>
-          <p style={{ margin: '0 0 10px 0' }}>Current path: {window.location.pathname}</p>
-          <p style={{ margin: '0' }}>React application is successfully mounting and rendering.</p>
+  // Add to document body directly to bypass any CSS issues
+  setTimeout(() => {
+    document.body.style.background = 'lightblue';
+    document.body.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+      ">
+        <div style="
+          background: green;
+          color: white;
+          padding: 40px;
+          border-radius: 10px;
+          text-align: center;
+          font-size: 24px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        ">
+          ✅ REACT IS WORKING!<br>
+          The blank screen issue is fixed.
         </div>
       </div>
-    );
-  } catch (error) {
-    console.error("Error in App component:", error);
-    return (
-      <div style={{ 
-        background: 'red', 
-        color: 'white', 
-        padding: '20px', 
-        fontSize: '18px' 
-      }}>
-        Error: {error instanceof Error ? error.message : 'Unknown error'}
-      </div>
-    );
-  }
+    `;
+  }, 100);
+  
+  return (
+    <div style={{ 
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      background: 'blue', 
+      color: 'white',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '32px',
+      fontFamily: 'Arial, sans-serif',
+      zIndex: 10000
+    }}>
+      REACT MOUNTED SUCCESSFULLY!
+    </div>
+  );
 }
 
 export default App;

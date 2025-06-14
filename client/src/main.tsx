@@ -18,11 +18,11 @@ if (!rootElement) {
   try {
     const root = createRoot(rootElement);
     console.log("React root created, rendering app...");
+    
+    // Simplified rendering without QueryClient to isolate the issue
     root.render(
       <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
+        <App />
       </React.StrictMode>
     );
     console.log("App rendered successfully");

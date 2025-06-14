@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-banner { background: green; color: white; padding: 20px; margin: 10px 0; }
+        .error-banner { background: red; color: white; padding: 20px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="test-banner">
+        ✅ Static HTML is working
+    </div>
+    
+    <div id="js-test">
+        ❌ JavaScript not executed yet
+    </div>
+    
+    <div id="root">
+        ❌ React not mounted yet
+    </div>
+
+    <script>
+        console.log("Basic JavaScript executing...");
+        document.getElementById('js-test').innerHTML = '✅ JavaScript is working';
+        document.getElementById('js-test').className = 'test-banner';
+    </script>
+
+    <script type="module">
+        console.log("ES modules working...");
+        try {
+            import React from "/@fs/home/runner/workspace/node_modules/.vite/deps/react.js?v=957d97b6";
+            import { createRoot } from "/@fs/home/runner/workspace/node_modules/.vite/deps/react-dom_client.js?v=957d97b6";
+            
+            console.log("React imported successfully");
+            
+            const TestApp = () => {
+                return React.createElement('div', {
+                    style: { background: 'blue', color: 'white', padding: '20px' }
+                }, '✅ React is working directly!');
+            };
+            
+            const rootElement = document.getElementById('root');
+            if (rootElement) {
+                const root = createRoot(rootElement);
+                root.render(React.createElement(TestApp));
+                console.log("React test app rendered");
+            }
+        } catch (error) {
+            console.error("Error with React:", error);
+            document.getElementById('root').innerHTML = '❌ React failed: ' + error.message;
+            document.getElementById('root').className = 'error-banner';
+        }
+    </script>
+</body>
+</html>
