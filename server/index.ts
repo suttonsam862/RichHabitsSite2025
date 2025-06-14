@@ -42,23 +42,31 @@ async function startServer() {
   try {
     console.log("🧠 Starting Rich Habits server...");
 
-    // Setup static file serving FIRST before any other middleware
+    // Setup high-priority static file serving with explicit routes
+    const publicPath = path.resolve(process.cwd(), "public");
+    const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
+    
     if (process.env.NODE_ENV === "production") {
       const distPublicPath = path.resolve(process.cwd(), "dist/public");
       console.log("📦 Production: Serving static files from", distPublicPath);
-      app.use(express.static(distPublicPath));
       
-      // Serve attached assets for production
-      const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
+      // High priority static routes
+      app.use('/images', express.static(path.join(distPublicPath, 'images')));
+      app.use('/assets', express.static(path.join(distPublicPath, 'assets')));
+      app.use('/videos', express.static(path.join(distPublicPath, 'videos')));
+      app.use('/designs', express.static(path.join(distPublicPath, 'designs')));
+      app.use(express.static(distPublicPath));
       app.use('/assets', express.static(attachedAssetsPath));
       console.log("📦 Production: Serving assets from", attachedAssetsPath);
     } else {
-      const publicPath = path.resolve(process.cwd(), "public");
       console.log("🛠️ Development: Serving static files from", publicPath);
-      app.use(express.static(publicPath));
       
-      // Serve attached assets for development
-      const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
+      // High priority static routes BEFORE any other middleware
+      app.use('/images', express.static(path.join(publicPath, 'images')));
+      app.use('/assets', express.static(path.join(publicPath, 'assets')));
+      app.use('/videos', express.static(path.join(publicPath, 'videos')));
+      app.use('/designs', express.static(path.join(publicPath, 'designs')));
+      app.use(express.static(publicPath));
       app.use('/assets', express.static(attachedAssetsPath));
       console.log("🛠️ Development: Serving assets from", attachedAssetsPath);
     }
@@ -108,8 +116,17 @@ async function startServer() {
       );
     });
 
-    // Setup Vite dev middleware AFTER static file serving
+    // Setup Vite dev middleware with static file protection
     if (process.env.NODE_ENV !== "production") {
+      // Force static file handling before Vite can intercept
+      app.use((req, res, next) => {
+        const isStaticFile = req.url.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm|woff|woff2|ttf|eot|css|js|json)$/i);
+        if (isStaticFile) {
+          console.log(`🖼️ Static file request: ${req.url}`);
+        }
+        next();
+      });
+      
       await setupVite(app, server);
       console.log("✅ Vite dev server active");
     }
