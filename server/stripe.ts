@@ -719,7 +719,52 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           break;
         }
         
-        // CRITICAL SAFEGUARD: Validate payment metadata before processing
+        // Check if this is a retail cart payment or event registration
+        const paymentType = paymentIntent.metadata?.type;
+        
+        if (paymentType === 'retail_cart_checkout') {
+          // Handle retail cart checkout
+          console.log('Processing retail cart payment:', paymentIntent.id);
+          
+          try {
+            // Parse cart items from metadata
+            const cartItemsData = JSON.parse(paymentIntent.metadata.cart_items || '[]');
+            const customerEmail = paymentIntent.metadata.customer_email;
+            
+            if (!customerEmail || !cartItemsData.length) {
+              console.error('Missing customer info or cart items for retail payment:', paymentIntent.id);
+              break;
+            }
+            
+            // Create customer info from payment intent
+            const customer = {
+              firstName: paymentIntent.metadata.customer_first_name || 'Customer',
+              lastName: paymentIntent.metadata.customer_last_name || '',
+              email: customerEmail,
+              phone: paymentIntent.metadata.customer_phone || ''
+            };
+            
+            // Import and use the createShopifyOrderFromCart function
+            const { createShopifyOrderFromCart } = await import('./shopify.js');
+            const shopifyOrder = await createShopifyOrderFromCart(cartItemsData, customer, paymentIntent.id);
+            
+            if (shopifyOrder.success) {
+              console.log('Successfully created Shopify order from cart payment:', shopifyOrder.orderId);
+              trackOrderCreated();
+            } else {
+              console.error('Failed to create Shopify order from cart payment');
+              trackOrderFailed();
+            }
+            
+          } catch (error) {
+            console.error('Error processing retail cart payment:', error);
+            trackOrderFailed();
+          }
+          
+          break;
+        }
+        
+        // Handle event registration payments (existing logic)
         const eventId = paymentIntent.metadata?.eventId;
         const eventName = paymentIntent.metadata?.eventName;
         

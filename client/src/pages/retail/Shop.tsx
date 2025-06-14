@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
 import { ShopifyImage, getShopifyImageUrl } from "../../components/ui/robust-image";
+import type { Product } from "../../types/shopify";
 
 
 const fadeIn = {
