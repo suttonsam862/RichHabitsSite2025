@@ -45,16 +45,24 @@ function Router() {
 }
 
 function App() {
+  console.log("App component rendering...");
+  
   // Check if the current path is a special page that shouldn't show header/footer
   const pathname = window.location.pathname;
   const isSpecialPage = 
     pathname === '/redirect' || 
     pathname === '/embedded-cart';
   
+  console.log("Current pathname:", pathname);
+  console.log("Is special page:", isSpecialPage);
+  
   return (
     <TooltipProvider>
       <CartProvider>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-white">
+          <div style={{ background: 'red', color: 'white', padding: '10px', fontSize: '18px' }}>
+            DEBUG: React App is rendering! Path: {pathname}
+          </div>
           {!isSpecialPage && <MaintenanceBanner />}
           {!isSpecialPage && <Header />}
           <main className={`flex-grow ${!isSpecialPage ? 'pt-16' : ''}`}>
