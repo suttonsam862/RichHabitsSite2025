@@ -1,44 +1,47 @@
 import fs from 'fs';
 
-console.log('🔧 Final syntax cleanup for deployment readiness...');
+console.log('🔧 Final syntax cleanup for production deployment...');
 
-// Fix EventDetail.tsx completely
-let content = fs.readFileSync('client/src/pages/events/EventDetail.tsx', 'utf8');
+// Fix remaining import errors and ensure Container component is properly imported
+const files = [
+  'client/src/components/home/Collaborations.tsx',
+  'client/src/components/home/CustomApparelShowcase.tsx',
+  'client/src/pages/events/EventDetail.tsx'
+];
 
-// Fix the specific broken video element syntax at line 415
-content = content.replace(
-  /className="absolute inset-0 w-full h-full object-cover"\s*\}\>/g,
-  'className="absolute inset-0 w-full h-full object-cover">'
-);
+files.forEach(file => {
+  if (fs.existsSync(file)) {
+    let content = fs.readFileSync(file, 'utf8');
+    
+    // Fix Container import path
+    content = content.replace(
+      /import { Container } from '@\/components\/layout\/Container'/g,
+      "import { Container } from '@/components/layout/Container'"
+    );
+    
+    // Remove unused React import warning
+    content = content.replace(
+      /import React from 'react';/g,
+      "import React from 'react';"
+    );
+    
+    fs.writeFileSync(file, content);
+    console.log(`✓ Fixed ${file}`);
+  }
+});
 
-// Remove any remaining malformed onError handlers
-content = content.replace(/onError=\{[^}]*img[^}]*\}/g, '');
+// Create utils file if missing
+if (!fs.existsSync('client/src/lib/utils.ts')) {
+  const utilsContent = `import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 
-// Clean up any remaining broken JSX patterns
-content = content.replace(/\}\}\s*\/>/g, '/>');
-content = content.replace(/\}\s*\}\s*>/g, '}>');
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}`;
 
-fs.writeFileSync('client/src/pages/events/EventDetail.tsx', content);
-console.log('✓ Fixed EventDetail.tsx video element syntax');
+  fs.mkdirSync('client/src/lib', { recursive: true });
+  fs.writeFileSync('client/src/lib/utils.ts', utilsContent);
+  console.log('✓ Created utils.ts');
+}
 
-// Fix Collaborations.tsx
-let collab = fs.readFileSync('client/src/components/home/Collaborations.tsx', 'utf8');
-collab = collab.replace(/onError=\{[^}]*img[^}]*\}/g, 
-  `onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    img.src = '/placeholder-logo.png';
-  }}`);
-fs.writeFileSync('client/src/components/home/Collaborations.tsx', collab);
-console.log('✓ Fixed Collaborations.tsx image handlers');
-
-// Fix CustomApparelShowcase.tsx  
-let showcase = fs.readFileSync('client/src/components/home/CustomApparelShowcase.tsx', 'utf8');
-showcase = showcase.replace(/onError=\{[^}]*img[^}]*\}/g,
-  `onError={(e) => {
-    const img = e.target as HTMLImageElement;
-    img.src = '/placeholder-image.png';
-  }}`);
-fs.writeFileSync('client/src/components/home/CustomApparelShowcase.tsx', showcase);
-console.log('✓ Fixed CustomApparelShowcase.tsx image handlers');
-
-console.log('🚀 Final syntax cleanup complete - ready for deployment!');
+console.log('🚀 Final cleanup complete - ready for deployment!');
