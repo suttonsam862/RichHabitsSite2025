@@ -1,9 +1,14 @@
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
-import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts, getProductsInSalesChannel } from "../shopify.js";
+import { listCollections, getCollectionByHandle, getCollectionProducts, getProductById, getProductByHandle, listProducts, getProductsInSalesChannel, createShopifyOrderFromCart } from "../shopify.js";
 import { storage } from "../storage.js";
+import Stripe from 'stripe';
 
-// Cart item validation schema - handles both string and numeric IDs from Shopify
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2024-12-18.acacia',
+});
+
+// Enhanced cart item validation schema with variant selection tracking
 const addToCartSchema = z.object({
   shopifyProductId: z.union([z.string(), z.number()]).transform(String),
   shopifyVariantId: z.union([z.string(), z.number()]).transform(String),
@@ -15,7 +20,10 @@ const addToCartSchema = z.object({
   quantity: z.number().min(1, "Quantity must be at least 1").optional().default(1),
   productImage: z.string().optional(),
   productType: z.string().optional(),
-  vendor: z.string().optional()
+  vendor: z.string().optional(),
+  selectedSize: z.string().optional(),
+  selectedColor: z.string().optional(),
+  variantOptions: z.record(z.string()).optional()
 });
 
 // Legacy cart item schema for checkout compatibility
@@ -29,9 +37,24 @@ const legacyCartItemSchema = z.object({
   image: z.string().optional()
 });
 
-// Cart checkout validation schema
+// Enhanced cart checkout validation schema
 const cartCheckoutSchema = z.object({
-  items: z.array(legacyCartItemSchema).min(1, "Cart must contain at least one item"),
+  items: z.array(z.object({
+    id: z.string().optional(),
+    shopifyProductId: z.string(),
+    shopifyVariantId: z.string(),
+    productHandle: z.string(),
+    productTitle: z.string(),
+    variantTitle: z.string().optional(),
+    price: z.string(),
+    quantity: z.number().min(1),
+    selectedSize: z.string().optional(),
+    selectedColor: z.string().optional(),
+    variantOptions: z.record(z.string()).optional(),
+    productImage: z.string().optional(),
+    productType: z.string().optional(),
+    vendor: z.string().optional()
+  })).min(1, "Cart must contain at least one item"),
   customerInfo: z.object({
     email: z.string().email("Valid email is required"),
     firstName: z.string().min(1, "First name is required"),
