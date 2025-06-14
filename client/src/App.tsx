@@ -47,33 +47,49 @@ function Router() {
 function App() {
   console.log("App component rendering...");
   
-  // Check if the current path is a special page that shouldn't show header/footer
-  const pathname = window.location.pathname;
-  const isSpecialPage = 
-    pathname === '/redirect' || 
-    pathname === '/embedded-cart';
-  
-  console.log("Current pathname:", pathname);
-  console.log("Is special page:", isSpecialPage);
-  
-  return (
-    <TooltipProvider>
-      <CartProvider>
-        <div className="flex flex-col min-h-screen bg-white">
-          <div style={{ background: 'red', color: 'white', padding: '10px', fontSize: '18px' }}>
-            DEBUG: React App is rendering! Path: {pathname}
-          </div>
-          {!isSpecialPage && <MaintenanceBanner />}
-          {!isSpecialPage && <Header />}
-          <main className={`flex-grow ${!isSpecialPage ? 'pt-16' : ''}`}>
-            <Router />
-          </main>
-          {!isSpecialPage && <Footer />}
-          <Toaster />
+  try {
+    return (
+      <div style={{ 
+        background: 'white', 
+        minHeight: '100vh', 
+        padding: '20px',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <div style={{ 
+          background: 'red', 
+          color: 'white', 
+          padding: '20px', 
+          fontSize: '24px',
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
+          ✅ SUCCESS: React App is now working!
         </div>
-      </CartProvider>
-    </TooltipProvider>
-  );
+        <div style={{ 
+          background: '#f0f0f0', 
+          padding: '20px', 
+          borderRadius: '8px',
+          fontSize: '18px'
+        }}>
+          <h1 style={{ margin: '0 0 20px 0', color: '#333' }}>Rich Habits Wrestling</h1>
+          <p style={{ margin: '0 0 10px 0' }}>Current path: {window.location.pathname}</p>
+          <p style={{ margin: '0' }}>React application is successfully mounting and rendering.</p>
+        </div>
+      </div>
+    );
+  } catch (error) {
+    console.error("Error in App component:", error);
+    return (
+      <div style={{ 
+        background: 'red', 
+        color: 'white', 
+        padding: '20px', 
+        fontSize: '18px' 
+      }}>
+        Error: {error instanceof Error ? error.message : 'Unknown error'}
+      </div>
+    );
+  }
 }
 
 export default App;
