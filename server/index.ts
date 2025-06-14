@@ -107,6 +107,11 @@ async function startServer() {
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ Rich Habits server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
       console.log('🌐 Server address:', server.address());
+      
+      // Add a small delay to ensure server is fully ready
+      setTimeout(() => {
+        console.log('🚀 Server is ready to accept connections');
+      }, 1000);
     });
 
     // Setup Vite only in development
