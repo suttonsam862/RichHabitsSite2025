@@ -1,3 +1,4 @@
+import React from "react";
 import { Dialog, DialogContent, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 // Design image paths with direct paths

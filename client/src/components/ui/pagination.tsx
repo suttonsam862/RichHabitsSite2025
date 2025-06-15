@@ -1,3 +1,4 @@
+import React from "react";
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
     role="navigation"

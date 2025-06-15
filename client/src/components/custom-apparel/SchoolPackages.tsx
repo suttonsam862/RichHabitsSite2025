@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import Container from "../layout/Container";
 import { motion, AnimatePresence } from "framer-motion";

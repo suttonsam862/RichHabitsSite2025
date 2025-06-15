@@ -1,3 +1,4 @@
+import React from "react";
 const Accordion = AccordionPrimitive.Root
 
 const AccordionItem = React.forwardRef<

@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * This page provides debugging tools for Shopify checkout URLs
  * to help identify and fix issues with the checkout process.

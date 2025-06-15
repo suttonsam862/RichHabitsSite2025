@@ -1,3 +1,4 @@
+import React from "react";
 import Container from "../layout/Container";
 import { motion } from "framer-motion";
 import { Link } from "wouter";

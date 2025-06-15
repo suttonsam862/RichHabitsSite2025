@@ -1,3 +1,4 @@
+import React from "react";
 // Native Analytics Tracker Component
 // Automatically tracks page views and visitor activity
 // Completely invisible to users and doesn't affect existing functionality

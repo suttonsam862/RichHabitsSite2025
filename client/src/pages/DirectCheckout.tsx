@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * This page creates a direct, reliable checkout experience with Shopify
  * using a simplified approach that avoids JavaScript complexity.

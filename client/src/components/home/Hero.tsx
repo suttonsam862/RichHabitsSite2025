@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
 
 export function Hero() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

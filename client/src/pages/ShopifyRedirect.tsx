@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * This page handles redirecting to Shopify for cart and checkout operations.
  */
