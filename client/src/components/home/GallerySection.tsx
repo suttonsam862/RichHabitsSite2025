@@ -1,6 +1,5 @@
 import { Link } from "wouter";
-import { AnimatedUnderline } from "@/components/ui/animated-underline";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 import { motion } from "framer-motion";
 
 const galleryImages = [
@@ -46,10 +45,8 @@ export function GallerySection() {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl font-serif font-semibold mb-4 group">
-            <AnimatedUnderline>
-              Gallery
-            </AnimatedUnderline>
+          <h2 className="text-3xl font-serif font-semibold mb-4">
+            Gallery
           </h2>
           <p className="text-lg mb-12">A showcase of our collections and custom projects.</p>
         </motion.div>

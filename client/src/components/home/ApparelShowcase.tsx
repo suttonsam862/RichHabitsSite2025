@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 
 export function ApparelShowcase() {
   const [selectedCategory, setSelectedCategory] = useState("all");
