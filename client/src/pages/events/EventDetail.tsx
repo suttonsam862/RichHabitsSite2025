@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet';
-import { getEventMedia } from '@/lib/eventMediaMap';
 
 export default function EventDetail() {
   const [location] = useLocation();
@@ -28,35 +27,31 @@ export default function EventDetail() {
         
         const data = await response.json();
         
-        // Add authentic coach data and media for Birmingham Slam Camp
+        // Add authentic coach data for Birmingham Slam Camp
         if (data.id === 1) {
-          // Get media assets for Birmingham Slam Camp
-          const eventMedia = getEventMedia(data.id);
-          data.media = eventMedia;
-          
           data.coaches = [
             {
               name: "Zahid Valencia",
               title: "2x NCAA Champion",
-              image: "/assets/coaches/VALENCIA_Zahid-headshot.jpg",
+              image: "/assets/VALENCIA_Zahid-headshot.jpg",
               bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat."
             },
             {
-              name: "Josh Shields",
+              name: "Josh Shields", 
               title: "NCAA All-American",
-              image: "/assets/coaches/josh_shields.jpg",
+              image: "/assets/josh_shields.jpg",
               bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit."
             },
             {
               name: "Brandon Courtney",
-              title: "NCAA Finalist",
-              image: "/assets/coaches/brandon_courtney.webp",
+              title: "NCAA Finalist", 
+              image: "/assets/brandon_courtney.webp",
               bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat."
             },
             {
               name: "Michael McGee",
               title: "NCAA All-American",
-              image: "/assets/coaches/Michael_McGee_JouQS.jpg",
+              image: "/assets/Michael_McGee_JouQS.jpg", 
               bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness."
             }
           ];
@@ -100,42 +95,33 @@ export default function EventDetail() {
         <meta name="description" content={event.shortDescription} />
       </Helmet>
       
-      {/* Event Banner with Video Background */}
-      <div className="w-full overflow-hidden relative h-[60vh] bg-black">
-        {/* Video Background for Birmingham Slam Camp */}
-        {event.id === 1 && event.media && (
+      {/* Event Banner with Loop Video */}
+      <div className="w-full overflow-hidden relative">
+        {/* Loop Video for Birmingham Slam Camp */}
+        {event.id === 1 && (
           <video 
             autoPlay 
             muted 
             loop 
             playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-            poster={event.media.mainVideoPoster}
+            className="w-full h-auto"
           >
-            <source src={event.media.mainVideo} type="video/mp4" />
+            <source src="/assets/slamcamp.webm" type="video/webm" />
+            <source src="/assets/slamcamp.mov" type="video/mp4" />
           </video>
         )}
         
-        {/* Fallback Banner Image */}
-        {(!event.media || event.id !== 1) && (
+        {/* Fallback Banner Image for other events */}
+        {event.id !== 1 && (
           <img 
-            src={event.image || '/assets/SlamCampSiteBanner.png'} 
+            src={event.image} 
             alt={event.title} 
-            className="w-full h-full object-cover" 
+            className="w-full h-auto object-cover" 
             onError={(e) => {
               e.currentTarget.src = '/assets/SlamCampSiteBanner.png';
             }}
           />
         )}
-        
-        {/* Overlay with event title */}
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">{event.title}</h1>
-            <p className="text-xl md:text-2xl">{event.date}</p>
-            <p className="text-lg md:text-xl opacity-90">{event.location}</p>
-          </div>
-        </div>
         
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
       </div>
@@ -253,85 +239,7 @@ export default function EventDetail() {
                 </div>
               )}
               
-              {/* Video Gallery for Birmingham Slam Camp */}
-              {event.id === 1 && event.media && (
-                <div className="mb-12">
-                  <h3 className="text-2xl font-bold mb-6">Event Highlights</h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Main Video */}
-                    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                      <video
-                        controls
-                        muted
-                        className="w-full h-full object-cover"
-                        poster={event.media.mainVideoPoster}
-                      >
-                        <source src={event.media.mainVideo} type="video/mp4" />
-                      </video>
-                      <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center pointer-events-none">
-                        <div className="text-white text-center">
-                          <h4 className="text-lg font-bold mb-2">Main Event</h4>
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Highlight Video */}
-                    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                      <video
-                        controls
-                        muted
-                        className="w-full h-full object-cover"
-                        poster={event.media.highlightVideoPoster}
-                      >
-                        <source src={event.media.highlightVideo} type="video/mp4" />
-                      </video>
-                      <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center pointer-events-none">
-                        <div className="text-white text-center">
-                          <h4 className="text-lg font-bold mb-2">Highlights</h4>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Feature Video */}
-                    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                      <video
-                        controls
-                        muted
-                        className="w-full h-full object-cover"
-                        poster={event.media.featureVideoPoster}
-                      >
-                        <source src={event.media.featureVideo} type="video/mp4" />
-                      </video>
-                      <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center pointer-events-none">
-                        <div className="text-white text-center">
-                          <h4 className="text-lg font-bold mb-2">Features</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Photo Gallery for Birmingham Slam Camp */}
-              {event.id === 1 && event.media && event.media.galleryImages && (
-                <div className="mb-12">
-                  <h3 className="text-2xl font-bold mb-6">Photo Gallery</h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {event.media.galleryImages.map((image, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                        <img
-                          src={image}
-                          alt={`${event.title} Photo ${index + 1}`}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.currentTarget.src = '/assets/SlamCampSiteBanner.png';
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
               
               <div>
                 <h2 className="text-2xl font-bold mb-6">About {event.title}</h2>
