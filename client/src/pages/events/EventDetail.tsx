@@ -80,9 +80,8 @@ export default function EventDetail() {
                   onClick={() => setSelectedImage(index)}
                   className={`aspect-video overflow-hidden rounded border-2 ${
                     selectedImage === index ? 'border-blue-500' : 'border-gray-200'
-                  }`}
-                >
-                  <img
+                  }`}}
+            /><img
                     src={image}
                     alt={`${currentEvent.title} ${index + 1}`}
                     className="w-full h-full object-cover"

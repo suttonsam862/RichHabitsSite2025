@@ -73,7 +73,8 @@ export function CampSlideshow() {
         
         <div className="relative h-[500px] rounded-xl overflow-hidden shadow-2xl">
           {/* Background gradient overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-r ${currentCamp.color} opacity-80 z-10`}></div>
+          <div className={`absolute inset-0 bg-gradient-to-r ${currentCamp.color} opacity-80 z-10`}}
+            /></div>
           
           {/* Camp slideshow */}
           <AnimatePresence mode="wait">
@@ -99,7 +100,7 @@ export function CampSlideshow() {
                       img.dataset.fallbackAttempted = 'true';
                       img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
                     }
-                  }}
+
                 />
               </div>
               
@@ -110,18 +111,16 @@ export function CampSlideshow() {
                     className="text-4xl md:text-5xl font-bold mb-4"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    {currentCamp.name}
+                    transition={{ delay: 0.2 }}}
+            />{currentCamp.name}
                   </motion.h3>
                   
                   <motion.div 
                     className="text-xl md:text-2xl mb-6 font-semibold"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <span className="mr-4">{currentCamp.date}</span>
+                    transition={{ delay: 0.3 }}}
+            /><span className="mr-4">{currentCamp.date}</span>
                     <span>{currentCamp.location}</span>
                   </motion.div>
                   
@@ -129,17 +128,15 @@ export function CampSlideshow() {
                     className="text-lg mb-8"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    {currentCamp.description}
+                    transition={{ delay: 0.4 }}}
+            />{currentCamp.description}
                   </motion.p>
                   
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                  >
-                    <Link href={currentCamp.link} className="inline-block bg-white text-gray-900 font-medium py-3 px-8 rounded-md hover:bg-gray-100 transition-colors">
+                    transition={{ delay: 0.5 }}}
+            /><Link href={currentCamp.link} className="inline-block bg-white text-gray-900 font-medium py-3 px-8 rounded-md hover:bg-gray-100 transition-colors">
                       Learn More
                     </Link>
                   </motion.div>
