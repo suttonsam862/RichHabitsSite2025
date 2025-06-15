@@ -1,10 +1,10 @@
-import React from "react";
 import { useState } from 'react';
 import { useParams, Link } from 'wouter';
 import { Button } from '../../components/ui/button';
 import Container from '../../components/layout/Container';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, MapPin, ChevronLeft, Star, ArrowRight  } from "../../lib/icons";
+
 interface Event {
   id: number;
   title: string;
@@ -17,36 +17,109 @@ interface Event {
   slug: string;
 }
 
-const mockEvents: Event[] = [
-  {
-    id: 1,
-    title: "Summer Wrestling Camp",
-    date: "July 15-19, 2024",
-    location: "Athletic Training Center",
-    price: 299,
-    description: "Intensive 5-day wrestling camp for all skill levels...",
-    features: ["Professional Coaching", "Competition Training", "Technique Development"],
-    images: ["/hero-bg.jpg", "/training-session.jpg"],
-    slug: "summer-camp"
-  }
-];
-
 export default function EventDetail() {
-  const { slug } = useParams();
+  const { id } = useParams();
   const [selectedImage, setSelectedImage] = useState(0);
+
+  // Map ID to slug for API calls
+  const idToSlugMap: Record<string, string> = {
+    '1': 'birmingham-slam-camp',
+    '2': 'national-champ-camp', 
+    '3': 'texas-recruiting-clinic',
+    '4': 'panther-train-tour'
+  };
+
+  const slug = id ? idToSlugMap[id] || id : undefined;
 
   const { data: event } = useQuery({
     queryKey: ['/api/events', slug],
     enabled: !!slug
   });
 
-  const currentEvent = (event || mockEvents.find(e => e.slug === slug)) as Event | undefined;
+  // Define the actual events data
+  const events: Event[] = [
+    {
+      id: 1,
+      title: "Birmingham Slam Camp",
+      date: "June 19-21, 2025",
+      location: "Clay-Chalkville Middle School, Birmingham, AL",
+      price: 249,
+      description: "A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.",
+      features: [
+        "NCAA champion instructors and elite coaches",
+        "Specialized technique sessions for all skill levels", 
+        "Leadership and mental toughness workshops",
+        "Custom Rich Habits camp gear included",
+        "Professional training environment",
+        "Limited to 200 participants for quality instruction"
+      ],
+      images: ["/assets/SlamCampSiteBanner.png", "/assets/DSC08460--.jpg"],
+      slug: "birmingham-slam-camp"
+    },
+    {
+      id: 2,
+      title: "National Champ Camp",
+      date: "June 5-7, 2025",
+      location: "Roy Martin Middle School, Las Vegas, NV", 
+      price: 299,
+      description: "Train with NCAA champions and Olympic athletes in this intensive 3-day camp focused on championship-level techniques and mindset development.",
+      features: [
+        "Training with NCAA champions and Olympic athletes",
+        "Championship-level technique instruction",
+        "Mental performance coaching",
+        "Competition preparation strategies",
+        "Elite-level conditioning programs",
+        "Networking with top-tier athletes"
+      ],
+      images: ["/assets/LongSitePhotovegas.png", "/assets/DSC00423.JPG"],
+      slug: "national-champ-camp"
+    },
+    {
+      id: 3,
+      title: "Texas Recruiting Clinic", 
+      date: "June 12-13, 2025",
+      location: "Arlington Martin High School, Arlington, TX",
+      price: 249,
+      description: "Designed specifically for high school wrestlers seeking collegiate opportunities, featuring college coach evaluations and recruitment guidance.",
+      features: [
+        "College coaches in attendance for direct scouting",
+        "Professional video recording of matches and drills",
+        "Personalized feedback from NCAA athletes", 
+        "Recruiting workshop with application tips",
+        "Networking opportunities with coaches and scouts",
+        "Limited to 150 participants for maximum exposure"
+      ],
+      images: ["/assets/RecruitingWebsiteimage4.png", "/assets/DSC09353.JPG"],
+      slug: "texas-recruiting-clinic"
+    },
+    {
+      id: 4,
+      title: "Panther Train Tour",
+      date: "July 23-25, 2025",
+      location: "Various locations",
+      price: 99,
+      description: "Mobile wrestling clinic touring multiple locations, bringing elite training directly to your community.",
+      features: [
+        "Multi-location training tour",
+        "Community-based instruction",
+        "Accessible elite coaching",
+        "Local venue partnerships",
+        "Flexible scheduling options",
+        "Regional athlete development focus"
+      ],
+      images: ["/assets/Cory_Site_Image.png", "/assets/DSC07337--.jpg"],
+      slug: "panther-train-tour"
+    }
+  ];
+
+  const currentEvent = event || events.find(e => e.id.toString() === id || e.slug === slug);
 
   if (!currentEvent) {
     return (
       <Container className="py-20">
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
+          <p className="text-gray-600 mb-6">The event you're looking for could not be found.</p>
           <Link href="/events">
             <Button>Back to Events</Button>
           </Link>
