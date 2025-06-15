@@ -25,6 +25,26 @@ const authenticEventData = [
       "Professional training environment",
       "Limited to 200 participants to ensure quality instruction"
     ],
+    clinicians: [
+      {
+        name: "Bo Nickal",
+        credentials: "3x NCAA Champion, UFC Fighter",
+        specialty: "Takedowns & Transitions",
+        image: "/assets/bo-nickal.jpg"
+      },
+      {
+        name: "David Taylor",
+        credentials: "2x NCAA Champion, Olympic Gold Medalist",
+        specialty: "Championship Mindset & Technique",
+        image: "/assets/david-taylor.jpg"
+      },
+      {
+        name: "Carter Starocci",
+        credentials: "4x NCAA Champion",
+        specialty: "Mental Performance & Competition",
+        image: "/assets/carter-starocci.jpg"
+      }
+    ],
     schedule: [
       {
         day: "Day 1 (Thursday)",
@@ -94,6 +114,32 @@ const authenticEventData = [
       "Film review and strategy sessions",
       "Nutrition and recovery workshops",
       "Limited to 200 participants with selective application process"
+    ],
+    clinicians: [
+      {
+        name: "Roman Bravo-Young",
+        credentials: "NCAA Champion, World Team Member",
+        specialty: "Speed & Agility Techniques",
+        image: "/assets/roman-bravo-young.jpg"
+      },
+      {
+        name: "Aaron Brooks",
+        credentials: "2x NCAA Champion",
+        specialty: "Scoring & Offensive Wrestling",
+        image: "/assets/aaron-brooks.jpg"
+      },
+      {
+        name: "Nick Lee",
+        credentials: "NCAA Champion, World Bronze Medalist",
+        specialty: "Defensive Wrestling & Counters",
+        image: "/assets/nick-lee.jpg"
+      },
+      {
+        name: "Spencer Lee",
+        credentials: "3x NCAA Champion",
+        specialty: "Mental Toughness & Competition",
+        image: "/assets/spencer-lee.jpg"
+      }
     ],
     schedule: [
       {
