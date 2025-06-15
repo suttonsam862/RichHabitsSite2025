@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+    <style>
+        body { 
+            background: #00ff00; 
+            color: black; 
+            font-size: 24px; 
+            padding: 20px; 
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>DEBUG: Server is working</h1>
+    <p>If you see this GREEN page, the server is serving content correctly.</p>
+    <p>Visit <a href="/">localhost:5000</a> to test the main site.</p>
+    <script>
+        console.log("Debug page JavaScript working");
+        document.body.innerHTML += "<p>JavaScript is executing</p>";
+    </script>
+</body>
+</html>
