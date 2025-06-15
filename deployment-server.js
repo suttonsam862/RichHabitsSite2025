@@ -1,93 +1,152 @@
-#!/usr/bin/env node
-
 /**
  * Deployment Server for Replit
  * Handles deployment requirements for Rich Habits platform
  */
 
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import session from "express-session";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// Create Express application
 const app = express();
-const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0';
-
-// Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint for deployment
+// Get current directory in ESM context
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Force deployment environment settings
+process.env.PORT = process.env.PORT || '5000';
+process.env.NODE_ENV = 'production';
+
+console.log(`🚀 Starting Rich Habits deployment server on port ${process.env.PORT}`);
+
+// Session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "rich-habits-production-secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false, // Allow HTTP for deployment testing
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+    },
+  }),
+);
+
+// Health check endpoints for deployment
 app.get('/health', (req, res) => {
   res.status(200).json({ 
-    status: 'healthy',
+    status: 'healthy', 
     timestamp: new Date().toISOString(),
-    port: PORT,
-    env: process.env.NODE_ENV || 'production'
+    port: process.env.PORT,
+    environment: process.env.NODE_ENV
   });
 });
 
-// Serve static files from public directory
-const publicPath = path.resolve(process.cwd(), 'public');
-app.use(express.static(publicPath));
-
-// Serve built client files if they exist
-const distPublicPath = path.resolve(process.cwd(), 'dist/public');
-app.use(express.static(distPublicPath));
-
-// Basic API health endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'API healthy', timestamp: new Date().toISOString() });
+  res.status(200).json({ 
+    status: 'healthy', 
+    api: 'running',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Catch-all route for SPA
+// Static file serving with priority
+const publicPath = path.resolve(process.cwd(), "public");
+
+// Serve static files from multiple locations
+app.use(express.static(publicPath));
+app.use('/images', express.static(path.join(publicPath, 'images')));
+app.use('/assets', express.static(path.join(publicPath, 'assets')));
+app.use('/videos', express.static(path.join(publicPath, 'videos')));
+
+// Try to serve built client files if they exist
+try {
+  const distPath = path.resolve(process.cwd(), "dist/public");
+  app.use(express.static(distPath));
+  console.log(`📦 Serving built client from: ${distPath}`);
+} catch (err) {
+  console.log('📝 Built client files not found, will serve development version');
+}
+
+// Basic API routes for testing
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Rich Habits API is running', timestamp: new Date().toISOString() });
+});
+
+// Catch-all route to serve index.html for React routing
 app.get('*', (req, res) => {
-  // Try to serve built index.html first
-  const builtIndexPath = path.join(distPublicPath, 'index.html');
-  const devIndexPath = path.join(process.cwd(), 'client/index.html');
-  
-  // Check if built version exists
-  try {
-    res.sendFile(builtIndexPath);
-  } catch {
-    // Fallback to development index
-    res.sendFile(devIndexPath, (err) => {
-      if (err) {
-        res.status(500).send('Application not ready - please try again in a moment');
-      }
-    });
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
   }
-});
-
-// Start server
-const server = app.listen(PORT, HOST, () => {
-  console.log(`Rich Habits server running on http://${HOST}:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'production'}`);
-  console.log(`Public path: ${publicPath}`);
-  console.log(`Built files path: ${distPublicPath}`);
+  
+  // Try built version first, then development version
+  const builtIndex = path.resolve(process.cwd(), "dist/public/index.html");
+  const devIndex = path.resolve(process.cwd(), "client/index.html");
+  
+  // Serve the built index if it exists, otherwise serve development version
+  res.sendFile(builtIndex, (err) => {
+    if (err) {
+      console.log('Built index.html not found, trying development version');
+      res.sendFile(devIndex, (devErr) => {
+        if (devErr) {
+          console.error('No index.html found');
+          res.status(500).send(`
+            <html>
+              <head><title>Rich Habits</title></head>
+              <body>
+                <h1>Rich Habits Wrestling</h1>
+                <p>Server is running but client files are not available.</p>
+                <p>Build the client with: npm run build</p>
+              </body>
+            </html>
+          `);
+        }
+      });
+    }
+  });
 });
 
 // Error handling
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} already in use`);
-    process.exit(1);
-  } else {
-    console.error('Server error:', err);
-    process.exit(1);
-  }
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+// Start server
+const PORT = parseInt(process.env.PORT, 10);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Rich Habits deployment server running on http://0.0.0.0:${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+  console.log(`📍 Health check available at: http://0.0.0.0:${PORT}/health`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('Shutting down gracefully...');
+  console.log('🛑 SIGTERM received, shutting down gracefully');
   server.close(() => {
-    console.log('Server closed');
+    console.log('✅ Server closed');
     process.exit(0);
   });
 });
 
-export default app;
+process.on('SIGINT', () => {
+  console.log('🛑 SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} already in use`);
+  } else {
+    console.error('❌ Server error:', err);
+  }
+  process.exit(1);
+});
