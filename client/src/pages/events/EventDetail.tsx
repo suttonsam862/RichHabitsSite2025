@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRoute, Link } from 'wouter';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Users, Star, ChevronLeft, ArrowRight, Play, Pause, Trophy, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Shield, ChevronLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { getEventMedia } from '@/lib/eventMediaMap';
+import CoachList from '@/components/events/CoachList';
 
 // Authentic event data from the existing codebase
 const authenticEventData = [
@@ -496,11 +497,192 @@ export default function EventDetail() {
             </motion.div>
           )}
 
-          {/* CTA Section */}
+          {/* Coaching Staff Section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.0, duration: 0.6 }}
+            className="mb-16"
+          >
+            <CoachList eventId={currentEvent.id} />
+          </motion.div>
+
+          {/* Video Gallery Section */}
+          {eventMedia && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
+              className="mb-16"
+            >
+              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Event Highlights</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Main Video */}
+                <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                    poster={eventMedia.mainVideoPoster}
+                  >
+                    <source src={eventMedia.mainVideo} type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <h4 className="text-lg font-bold mb-2">Main Event</h4>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Highlight Video */}
+                <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                    poster={eventMedia.highlightVideoPoster}
+                  >
+                    <source src={eventMedia.highlightVideo} type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <h4 className="text-lg font-bold mb-2">Highlights</h4>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feature Video */}
+                <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                    poster={eventMedia.featureVideoPoster}
+                  >
+                    <source src={eventMedia.featureVideo} type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <h4 className="text-lg font-bold mb-2">Features</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Photo Gallery */}
+          {eventMedia?.galleryImages && eventMedia.galleryImages.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.4, duration: 0.6 }}
+              className="mb-16"
+            >
+              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Photo Gallery</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {eventMedia.galleryImages.map((image, index) => (
+                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                    <img
+                      src={image}
+                      alt={`${currentEvent.title} Photo ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.src = '/assets/SlamCampSiteBanner.png';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Registration Options Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.6 }}
+            className="mb-16"
+          >
+            <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Registration Options</h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Individual Registration */}
+              <div className="bg-white rounded-lg border-2 border-gray-200 p-8 hover:border-red-500 transition-colors">
+                <div className="text-center mb-6">
+                  <h4 className="text-2xl font-bold text-gray-900 mb-2">Individual Registration</h4>
+                  <p className="text-gray-600">Perfect for individual athletes</p>
+                </div>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-green-500" />
+                    <span>Secure online registration</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Full event access</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Custom gear included</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Certificate of completion</span>
+                  </div>
+                </div>
+                <Link href={`/register/${currentEvent.id}`}>
+                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white py-3">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Secure Individual Registration
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Team Registration */}
+              <div className="bg-white rounded-lg border-2 border-gray-200 p-8 hover:border-blue-500 transition-colors">
+                <div className="text-center mb-6">
+                  <h4 className="text-2xl font-bold text-gray-900 mb-2">Team Registration</h4>
+                  <p className="text-gray-600">Best value for teams and clubs</p>
+                </div>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-green-500" />
+                    <span>Secure team management</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Group discounts available</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Coach coordination tools</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span>Team photo opportunities</span>
+                  </div>
+                </div>
+                <Link href={`/team-register/${currentEvent.id}`}>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3">
+                    <Users className="mr-2 h-4 w-4" />
+                    Secure Team Registration
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* CTA Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.8, duration: 0.6 }}
             className="text-center rounded-2xl p-12"
             style={{
               background: `linear-gradient(135deg, ${currentEvent.primaryColor}, ${currentEvent.secondaryColor})`
@@ -513,12 +695,14 @@ export default function EventDetail() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href={`/register/${currentEvent.id}`}>
                 <Button size="lg" className="bg-white hover:bg-gray-100 px-8 py-4 text-lg" style={{ color: currentEvent.primaryColor }}>
-                  Individual Registration
+                  <Shield className="mr-2 h-4 w-4" />
+                  Secure Registration
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link href={`/team-register/${currentEvent.id}`}>
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+                  <Users className="mr-2 h-4 w-4" />
                   Team Registration
                 </Button>
               </Link>
