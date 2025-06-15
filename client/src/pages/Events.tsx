@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Users, Star, ArrowRight } from "lucide-react";
@@ -66,7 +66,6 @@ const events: Event[] = [
 ];
 
 export default function Events() {
-  const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -116,8 +115,6 @@ export default function Events() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * index, duration: 0.6 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-              onMouseEnter={() => setSelectedEvent(event.id)}
-              onMouseLeave={() => setSelectedEvent(null)}
             >
               {/* Event Image */}
               <div className="relative h-64 overflow-hidden">
