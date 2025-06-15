@@ -1,715 +1,765 @@
-import React, { useState, useEffect } from 'react';
-import { useRoute, Link } from 'wouter';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Users, Shield, ChevronLeft, ArrowRight, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
+import { Helmet } from 'react-helmet';
 import { Container } from '@/components/ui/container';
-import { getEventMedia } from '@/lib/eventMediaMap';
-import CoachList from '@/components/events/CoachList';
+import { FruitHuntersCompact } from '@/components/home/FruitHuntersCompact';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
-// Authentic event data from the existing codebase
-const authenticEventData = [
-  {
-    id: 1,
-    title: "Birmingham Slam Camp",
-    shortDescription: "Southern grit meets elite technique",
-    location: "Clay-Chalkville Middle School",
-    date: "June 19-21, 2025",
-    primaryColor: "#FF6B00",
-    secondaryColor: "#FFA500",
-    longDescription: "The Birmingham Slam Camp is where Southern grit meets elite technique. Hosted at Clay-Chalkville Middle School, this multi-day clinic features NCAA stars, high-intensity sessions, and real talks on leadership and toughness. Athletes train in a professional environment with custom gear, branded check-in, and family-friendly access. The camp combines technical training with mental preparation, creating a comprehensive development experience for wrestlers serious about advancing their skills.",
-    details: [
-      "NCAA champion instructors and elite coaches",
-      "Specialized technique sessions for all skill levels",
-      "Leadership and mental toughness workshops",
-      "Custom Rich Habits camp gear included",
-      "Professional training environment",
-      "Limited to 200 participants to ensure quality instruction"
-    ],
-    clinicians: [
-      {
-        name: "Bo Nickal",
-        credentials: "3x NCAA Champion, UFC Fighter",
-        specialty: "Takedowns & Transitions",
-        image: "/assets/bo-nickal.jpg"
-      },
-      {
-        name: "David Taylor",
-        credentials: "2x NCAA Champion, Olympic Gold Medalist",
-        specialty: "Championship Mindset & Technique",
-        image: "/assets/david-taylor.jpg"
-      },
-      {
-        name: "Carter Starocci",
-        credentials: "4x NCAA Champion",
-        specialty: "Mental Performance & Competition",
-        image: "/assets/carter-starocci.jpg"
-      }
-    ],
-    schedule: [
-      {
-        day: "Day 1 (Thursday)",
-        activities: [
-          "8:30 AM - Check-in & Registration",
-          "9:00 AM - Opening Ceremony & Welcome", 
-          "9:30 AM - Technique Session: Basic Takedowns",
-          "10:45 AM - Break",
-          "11:00 AM - Live Wrestling & Drilling",
-          "12:00 PM - Lunch Break",
-          "1:00 PM - Mental Performance Workshop",
-          "2:00 PM - Advanced Technique: Mat Wrestling",
-          "3:15 PM - Conditioning & Fitness",
-          "4:00 PM - Day 1 Wrap-up & Q&A"
-        ]
-      },
-      {
-        day: "Day 2 (Friday)",
-        activities: [
-          "9:00 AM - Dynamic Warm-up",
-          "9:30 AM - Technique Session: Escapes & Reversals",
-          "10:45 AM - Break",
-          "11:00 AM - Positional Wrestling", 
-          "12:00 PM - Lunch Break",
-          "1:00 PM - Competition Strategy",
-          "2:00 PM - Advanced Technique: Top Position",
-          "3:15 PM - Strength & Conditioning",
-          "4:00 PM - Day 2 Recap"
-        ]
-      },
-      {
-        day: "Day 3 (Saturday)",
-        activities: [
-          "9:00 AM - Final Warm-up",
-          "9:30 AM - Technique Review & Q&A",
-          "10:30 AM - Practice Matches",
-          "11:30 AM - Awards & Recognition",
-          "12:00 PM - Closing Ceremony",
-          "12:30 PM - Photos & Farewells"
-        ]
-      }
-    ],
-    whatToBring: [
-      "Wrestling shoes (required)",
-      "Athletic shorts (no pockets or zippers)",
-      "Moisture-wicking t-shirts",
-      "Water bottle",
-      "Towel",
-      "Notebook and pen for notes",
-      "Positive attitude and willingness to learn"
-    ],
-    slug: "birmingham-slam-camp"
-  },
-  {
-    id: 2,
-    title: "National Champ Camp",
-    shortDescription: "Three days of elite instruction from NCAA champions",
-    location: "Roy Martin Middle School",
-    date: "June 5-7, 2025",
-    primaryColor: "#041e42",
-    secondaryColor: "#1e88e5",
-    longDescription: "The National Champ Camp at Roy Martin Middle School delivers three days of instruction from NCAA champions in a high-level environment with media coverage, mental coaching, and signature Rich Habits style. This premier event brings together the nation's top wrestlers and coaches for an immersive experience that goes beyond technique. Participants train in state-of-the-art facilities, receive personalized coaching, and build connections that last long after the camp ends. The camp's championship mindset philosophy helps athletes break through mental barriers and reach new levels.",
-    details: [
-      "Training sessions led by NCAA champions",
-      "Advanced technique development for competitive edge",
-      "Mental performance coaching from sports psychologists",
-      "Film review and strategy sessions",
-      "Nutrition and recovery workshops",
-      "Limited to 200 participants with selective application process"
-    ],
-    clinicians: [
-      {
-        name: "Roman Bravo-Young",
-        credentials: "NCAA Champion, World Team Member",
-        specialty: "Speed & Agility Techniques",
-        image: "/assets/roman-bravo-young.jpg"
-      },
-      {
-        name: "Aaron Brooks",
-        credentials: "2x NCAA Champion",
-        specialty: "Scoring & Offensive Wrestling",
-        image: "/assets/aaron-brooks.jpg"
-      },
-      {
-        name: "Nick Lee",
-        credentials: "NCAA Champion, World Bronze Medalist",
-        specialty: "Defensive Wrestling & Counters",
-        image: "/assets/nick-lee.jpg"
-      },
-      {
-        name: "Spencer Lee",
-        credentials: "3x NCAA Champion",
-        specialty: "Mental Toughness & Competition",
-        image: "/assets/spencer-lee.jpg"
-      }
-    ],
-    schedule: [
-      {
-        day: "Day 1 (Thursday)",
-        activities: [
-          "8:00 AM - Elite Check-in Process",
-          "8:30 AM - Championship Mindset Session",
-          "9:30 AM - Advanced Takedown Techniques",
-          "11:00 AM - Break & Hydration",
-          "11:15 AM - Mental Performance Workshop",
-          "12:30 PM - Catered Lunch",
-          "1:30 PM - Film Study & Analysis",
-          "2:30 PM - Live Wrestling with Champions",
-          "3:45 PM - Recovery & Flexibility",
-          "4:30 PM - Day 1 Debrief"
-        ]
-      },
-      {
-        day: "Day 2 (Friday)", 
-        activities: [
-          "8:30 AM - Dynamic Championship Warm-up",
-          "9:00 AM - Advanced Mat Wrestling",
-          "10:30 AM - Break",
-          "10:45 AM - Competition Psychology",
-          "12:00 PM - Lunch & Nutrition Seminar",
-          "1:00 PM - Championship Drilling",
-          "2:30 PM - Situational Wrestling",
-          "3:45 PM - Strength & Conditioning",
-          "4:30 PM - Champion Q&A Session"
-        ]
-      },
-      {
-        day: "Day 3 (Saturday)",
-        activities: [
-          "8:30 AM - Final Preparation",
-          "9:00 AM - Championship Challenge Matches",
-          "10:30 AM - Awards & Recognition Ceremony",
-          "11:30 AM - Photo Sessions with Champions",
-          "12:00 PM - Closing Ceremony",
-          "12:30 PM - Networking & Farewell"
-        ]
-      }
-    ],
-    whatToBring: [
-      "Wrestling shoes (required)",
-      "Competition-quality wrestling singlet",
-      "Athletic wear for training",
-      "Multiple water bottles",
-      "Towel and personal hygiene items",
-      "Notebook for technique notes",
-      "Camera for memories with champions"
-    ],
-    slug: "national-champ-camp"
-  },
-  {
-    id: 3,
-    title: "Texas Recruiting Clinic",
-    shortDescription: "Showcase your talent in front of cameras and coaches",
-    location: "Arlington Martin High School",
-    date: "June 12-13, 2025",
-    primaryColor: "#B22234",
-    secondaryColor: "#3C3B6E",
-    longDescription: "The Texas Recruiting Clinic at Arlington Martin High School is a spotlight event where wrestlers showcase their talent in front of cameras and college coaches. This one-day intensive combines skill development with visibility opportunities that can change an athlete's trajectory. Participants receive professional feedback, get filmed during live sessions, and learn directly from college coaches about what they're looking for in recruits. The clinic creates a unique bridge between high school wrestling and collegiate opportunities.",
-    details: [
-      "College coaches in attendance for direct scouting",
-      "Professional video recording of matches and drills",
-      "Personalized feedback from NCAA athletes",
-      "Recruiting workshop with tips for college applications",
-      "Networking opportunities with coaches and scouts",
-      "Limited to 150 participants for maximum exposure"
-    ],
-    schedule: [
-      {
-        day: "Day 1 (Thursday)",
-        activities: [
-          "8:00 AM - Athlete Check-in & Profile Setup",
-          "9:00 AM - Recruiting Process Overview",
-          "10:00 AM - Skills Assessment & Filming",
-          "11:30 AM - Break",
-          "12:00 PM - College Coach Panel Discussion",
-          "1:00 PM - Lunch & Networking",
-          "2:00 PM - Live Wrestling Evaluations",
-          "3:30 PM - Individual Coach Meetings",
-          "4:30 PM - Day 1 Wrap-up"
-        ]
-      },
-      {
-        day: "Day 2 (Friday)",
-        activities: [
-          "9:00 AM - Technique Refinement Session",
-          "10:30 AM - Competition Simulation",
-          "12:00 PM - Final Evaluations & Filming",
-          "1:00 PM - Lunch & Results Discussion",
-          "2:00 PM - Scholarship Information Session",
-          "3:00 PM - Individual Action Plans",
-          "4:00 PM - Closing Ceremony & Next Steps"
-        ]
-      }
-    ],
-    whatToBring: [
-      "Wrestling shoes (required)",
-      "Competition singlet",
-      "Athletic shorts and shirts",
-      "Academic transcripts (unofficial copies)",
-      "Athletic resume or highlight reel",
-      "Water bottle and snacks",
-      "Professional attitude and goals"
-    ],
-    slug: "texas-recruiting-clinic"
-  },
-  {
-    id: 4,
-    title: "Panther Train Tour",
-    shortDescription: "Elite training brought directly to regions across the country",
-    location: "Multiple locations nationwide",
-    date: "June 15-17, 2025",
-    primaryColor: "#6a0dad",
-    secondaryColor: "#ffd700",
-    longDescription: "The nationwide Panther Train Tour (formerly the Cory Land Tour) brings elite training directly to regions across the country, mimicking mini camps with live sessions, merchandise drops, and stories from athletes who've made it. This innovative approach makes high-level instruction accessible to wrestlers in diverse communities. Each stop features intensive training, motivation from successful athletes, and the signature Rich Habits approach to development. The tour creates a nationwide community of wrestlers connected through shared experiences and training philosophy.",
-    details: [
-      "Regional stops throughout the country",
-      "Training with collegiate and Olympic athletes",
-      "Technique sessions tailored to regional wrestling styles",
-      "Success stories and Q&A with accomplished wrestlers",
-      "Exclusive Rich Habits merchandise available at each stop",
-      "Affordable single-day registration options"
-    ],
-    schedule: [
-      {
-        day: "Tour Stop Schedule",
-        activities: [
-          "Location-specific timing (typically 6:00 PM - 9:00 PM)",
-          "Community welcome and introductions",
-          "Fundamental technique instruction",
-          "Local athlete showcases",
-          "Q&A with touring coaches",
-          "Community building activities",
-          "Next location preview"
-        ]
-      }
-    ],
-    whatToBring: [
-      "Wrestling shoes (required)",
-      "Comfortable athletic wear",
-      "Water bottle",
-      "Towel",
-      "Enthusiasm for learning",
-      "Community spirit"
-    ],
-    slug: "panther-train-tour"
-  }
-];
+// Import event banner images
+import recruitingBanner from '@/assets/events/recruiting-banner.png';
+
+// Event data comes from the API
 
 export default function EventDetail() {
-  const [, params] = useRoute("/events/:id");
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  
-  const id = params?.id;
-  
-  // Find event by ID or slug
-  const currentEvent = authenticEventData.find(e => 
-    e.id.toString() === id || e.slug === id
-  );
+  const [location] = useLocation();
+  const [showRegistrationDialog, setShowRegistrationDialog] = useState(false);
+  const [registrationForm, setRegistrationForm] = useState({
+    firstName: '',
+    lastName: '',
+    contactName: '',
+    email: '',
+    phone: '',
+    tShirtSize: '',
+    grade: '',
+    schoolName: '',
+    clubName: '',
+    medicalReleaseAccepted: false,
+    registrationType: 'full', // 'full' or 'single'
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  // Get media for this event
-  const eventMedia = currentEvent ? getEventMedia(currentEvent.id) : null;
-
+  // Extract the event ID from the URL
+  const eventId = parseInt(location.split('/').pop() || "0", 10);
+  
+  // State for loading event data
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Fetch event data from API
   useEffect(() => {
-    if (eventMedia?.galleryImages && eventMedia.galleryImages.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentImageIndex((prev) => 
-          prev === eventMedia.galleryImages.length - 1 ? 0 : prev + 1
-        );
-      }, 4000);
-      return () => clearInterval(interval);
+    async function fetchEvent() {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/events/${eventId}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Event not found');
+          } else {
+            throw new Error('Failed to fetch event data');
+          }
+          return;
+        }
+        
+        const data = await response.json();
+        
+        // For the demo, add in coach data which would normally come from the API
+        if (data.id === 1) {
+          data.coaches = [
+            {
+              name: "Zahid Valencia",
+              title: "2x NCAA Champion",
+              image: "/src/assets/coaches/VALENCIA_Zahid-headshot.jpg",
+              bio: "Zahid Valencia is a 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques, Zahid brings world-class expertise to the mat."
+            },
+            {
+              name: "Josh Shields",
+              title: "NCAA All-American",
+              image: "/src/assets/coaches/josh_shields.jpg",
+              bio: "Josh Shields is a 2x All-American from Arizona State University and current professional wrestler. His technical approach and strategic mind make him one of the most respected coaches on the circuit."
+            },
+            {
+              name: "Brandon Courtney",
+              title: "NCAA Finalist",
+              image: "/src/assets/coaches/brandon_courtney.webp",
+              bio: "Brandon Courtney is an NCAA Finalist and 2x All-American from Arizona State University. A specialist in lightweight technique and speed development, Brandon brings unique insights into creating and exploiting advantages on the mat."
+            },
+            {
+              name: "Michael McGee",
+              title: "NCAA All-American",
+              image: "/src/assets/coaches/Michael_McGee_JouQS.jpg",
+              bio: "Michael McGee is an NCAA All-American from the University of North Carolina and Arizona State University. A technique specialist and mental performance coach, Michael focuses on combining physical skills with mental toughness."
+            }
+          ];
+        } else if (data.id === 2) {
+          data.coaches = [
+            {
+              name: "Jason Nolf",
+              title: "3x NCAA Champion at 157 lbs (2017-19)",
+              image: "/src/assets/coaches/nolf.webp",
+              bio: "Jason Nolf is a 3x NCAA Champion at 157 lbs (2017-19) and 4x finalist from Penn State University. Widely regarded as one of the most dominant collegiate wrestlers of all time, Jason brings unprecedented technical expertise and competitive insight to his coaching. His innovative approach to position and leverage has changed modern wrestling."
+            },
+            {
+              name: "Mark Hall",
+              title: "NCAA Champion at 174 lbs (2017)",
+              image: "/src/assets/coaches/hall.webp",
+              bio: "Mark Hall is a 2017 NCAA Champion at 174 lbs and three-time finalist from Penn State University. With his exceptional technique and competitive fire, Mark has established himself as one of the premier wrestlers and coaches in the country. His ability to teach complex techniques in an accessible way makes him a fan-favorite instructor."
+            },
+            {
+              name: "Vincenzo Joseph",
+              title: "2x NCAA Champion at 165 lbs (2017, 2018)",
+              image: "/src/assets/coaches/joseph.webp",
+              bio: "Vincenzo 'Cenzo' Joseph is a 2x NCAA Champion at 165 lbs (2017, 2018) from Penn State University. Known for his creativity and unorthodox style, Cenzo revolutionized the sport with his dynamic approach to wrestling. His championship mentality and innovative techniques have made him one of the most sought-after clinicians in the country."
+            }
+          ];
+          
+          data.schedule = [
+            {
+              time: "9:00 AM - 9:15 AM",
+              activity: "Registration and Gear Distribution"
+            },
+            {
+              time: "9:15 AM - 11:00 AM",
+              activity: "Fun Warmup, Games, and Technical Session"
+            },
+            {
+              time: "11:00 AM - 11:30 AM",
+              activity: "Break (PlayStation Station Available)"
+            },
+            {
+              time: "11:30 AM - 12:30 PM",
+              activity: "Live Wrestling Sessions and Spotlight Matches"
+            },
+            {
+              time: "12:30 PM - 1:30 PM",
+              activity: "Lunch Break and Rich Habits Gear Shop"
+            },
+            {
+              time: "1:30 PM - 3:00 PM",
+              activity: "Second Technical Session"
+            },
+            {
+              time: "3:00 PM - 4:00 PM",
+              activity: "Q&A with Clinician and Closing Activities"
+            }
+          ];
+          
+          // Adding other required fields
+          data.categoryClass = "bg-blue-100 text-blue-800";
+          data.buttonLabel = "Register Now";
+          data.ageGroups = "Ages 10+ through high school";
+          data.capacity = "Limited to 200 wrestlers";
+          data.shortDescription = "An intensive 4-day wrestling camp featuring elite coaching from Penn State NCAA champions in Las Vegas.";
+        } else if (data.id === 3) {
+          data.coaches = [
+            {
+              name: "Micky Phillippi",
+              title: "Assistant Coach, University of Pittsburgh",
+              image: "/src/assets/coaches/recruiting/main.png",
+              school: "University of Pittsburgh",
+              schoolLogo: "/src/assets/schools/pitt.svg",
+              bio: "Micky Phillippi serves as an assistant coach at the University of Pittsburgh. As a former standout wrestler, Phillippi brings technical expertise and a deep understanding of what college programs look for in recruits."
+            },
+            {
+              name: "Mark Hall",
+              title: "Recruiting Coordinator, University of Oklahoma",
+              image: "/src/assets/coaches/hall.webp",
+              school: "University of Oklahoma",
+              schoolLogo: "/src/assets/schools/ou.svg",
+              bio: "Mark Hall is the recruiting coordinator at the University of Oklahoma and a former NCAA Champion and three-time finalist from Penn State University. His expertise in talent identification and development makes him an invaluable resource for wrestlers looking to compete at the collegiate level."
+            },
+            {
+              name: "Josh Shields",
+              title: "RTC Coach and Recruiter, Brown University",
+              image: "/src/assets/coaches/josh_shields.jpg",
+              school: "Brown University",
+              schoolLogo: "/src/assets/schools/brown.svg",
+              bio: "Josh Shields serves as an RTC coach and recruiter at Brown University. A former All-American from Arizona State University, Shields brings a wealth of knowledge about Ivy League recruitment and what it takes to succeed at elite academic institutions."
+            },
+            {
+              name: "Grant Leeth",
+              title: "Head Coach, Tarleton State University",
+              image: "/src/assets/coaches/recruiting/main.png",
+              school: "Tarleton State University",
+              schoolLogo: "/src/assets/schools/tarleton.svg",
+              bio: "Grant Leeth is the head coach at Tarleton State University. With his experience leading a collegiate program, Leeth provides valuable insights into the recruitment process from a head coach's perspective."
+            },
+            {
+              name: "Max Murin",
+              title: "Assistant Coach and Recruiter, George Mason University",
+              image: "/src/assets/coaches/recruiting/main.png",
+              school: "George Mason University",
+              schoolLogo: "/src/assets/schools/gmu.svg",
+              bio: "Max Murin is an assistant coach and recruiter at George Mason University. A former standout wrestler himself, Murin understands what it takes to get noticed by college programs and how to transition successfully to collegiate wrestling."
+            }
+          ];
+          
+          data.schedule = [
+            {
+              time: "9:00 AM - 9:30 AM",
+              activity: "Check-in and Welcome"
+            },
+            {
+              time: "9:30 AM - 11:30 AM",
+              activity: "Technical Session with College Coaches"
+            },
+            {
+              time: "11:30 AM - 12:30 PM",
+              activity: "Lunch Break and Networking"
+            },
+            {
+              time: "12:30 PM - 2:30 PM",
+              activity: "Live Wrestling and Evaluation"
+            },
+            {
+              time: "2:30 PM - 3:30 PM",
+              activity: "Recruiting Seminar and Q&A"
+            },
+            {
+              time: "3:30 PM - 4:00 PM",
+              activity: "One-on-One Feedback Sessions"
+            }
+          ];
+          
+          // Adding other required fields
+          data.categoryClass = "bg-red-100 text-red-800";
+          data.buttonLabel = "Secure Your Spot";
+          data.ageGroups = "High school wrestlers";
+          data.capacity = "Limited to 150 participants";
+          data.shortDescription = "A specialized two-day clinic combining elite coaching with college recruiting opportunities at Arlington Martin High School.";
+        }
+        
+        setEvent(data);
+      } catch (err) {
+        console.error('Error fetching event:', err);
+        setError('Could not load event data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [eventMedia]);
-
-  if (!currentEvent) {
+    
+    fetchEvent();
+  }, [eventId]);
+  
+  // Loading state
+  if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <Container className="py-20">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
-            <p className="text-gray-400 mb-6">The event you're looking for could not be found.</p>
-            <Link href="/events">
-              <Button className="bg-red-600 hover:bg-red-700">Back to Events</Button>
-            </Link>
-          </div>
-        </Container>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] py-12">
+        <div className="animate-spin h-8 w-8 border-4 border-gray-300 rounded-full border-t-primary"></div>
+        <p className="mt-4 text-gray-600">Loading event details...</p>
       </div>
     );
   }
-
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section with Video/Image Background */}
-      <div className="relative h-screen overflow-hidden">
-        {/* Background Media */}
-        <div className="absolute inset-0">
-          {eventMedia?.mainVideo && !eventMedia.preferImageOnly ? (
-            <video
-              autoPlay={!eventMedia.disableAutoplay}
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover"
-              poster={eventMedia.mainVideoPoster}
-            >
-              <source src={eventMedia.mainVideo} type="video/mp4" />
-            </video>
-          ) : (
-            <img
-              src={eventMedia?.banner || "/assets/SlamCampSiteBanner.png"}
-              alt={currentEvent.title}
-              className="w-full h-full object-cover"
-            />
-          )}
-        </div>
-        
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
-        
-        <Container className="relative z-10 h-full flex items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl text-white"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-              {currentEvent.title}
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl leading-relaxed">
-              {currentEvent.shortDescription}
-            </p>
-            
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-6 h-6 text-red-400" />
-                <span className="text-lg">{currentEvent.date}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-6 h-6 text-red-400" />
-                <span className="text-lg">{currentEvent.location}</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href={`/register/${currentEvent.id}`}>
-                <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg">
-                  Register Now
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href={`/team-register/${currentEvent.id}`}>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
-                  Team Registration
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        </Container>
-
-        {/* Back to Events Link */}
-        <div className="absolute top-8 left-8">
-          <Link href="/events">
-            <Button variant="outline" className="text-white border-white hover:bg-white hover:text-black">
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back to Events
-            </Button>
-          </Link>
-        </div>
+  
+  // Error state
+  if (error || !event) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] py-12">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Event Not Found</h1>
+        <p className="text-gray-600 mb-6">{error || "The event you're looking for doesn't exist or has been removed."}</p>
+        <a href="/events" className="text-primary underline">Return to Events</a>
       </div>
-
-      {/* Event Content */}
-      <div className="bg-white">
-        <Container className="py-16">
-          {/* About Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-16"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">About This Event</h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              {currentEvent.longDescription}
-            </p>
-          </motion.div>
-
-          {/* Features Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="mb-16"
-          >
-            <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">What's Included</h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentEvent.details.map((detail, index) => (
-                <div key={index} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <span className="text-gray-800">{detail}</span>
-                </div>
-              ))}
+    );
+  }
+  
+  return (
+    <>
+      <Helmet>
+        <title>{event.title} | Rich Habits</title>
+        <meta name="description" content={event.shortDescription} />
+      </Helmet>
+      
+      {/* Banner at the top with lighting effects based on event */}
+      {event.id === 1 && (
+        <div className="w-full overflow-hidden banner-container relative">
+          <img 
+            src={event.image} 
+            alt={event.title} 
+            className="w-full h-auto object-cover" 
+          />
+          <div className="sun-glow"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
+        </div>
+      )}
+      
+      {event.id === 2 && (
+        <div className="w-full overflow-hidden banner-container relative">
+          <img 
+            src="/src/assets/LongSitePhotovegas.png" 
+            alt={event.title} 
+            className="w-full h-auto object-cover" 
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
+        </div>
+      )}
+      
+      {event.id === 3 && (
+        <div className="w-full overflow-hidden banner-container relative">
+          <img 
+            src={recruitingBanner} 
+            alt={event.title} 
+            className="w-full h-auto object-cover" 
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
+        </div>
+      )}
+      
+      <div className={`bg-white py-16 ${event.id === 1 ? 'flame-bg' : event.id === 2 ? 'psu-bg' : event.id === 3 ? 'recruiting-bg' : ''}`}>
+        {event.id === 1 && (
+          <>
+            {/* Heat waves */}
+            <div className="heat-wave heat-wave-1"></div>
+            <div className="heat-wave heat-wave-2"></div>
+            <div className="heat-wave heat-wave-3"></div>
+            <div className="heat-wave heat-wave-1" style={{top: '25%', animationDelay: '1s'}}></div>
+            <div className="heat-wave heat-wave-2" style={{top: '55%', animationDelay: '3s'}}></div>
+            <div className="heat-wave heat-wave-3" style={{top: '80%', animationDelay: '2s'}}></div>
+            
+            {/* Neon flame licks */}
+            <div className="neon-lick-1"></div>
+            <div className="neon-lick-2"></div>
+            <div className="neon-lick-3"></div>
+            <div className="neon-lick-1" style={{left: '75%', animationDelay: '3s'}}></div>
+            <div className="neon-lick-2" style={{left: '25%', animationDelay: '7s'}}></div>
+          </>
+        )}
+        
+        {event.id === 2 && (
+          <>
+            {/* Penn State themed waves */}
+            <div className="wave-blue" style={{ top: '10%', left: '50%' }}></div>
+            <div className="wave-navy" style={{ top: '30%', left: '50%' }}></div>
+            <div className="wave-blue" style={{ top: '60%', left: '50%' }}></div>
+            <div className="wave-navy" style={{ top: '80%', left: '50%' }}></div>
+            
+            {/* Penn State diamond pattern */}
+            <div className="psu-diamond-pattern"></div>
+            
+            {/* Animated glossy stripe */}
+            <div className="psu-stripe"></div>
+          </>
+        )}
+        
+        {event.id === 3 && (
+          <>
+            {/* Texas Recruiting Clinic red, white, and blue waves */}
+            <div className="recruiting-red-wave"></div>
+            <div className="recruiting-white-wave"></div>
+            <div className="recruiting-blue-wave"></div>
+            
+            {/* Add another set of waves with different timing */}
+            <div className="recruiting-red-wave" style={{ top: '25%', animationDelay: '6s' }}></div>
+            <div className="recruiting-white-wave" style={{ top: '55%', animationDelay: '10s' }}></div>
+            <div className="recruiting-blue-wave" style={{ top: '85%', animationDelay: '14s' }}></div>
+          </>
+        )}
+        
+        <Container>
+          {/* Event Header */}
+          <div className="mb-12">
+            <div className="flex items-center mb-6">
+              <a href="/events" className="text-gray-500 hover:text-primary mr-2">
+                Events
+              </a>
+              <span className="text-gray-400 mx-2">/</span>
+              <span className="text-gray-800">{event.title}</span>
             </div>
-          </motion.div>
-
-          {/* Schedule Section */}
-          {currentEvent.schedule && currentEvent.schedule.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="mb-16"
-            >
-              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Event Schedule</h3>
-              <div className="grid gap-6">
-                {currentEvent.schedule.map((day, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-6">
-                    <h4 className="text-xl font-bold text-gray-900 mb-4">{day.day}</h4>
-                    <div className="space-y-2">
-                      {day.activities.map((activity, actIndex) => (
-                        <div key={actIndex} className="flex items-center gap-3 text-gray-700">
-                          <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span>{activity}</span>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              <div className="lg:col-span-2">
+                <span className={`inline-block ${event.id === 1 ? "fire-gradient-btn text-white" : event.categoryClass} text-xs font-medium px-3 py-1 rounded-sm mb-4`}>
+                  {event.category}
+                </span>
+                {event.id === 1 ? (
+                  <>
+                    <div className="bg-white p-4 rounded-md border-l-4 border-gray-500 mb-4 shadow-sm">
+                      <div className="flex items-center">
+                        <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
+                      </div>
+                    </div>
+                    
+                    <div className="my-6 flex flex-col items-center">
+                      <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mt-6 text-center">
+                        <span className="block mb-2">{event.date}</span>
+                        <span className="block text-lg font-normal">{event.location}</span>
+                      </h1>
+                    </div>
+                  </>
+                ) : event.id === 2 ? (
+                  <>
+                    <div className="bg-white p-4 rounded-md border-l-4 border-[#041e42] mb-4 shadow-sm">
+                      <div className="flex items-center">
+                        <span className="font-medium">Limited to 200 participants - Register early to secure your spot</span>
+                      </div>
+                    </div>
+                    
+                    <div className="my-6 flex flex-col items-center">
+                      <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mt-6 text-center">
+                        <span className="block mb-2">{event.date}</span>
+                        <span className="block text-lg font-normal">{event.location}</span>
+                      </h1>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">{event.title}</h1>
+                    <p className="text-gray-600 mb-6">{event.shortDescription}</p>
+                  </>
+                )}
+              </div>
+              
+              {event.id !== 1 && event.id !== 2 && (
+                <div>
+                  <div className="bg-white rounded-lg overflow-hidden shadow-lg">
+                    <img src={event.image} alt={event.title} className="w-full h-auto aspect-[16/9] object-cover" />
+                  </div>
+                </div>
+              )}
+              
+              <div className={`${event.id !== 1 && event.id !== 2 ? '' : 'lg:col-span-2'}`}>
+                <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-1">Date & Time</h3>
+                      <div className="flex items-center">
+                        <span className="text-gray-800">
+                          {event.date} <span className="text-gray-500">•</span> {event.time}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-1">Location</h3>
+                      <div className="flex items-center">
+                        <span className="text-gray-800">{event.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4">
+                    <div className="flex items-center mb-2">
+                      <span className="text-gray-800 font-medium">{event.price}</span>
+                    </div>
+                    
+                    <button 
+                      onClick={() => setShowRegistrationDialog(true)}
+                      className={`w-full mt-4 font-medium py-3 px-4 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                        event.id === 2 
+                          ? 'psu-gradient-btn text-white focus:ring-blue-500' 
+                          : event.id === 1
+                            ? 'fire-gradient-btn text-white focus:ring-orange-500'
+                            : 'bg-black hover:bg-gray-800 text-white focus:ring-gray-500'
+                      }`}
+                    >
+                      {event.buttonLabel || 'Register Now'}
+                    </button>
+                    
+                    <div className="mt-4 flex justify-between text-gray-500 text-sm">
+                      <div className="flex items-center">
+                        {event.ageGroups}
+                      </div>
+                      <div className="flex items-center">
+                        {event.capacity}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Event Description */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+            <div className="lg:col-span-2">
+              {event.id === 1 ? (
+                <div>
+                  <div className="mb-10">
+                    <div className="mb-6 border-b border-gray-200 pb-2">
+                      <h3 className="text-xl font-bold">Elite Coaching Staff</h3>
+                      <p className="text-gray-600">Learn from the best in the sport</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+                          <div className="aspect-square overflow-hidden">
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name} 
+                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
+                            <p className="text-gray-500 text-sm mb-2">{coach.title}</p>
+                            <p className="text-gray-700 text-sm">{coach.bio}</p>
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* What to Bring Section */}
-          {currentEvent.whatToBring && currentEvent.whatToBring.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="mb-16"
-            >
-              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">What to Bring</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {currentEvent.whatToBring.map((item, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                    <span className="text-gray-800">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Coaching Staff Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 0.6 }}
-            className="mb-16"
-          >
-            <CoachList eventId={currentEvent.id} />
-          </motion.div>
-
-          {/* Video Gallery Section */}
-          {eventMedia && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.6 }}
-              className="mb-16"
-            >
-              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Event Highlights</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Main Video */}
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="w-full h-full object-cover"
-                    poster={eventMedia.mainVideoPoster}
-                  >
-                    <source src={eventMedia.mainVideo} type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <h4 className="text-lg font-bold mb-2">Main Event</h4>
+                </div>
+              ) : event.id === 2 ? (
+                <div>
+                  <div className="mb-10">
+                    <div className="mb-6 border-b border-blue-100 pb-2">
+                      <h3 className="text-xl font-bold psu-title">Elite Penn State Coaching Staff</h3>
+                      <p className="text-gray-600">Learn from NCAA champions who have dominated collegiate wrestling</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-[#041e42]/20 hover:shadow-md transition-shadow duration-300">
+                          <div className="aspect-square overflow-hidden">
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name} 
+                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
+                            <p className="text-[#1e88e5] text-sm mb-2">{coach.title}</p>
+                            <p className="text-gray-700 text-sm">{coach.bio}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
+                  
+                  {/* Event Schedule */}
+                  {event.schedule && (
+                    <div className="mt-10">
+                      <div className="mb-6 border-b border-blue-100 pb-2">
+                        <h3 className="text-xl font-bold psu-title">Daily Schedule</h3>
+                        <p className="text-gray-600">Elite training program with Penn State champions</p>
+                      </div>
+                      <div className="psu-border rounded-md overflow-hidden shadow-lg relative">
+                        <div className="psu-diamond-pattern absolute inset-0 opacity-10"></div>
+                        {event.schedule.map((item: any, index: number) => (
+                          <div 
+                            key={index} 
+                            className={`grid grid-cols-3 p-4 relative ${
+                              index % 2 === 0 ? 'bg-[#041e42]/5' : 'bg-white'
+                            }`}
+                          >
+                            <div className="font-medium text-[#041e42]">{item.time}</div>
+                            <div className="col-span-2 text-gray-800">{item.activity}</div>
+                          </div>
+                        ))}
+                        <div className="psu-stripe"></div>
+                      </div>
+                      
+                      <div className="mt-12 p-6 bg-gradient-to-r from-[#041e42] to-[#1e88e5] rounded-lg text-white shadow-lg">
+                        <h3 className="text-xl font-bold mb-4">Why Train with Penn State Champions?</h3>
+                        <p className="mb-4">
+                          Penn State University has dominated NCAA wrestling, winning 9 of the last 12 national championships. Our National Champ Camp brings you direct access to the training methods that have created this dynasty.
+                        </p>
+                      </div>
+                      
+                      <div className="mt-10">
+                        <div className="mb-6 border-b border-blue-100 pb-2">
+                          <h3 className="text-xl font-bold psu-title">About National Champ Camp</h3>
+                          <p className="text-gray-600">A premium wrestling experience in Las Vegas</p>
+                        </div>
+                        
+                        <div className="prose max-w-none text-gray-700">
+                          {event.description && event.description.split('\n\n').map((paragraph: string, index: number) => (
+                            <p key={index} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                {/* Highlight Video */}
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="w-full h-full object-cover"
-                    poster={eventMedia.highlightVideoPoster}
-                  >
-                    <source src={eventMedia.highlightVideo} type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <h4 className="text-lg font-bold mb-2">Highlights</h4>
+              ) : event.id === 3 ? (
+                <div>
+                  <div className="mb-10">
+                    <div className="mb-6 border-b border-red-100 pb-2">
+                      <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Elite NCAA Champion Coaches
+                      </h3>
+                      <p className="text-gray-600">Learn directly from collegiate champions with recruiting expertise</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.coaches && event.coaches.map((coach: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300">
+                          <div className="aspect-square overflow-hidden relative">
+                            <img 
+                              src={coach.image} 
+                              alt={coach.name} 
+                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                            {coach.schoolLogo && (
+                              <div className="absolute top-3 right-3 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg school-logo-pulse">
+                                <img 
+                                  src={coach.schoolLogo} 
+                                  alt={coach.school || ""} 
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-gray-800">{coach.name}</h4>
+                            <p className="text-[#bf0a30] text-sm mb-2">{coach.title}</p>
+                            <p className="text-gray-700 text-sm">{coach.bio}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
-
-                {/* Feature Video */}
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="w-full h-full object-cover"
-                    poster={eventMedia.featureVideoPoster}
-                  >
-                    <source src={eventMedia.featureVideo} type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <h4 className="text-lg font-bold mb-2">Features</h4>
+                  
+                  {/* Event Schedule */}
+                  {event.schedule && (
+                    <div className="mt-10">
+                      <div className="mb-6 border-b border-red-100 pb-2">
+                        <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                          Daily Schedule
+                        </h3>
+                        <p className="text-gray-600">Two days of intensive coaching and recruiting insights</p>
+                      </div>
+                      <div className="border-2 border-[#bf0a30] rounded-md overflow-hidden shadow-lg relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#bf0a30]/5 to-[#002868]/5"></div>
+                        {event.schedule.map((item: any, index: number) => (
+                          <div 
+                            key={index} 
+                            className={`grid grid-cols-3 p-4 relative ${
+                              index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                            }`}
+                          >
+                            <div className="font-medium text-[#bf0a30]">{item.time}</div>
+                            <div className="col-span-2 text-gray-800">{item.activity}</div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="mt-12 p-6 bg-gradient-to-r from-[#bf0a30] to-[#002868] rounded-lg text-white shadow-lg">
+                        <h3 className="text-xl font-bold mb-4">Your Path to College Wrestling</h3>
+                        <p className="mb-4">
+                          This clinic bridges the gap between high school and collegiate wrestling. Get direct access to coaches who are actively recruiting and learn what it takes to compete at the next level.
+                        </p>
+                      </div>
+                      
+                      <div className="mt-10">
+                        <div className="mb-6 border-b border-red-100 pb-2">
+                          <h3 className="text-xl font-bold" style={{ background: 'linear-gradient(to right, #bf0a30, #002868)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            About Texas Recruiting Clinic
+                          </h3>
+                          <p className="text-gray-600">Your gateway to collegiate wrestling opportunities</p>
+                        </div>
+                        
+                        <div className="prose max-w-none text-gray-700">
+                          {event.description && event.description.split('\n\n').map((paragraph: string, index: number) => (
+                            <p key={index} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Photo Gallery */}
-          {eventMedia?.galleryImages && eventMedia.galleryImages.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.4, duration: 0.6 }}
-              className="mb-16"
-            >
-              <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Photo Gallery</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {eventMedia.galleryImages.map((image, index) => (
-                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <img
-                      src={image}
-                      alt={`${currentEvent.title} Photo ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.currentTarget.src = '/assets/SlamCampSiteBanner.png';
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Registration Options Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.6 }}
-            className="mb-16"
-          >
-            <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Registration Options</h3>
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Individual Registration */}
-              <div className="bg-white rounded-lg border-2 border-gray-200 p-8 hover:border-red-500 transition-colors">
-                <div className="text-center mb-6">
-                  <h4 className="text-2xl font-bold text-gray-900 mb-2">Individual Registration</h4>
-                  <p className="text-gray-600">Perfect for individual athletes</p>
+              ) : (
+                <div>
+                  <h2 className="text-2xl font-bold mb-6">About {event.title}</h2>
+                  <p className="text-gray-700 mb-6">{event.description}</p>
+                  
+                  {event.details && (
+                    <div className="mb-8">
+                      <h3 className="text-lg font-semibold mb-4">What's Included</h3>
+                      <ul className="space-y-2">
+                        {event.details.map((detail: string, index: number) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-green-500 mr-2">✓</span>
+                            <span>{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-green-500" />
-                    <span>Secure online registration</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Full event access</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Custom gear included</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Certificate of completion</span>
-                  </div>
-                </div>
-                <Link href={`/register/${currentEvent.id}`}>
-                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white py-3">
-                    <Shield className="mr-2 h-4 w-4" />
-                    Secure Individual Registration
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Team Registration */}
-              <div className="bg-white rounded-lg border-2 border-gray-200 p-8 hover:border-blue-500 transition-colors">
-                <div className="text-center mb-6">
-                  <h4 className="text-2xl font-bold text-gray-900 mb-2">Team Registration</h4>
-                  <p className="text-gray-600">Best value for teams and clubs</p>
-                </div>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-green-500" />
-                    <span>Secure team management</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Group discounts available</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Coach coordination tools</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Team photo opportunities</span>
-                  </div>
-                </div>
-                <Link href={`/team-register/${currentEvent.id}`}>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3">
-                    <Users className="mr-2 h-4 w-4" />
-                    Secure Team Registration
-                  </Button>
-                </Link>
-              </div>
+              )}
             </div>
-          </motion.div>
-
-          {/* CTA Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.8, duration: 0.6 }}
-            className="text-center rounded-2xl p-12"
-            style={{
-              background: `linear-gradient(135deg, ${currentEvent.primaryColor}, ${currentEvent.secondaryColor})`
-            }}
-          >
-            <h3 className="text-3xl font-bold mb-4 text-white">Ready to Join Us?</h3>
-            <p className="text-xl mb-8 text-white opacity-90">
-              Secure your spot at {currentEvent.title} and take your wrestling to the next level.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={`/register/${currentEvent.id}`}>
-                <Button size="lg" className="bg-white hover:bg-gray-100 px-8 py-4 text-lg" style={{ color: currentEvent.primaryColor }}>
-                  <Shield className="mr-2 h-4 w-4" />
-                  Secure Registration
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href={`/team-register/${currentEvent.id}`}>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
-                  <Users className="mr-2 h-4 w-4" />
+            
+            {/* Sidebar */}
+            <div className="space-y-8">
+              {/* Instructor Section - Only show if event has coaches */}
+              {event.coaches && event.coaches.length > 0 && event.id !== 1 && event.id !== 2 && event.id !== 3 && (
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold mb-4">Instructors</h3>
+                  <div className="space-y-4">
+                    {event.coaches.slice(0, 2).map((coach: any, index: number) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <img 
+                          src={coach.image} 
+                          alt={coach.name} 
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div>
+                          <p className="font-medium text-sm">{coach.name}</p>
+                          <p className="text-xs text-gray-600">{coach.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Team Registration CTA */}
+              <div className="bg-gray-900 text-white rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Team Registration</h3>
+                <p className="text-sm text-gray-300 mb-4">
+                  Bringing multiple athletes? Register as a team for special pricing and coordination.
+                </p>
+                <a 
+                  href={`/team-register/${eventId}`}
+                  className="block w-full bg-white text-gray-900 text-center py-2 px-4 rounded-md font-medium hover:bg-gray-100 transition-colors"
+                >
                   Team Registration
-                </Button>
-              </Link>
+                </a>
+              </div>
+              
+              {/* Event Info */}
+              <div className="bg-gray-50 rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Event Information</h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-600">Age Group:</span>
+                    <p>{event.ageGroups || 'All ages welcome'}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-600">Capacity:</span>
+                    <p>{event.capacity || 'Limited spots available'}</p>
+                  </div>
+                  {event.id === 1 && (
+                    <div>
+                      <span className="font-medium text-gray-600">Special Features:</span>
+                      <p>Flame effects and southern hospitality</p>
+                    </div>
+                  )}
+                  {event.id === 2 && (
+                    <div>
+                      <span className="font-medium text-gray-600">Special Features:</span>
+                      <p>Penn State championship atmosphere</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </Container>
       </div>
-    </div>
+      
+      {/* Registration Dialog */}
+      <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogTitle>Register for {event?.title}</DialogTitle>
+          <DialogDescription>
+            Fill out the form below to register for this event.
+          </DialogDescription>
+          
+          <FruitHuntersCompact />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
