@@ -152,6 +152,23 @@ async function startServer() {
       console.log("🔧 Setting up Vite development server...");
       await setupVite(app, server);
       console.log("✅ Vite dev server active");
+      
+      // Development fallback route for React SPA
+      app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api/')) return next();
+        if (req.path.startsWith('/@')) return next(); // Vite internal paths
+        if (req.path.startsWith('/src/')) return next(); // Source files
+        if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm|js|css|ts|tsx)$/i)) return next();
+        
+        // Send the index.html for client-side routing
+        const indexPath = path.resolve(process.cwd(), "client/index.html");
+        res.sendFile(indexPath, (err) => {
+          if (err) {
+            console.error("Failed to serve index.html:", err);
+            res.status(500).send("Internal Server Error");
+          }
+        });
+      });
     } else {
       console.log("📦 Production mode - serving static files");
       
