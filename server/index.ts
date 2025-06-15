@@ -45,7 +45,7 @@ async function startServer() {
     // Critical fix: Setup static file serving with highest priority
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
-    
+
     // Bulletproof static file routes with comprehensive error handling
     app.get("/Cursive-Logo.webp", (req, res) => {
       const filePath = path.join(publicPath, 'Cursive-Logo.webp');
@@ -56,7 +56,7 @@ async function startServer() {
         }
       });
     });
-    
+
     app.get("/images/*", (req, res) => {
       const filePath = path.join(publicPath, req.path);
       res.sendFile(filePath, (err) => {
@@ -66,7 +66,7 @@ async function startServer() {
         }
       });
     });
-    
+
     app.get("/assets/*", (req, res) => {
       const filePath = path.join(publicPath, req.path);
       res.sendFile(filePath, (err) => {
@@ -76,7 +76,7 @@ async function startServer() {
         }
       });
     });
-    
+
     // Generic image file handler
     app.get(/.*\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i, (req, res) => {
       const filePath = path.join(publicPath, req.path);
@@ -86,7 +86,7 @@ async function startServer() {
         }
       });
     });
-    
+
     // Directory-specific routes
     app.use('/images', express.static(path.join(publicPath, 'images')));
     app.use('/assets', express.static(path.join(publicPath, 'assets')));
@@ -94,11 +94,11 @@ async function startServer() {
     app.use('/designs', express.static(path.join(publicPath, 'designs')));
     app.use('/coaches', express.static(path.join(publicPath, 'coaches')));
     app.use('/events', express.static(path.join(publicPath, 'events')));
-    
+
     // General static serving as fallback
     app.use(express.static(publicPath));
     app.use('/assets', express.static(attachedAssetsPath));
-    
+
     console.log(`Static files configured from: ${publicPath}`);
     console.log(`Assets configured from: ${attachedAssetsPath}`);
 
@@ -152,14 +152,14 @@ async function startServer() {
       console.log("🔧 Setting up Vite development server...");
       await setupVite(app, server);
       console.log("✅ Vite dev server active");
-      
+
       // Development fallback route for React SPA
       app.get('*', (req, res, next) => {
         if (req.path.startsWith('/api/')) return next();
         if (req.path.startsWith('/@')) return next(); // Vite internal paths
         if (req.path.startsWith('/src/')) return next(); // Source files
         if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm|js|css|ts|tsx)$/i)) return next();
-        
+
         // Send the index.html for client-side routing
         const indexPath = path.resolve(process.cwd(), "client/index.html");
         res.sendFile(indexPath, (err) => {
@@ -171,12 +171,12 @@ async function startServer() {
       });
     } else {
       console.log("📦 Production mode - serving static files");
-      
+
       // Serve client index.html for all non-API routes in production
       app.get('*', (req, res, next) => {
         if (req.path.startsWith('/api/')) return next();
         if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i)) return next();
-        
+
         const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
         res.sendFile(indexPath);
       });
