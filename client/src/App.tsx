@@ -1,3 +1,4 @@
+import React from "react";
 import { Switch, Route } from "wouter";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -5,7 +6,6 @@ import { CartProvider } from "./contexts/CartContext";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
 import MaintenanceBanner from "./components/layout/MaintenanceBanner";
-import React from "react";
 
 // Page imports - organized by business logic
 import Home from "./pages/Home";
