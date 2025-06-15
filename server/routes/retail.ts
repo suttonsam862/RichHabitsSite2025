@@ -179,13 +179,22 @@ export function setupRetailRoutes(app: Express): void {
   // Shop-prefixed product routes for frontend compatibility
   app.get("/api/shop/products", async (req: Request, res: Response) => {
     try {
-      console.log('Fetching products for shop page...');
-      const products = await listProducts();
-      console.log(`Successfully fetched ${products.length} products for shop page`);
-      res.json(products);
+      console.log('Fetching filtered products for shop page...');
+      const allProducts = await listProducts();
+      
+      // Filter to only show the 2 specific Rich Habits products
+      const filteredProducts = allProducts.filter(product => {
+        const title = product.title?.toLowerCase() || '';
+        return (
+          (title.includes('heavyweight tee') || title.includes('rich habits heavyweight tee')) ||
+          (title.includes('rich habits cap') || (title.includes('cap') && title.includes('rich habits')))
+        );
+      });
+      
+      console.log(`Filtered from ${allProducts.length} to ${filteredProducts.length} products for shop display`);
+      res.json(filteredProducts);
     } catch (error) {
       console.error("Failed to fetch products:", error);
-      // Return empty array instead of error to prevent frontend crashes
       res.json([]);
     }
   });
