@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Trash2, Plus, Minus, ShoppingBag, CreditCard  } from "@/lib/icons";
+import { Trash2, Plus, Minus, ShoppingBag, CreditCard  } from "../../lib/icons";
 // Initialize Stripe with proper key handling
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 
                              'pk_live_51RK25mBIRPjPy7BLnnfk9W4NLtkhEARrXCYY7yn2lAryA1jBPSkK7pU9ILCf1sJL0YVbrdd1mTcsYTot04uuIVav00HVWDloOE';

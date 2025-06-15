@@ -3,7 +3,7 @@ import { useParams, Link } from 'wouter';
 import { Button } from '../../components/ui/button';
 import Container from '../../components/layout/Container';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, MapPin, ChevronLeft, Star, ArrowRight  } from "@/lib/icons";
+import { Calendar, MapPin, ChevronLeft, Star, ArrowRight  } from "../../lib/icons";
 interface Event {
   id: number;
   title: string;

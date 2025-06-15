@@ -3,6 +3,7 @@ export {
   Menu,
   X, 
   ShoppingCart,
+  ShoppingBag,
   User,
   Search,
   Plus,
@@ -23,5 +24,7 @@ export {
   Users,
   Trophy,
   Target,
-  Zap
+  Zap,
+  Trash2,
+  CreditCard
 } from 'lucide-react';
