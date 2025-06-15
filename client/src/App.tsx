@@ -19,7 +19,7 @@ import ProductDetail from "./pages/retail/ProductDetail";
 import Cart from "./pages/retail/Cart";
 
 // Event pages (Stripe + internal DB)
-import Events from "./pages/events/EventsSimple";
+import Events from "./pages/Events";
 import EventDetail from "./pages/events/EventDetail";
 import EventRegistration from "./pages/events/EventRegistration";
 import TeamRegistration from "./pages/events/TeamRegistration";
