@@ -25,9 +25,33 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2025-03-31.basil',
 });
 
-// Configure multer for file uploads (store in memory)
+// Configure multer for file uploads with security enhancements
 const multerStorage = multer.memoryStorage();
-const upload = multer({ storage: multerStorage });
+const upload = multer({ 
+  storage: multerStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 5, // Maximum 5 files per request
+    fields: 20 // Maximum 20 non-file fields
+  },
+  fileFilter: (req, file, cb) => {
+    // Allow only specific file types for security
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/png', 
+      'image/webp',
+      'image/gif',
+      'application/pdf',
+      'text/plain'
+    ];
+    
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only images, PDFs, and text files are allowed.'));
+    }
+  }
+});
 
 // Extend SessionData to include our custom properties
 declare module 'express-session' {
