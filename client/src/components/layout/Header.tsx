@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { useCart } from "../../hooks/useCartOptimized";
+import { useCart } from "../../contexts/CartContext";
 import { ShoppingCart, Menu, X  } from "../../lib/icons";
 
 export function Header() {
