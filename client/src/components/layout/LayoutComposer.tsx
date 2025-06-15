@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { Header } from '../components/layout/Header';
-import { Footer } from '../components/layout/Footer';
-import MaintenanceBanner from '../components/layout/MaintenanceBanner';
+import { Header } from './Header';
+import { Footer } from './Footer';
+import MaintenanceBanner from './MaintenanceBanner';
 
 interface LayoutProps {
   children: ReactNode;
