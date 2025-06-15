@@ -1,0 +1,24 @@
+/* Utility classes to replace inline styles */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gradient-overlay {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
+}
+
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.border-glow {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.filter-brightness {
+  filter: brightness(0.7);
+}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { ShoppingCart, Menu, X } from "lucide-react";
-import { useCart } from "../../contexts/CartContext";
+import { useCart } from "../../hooks/useCartOptimized";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);

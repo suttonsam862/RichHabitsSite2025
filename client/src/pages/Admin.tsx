@@ -248,8 +248,7 @@ export default function AdminPage() {
     
     try {
       setLoginLoading(true);
-      console.log("Attempting login with:", loginData.username);
-      
+
       // First try a direct fetch approach
       const response = await fetch('/api/admin/login', {
         method: 'POST',
@@ -263,7 +262,7 @@ export default function AdminPage() {
       });
       
       if (response.ok) {
-        console.log("Login successful");
+
         setIsAuthenticated(true);
         toast({
           title: "Success",

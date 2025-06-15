@@ -1,6 +1,5 @@
 import React, { useState, useEffect, CSSProperties, ReactNode } from 'react';
 import useResponsive from '../hooks/useResponsive';
-import { getOptimizedImageUrl, createPlaceholderImage } from '../utils/imageOptimizer';
 
 interface OptimizedBackgroundImageProps {
   src: string;

@@ -81,11 +81,11 @@ export default function DirectCheckout() {
         if (!variantId) {
           // Try to extract a variant ID from the fallback URL if available
           if (storedFallbackUrl) {
-            console.log('No variant ID in URL, checking stored fallback URL:', storedFallbackUrl);
+
             const cartMatch = storedFallbackUrl.match(/\/cart\/([0-9]+):/);
             if (cartMatch && cartMatch[1]) {
               variantId = cartMatch[1];
-              console.log('Extracted variant ID from fallback URL:', variantId);
+
             }
           }
           
@@ -94,8 +94,6 @@ export default function DirectCheckout() {
             throw new Error('No variant ID provided in URL or in stored fallback');
           }
         }
-
-        console.log('Processing direct checkout with variant ID:', variantId);
 
         // Show initial toast
         toast({
@@ -129,8 +127,6 @@ export default function DirectCheckout() {
           throw new Error('Failed to parse variant ID');
         }
 
-        console.log('Formatted variant ID for direct cart URL:', formattedVariantId);
-
         // Create a simple cart URL with the variant ID
         const shopifyDomain = 'rich-habits-2022.myshopify.com';
         
@@ -152,8 +148,7 @@ export default function DirectCheckout() {
         );
         
         // Debug the success URL to ensure it's properly formatted
-        console.log('Success redirect URL:', successRedirectUrl);
-        
+
         // Get option type from URL params
         const optionType = params.get('option') || 'full';
         
@@ -180,8 +175,7 @@ export default function DirectCheckout() {
             const numericId = data.variantId.replace('gid://shopify/ProductVariant/', '');
             
             // Use our direct checkout utility that handles domain redirection issues
-            console.log('Using variant ID for direct checkout:', data.variantId);
-            
+
             // Show toast before redirecting
             toast({
               title: "Redirecting to Checkout",
@@ -297,7 +291,7 @@ export default function DirectCheckout() {
         // If we have a fallback URL in localStorage, offer it as a last resort
         const fallbackUrl = localStorage.getItem('shopify_fallback_url');
         if (fallbackUrl) {
-          console.log('Providing fallback URL as last resort:', fallbackUrl);
+
           setTimeout(() => {
             toast({
               title: "Alternative Checkout Available",
@@ -432,11 +426,7 @@ export default function DirectCheckout() {
                       }
                       // Remove any non-numeric characters
                       formattedVid = formattedVid.replace(/\D/g, '');
-                      
-                      console.log('Retry using cleaned variant ID:', formattedVid);
-                      
-                      console.log('Manual checkout using clean variant ID:', formattedVid);
-                      
+
                       // Use our special checkout fix utility that handles domain redirect issues
                       // This utility will try multiple methods to ensure successful checkout
                       setTimeout(() => {
@@ -576,8 +566,7 @@ export default function DirectCheckout() {
                   
                   // Remove any non-numeric characters
                   formattedId = formattedId.replace(/\D/g, '');
-                  console.log('Manual checkout using clean variant ID:', formattedId);
-                  
+
                   // Create direct cart URL for storage/display
                   const directUrl = createDirectShopifyCartUrl(formattedId, 1);
                   setCheckoutUrl(directUrl);

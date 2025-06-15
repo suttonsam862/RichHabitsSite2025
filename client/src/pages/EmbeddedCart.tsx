@@ -33,7 +33,7 @@ export default function EmbeddedCart() {
               return;
             }
           } catch (error) {
-            console.log('Error fetching existing cart, creating new one:', error);
+
             // Continue to create a new cart if the existing one can't be fetched
           }
         }

@@ -160,22 +160,18 @@ export default function TeamRegistration() {
   };
 
   const processTeamRegistration = async () => {
-    console.log('🔄 Team registration button clicked');
-    console.log('Coach info:', coachInfo);
-    console.log('Athletes:', athletes);
-    
+
     // Prevent form submission if already processing
     if (isProcessing) {
-      console.log('⏳ Already processing, ignoring duplicate submission');
+
       return;
     }
     
     if (!validateForm()) {
-      console.log('❌ Form validation failed');
+
       return;
     }
 
-    console.log('✅ Form validation passed, processing...');
     setIsProcessing(true);
 
     try {
@@ -190,12 +186,10 @@ export default function TeamRegistration() {
                        athlete.parentPhoneNumber && athlete.parentPhoneNumber.trim();
         
         if (!isValid) {
-          console.log('Invalid athlete:', athlete);
+
         }
         return isValid;
       });
-
-      console.log(`Valid athletes: ${validAthletes.length}/${athletes.length}`);
 
       if (validAthletes.length < 5) {
         toast({
@@ -243,9 +237,7 @@ export default function TeamRegistration() {
       };
 
       // Call the team registration API - same format as individual registration
-      console.log("🚀 Sending team registration for payment...");
-      console.log("📦 Request payload:", teamRegistrationData);
-      
+
       const response = await fetch("/api/team-registration", {
         method: "POST",
         headers: {
@@ -253,10 +245,6 @@ export default function TeamRegistration() {
         },
         body: JSON.stringify(teamRegistrationData)
       });
-
-      console.log("📡 Response received:", response.status);
-      console.log("📄 Response headers:", response.headers);
-      console.log("🔍 Response OK?", response.ok);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown server error' }));
@@ -282,8 +270,6 @@ export default function TeamRegistration() {
       }
 
       const data = await response.json();
-      console.log("✅ Team registration response:", data);
-      console.log("💳 Client secret:", data.clientSecret ? "✓ Present" : "✗ Missing");
 
       if (data.clientSecret) {
         toast({
@@ -299,8 +285,7 @@ export default function TeamRegistration() {
           totalAmount: data.amount,
           athleteCount: validAthletes.length
         }));
-        
-        console.log("🚀 Redirecting to payment page...");
+
         // Redirect to same StripeCheckout page that works for individual registrations
         window.location.href = `/stripe-checkout?eventId=${eventId}&eventName=${encodeURIComponent(event.name)}&option=team&clientSecret=${data.clientSecret}&amount=${data.amount}`;
       } else {
@@ -479,7 +464,6 @@ export default function TeamRegistration() {
                           type="number"
                         />
                       </div>
-
 
                       <div>
                         <Label>Shirt Size *</Label>

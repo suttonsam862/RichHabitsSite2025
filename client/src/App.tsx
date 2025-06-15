@@ -1,10 +1,8 @@
 import { Switch, Route } from "wouter";
-import { Header } from "./components/layout/Header";
-import { Footer } from "./components/layout/Footer";
-import MaintenanceBanner from "./components/layout/MaintenanceBanner";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { CartProvider } from "./contexts/CartContext";
+import { Layout, EventLayout, RetailLayout, MinimalLayout } from "./components/layout/LayoutComposer";
 
 // Page imports - organized by business logic
 import Home from "./pages/Home";
@@ -27,41 +25,29 @@ import StripeCheckout from "./pages/events/StripeCheckout";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/shop" component={Shop} />
-      <Route path="/shop/:handle" component={ProductDetail} />
-      <Route path="/cart" component={Cart} />
-      <Route path="/events" component={Events} />
-      <Route path="/events/:id" component={EventDetail} />
-      <Route path="/register/:id" component={EventRegistration} />
-      <Route path="/team-register/:id" component={TeamRegistration} />
-      <Route path="/team-registration" component={TeamRegistration} />
-      <Route path="/stripe-checkout" component={StripeCheckout} />
-      <Route path="/custom-apparel" component={CustomApparel} />
-      <Route path="/contact" component={Contact} />
-      <Route component={NotFound} />
+      <Route path="/" component={() => <Layout><Home /></Layout>} />
+      <Route path="/shop" component={() => <RetailLayout><Shop /></RetailLayout>} />
+      <Route path="/shop/:handle" component={() => <RetailLayout><ProductDetail /></RetailLayout>} />
+      <Route path="/cart" component={() => <RetailLayout><Cart /></RetailLayout>} />
+      <Route path="/events" component={() => <EventLayout><Events /></EventLayout>} />
+      <Route path="/events/:id" component={() => <EventLayout><EventDetail /></EventLayout>} />
+      <Route path="/register/:id" component={() => <EventLayout><EventRegistration /></EventLayout>} />
+      <Route path="/team-register/:id" component={() => <EventLayout><TeamRegistration /></EventLayout>} />
+      <Route path="/team-registration" component={() => <EventLayout><TeamRegistration /></EventLayout>} />
+      <Route path="/stripe-checkout" component={() => <MinimalLayout><StripeCheckout /></MinimalLayout>} />
+      <Route path="/custom-apparel" component={() => <Layout><CustomApparel /></Layout>} />
+      <Route path="/contact" component={() => <Layout><Contact /></Layout>} />
+      <Route component={() => <Layout><NotFound /></Layout>} />
     </Switch>
   );
 }
 
 function App() {
-  const pathname = window.location.pathname;
-  const isSpecialPage = 
-    pathname === '/redirect' || 
-    pathname === '/embedded-cart';
-  
   return (
     <TooltipProvider>
       <CartProvider>
-        <div className="flex flex-col min-h-screen">
-          {!isSpecialPage && <MaintenanceBanner />}
-          {!isSpecialPage && <Header />}
-          <main className={`flex-grow ${!isSpecialPage ? 'pt-16' : ''}`}>
-            <Router />
-          </main>
-          {!isSpecialPage && <Footer />}
-          <Toaster />
-        </div>
+        <Router />
+        <Toaster />
       </CartProvider>
     </TooltipProvider>
   );

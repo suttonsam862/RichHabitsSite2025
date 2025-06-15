@@ -4,7 +4,6 @@ import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Product } from "@/types/shopify";
-import { apiRequest } from "@/lib/queryClient";
 
 // Handle for the Retail Collection in your Shopify store
 const RETAIL_COLLECTION_HANDLE = "retail-collection";

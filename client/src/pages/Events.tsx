@@ -94,7 +94,7 @@ export default function Events() {
   
   // Optimized filter handler
   const handleFilterChange = (filters: any) => {
-    console.log("Filtering events with:", filters);
+
     // Simple filtering to reduce computational load
     const filtered = events.filter(event => {
       // Basic location filter

@@ -243,8 +243,6 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           day3: sessionStorage.getItem('registration_day3') === 'true',
         };
 
-        console.log('Sending complete registration data to backend:', registrationData);
-
         const registrationResponse = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
           method: 'POST',
           headers: {
@@ -353,8 +351,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       }
       
       const data = await response.json();
-      console.log('Payment intent recreated with discount:', data);
-      
+
       if (data.clientSecret) {
         // Store the new payment details for page reload
         sessionStorage.setItem('payment_client_secret', data.clientSecret);
@@ -384,7 +381,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
     
     // Prevent multiple simultaneous discount applications
     if (isApplyingDiscount) {
-      console.log('Discount application already in progress, ignoring duplicate request');
+
       return;
     }
     
@@ -475,8 +472,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           
           if (recreateResponse.ok) {
             const recreateData = await recreateResponse.json();
-            console.log('New payment intent created with discount:', recreateData);
-            
+
             // Update payment state via callbacks
             onClientSecretUpdate && onClientSecretUpdate(recreateData.clientSecret);
             onAmountUpdate && onAmountUpdate(data.discount.finalPrice);
@@ -655,11 +651,7 @@ export default function StripeCheckout() {
           const urlAmount = params.get('amount');
           
           if (urlClientSecret && urlAmount) {
-            console.log('Using team registration payment intent:', {
-              clientSecret: urlClientSecret ? 'present' : 'missing',
-              amount: urlAmount
-            });
-            
+
             setClientSecret(urlClientSecret);
             setAmount(parseFloat(urlAmount));
             setLoading(false);
@@ -671,7 +663,7 @@ export default function StripeCheckout() {
           if (teamData) {
             try {
               const parsedTeamData = JSON.parse(teamData);
-              console.log('Found team registration data in session:', parsedTeamData);
+
               setAmount(parsedTeamData.totalAmount || 0);
             } catch (parseError) {
               console.error('Failed to parse team registration data from sessionStorage:', parseError);
@@ -698,7 +690,7 @@ export default function StripeCheckout() {
     const fetchPaymentIntent = async () => {
       // Prevent duplicate calls
       if (isSetupInProgress) {
-        console.log('Payment setup already in progress, skipping duplicate call');
+
         return;
       }
       
@@ -723,9 +715,7 @@ export default function StripeCheckout() {
           day2: sessionStorage.getItem('registration_day2') === 'true',
           day3: sessionStorage.getItem('registration_day3') === 'true',
         };
-        
-        console.log('Collected registration data:', registrationData);
-        
+
         // Enhanced validation - check for essential fields
         const missingFields = [];
         if (!registrationData.firstName) missingFields.push('First Name');
@@ -742,12 +732,6 @@ export default function StripeCheckout() {
         const appliedDiscountCode = sessionStorage.getItem('applied_discount_code');
         const discountData = sessionStorage.getItem('applied_discount');
         const appliedDiscount = discountData ? JSON.parse(discountData) : null;
-        
-        console.log('Debug discount retrieval:', {
-          appliedDiscountCode,
-          discountData,
-          appliedDiscount
-        });
 
         // Single optimized API call for payment intent creation
         const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
@@ -805,13 +789,10 @@ export default function StripeCheckout() {
           console.error('JSON parsing error on success response:', parseError);
           throw new Error('Unable to process payment response. Please contact support with discount code: ' + (appliedDiscountCode || 'none'));
         }
-        
-        console.log('Payment intent response data:', data);
-        
+
         // Handle free registrations (100% discount codes) - don't auto-process, show button
         if (data.isFreeRegistration || (data.success && data.registrationId)) {
-          console.log('Free registration ready - setting up completion button');
-          
+
           // Set special clientSecret to trigger free registration UI
           setClientSecret('free_registration');
           setAmount(0);
@@ -822,8 +803,7 @@ export default function StripeCheckout() {
             // Set the amount for display on the button - use amount from response or calculate from event
             const responseAmount = data.amount || 249; // Default to $249 for full event
             setAmount(responseAmount);
-            console.log('Payment setup successful:', { clientSecret: data.clientSecret, amount: responseAmount });
-            
+
             // Clear any existing errors since payment setup was successful
             setError(null);
           } catch (setupError) {
@@ -845,7 +825,7 @@ export default function StripeCheckout() {
           });
         } else {
           // We have a valid client secret, so ignore this error
-          console.log('Ignoring error since payment setup was successful:', err);
+
           setError(null);
         }
       } finally {

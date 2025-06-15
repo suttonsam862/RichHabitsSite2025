@@ -53,8 +53,7 @@ export default function ShopifyRedirect() {
       });
       
       // Log for debugging
-      console.log('Redirecting to Shopify cart with variant ID:', variantId);
-      
+
       // Create direct cart URL for storage/display
       const directUrl = createDirectShopifyCartUrl(variantId, 1);
       setCheckoutUrl(directUrl);
