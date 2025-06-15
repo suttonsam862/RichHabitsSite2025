@@ -1,28 +1,13 @@
 import React from "react";
 import { Link } from "wouter";
 
-// Simplified event data
+// Current events data - hiding past events
 const events = [
   {
     id: 1,
     title: "Birmingham Slam Camp",
     date: "June 19-21, 2025",
     location: "Clay-Chalkville Middle School, Birmingham, AL",
-    price: "$249"
-  },
-  {
-    id: 2,
-    title: "National Champ Camp",
-    date: "June 5-7, 2025",
-    location: "Roy Martin Middle School, Las Vegas, NV",
-    price: "$299",
-    originalPrice: "$349"
-  },
-  {
-    id: 3,
-    title: "Texas Recruiting Clinic",
-    date: "June 12-13, 2025",
-    location: "Arlington Martin High School, Arlington, TX",
     price: "$249"
   },
   {
