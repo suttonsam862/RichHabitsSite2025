@@ -1,1 +1,1 @@
-web: node deployment-server.js
+web: node replit-deploy.js
