@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 

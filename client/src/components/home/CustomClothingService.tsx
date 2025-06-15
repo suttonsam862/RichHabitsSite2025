@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 

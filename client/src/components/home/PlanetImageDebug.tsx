@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 
 const PlanetImageDebug: React.FC = () => {
   // Testing different image paths - focusing on /assets/ folder paths which work

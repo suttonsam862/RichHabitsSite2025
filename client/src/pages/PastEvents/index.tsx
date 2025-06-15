@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@/components/ui/container';
+import Container from '../../components/layout/Container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 const PastEvents = () => {

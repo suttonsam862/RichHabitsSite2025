@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container } from "@/components/ui/container";
+import Container from "../components/layout/Container";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";

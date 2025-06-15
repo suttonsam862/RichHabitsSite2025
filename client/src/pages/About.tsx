@@ -1,4 +1,4 @@
-import { Container } from "@/components/ui/container";
+import Container from "../components/layout/Container";
 import { AnimatedUnderline } from "@/components/ui/animated-underline";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
