@@ -2,8 +2,9 @@ import { useImageError } from '../hooks/useImageError';
 import { OptimizedImage, useClassNames } from '../utils/performanceUtils';
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ChevronDown, Users, User, X } from "lucide-react";
 import { useState } from "react";
+import { X } from "lucide-react/dist/esm/icons/";
+import { ChevronDown, Users, User } from "lucide-react";
 
 export default function Home() {
   const [showEventSelector, setShowEventSelector] = useState(false);

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { Calendar, MapPin, ChevronLeft, Star, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import Container from '../../components/layout/Container';
 import { useQuery } from '@tanstack/react-query';
-
+import { Calendar, MapPin, ChevronLeft, Star, ArrowRight } from "lucide-react";
 interface Event {
   id: number;
   title: string;

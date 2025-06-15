@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useRoute } from "wouter";
 import { motion } from "framer-motion";
-import { Users, Plus, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-
+import { Users, Plus, Trash2, User } from "lucide-react";
 interface Athlete {
   id: string;
   firstName: string;

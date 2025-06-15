@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { ArrowRight } from "lucide-react";
-
 interface Event {
   id: string;
   title: string;

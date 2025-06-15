@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
-import { ShoppingCart, Plus, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
+import { ShoppingCart, Plus, Check } from "lucide-react";
 interface AddToCartButtonProps {
   product: {
     shopifyProductId: string;

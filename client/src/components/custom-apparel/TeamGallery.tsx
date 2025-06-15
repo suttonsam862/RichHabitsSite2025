@@ -1,7 +1,6 @@
 import { Dialog, DialogContent, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-
+import { X } from "lucide-react/dist/esm/icons/";
 // Design image paths with direct paths
 const design1 = "/images/custom-apparel/Athens Mockup.png";
 const design2 = "/images/custom-apparel/BrooksMockupFinal.png";

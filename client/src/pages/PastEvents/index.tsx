@@ -2,8 +2,7 @@ import React from 'react';
 import { Container } from '@/components/ui/container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Calendar, DollarSign, Users, Trophy, Heart } from 'lucide-react';
-
+import { Calendar, DollarSign, Users, Trophy, Heart } from "lucide-react";
 const PastEvents = () => {
   return (
     <div className="bg-white">

@@ -8,8 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipProvider } from '@/components/ui/tooltip';
-import { Info } from 'lucide-react';
-
+import { Info } from "lucide-react";
 // STRUCTURE: Enhanced type safety for registration form data
 export interface RegistrationFormData {
   firstName: string;

@@ -7,10 +7,9 @@ import { useLocation } from 'wouter';
 import { useToast } from '../hooks/use-toast';
 import { RegistrationProgress } from '../components/RegistrationProgress';
 import { Container } from '../components/Container';
-import { AlertCircle } from 'lucide-react';
 import { attemptDirectCheckout, createDirectShopifyCartUrl } from '../lib/shopifyRedirectFix';
-import { 
-  trackCheckoutCompleted,
+import { import { AlertCircle } from "lucide-react";
+trackCheckoutCompleted,
   handleRegistrationError,
   getLastRegistrationError,
   clearLastRegistrationError,
