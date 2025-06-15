@@ -3,7 +3,7 @@ import { OptimizedImage, useClassNames } from '../utils/performanceUtils';
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, Users, User  } from "@/lib/minimal-icons";
+import { ChevronDown, Users, User  } from "@/lib/icons";
 
 export default function Home() {
   const [showEventSelector, setShowEventSelector] = useState(false);
