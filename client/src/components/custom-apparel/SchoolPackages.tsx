@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 import { motion, AnimatePresence } from "framer-motion";
 
 // School package images with direct paths

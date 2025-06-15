@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 // Image paths with baseUrl for production reliability
 const baseUrl = window.location.origin;

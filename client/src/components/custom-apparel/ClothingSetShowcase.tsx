@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 
 interface ClothingSet {
   name: string;
