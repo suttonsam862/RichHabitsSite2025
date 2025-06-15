@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'wouter';
+import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/button';
 import Container from '../../components/layout/Container';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, MapPin, ChevronLeft, Star, ArrowRight  } from "../../lib/icons";
+import { Calendar, MapPin, ChevronLeft, Star, ArrowRight, Users, Trophy, Clock, DollarSign } from "../../lib/icons";
+import { getEventMedia } from '../../lib/eventMediaMap';
 
 interface Event {
   id: number;
@@ -15,6 +17,16 @@ interface Event {
   features: string[];
   images: string[];
   slug: string;
+  longDescription?: string;
+  coaches?: string[];
+  schedule?: string[];
+  whatToBring?: string[];
+  accommodations?: string[];
+  pricing?: {
+    individual: number;
+    team: number;
+    oneDay?: number;
+  };
 }
 
 export default function EventDetail() {
