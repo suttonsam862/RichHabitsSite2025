@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { Container } from "@/components/ui/container";
-import { AnimatedUnderline } from "@/components/ui/animated-underline";
+import Container from "../components/layout/Container";
 import { motion } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { submitContactForm } from "@/lib/shopify";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Button } from "../components/ui/button";
+import { submitContactForm } from "../lib/shopify";
 import { Helmet } from "react-helmet";
 
 const contactFormSchema = z.object({

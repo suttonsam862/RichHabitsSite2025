@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Container } from "@/components/ui/container";
+import Container from "../layout/Container";
 
 // Team designs mockups
 const athensMockup = "/images/custom-apparel/Athens Mockup.png";
