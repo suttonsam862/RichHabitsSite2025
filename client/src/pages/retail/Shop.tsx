@@ -181,17 +181,27 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function Shop() {
-  // Get only retail collection products from the sales channel
-  const { data: retailProducts = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/products'],
+  // Get only the specific retail products: Rich Habits Heavyweight Tee and Rich Habits Cap
+  const { data: allProducts = [], isLoading } = useQuery<Product[]>({
+    queryKey: ['/api/products/retail'],
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1
   });
 
-  // Memoize product processing to prevent hook order issues
+  // Filter to show only the two specific products from the original shop
   const products = useMemo(() => {
-    return Array.isArray(retailProducts) ? retailProducts : [];
-  }, [retailProducts]);
+    if (!Array.isArray(allProducts)) return [];
+    
+    return allProducts.filter((product: Product) => {
+      const title = product.title?.toLowerCase() || '';
+      return (
+        title.includes('rich habits heavyweight tee') || 
+        title.includes('rich habits cap') ||
+        title.includes('heavyweight tee') ||
+        (title.includes('rich habits') && title.includes('cap'))
+      );
+    });
+  }, [allProducts]);
 
   return (
     <div className="min-h-screen bg-black text-white">
