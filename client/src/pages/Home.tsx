@@ -3,8 +3,7 @@ import { OptimizedImage, useClassNames } from '../utils/performanceUtils';
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { X } from "lucide-react/dist/esm/icons/";
-import { ChevronDown, Users, User } from "lucide-react";
+import { ChevronDown, Users, User  } from "@/lib/minimal-icons";
 
 export default function Home() {
   const [showEventSelector, setShowEventSelector] = useState(false);

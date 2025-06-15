@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useCart } from "../../hooks/useCartOptimized";
-import { X } from "lucide-react/dist/esm/icons/";
-import { ShoppingCart, Menu } from "lucide-react";
+import { ShoppingCart, Menu  } from "@/lib/minimal-icons";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);

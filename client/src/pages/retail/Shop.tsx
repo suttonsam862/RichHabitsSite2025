@@ -6,7 +6,7 @@ import { useCart } from "../../contexts/CartContext";
 import { useToast } from "../../hooks/use-toast";
 import { ShopifyImage, getShopifyImageUrl } from "../../components/ui/robust-image";
 import type { Product } from "../../types/shopify";
-import { ShoppingCart, Star, ArrowRight, Plus } from "lucide-react";
+import { ShoppingCart, Star, ArrowRight, Plus  } from "@/lib/minimal-icons";
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
   animate: { 

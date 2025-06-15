@@ -8,8 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { X } from "lucide-react/dist/esm/icons/";
-import { Upload, CheckCircle, AlertCircle } from "lucide-react";
 interface CollegeCoachRegistrationFormProps {
   isOpen: boolean;
   onClose: () => void;

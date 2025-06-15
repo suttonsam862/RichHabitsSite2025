@@ -7,7 +7,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2 } from "lucide-react";
 // Form validation schema
 const registerSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
