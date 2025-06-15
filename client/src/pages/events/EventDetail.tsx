@@ -21,52 +21,86 @@ interface Event {
   slug: string;
 }
 
-const getEventMedia = (eventId: number) => {
-  const mediaMap: Record<number, { video?: string; images: string[] }> = {
-    1: { // Birmingham Slam Camp
-      video: "/videos/birmingham-slam-preview.mp4",
-      images: [
-        "/assets/SlamCampSiteBanner.png",
-        "/assets/DSC08460--.jpg",
-        "/images/events/birmingham-camp-3.jpg"
-      ]
+// Import authentic event data from existing component
+const getAuthenticEventData = () => {
+  return [
+    {
+      id: 1,
+      title: "Birmingham Slam Camp",
+      shortDescription: "Southern grit meets elite technique",
+      location: "Clay-Chalkville Middle School",
+      date: "June 19-21, 2025",
+      primaryColor: "#FF6B00",
+      secondaryColor: "#FFA500",
+      longDescription: "The Birmingham Slam Camp is where Southern grit meets elite technique. Hosted at Clay-Chalkville Middle School, this multi-day clinic features NCAA stars, high-intensity sessions, and real talks on leadership and toughness. Athletes train in a professional environment with custom gear, branded check-in, and family-friendly access. The camp combines technical training with mental preparation, creating a comprehensive development experience for wrestlers serious about advancing their skills.",
+      details: [
+        "NCAA champion instructors and elite coaches",
+        "Specialized technique sessions for all skill levels",
+        "Leadership and mental toughness workshops",
+        "Custom Rich Habits camp gear included",
+        "Professional training environment",
+        "Limited to 200 participants to ensure quality instruction"
+      ],
+      slug: "birmingham-slam-camp"
     },
-    2: { // National Champ Camp
-      video: "/videos/national-champ-preview.mp4", 
-      images: [
-        "/images/events/national-champ-1.jpg",
-        "/images/events/national-champ-2.jpg",
-        "/images/events/national-champ-3.jpg"
-      ]
+    {
+      id: 2,
+      title: "National Champ Camp",
+      shortDescription: "Three days of elite instruction from NCAA champions",
+      location: "Roy Martin Middle School",
+      date: "June 5-7, 2025",
+      primaryColor: "#041e42",
+      secondaryColor: "#1e88e5",
+      longDescription: "The National Champ Camp at Roy Martin Middle School delivers three days of instruction from NCAA champions in a high-level environment with media coverage, mental coaching, and signature Rich Habits style. This premier event brings together the nation's top wrestlers and coaches for an immersive experience that goes beyond technique. Participants train in state-of-the-art facilities, receive personalized coaching, and build connections that last long after the camp ends. The camp's championship mindset philosophy helps athletes break through mental barriers and reach new levels.",
+      details: [
+        "Training sessions led by NCAA champions",
+        "Advanced technique development for competitive edge",
+        "Mental performance coaching from sports psychologists",
+        "Film review and strategy sessions",
+        "Nutrition and recovery workshops",
+        "Limited to 200 participants with selective application process"
+      ],
+      slug: "national-champ-camp"
     },
-    3: { // Texas Recruiting Clinic
-      video: "/videos/texas-recruiting-preview.mp4",
-      images: [
-        "/images/events/texas-recruiting-1.jpg",
-        "/images/events/texas-recruiting-2.jpg", 
-        "/images/events/texas-recruiting-3.jpg"
-      ]
+    {
+      id: 3,
+      title: "Texas Recruiting Clinic",
+      shortDescription: "Showcase your talent in front of cameras and coaches",
+      location: "Arlington Martin High School",
+      date: "June 12-13, 2025",
+      primaryColor: "#B22234",
+      secondaryColor: "#3C3B6E",
+      longDescription: "The Texas Recruiting Clinic at Arlington Martin High School is a spotlight event where wrestlers showcase their talent in front of cameras and college coaches. This one-day intensive combines skill development with visibility opportunities that can change an athlete's trajectory. Participants receive professional feedback, get filmed during live sessions, and learn directly from college coaches about what they're looking for in recruits. The clinic creates a unique bridge between high school wrestling and collegiate opportunities.",
+      details: [
+        "College coaches in attendance for direct scouting",
+        "Professional video recording of matches and drills",
+        "Personalized feedback from NCAA athletes",
+        "Recruiting workshop with tips for college applications",
+        "Networking opportunities with coaches and scouts",
+        "Limited to 150 participants for maximum exposure"
+      ],
+      slug: "texas-recruiting-clinic"
     },
-    4: { // Panther Train Tour
-      video: "/videos/panther-train-preview.mp4",
-      images: [
-        "/images/events/panther-train-1.jpg",
-        "/images/events/panther-train-2.jpg",
-        "/images/events/panther-train-3.jpg"
-      ]
+    {
+      id: 4,
+      title: "Panther Train Tour",
+      shortDescription: "Elite training brought directly to regions across the country",
+      location: "Multiple locations nationwide",
+      date: "June 15-17, 2025",
+      primaryColor: "#6a0dad",
+      secondaryColor: "#ffd700",
+      longDescription: "The nationwide Panther Train Tour (formerly the Cory Land Tour) brings elite training directly to regions across the country, mimicking mini camps with live sessions, merchandise drops, and stories from athletes who've made it. This innovative approach makes high-level instruction accessible to wrestlers in diverse communities. Each stop features intensive training, motivation from successful athletes, and the signature Rich Habits approach to development. The tour creates a nationwide community of wrestlers connected through shared experiences and training philosophy.",
+      details: [
+        "Regional stops throughout the country",
+        "Training with collegiate and Olympic athletes",
+        "Technique sessions tailored to regional wrestling styles",
+        "Success stories and Q&A with accomplished wrestlers",
+        "Exclusive Rich Habits merchandise available at each stop",
+        "Affordable single-day registration options"
+      ],
+      slug: "panther-train-tour"
     }
-  };
-
-  const media = mediaMap[eventId];
-  if (!media) {
-    console.warn(`No media defined for event ID ${eventId}, using fallback media`);
-    return {
-      video: "/videos/default-preview.mp4",
-      images: ["/assets/SlamCampSiteBanner.png", "/assets/DSC08460--.jpg"]
-    };
-  }
-  
-  return media;
+  ];
 };
 
 export default function EventDetail() {
@@ -78,270 +112,25 @@ export default function EventDetail() {
   const id = params?.id;
   const slug = isNaN(Number(id)) ? id : null;
 
-  // Define the complete events data with all original information
-  const events: Event[] = [
-    {
-      id: 1,
-      title: "Birmingham Slam Camp",
-      date: "June 19-21, 2025",
-      location: "Clay-Chalkville Middle School, Birmingham, AL",
-      price: 249,
-      description: "A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.",
-      longDescription: "The Birmingham Slam Camp is where Southern grit meets elite technique. Hosted at Clay-Chalkville Middle School, this multi-day clinic features NCAA stars, high-intensity sessions, and real talks on leadership and toughness. Athletes train in a professional environment with custom gear, branded check-in, and family-friendly access. The camp combines technical training with mental preparation, creating a comprehensive development experience for wrestlers serious about advancing their skills.",
-      features: [
-        "NCAA champion instructors and elite coaches",
-        "Specialized technique sessions for all skill levels", 
-        "Leadership and mental toughness workshops",
-        "Custom Rich Habits camp gear included",
-        "Professional training environment",
-        "Limited to 200 participants for quality instruction"
-      ],
-      coaches: [
-        "NCAA Division I Champions",
-        "Olympic Training Center Coaches",
-        "High School State Champions",
-        "Professional Wrestling Mentors"
-      ],
-      schedule: [
-        {
-          day: "Day 1 (Thursday)",
-          activities: [
-            "8:30 AM - Check-in & Registration",
-            "9:00 AM - Opening Ceremony & Welcome", 
-            "9:30 AM - Technique Session: Basic Takedowns",
-            "10:45 AM - Break",
-            "11:00 AM - Live Wrestling & Drilling",
-            "12:00 PM - Lunch Break",
-            "1:00 PM - Mental Performance Workshop",
-            "2:00 PM - Advanced Technique: Mat Wrestling",
-            "3:15 PM - Conditioning & Fitness",
-            "4:00 PM - Day 1 Wrap-up & Q&A"
-          ]
-        },
-        {
-          day: "Day 2 (Friday)",
-          activities: [
-            "9:00 AM - Dynamic Warm-up",
-            "9:30 AM - Technique Session: Escapes & Reversals",
-            "10:45 AM - Break",
-            "11:00 AM - Positional Wrestling", 
-            "12:00 PM - Lunch Break",
-            "1:00 PM - Competition Strategy",
-            "2:00 PM - Advanced Technique: Top Position",
-            "3:15 PM - Strength & Conditioning",
-            "4:00 PM - Day 2 Recap"
-          ]
-        },
-        {
-          day: "Day 3 (Saturday)",
-          activities: [
-            "9:00 AM - Final Warm-up",
-            "9:30 AM - Technique Review & Q&A",
-            "10:30 AM - Practice Matches",
-            "11:30 AM - Awards & Recognition",
-            "12:00 PM - Closing Ceremony",
-            "12:30 PM - Photos & Farewells"
-          ]
-        }
-      ],
-      whatToBring: [
-        "Wrestling shoes (required)",
-        "Athletic shorts (no pockets or zippers)",
-        "Moisture-wicking t-shirts",
-        "Water bottle",
-        "Towel",
-        "Notebook and pen for notes",
-        "Positive attitude and willingness to learn"
-      ],
-      images: ["/assets/SlamCampSiteBanner.png", "/assets/DSC08460--.jpg"],
-      slug: "birmingham-slam-camp"
-    },
-    {
-      id: 2,
-      title: "National Champ Camp",
-      date: "June 5-7, 2025",
-      location: "Roy Martin Middle School, Las Vegas, NV",
-      price: 299,
-      description: "Train with NCAA champions and Olympic athletes in this intensive 3-day camp focused on championship-level techniques and mindset development.",
-      longDescription: "The National Champ Camp delivers three days of instruction from NCAA champions in a high-level environment with media coverage, mental coaching, and signature Rich Habits style. This premier event brings together the nation's top wrestlers and coaches for an immersive experience that goes beyond technique. Participants train in state-of-the-art facilities, receive personalized coaching, and build connections that last long after the camp ends.",
-      features: [
-        "Training sessions led by NCAA champions",
-        "Advanced technique development for competitive edge",
-        "Mental performance coaching from sports psychologists", 
-        "Film review and strategy sessions",
-        "Nutrition and recovery workshops",
-        "Limited to 200 participants with selective application process"
-      ],
-      coaches: [
-        "NCAA Division I National Champions",
-        "Olympic Training Partners",
-        "World Championship Medalists",
-        "Elite College Coaches"
-      ],
-      schedule: [
-        {
-          day: "Day 1 (Thursday)",
-          activities: [
-            "8:00 AM - Elite Check-in Process",
-            "8:30 AM - Championship Mindset Session",
-            "9:30 AM - Advanced Takedown Techniques",
-            "11:00 AM - Break & Hydration",
-            "11:15 AM - Mental Performance Workshop",
-            "12:30 PM - Catered Lunch",
-            "1:30 PM - Film Study & Analysis",
-            "2:30 PM - Live Wrestling with Champions",
-            "3:45 PM - Recovery & Flexibility",
-            "4:30 PM - Day 1 Debrief"
-          ]
-        },
-        {
-          day: "Day 2 (Friday)", 
-          activities: [
-            "8:30 AM - Dynamic Championship Warm-up",
-            "9:00 AM - Advanced Mat Wrestling",
-            "10:30 AM - Break",
-            "10:45 AM - Competition Psychology",
-            "12:00 PM - Lunch & Nutrition Seminar",
-            "1:00 PM - Championship Drilling",
-            "2:30 PM - Situational Wrestling",
-            "3:45 PM - Strength & Conditioning",
-            "4:30 PM - Champion Q&A Session"
-          ]
-        },
-        {
-          day: "Day 3 (Saturday)",
-          activities: [
-            "8:30 AM - Final Preparation",
-            "9:00 AM - Championship Challenge Matches",
-            "10:30 AM - Awards & Recognition Ceremony",
-            "11:30 AM - Photo Sessions with Champions",
-            "12:00 PM - Closing Ceremony",
-            "12:30 PM - Networking & Farewell"
-          ]
-        }
-      ],
-      whatToBring: [
-        "Wrestling shoes (required)",
-        "Competition-quality wrestling singlet",
-        "Athletic wear for training",
-        "Multiple water bottles",
-        "Towel and personal hygiene items",
-        "Notebook for technique notes",
-        "Camera for memories with champions"
-      ],
-      images: ["/images/events/national-champ-1.jpg", "/images/events/national-champ-2.jpg", "/images/events/national-champ-3.jpg"],
-      slug: "national-champ-camp"
-    },
-    {
-      id: 3,
-      title: "Texas Recruiting Clinic",
-      date: "June 12-13, 2025", 
-      location: "Arlington Martin High School, Arlington, TX",
-      price: 249,
-      description: "Designed specifically for high school wrestlers seeking collegiate opportunities, featuring college coach evaluations and recruitment guidance.",
-      longDescription: "The Texas Recruiting Clinic is a spotlight event where wrestlers showcase their talent in front of cameras and college coaches. This intensive combines skill development with visibility opportunities that can change an athlete's trajectory. Participants receive professional feedback, get filmed during live sessions, and learn directly from college coaches about what they're looking for in recruits.",
-      features: [
-        "College coaches in attendance for direct scouting",
-        "Professional video recording of matches and drills",
-        "Personalized feedback from NCAA athletes",
-        "Recruiting workshop with tips for college applications",
-        "Networking opportunities with coaches and scouts",
-        "Limited to 150 participants for maximum exposure"
-      ],
-      coaches: [
-        "Active NCAA Division I Coaches",
-        "College Recruiting Coordinators",
-        "Former College All-Americans",
-        "Sports Psychology Professionals"
-      ],
-      schedule: [
-        {
-          day: "Day 1 (Thursday)",
-          activities: [
-            "8:00 AM - Athlete Check-in & Profile Setup",
-            "9:00 AM - Recruiting Process Overview",
-            "10:00 AM - Skills Assessment & Filming",
-            "11:30 AM - Break",
-            "12:00 PM - College Coach Panel Discussion",
-            "1:00 PM - Lunch & Networking",
-            "2:00 PM - Live Wrestling Evaluations",
-            "3:30 PM - Individual Coach Meetings",
-            "4:30 PM - Day 1 Wrap-up"
-          ]
-        },
-        {
-          day: "Day 2 (Friday)",
-          activities: [
-            "9:00 AM - Technique Refinement Session",
-            "10:30 AM - Competition Simulation",
-            "12:00 PM - Final Evaluations & Filming",
-            "1:00 PM - Lunch & Results Discussion",
-            "2:00 PM - Scholarship Information Session",
-            "3:00 PM - Individual Action Plans",
-            "4:00 PM - Closing Ceremony & Next Steps"
-          ]
-        }
-      ],
-      whatToBring: [
-        "Wrestling shoes (required)",
-        "Competition singlet",
-        "Athletic shorts and shirts",
-        "Academic transcripts (unofficial copies)",
-        "Athletic resume or highlight reel",
-        "Water bottle and snacks",
-        "Professional attitude and goals"
-      ],
-      images: ["/images/events/texas-recruiting-1.jpg", "/images/events/texas-recruiting-2.jpg", "/images/events/texas-recruiting-3.jpg"],
-      slug: "texas-recruiting-clinic"
-    },
-    {
-      id: 4,
-      title: "Panther Train Tour",
-      date: "June 15-17, 2025",
-      location: "Multiple locations nationwide",
-      price: 99,
-      description: "Mobile wrestling clinic touring multiple locations, bringing elite training directly to your community.",
-      longDescription: "The Panther Train Tour brings elite wrestling instruction directly to communities across the nation. This mobile clinic format makes high-quality coaching accessible to wrestlers who might not otherwise have the opportunity to train with top-level instructors. Each stop features intensive technique sessions, mental preparation, and the signature Rich Habits approach to wrestling excellence.",
-      features: [
-        "Multi-location tour bringing coaching to you",
-        "Community-focused instruction and outreach",
-        "Accessible pricing for all athletes",
-        "Regional development and talent identification",
-        "Local partnerships with wrestling programs",
-        "Flexible scheduling to accommodate communities"
-      ],
-      coaches: [
-        "Touring Professional Coaches",
-        "Regional Wrestling Ambassadors",
-        "Community Outreach Specialists",
-        "Local Wrestling Legends"
-      ],
-      schedule: [
-        {
-          day: "Tour Stop Schedule",
-          activities: [
-            "Location-specific timing (typically 6:00 PM - 9:00 PM)",
-            "Community welcome and introductions",
-            "Fundamental technique instruction",
-            "Local athlete showcases",
-            "Q&A with touring coaches",
-            "Community building activities",
-            "Next location preview"
-          ]
-        }
-      ],
-      whatToBring: [
-        "Wrestling shoes (required)",
-        "Comfortable athletic wear",
-        "Water bottle",
-        "Towel",
-        "Enthusiasm for learning",
-        "Community spirit"
-      ],
-      images: ["/images/events/panther-train-1.jpg", "/images/events/panther-train-2.jpg", "/images/events/panther-train-3.jpg"],
-      slug: "panther-train-tour"
-    }
-  ];
+  // Use the authentic event data from the existing EventDetails component
+  const authenticEvents = getAuthenticEventData();
+  
+  // Map to the format needed for this component
+  const events: Event[] = authenticEvents.map(event => ({
+    id: event.id,
+    title: event.title,
+    date: event.date,
+    location: event.location,
+    price: event.id === 1 ? 249 : event.id === 2 ? 299 : event.id === 3 ? 249 : 99,
+    description: event.shortDescription,
+    longDescription: event.longDescription,
+    features: event.details,
+    coaches: [], // Will be populated from authentic data
+    schedule: [], // Will be populated from authentic data
+    whatToBring: [], // Will be populated from authentic data
+    images: getEventMedia(event.id)?.images || ["/assets/SlamCampSiteBanner.png"],
+    slug: event.slug
+  }));
 
   // Find the event by ID or slug
   const event = events.find(e => e.id.toString() === id || e.slug === slug);

@@ -17,15 +17,16 @@ interface Event {
   slug: string;
 }
 
+// Use authentic event data from the existing codebase
 const events: Event[] = [
   {
     id: 1,
     title: "Birmingham Slam Camp",
     date: "June 19-21, 2025",
-    location: "Clay-Chalkville Middle School, Birmingham, AL",
+    location: "Clay-Chalkville Middle School",
     price: 249,
-    description: "A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.",
-    features: ["NCAA Champions", "3-Day Intensive", "All Skill Levels", "Custom Gear"],
+    description: "Southern grit meets elite technique",
+    features: ["NCAA Champions", "Elite Technique", "Leadership Workshops", "Custom Gear"],
     image: "/assets/SlamCampSiteBanner.png",
     slug: "birmingham-slam-camp"
   },
@@ -33,22 +34,22 @@ const events: Event[] = [
     id: 2,
     title: "National Champ Camp",
     date: "June 5-7, 2025",
-    location: "Roy Martin Middle School, Las Vegas, NV",
+    location: "Roy Martin Middle School",
     price: 299,
-    description: "Train with NCAA champions and Olympic athletes in this intensive 3-day camp focused on championship-level techniques and mindset development.",
-    features: ["Olympic Athletes", "Championship Training", "Mental Coaching", "Elite Level"],
-    image: "/assets/DSC08460--.jpg",
+    description: "Three days of elite instruction from NCAA champions",
+    features: ["NCAA Champions", "Mental Coaching", "Film Study", "Championship Mindset"],
+    image: "/assets/LongSitePhotovegas.png",
     slug: "national-champ-camp"
   },
   {
     id: 3,
     title: "Texas Recruiting Clinic",
     date: "June 12-13, 2025",
-    location: "Arlington Martin High School, Arlington, TX",
+    location: "Arlington Martin High School",
     price: 249,
-    description: "Designed specifically for high school wrestlers seeking collegiate opportunities, featuring college coach evaluations and recruitment guidance.",
+    description: "Showcase your talent in front of cameras and coaches",
     features: ["College Coaches", "Video Recording", "Recruiting Guidance", "Scholarship Info"],
-    image: "/assets/SlamCampSiteBanner.png",
+    image: "/assets/RecruitingWebsiteimage4.png",
     slug: "texas-recruiting-clinic"
   },
   {
@@ -57,9 +58,9 @@ const events: Event[] = [
     date: "June 15-17, 2025",
     location: "Multiple locations nationwide",
     price: 99,
-    description: "Mobile wrestling clinic touring multiple locations, bringing elite training directly to your community.",
-    features: ["Multi-Location", "Community Focus", "Accessible Pricing", "Local Partnerships"],
-    image: "/assets/DSC08460--.jpg",
+    description: "Elite training brought directly to regions across the country",
+    features: ["Regional Stops", "Community Focus", "Accessible Pricing", "Success Stories"],
+    image: "/assets/Cory_Site_Image.png",
     slug: "panther-train-tour"
   }
 ];
