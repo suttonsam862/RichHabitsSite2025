@@ -11,7 +11,7 @@ packages = ["jq", "ffmpeg", "lsof"]
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "npm run start:production"]
+run = ["sh", "-c", "npm start"]
 
 [[ports]]
 localPort = 5000
