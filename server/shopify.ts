@@ -725,6 +725,18 @@ export async function createCustomCheckout(
           email: customer.email,
           phone: customer.phone || ''
         },
+        billing_address: {
+          first_name: customer.firstName,
+          last_name: customer.lastName,
+          email: customer.email,
+          phone: customer.phone || ''
+        },
+        shipping_address: {
+          first_name: customer.firstName,
+          last_name: customer.lastName,
+          email: customer.email,
+          phone: customer.phone || ''
+        },
         note: orderNote, // Add descriptive note
         use_customer_default_address: false,
         tags: `Online Registration, Rich Habits Event, ${eventName}`,

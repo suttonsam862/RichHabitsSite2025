@@ -615,8 +615,8 @@ export async function createShopifyOrderFromRegistration(
     }
     
     const customer = {
-      firstName: registration.firstName,
-      lastName: registration.lastName,
+      firstName: registration.contactName ? registration.contactName.split(' ')[0] : registration.firstName,
+      lastName: registration.contactName ? registration.contactName.split(' ').slice(1).join(' ') || registration.lastName : registration.lastName,
       email: email,
       phone: registration.phone || ''
     };

@@ -15,6 +15,9 @@ export function setupRoutes(app: Express): void {
   setupEventRoutes(app);  // Event registration and Stripe payments
   setupRetailRoutes(app); // Product browsing and Shopify cart checkout
 
+  // Stripe webhook endpoint for automatic Shopify order creation
+  app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
+
   // Health check endpoint
   app.get("/api/health", async (req: Request, res: Response) => {
     try {
