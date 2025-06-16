@@ -281,8 +281,25 @@ export function setupEventRoutes(app: Express): void {
 
       const registrationData = validationResult.data;
 
-      // Validate event exists in database - NO FALLBACKS
-      const event = await storage.getEventBySlug(registrationData.eventId);
+      // Handle Birmingham Slam Camp for emergency page
+      let event;
+      if (registrationData.eventId === 'birmingham-slam-camp' || registrationData.eventId === '1') {
+        // Birmingham Slam Camp hardcoded for emergency page
+        event = {
+          id: '1',
+          slug: 'birmingham-slam-camp',
+          title: 'Birmingham Slam Camp',
+          description: 'A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.',
+          basePrice: '249.00',
+          startDate: '2025-06-19',
+          endDate: '2025-06-21',
+          location: 'Clay-Chalkville Middle School, Birmingham, AL',
+          status: 'active'
+        };
+      } else {
+        event = await storage.getEventBySlug(registrationData.eventId);
+      }
+      
       if (!event) {
         console.error(`Event not found for ID: ${registrationData.eventId}`);
         return res.status(400).json({ 
@@ -529,7 +546,7 @@ export function setupEventRoutes(app: Express): void {
 
       // Handle numeric event ID for emergency page
       let event;
-      if (eventId === '1' || eventId === 1) {
+      if (eventId === '1') {
         // Birmingham Slam Camp hardcoded for emergency page
         event = {
           id: '1',
