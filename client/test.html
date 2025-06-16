@@ -29,31 +29,11 @@
         document.getElementById('js-test').className = 'test-banner';
     </script>
 
-    <script type="module">
-        console.log("ES modules working...");
-        try {
-            import React from "/@fs/home/runner/workspace/node_modules/.vite/deps/react.js?v=957d97b6";
-            import { createRoot } from "/@fs/home/runner/workspace/node_modules/.vite/deps/react-dom_client.js?v=957d97b6";
-            
-            console.log("React imported successfully");
-            
-            const TestApp = () => {
-                return React.createElement('div', {
-                    style: { background: 'blue', color: 'white', padding: '20px' }
-                }, '✅ React is working directly!');
-            };
-            
-            const rootElement = document.getElementById('root');
-            if (rootElement) {
-                const root = createRoot(rootElement);
-                root.render(React.createElement(TestApp));
-                console.log("React test app rendered");
-            }
-        } catch (error) {
-            console.error("Error with React:", error);
-            document.getElementById('root').innerHTML = '❌ React failed: ' + error.message;
-            document.getElementById('root').className = 'error-banner';
-        }
+    <script>
+        // Simple test without ESM imports to avoid esbuild conflicts
+        console.log("Basic test completed");
+        document.getElementById('root').innerHTML = '✅ Test file cleaned up';
+        document.getElementById('root').className = 'test-banner';
     </script>
 </body>
 </html>
