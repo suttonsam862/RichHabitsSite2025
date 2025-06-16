@@ -147,21 +147,15 @@ async function startServer() {
       );
     });
 
-    // Setup Vite dev middleware after server starts
-    if (process.env.NODE_ENV !== "production") {
-      console.log("🔧 Setting up Vite development server...");
-      await setupVite(app, server);
-      console.log("✅ Vite dev server active");
+    // Emergency Birmingham Slam Camp page for development (matches deployment)
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api/')) return next();
+      if (req.path.startsWith('/@')) return next(); // Vite internal paths
+      if (req.path.startsWith('/src/')) return next(); // Source files
+      if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm|js|css|ts|tsx)$/i)) return next();
 
-      // Emergency Birmingham Slam Camp page for development (matches deployment)
-      app.get('*', (req, res, next) => {
-        if (req.path.startsWith('/api/')) return next();
-        if (req.path.startsWith('/@')) return next(); // Vite internal paths
-        if (req.path.startsWith('/src/')) return next(); // Source files
-        if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm|js|css|ts|tsx)$/i)) return next();
-
-        // Serve emergency Birmingham Slam Camp page (consistent with deployment)
-        res.status(200).send(`
+      // Serve emergency Birmingham Slam Camp page (consistent with deployment)
+      res.status(200).send(`
           <!DOCTYPE html>
           <html lang="en">
           <head>
