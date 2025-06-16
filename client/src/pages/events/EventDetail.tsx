@@ -101,25 +101,10 @@ export default function EventDetail() {
         <meta name="description" content={event.shortDescription} />
       </Helmet>
       
-      {/* Event Banner with Loop Video */}
+      {/* Event Banner with Static Image */}
       <div className="w-full overflow-hidden relative">
-        {/* Loop Video for Birmingham Slam Camp */}
-        {event.id === 1 && (
-          <video 
-            autoPlay 
-            muted 
-            loop 
-            playsInline
-            className="w-full h-auto"
-          >
-            <source src="/assets/slamcamp.webm" type="video/webm" />
-            <source src="/assets/slamcamp.mov" type="video/mp4" />
-          </video>
-        )}
-        
-        {/* Fallback Banner Image for other events */}
-        {event.id !== 1 && (
-          <img 
+        {/* Static Banner Image for all events */}
+        <img 
             src={event.image} 
             alt={event.title} 
             className="w-full h-auto object-cover" 
@@ -127,7 +112,6 @@ export default function EventDetail() {
               e.currentTarget.src = '/assets/SlamCampSiteBanner.png';
             }}
           />
-        )}
         
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white"></div>
       </div>
