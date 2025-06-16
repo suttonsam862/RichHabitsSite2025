@@ -142,25 +142,63 @@
                     </div>
                     
                     <form id="registrationForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" id="firstName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <!-- Participant Information -->
+                        <div class="border-b border-gray-200 pb-4 mb-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Participant Information</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <input type="text" id="firstName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" id="lastName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                                    <input type="number" id="age" required min="10" max="18" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">School Name</label>
+                                    <input type="text" id="schoolName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" id="lastName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        
+                        <!-- Contact/Parent Guardian Information -->
+                        <div class="border-b border-gray-200 pb-4 mb-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Parent/Guardian Contact Information</h4>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Parent/Guardian Name</label>
+                                <input type="text" id="contactName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                    <input type="email" id="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                    <input type="tel" id="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" id="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                            <input type="tel" id="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
-                            <input type="number" id="age" required min="10" max="18" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        
+                        <!-- Medical Waiver -->
+                        <div class="mb-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Medical Waiver and Release</h4>
+                            <div class="bg-gray-50 border border-gray-200 rounded-md p-3 max-h-32 overflow-y-auto text-xs text-gray-600 mb-3">
+                                <p class="mb-2"><strong>ASSUMPTION OF RISK AND WAIVER OF CLAIMS:</strong></p>
+                                <p class="mb-2">I acknowledge that participation in wrestling activities involves inherent risks including but not limited to physical injury, and I voluntarily assume all such risks. I hereby waive, release, and discharge Rich Habits Wrestling, its coaches, staff, and affiliated organizations from any and all claims, demands, or causes of action arising from participation in wrestling activities.</p>
+                                <p class="mb-2">I certify that the participant is physically fit to participate and has no medical conditions that would prevent safe participation. I authorize emergency medical treatment if needed.</p>
+                                <p><strong>MEDIA RELEASE:</strong> I consent to the use of photographs, videos, and other media of the participant for promotional purposes.</p>
+                            </div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="waiverAccepted" required class="mr-2">
+                                <span class="text-sm text-gray-700">I have read and agree to the medical waiver and release terms above</span>
+                            </label>
                         </div>
                         
                         <button type="submit" id="registerBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
@@ -219,6 +257,9 @@
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
                 age: document.getElementById('age').value,
+                schoolName: document.getElementById('schoolName').value,
+                contactName: document.getElementById('contactName').value,
+                waiverAccepted: document.getElementById('waiverAccepted').checked,
                 registrationType: 'individual'
             };
             
