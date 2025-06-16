@@ -109,25 +109,36 @@ async function startServer() {
         dbConnected ? "✅ Database connected" : "❌ Database connection failed",
       );
     } catch (err) {
-      console.error("❌ Database connection failed, continuing with server startup:", err.message);
+      console.error("❌ Database connection failed, continuing with server startup:", err instanceof Error ? err.message : String(err));
     }
 
     // Register app routes
     setupRoutes(app);
 
-    // Import on-demand modules
-    const { setupDirectPaymentRoutes } = await import(
-      "./payment-verification-direct.js"
-    );
-    setupDirectPaymentRoutes(app);
+    // Import on-demand modules - with error handling
+    try {
+      const { setupDirectPaymentRoutes } = await import(
+        "./payment-verification-direct.js"
+      );
+      setupDirectPaymentRoutes(app);
+    } catch (err) {
+      console.log("Direct payment routes not available, skipping");
+    }
 
-    const { setupLegacyBridge } = await import("./legacy-bridge.js");
-    setupLegacyBridge(app);
+    try {
+      const { setupLegacyBridge } = await import("./legacy-bridge.js");
+      setupLegacyBridge(app);
+    } catch (err) {
+      console.log("Legacy bridge not available, skipping");
+    }
 
-    // Catch-all for client routes (after all APIs)
-    if (process.env.NODE_ENV === "production") {
-      app.get("*", (req, res, next) => {
-        if (req.path.startsWith("/api/")) return next();
+    // Serve React app for all non-API routes
+    app.get("*", (req, res, next) => {
+      // Skip API routes
+      if (req.path.startsWith("/api/")) return next();
+      
+      // In production, serve from dist/public
+      if (process.env.NODE_ENV === "production") {
         const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
         res.sendFile(indexPath, (err) => {
           if (err) {
@@ -135,8 +146,11 @@ async function startServer() {
             res.status(500).send("Internal Server Error");
           }
         });
-      });
-    }
+      } else {
+        // In development, let Vite handle the routing
+        next();
+      }
+    });
 
     const PORT = parseInt(process.env.PORT || "5000", 10);
     const server = app.listen(PORT, "0.0.0.0", () => {
