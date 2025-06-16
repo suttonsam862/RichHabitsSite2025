@@ -29,10 +29,9 @@ if (secretIsLive !== publishableIsLive) {
 }
 
 // Initialize Stripe with the secret key
-// Using the latest API version and enabling live mode 
+// Using default API version for compatibility
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  typescript: true,
-  apiVersion: '2025-05-28.basil'
+  typescript: true
 });
 
 // Explicitly log whether we're in live mode
