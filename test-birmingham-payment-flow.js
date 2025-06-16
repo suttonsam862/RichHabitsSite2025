@@ -94,9 +94,10 @@ async function testPaymentIntentCreation() {
   const requestBody = {
     option: 'full',
     registrationData,
-    discountedAmount: null,
-    discountCode: null
+    formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   };
+  
+  // Only include discount fields if they exist (matching frontend behavior)
   
   console.log('📤 Sending payment intent request...');
   console.log('Registration data:', JSON.stringify(registrationData, null, 2));

@@ -5,6 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Container } from '../../components/ui/container';
 import { RegistrationProgress } from '../../components/events/RegistrationProgress';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 // Make sure to call loadStripe outside of a component's render to avoid
 // recreating the Stripe object on every render.
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
@@ -732,22 +733,30 @@ export default function StripeCheckout() {
         const appliedDiscount = discountData ? JSON.parse(discountData) : null;
 
         // Single optimized API call for payment intent creation
+        const requestBody: any = {
+          option: option,
+          registrationData: {
+            ...registrationData,
+            eventId: parseInt(eventId),
+            registrationType: option
+          },
+          formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        };
+
+        // Only include discount fields if they exist (avoid sending null)
+        if (appliedDiscount?.finalPrice !== undefined) {
+          requestBody.discountedAmount = appliedDiscount.finalPrice;
+        }
+        if (appliedDiscountCode || appliedDiscount?.code) {
+          requestBody.discountCode = appliedDiscountCode || appliedDiscount.code;
+        }
+
         const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            option: option,
-            registrationData: {
-              ...registrationData,
-              eventId: parseInt(eventId),
-              registrationType: option
-            },
-            discountedAmount: appliedDiscount?.finalPrice || null,
-            discountCode: appliedDiscountCode || appliedDiscount?.code || null,
-            formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-          }),
+          body: JSON.stringify(requestBody),
         });
 
         // Enhanced error handling for discount code JSON parsing issues
