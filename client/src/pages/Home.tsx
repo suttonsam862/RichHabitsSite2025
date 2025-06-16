@@ -1,9 +1,8 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ChevronDown, Users, User, X  } from "../lib/icons";
-import finalXImage from "@assets/25OP_FINALX_RND2_2775_1750112376366.webp";
 
 export default function Home() {
   const [showEventSelector, setShowEventSelector] = useState(false);
@@ -69,9 +68,9 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group"
+          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group bg-gradient-to-r from-red-600 to-orange-600"
           style={{
-            backgroundImage: `url(${finalXImage})`,
+            backgroundImage: `url('/images/VALENCIA_Zahid-headshot.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
@@ -121,6 +120,11 @@ export default function Home() {
             src="/images/hero-background.webp" 
             alt="Rich Habits premium athletic wear collection"
             className="w-full h-full object-cover object-right"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              target.parentElement!.style.background = 'linear-gradient(135deg, #1f2937 0%, #374151 100%)';
+            }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40"></div>
