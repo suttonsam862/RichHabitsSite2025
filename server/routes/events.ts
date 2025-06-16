@@ -305,8 +305,10 @@ export function setupEventRoutes(app: Express): void {
         // Map tShirtSize -> shirtSize
         shirtSize: registrationData.tShirtSize || registrationData.shirtSize || null,
         
-        // Map contactName -> parentName
+        // Map contact information to parent fields
         parentName: registrationData.contactName || registrationData.parentName || null,
+        parentEmail: registrationData.email, // Use same email for parent contact
+        parentPhone: registrationData.phone || null,
         
         // Map experienceLevel -> experience
         experience: registrationData.experienceLevel || registrationData.experience || null,
@@ -525,8 +527,25 @@ export function setupEventRoutes(app: Express): void {
       const eventId = req.params.eventId;
       const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
 
-      // Validate event exists
-      const event = await storage.getEventBySlug(eventId);
+      // Handle numeric event ID for emergency page
+      let event;
+      if (eventId === '1' || eventId === 1) {
+        // Birmingham Slam Camp hardcoded for emergency page
+        event = {
+          id: '1',
+          slug: 'birmingham-slam-camp',
+          title: 'Birmingham Slam Camp',
+          description: 'A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.',
+          basePrice: '249.00',
+          startDate: '2025-06-19',
+          endDate: '2025-06-21',
+          location: 'Clay-Chalkville Middle School, Birmingham, AL',
+          status: 'active'
+        };
+      } else {
+        event = await storage.getEventBySlug(eventId);
+      }
+      
       if (!event) {
         return res.status(404).json({ 
           error: "Event not found", 
@@ -575,9 +594,17 @@ export function setupEventRoutes(app: Express): void {
           eventTitle: event.title,
           customerEmail: registrationData.email,
           customerName: `${registrationData.firstName} ${registrationData.lastName}`,
+          participantFirstName: registrationData.firstName,
+          participantLastName: registrationData.lastName,
+          schoolName: registrationData.schoolName || '',
+          age: registrationData.age || '',
+          contactName: registrationData.contactName || '',
+          phone: registrationData.phone || '',
+          waiverAccepted: registrationData.waiverAccepted || false,
           registrationType: 'individual',
           option: option,
-          discountCode: discountCode || ''
+          discountCode: discountCode || '',
+          createShopifyOrder: 'true'
         }
       });
 
