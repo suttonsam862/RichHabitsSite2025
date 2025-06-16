@@ -799,10 +799,16 @@ export default function StripeCheckout() {
         let data;
         try {
           const responseText = await response.text();
+          console.log('Successful response:', responseText);
           data = JSON.parse(responseText);
+          
+          // Validate response structure
+          if (!data || typeof data !== 'object') {
+            throw new Error('Invalid response format');
+          }
         } catch (parseError) {
           console.error('JSON parsing error on success response:', parseError);
-          throw new Error('Unable to process payment response. Please contact support with discount code: ' + (appliedDiscountCode || 'none'));
+          throw new Error('Payment system returned invalid data. Please refresh the page and try again.');
         }
 
         // Handle free registrations (100% discount codes) - don't auto-process, show button
