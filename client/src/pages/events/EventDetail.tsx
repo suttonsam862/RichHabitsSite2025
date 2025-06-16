@@ -27,8 +27,14 @@ export default function EventDetail() {
         
         const data = await response.json();
         
-        // Add authentic coach data for Birmingham Slam Camp
+        // Add authentic coach data and format display fields for Birmingham Slam Camp
         if (data.id === 1) {
+          // Format display fields
+          data.date = "June 19-21, 2025";
+          data.time = "9:00 AM - 4:00 PM daily";
+          data.price = `$${data.basePrice}`;
+          data.details = data.features || [];
+          
           data.coaches = [
             {
               name: "Zahid Valencia",
