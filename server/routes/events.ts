@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertEventRegistrationSchema } from "../../shared/schema.js";
+import { randomUUID } from "crypto";
 
 // Frontend-to-Database field mapping validation schema
 const frontendRegistrationSchema = z.object({
@@ -281,12 +282,12 @@ export function setupEventRoutes(app: Express): void {
 
       const registrationData = validationResult.data;
 
-      // Handle Birmingham Slam Camp for emergency page
+      // Handle Birmingham Slam Camp with proper UUID
       let event;
       if (registrationData.eventId === 'birmingham-slam-camp' || registrationData.eventId === '1') {
-        // Birmingham Slam Camp hardcoded for emergency page
+        // Birmingham Slam Camp with consistent UUID
         event = {
-          id: '1',
+          id: '550e8400-e29b-41d4-a716-446655440001',
           slug: 'birmingham-slam-camp',
           title: 'Birmingham Slam Camp',
           description: 'A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.',
@@ -308,9 +309,12 @@ export function setupEventRoutes(app: Express): void {
         });
       }
 
-      // Map frontend fields to database fields
+      // Map frontend fields to database fields with proper UUID handling
+      // Generate consistent UUID for Birmingham Slam Camp (event ID 1)
+      const eventUuid = event.id === '1' ? '550e8400-e29b-41d4-a716-446655440001' : event.id;
+      
       const mappedRegistration = {
-        eventId: event.id,
+        eventId: eventUuid,
         firstName: registrationData.firstName,
         lastName: registrationData.lastName,
         email: registrationData.email,

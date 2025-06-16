@@ -94,7 +94,7 @@ async function testUserRegistrationFlow() {
     {
       method: 'POST',
       body: JSON.stringify({
-        eventId: '1',
+        eventId: 'birmingham-slam-camp',
         ...registrationData,
         finalPrice: paymentData.amount.toString(),
         basePrice: paymentData.amount.toString()
