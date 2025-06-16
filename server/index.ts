@@ -147,7 +147,7 @@ async function startServer() {
       );
     });
 
-    // Emergency Birmingham Slam Camp page for development (matches deployment)
+    // Emergency Birmingham Slam Camp page for ALL environments to match deployment
     app.get('*', (req, res, next) => {
       if (req.path.startsWith('/api/')) return next();
       if (req.path.startsWith('/@')) return next(); // Vite internal paths
@@ -449,18 +449,6 @@ async function startServer() {
           </html>
         `);
       });
-    } else {
-      console.log("📦 Production mode - serving static files");
-
-      // Serve client index.html for all non-API routes in production
-      app.get('*', (req, res, next) => {
-        if (req.path.startsWith('/api/')) return next();
-        if (req.path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i)) return next();
-
-        const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
-        res.sendFile(indexPath);
-      });
-    }
 
     server.on("error", (err: any) => {
       if (err.code === "EADDRINUSE") {
