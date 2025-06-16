@@ -310,11 +310,8 @@ export function setupEventRoutes(app: Express): void {
       }
 
       // Map frontend fields to database fields with proper UUID handling
-      // Generate consistent UUID for Birmingham Slam Camp (event ID 1)
-      const eventUuid = event.id === '1' ? '550e8400-e29b-41d4-a716-446655440001' : event.id;
-      
       const mappedRegistration = {
-        eventId: eventUuid,
+        eventId: event.id,
         firstName: registrationData.firstName,
         lastName: registrationData.lastName,
         email: registrationData.email,
