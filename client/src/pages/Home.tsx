@@ -75,6 +75,10 @@ export default function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
           }}
+          onError={(e) => {
+            const target = e.target as HTMLDivElement;
+            target.style.background = 'linear-gradient(135deg, #dc2626 0%, #ea580c 100%)';
+          }}
         >
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-all duration-500"></div>

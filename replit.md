@@ -125,7 +125,9 @@ Rich Habits is a full-stack web application for managing wrestling event registr
 - TypeScript compilation with strict type checking
 
 ## Changelog
-- June 16, 2025. Initial setup
+- June 16, 2025: Fixed deployment error by removing missing image import from Home.tsx
+- June 16, 2025: Added error handling for missing images to prevent build failures
+- June 16, 2025: Initial setup
 
 ## User Preferences
 
