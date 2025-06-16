@@ -350,24 +350,26 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
     // Log the metadata for debugging
     console.log('Payment intent metadata:', paymentIntent.metadata);
     
-    // Use the complete registration data sent from frontend, not just metadata
+    // Use the complete registration data from payment intent metadata
     const registrationData = {
       eventId,
-      firstName: req.body.firstName || paymentIntent.metadata.firstName || '',
-      lastName: req.body.lastName || paymentIntent.metadata.lastName || '',
-      contactName: req.body.contactName || paymentIntent.metadata.contactName || '',
-      email: req.body.email || paymentIntent.metadata.email || '',
-      phone: req.body.phone || paymentIntent.metadata.phone || '',
-      tShirtSize: req.body.tShirtSize || paymentIntent.metadata.tShirtSize || '',
-      grade: req.body.grade || paymentIntent.metadata.grade || '',
-      gender: req.body.gender || paymentIntent.metadata.gender || '',
-      schoolName: req.body.schoolName || paymentIntent.metadata.schoolName || '',
-      clubName: req.body.clubName || paymentIntent.metadata.clubName || '',
-      medicalReleaseAccepted: true,
-      registrationType: req.body.registrationType || req.body.option || paymentIntent.metadata.option || 'full',
-      day1: req.body.day1 === true || req.body.day1 === 'true' || paymentIntent.metadata.day1 === 'true',
-      day2: req.body.day2 === true || req.body.day2 === 'true' || paymentIntent.metadata.day2 === 'true',
-      day3: req.body.day3 === true || req.body.day3 === 'true' || paymentIntent.metadata.day3 === 'true',
+      firstName: paymentIntent.metadata.participantFirstName || paymentIntent.metadata.firstName || '',
+      lastName: paymentIntent.metadata.participantLastName || paymentIntent.metadata.lastName || '',
+      contactName: paymentIntent.metadata.contactName || '',
+      email: paymentIntent.metadata.customerEmail || '',
+      phone: paymentIntent.metadata.phone || '',
+      age: paymentIntent.metadata.age || '',
+      schoolName: paymentIntent.metadata.schoolName || '',
+      waiverAccepted: paymentIntent.metadata.waiverAccepted === 'true',
+      tShirtSize: paymentIntent.metadata.tShirtSize || '',
+      grade: paymentIntent.metadata.grade || paymentIntent.metadata.age || '',
+      gender: paymentIntent.metadata.gender || '',
+      clubName: paymentIntent.metadata.clubName || '',
+      medicalReleaseAccepted: paymentIntent.metadata.waiverAccepted === 'true',
+      registrationType: paymentIntent.metadata.registrationType || 'individual',
+      day1: paymentIntent.metadata.day1 === 'true',
+      day2: paymentIntent.metadata.day2 === 'true',
+      day3: paymentIntent.metadata.day3 === 'true',
     };
     
     // Verify the registration data is complete

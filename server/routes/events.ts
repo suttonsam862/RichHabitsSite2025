@@ -469,7 +469,7 @@ export function setupEventRoutes(app: Express): void {
         });
       }
 
-      // Create Stripe payment intent with secure metadata
+      // Create Stripe payment intent with secure metadata including all form fields
       const { stripe } = await import("../stripe.js");
       
       try {
@@ -482,7 +482,15 @@ export function setupEventRoutes(app: Express): void {
             eventTitle: event.title,
             customerEmail: registrationData.email,
             customerName: `${registrationData.firstName} ${registrationData.lastName}`,
-            registrationType: registrationData.registrationType || 'individual'
+            participantFirstName: registrationData.firstName,
+            participantLastName: registrationData.lastName,
+            schoolName: registrationData.schoolName || '',
+            age: registrationData.age || '',
+            contactName: registrationData.contactName || '',
+            phone: registrationData.phone || '',
+            waiverAccepted: registrationData.waiverAccepted || false,
+            registrationType: registrationData.registrationType || 'individual',
+            createShopifyOrder: 'true'
           }
         });
         

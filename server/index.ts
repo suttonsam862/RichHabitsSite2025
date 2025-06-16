@@ -393,11 +393,22 @@ async function startServer() {
                           eventId: 1,
                           firstName: document.getElementById('firstName').value,
                           lastName: document.getElementById('lastName').value,
+                          schoolName: document.getElementById('schoolName').value,
+                          age: document.getElementById('age').value,
+                          contactName: document.getElementById('contactName').value,
                           email: document.getElementById('email').value,
                           phone: document.getElementById('phone').value,
-                          age: document.getElementById('age').value,
+                          waiverAccepted: document.getElementById('waiverAccepted').checked,
                           registrationType: 'individual'
                       };
+                      
+                      // Validate waiver acceptance
+                      if (!formData.waiverAccepted) {
+                          alert('Please accept the Medical Waiver & Release to continue.');
+                          registerBtn.disabled = false;
+                          registerBtn.textContent = 'Register Now - $249.00';
+                          return;
+                      }
                       
                       try {
                           // Create payment intent
@@ -433,7 +444,7 @@ async function startServer() {
                           
                       } catch (error) {
                           console.error('Registration error:', error);
-                          alert('Registration failed: ' + error.message + '. Please contact us at info@richhabits.com');
+                          alert('Registration failed: ' + error.message + '. Please contact us at admin@rich-habits.com');
                       } finally {
                           registerBtn.disabled = false;
                           registerBtn.textContent = 'Register Now - $249.00';
