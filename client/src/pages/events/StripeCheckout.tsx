@@ -759,21 +759,29 @@ export default function StripeCheckout() {
           body: JSON.stringify(requestBody),
         });
 
-        // Enhanced error handling for discount code JSON parsing issues
+        // Enhanced error handling with better server response processing
         if (!response.ok) {
           let errorData;
           try {
             const responseText = await response.text();
+            console.log('Server response:', responseText);
+            
             if (responseText.trim().startsWith('{')) {
               errorData = JSON.parse(responseText);
             } else {
               // Handle HTML error responses (common cause of JSON parsing errors)
-              console.error('Non-JSON response received:', responseText);
-              throw new Error('Server returned invalid response format. Please try again or contact support.');
+              console.error('Non-JSON response received:', responseText.substring(0, 200));
+              errorData = {
+                error: 'Server configuration error',
+                userFriendlyMessage: 'Payment system is temporarily unavailable. Please try again in a few moments.'
+              };
             }
           } catch (parseError) {
-            console.error('JSON parsing error:', parseError);
-            throw new Error('Unable to process server response. Please try again or contact support with discount code: ' + (appliedDiscountCode || 'none'));
+            console.error('Response parsing error:', parseError);
+            errorData = {
+              error: 'Response parsing failed',
+              userFriendlyMessage: 'Payment system response error. Please refresh the page and try again.'
+            };
           }
           
           const errorMessage = errorData.userFriendlyMessage || errorData.error || `Payment setup failed (${response.status})`;
