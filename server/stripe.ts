@@ -626,26 +626,36 @@ export async function createShopifyOrderFromRegistration(
       { key: "Event_Name", value: event.title },
       { key: "Event_ID", value: registration.eventId.toString() },
       { key: "Registration_Type", value: registration.registrationType === 'full' ? 'Full Camp' : 'Single Day' },
-      { key: "Student_Name", value: `${registration.firstName} ${registration.lastName}` },
-      { key: "Parent_Guardian", value: registration.contactName },
-      { key: "T_Shirt_Size", value: registration.tShirtSize },
-      { key: "Grade", value: registration.grade },
-      { key: "School", value: registration.schoolName },
-      { key: "Club", value: registration.clubName || 'N/A' }
+      { key: "Participant_First_Name", value: registration.firstName },
+      { key: "Participant_Last_Name", value: registration.lastName },
+      { key: "Contact_Name_Parent_Guardian", value: registration.contactName || '' },
+      { key: "Contact_Email", value: registration.email },
+      { key: "Contact_Phone", value: registration.phone || '' },
+      { key: "Participant_Age", value: registration.age || '' },
+      { key: "School_Name", value: registration.schoolName || '' },
+      { key: "T_Shirt_Size", value: registration.tShirtSize || '' },
+      { key: "Grade", value: registration.grade || '' },
+      { key: "Club", value: registration.clubName || 'N/A' },
+      { key: "Medical_Waiver_Accepted", value: registration.waiverAccepted ? 'Yes' : 'No' },
+      { key: "Medical_Release_Accepted", value: registration.medicalReleaseAccepted ? 'Yes' : 'No' }
     ];
     
-    // Additional registration notes
+    // Additional registration notes with all form fields including medical waiver
     const note = `
-      Registration Details:\n
-      Event ID: ${registration.eventId}\n
-      Student Name: ${registration.firstName} ${registration.lastName}\n
-      Parent/Guardian: ${registration.contactName}\n
-      T-Shirt Size: ${registration.tShirtSize}\n
-      Grade: ${registration.grade}\n
-      School: ${registration.schoolName}\n
+      Birmingham Slam Camp Registration Details:\n
+      Event: ${event.title}\n
+      Participant: ${registration.firstName} ${registration.lastName}\n
+      Age: ${registration.age || 'Not provided'}\n
+      School: ${registration.schoolName || 'Not provided'}\n
+      Contact (Parent/Guardian): ${registration.contactName || 'Not provided'}\n
+      Contact Email: ${registration.email}\n
+      Contact Phone: ${registration.phone || 'Not provided'}\n
+      T-Shirt Size: ${registration.tShirtSize || 'Not provided'}\n
+      Grade: ${registration.grade || 'Not provided'}\n
       Club: ${registration.clubName || 'N/A'}\n
       Registration Type: ${registration.registrationType === 'full' ? 'Full Camp' : 'Single Day'}\n
-      Payment Method: Stripe (ID: ${registration.shopifyOrderId})\n
+      Medical Waiver Accepted: ${registration.waiverAccepted ? 'Yes' : 'No'}\n
+      Payment Method: Stripe\n
       Registration Date: ${new Date().toISOString()}\n
     `;
     
