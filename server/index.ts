@@ -209,8 +209,8 @@ async function startServer() {
                                   <!-- Zahid Valencia -->
                                   <div class="bg-gray-50 rounded-lg p-4">
                                       <h3 class="font-bold text-lg">Zahid Valencia</h3>
-                                      <p class="text-red-600 text-sm mb-2">2x NCAA Champion</p>
-                                      <p class="text-gray-700 text-sm">2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques.</p>
+                                      <p class="text-red-600 text-sm mb-2">2025 Final X Champion • 2x NCAA Champion</p>
+                                      <p class="text-gray-700 text-sm">2025 Final X Champion, 2x NCAA Champion, 3x Pac-12 Champion, and 3x All-American for Arizona State University. Known for his explosive offense and innovative techniques.</p>
                                   </div>
 
                                   <!-- Josh Shields -->
@@ -352,7 +352,7 @@ async function startServer() {
                               <p class="text-sm text-gray-300 mb-4">
                                   Bringing multiple athletes? Contact us for team pricing and coordination.
                               </p>
-                              <a href="mailto:info@richhabits.com" class="block w-full bg-white text-gray-900 text-center py-2 px-4 rounded-md font-medium hover:bg-gray-100 transition-colors">
+                              <a href="mailto:admin@rich-habits.com" class="block w-full bg-white text-gray-900 text-center py-2 px-4 rounded-md font-medium hover:bg-gray-100 transition-colors">
                                   Contact for Team Pricing
                               </a>
                           </div>
@@ -361,7 +361,7 @@ async function startServer() {
                           <div class="bg-gray-50 rounded-lg p-6">
                               <h3 class="text-lg font-semibold mb-4">Questions?</h3>
                               <div class="space-y-2 text-sm">
-                                  <p><strong>Email:</strong> info@richhabits.com</p>
+                                  <p><strong>Email:</strong> admin@rich-habits.com</p>
                                   <p><strong>Location:</strong> Clay-Chalkville Middle School</p>
                                   <p><strong>Address:</strong> Birmingham, AL</p>
                               </div>
