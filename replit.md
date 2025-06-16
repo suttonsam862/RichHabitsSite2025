@@ -162,6 +162,7 @@ Changelog:
 - June 15, 2025. Fixed black screen JavaScript error by recreating CampSlideshow component with correct JSX syntax; resolved corrupted markup that was preventing React from rendering properly, restoring full site functionality
 - June 15, 2025. Fixed live deployment "event not found" error for Birmingham Slam Camp by adding missing event API endpoints to deployment-server.js; production server now includes authentic Birmingham Slam Camp and Panther Train Tour data with proper ID-to-slug mapping for frontend compatibility
 - June 16, 2025. Created emergency Birmingham Slam Camp only page for urgent deployment; replaced entire site with single-purpose camp registration featuring authentic coaches (Zahid Valencia, Josh Shields, Brandon Courtney, Michael McGee), complete camp details, working Stripe payment integration, and bold construction banner indicating site is temporarily limited to Birmingham Slam Camp signup only
+- June 16, 2025. Fixed critical inconsistency between preview and deployed site by updating development server to serve emergency Birmingham Slam Camp page; removed duplicate fake payment endpoints that could cause false checkouts; implemented real Stripe Checkout Sessions with proper success/cancel pages and webhook handling; both preview and deployment now show identical emergency page with authentic payment processing
 
 ## User Preferences
 
