@@ -251,7 +251,6 @@
             registerBtn.textContent = 'Processing...';
             
             const formData = {
-                eventId: 1,
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
                 email: document.getElementById('email').value,
@@ -270,7 +269,9 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({
+                        registrationData: formData
+                    })
                 });
                 
                 if (!response.ok) {
