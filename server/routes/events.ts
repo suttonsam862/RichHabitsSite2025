@@ -683,8 +683,6 @@ export function setupEventRoutes(app: Express): void {
           validationErrors: customerValidationErrors,
           userFriendlyMessage: "Please check your registration information and try again."
         });
-      }n in a few moments."
-        });
       }
 
       let paymentIntent;

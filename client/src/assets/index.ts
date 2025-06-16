@@ -1,27 +1,37 @@
+
 // Import event images from public folder
 // These will be bundled properly by Vite
 export const eventImages = {
-  event1: new URL('/event1.jpg', import.meta.url).href,
-  event2: new URL('/event2.jpg', import.meta.url).href,
-  event3: new URL('/event3.jpg', import.meta.url).href,
-  event4: new URL('/event4.jpg', import.meta.url).href
+  birminghamSlamCamp: new URL('/assets/events/SlamCampSiteBanner.png', import.meta.url).href,
+  nationalChampCamp: new URL('/assets/events/LongSitePhotovegas.png', import.meta.url).href,
+  texasRecruitingClinic: new URL('/assets/events/RecruitingWebsiteimage4.png', import.meta.url).href,
+  pantherTrainTour: new URL('/assets/events/CenzoSite.png', import.meta.url).href
 };
 
 // Import coach images
 export const coachImages = {
-  coach1: new URL('/coach1.jpg', import.meta.url).href,
-  coach2: new URL('/coach2.jpg', import.meta.url).href,
-  coach3: new URL('/coach3.jpg', import.meta.url).href
+  michaelMcgee: new URL('/Michael_McGee_JouQS.jpg', import.meta.url).href,
+  zahidValencia: new URL('/VALENCIA_Zahid-headshot.jpg', import.meta.url).href,
+  brandonCourtney: new URL('/client/src/assets/coaches/brandon_courtney.webp', import.meta.url).href
 };
 
 // Import gallery images
 export const galleryImages = {
-  gallery1_1: new URL('/gallery-1-1.jpg', import.meta.url).href,
-  gallery1_2: new URL('/gallery-1-2.jpg', import.meta.url).href,
-  gallery2_1: new URL('/gallery-2-1.jpg', import.meta.url).href,
-  gallery2_2: new URL('/gallery-2-2.jpg', import.meta.url).href,
-  gallery3_1: new URL('/gallery-3-1.jpg', import.meta.url).href,
-  gallery3_2: new URL('/gallery-3-2.jpg', import.meta.url).href,
-  gallery4_1: new URL('/gallery-4-1.jpg', import.meta.url).href,
-  gallery4_2: new URL('/gallery-4-2.jpg', import.meta.url).href
+  wrestling1: new URL('/DSC09353.JPG', import.meta.url).href,
+  wrestling2: new URL('/DSC09354.JPG', import.meta.url).href,
+  wrestling3: new URL('/DSC08612.JPG', import.meta.url).href,
+  wrestling4: new URL('/DSC08615.JPG', import.meta.url).href,
+  team1: new URL('/DSC00423.JPG', import.meta.url).href,
+  team2: new URL('/DSC07386.JPG', import.meta.url).href,
+  action1: new URL('/DSC09374--.JPG', import.meta.url).href,
+  action2: new URL('/DSC09491.JPG', import.meta.url).href
+};
+
+// School logos
+export const schoolLogos = {
+  brown: new URL('/brown-logo.webp', import.meta.url).href,
+  gmu: new URL('/george-mason-logo.webp', import.meta.url).href,
+  oklahoma: new URL('/oklahoma-logo.webp', import.meta.url).href,
+  pitt: new URL('/pitt-logo.webp', import.meta.url).href,
+  tarleton: new URL('/tarleton-logo.webp', import.meta.url).href
 };

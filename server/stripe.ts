@@ -54,7 +54,7 @@ const getEventPrice = async (eventId: number, option: string, numberOfDays?: num
   try {
     // Import pricing utilities to handle 1-day and team pricing correctly
     const { calculateRegistrationAmount } = await import('./pricingUtils.js');
-    
+
     // Use the proper pricing calculation that handles 1-day registrations
     return calculateRegistrationAmount(eventId, option, numberOfDays, selectedDates);
   } catch (error) {
@@ -68,7 +68,7 @@ export const verifyPaymentIntent = async (paymentIntentId: string): Promise<bool
   try {
     // Get the payment intent to verify its status
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    
+
     // Only consider payments that have been successfully processed
     // Status must be 'succeeded' for a payment to be valid
     return paymentIntent.status === 'succeeded';
@@ -129,7 +129,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     // Calculate amount with comprehensive validation
     let amount: number;
     const discountedAmount = req.body.discountedAmount;
-    
+
     if (discountedAmount !== null && discountedAmount !== undefined && typeof discountedAmount === 'number') {
       // Use discounted amount (already validated by discount system)
       if (discountedAmount < 0) {
@@ -139,7 +139,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
           userFriendlyMessage: 'There was an issue with your discount. Please try again.'
         });
       }
-      
+
       amount = Math.round(discountedAmount * 100); // Convert to cents
       console.log(`✅ Using discounted price: $${discountedAmount} (${amount} cents) for discount code: ${req.body.discountCode}`);
     } else {
@@ -151,7 +151,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
           userFriendlyMessage: 'Event configuration issue. Please contact support.'
         });
       }
-      
+
       const basePrice = parseFloat(event.basePrice) || 0;
       if (basePrice <= 0) {
         console.error('CRITICAL: Invalid base price for event:', { eventId: event.id, basePrice });
@@ -160,11 +160,11 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
           userFriendlyMessage: 'Event pricing not configured. Please contact support.'
         });
       }
-      
+
       amount = Math.round(basePrice * 100); // Convert to cents
       console.log(`💰 Using base price: $${basePrice} (${amount} cents) for event ${event.id}`);
     }
-    
+
     // Final amount validation
     if (!amount || isNaN(amount) || amount <= 0) {
       console.error('CRITICAL: Invalid final amount:', { eventId: event.id, amount, basePrice: event.basePrice });
@@ -233,7 +233,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
     // Create Stripe payment intent with retry logic
     let paymentIntent;
     let clientSecret: string;
-    
+
     try {
       paymentIntent = await stripe.paymentIntents.create({
         amount,
@@ -249,13 +249,13 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       });
 
       clientSecret = paymentIntent.client_secret;
-      
+
       if (!clientSecret) {
         throw new Error('Payment intent created but no client secret returned');
       }
 
       console.log(`✅ Payment intent created successfully: ${paymentIntent.id}`);
-      
+
     } catch (stripeError: any) {
       console.error('Stripe payment intent creation failed:', {
         error: stripeError.message,
@@ -268,7 +268,7 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
 
       // Return user-friendly error messages based on Stripe error types
       let userMessage = 'Payment setup failed. Please try again.';
-      
+
       if (stripeError.code === 'parameter_invalid_empty') {
         userMessage = 'Missing required payment information. Please check your details.';
       } else if (stripeError.code === 'parameter_invalid_integer') {
@@ -292,13 +292,13 @@ export const createPaymentIntent = async (req: Request, res: Response) => {
       eventId: event.id,
       eventName: event.title
     };
-    
+
     console.log(`✅ Payment intent response prepared for ${customerInfo.email}`);
     res.json(response);
 
   } catch (error) {
     console.error('Unexpected error in createPaymentIntent:', error);
-    
+
     res.status(500).json({
       error: error instanceof Error ? error.message : 'An unexpected error occurred',
       userFriendlyMessage: 'Something went wrong. Please refresh the page and try again.'
@@ -311,7 +311,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
   try {
     const { paymentIntentId, eventId: eventIdParam, amount, freeRegistration, discountCode } = req.body;
     const eventId = Number(req.params.eventId || eventIdParam);
-    
+
     // Check for valid event ID
     if (!eventId || isNaN(eventId)) {
       return res.status(400).json({ error: 'Invalid event ID' });
@@ -333,21 +333,21 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
 
     // Handle free registration case (100% discount)
     let paymentIntent: any;
-    
+
     if (freeRegistration) {
       console.log('Processing free registration with discount code:', discountCode);
       console.log('Registration data received:', req.body);
-      
+
       // For free registrations, we won't verify a payment intent
       // Instead, we'll use the registration data sent from the client
-      
+
       // Retrieve registration data from registration form (stored in client sessionStorage)
       const registrationEmail = req.body.email || '';
-      
+
       if (!registrationEmail) {
         return res.status(400).json({ error: 'Missing email for free registration' });
       }
-      
+
       // Create a mock payment intent for free registrations
       paymentIntent = {
         id: `free_reg_${Date.now()}`,
@@ -370,7 +370,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
           discountCode: discountCode || ''
         }
       };
-      
+
       console.log('Created mock payment intent for free registration:', paymentIntent);
       // For free registrations, we'll continue with the flow using our mock payment intent
     } else {
@@ -378,10 +378,10 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       if (!paymentIntentId) {
         return res.status(400).json({ error: 'Payment intent ID is required' });
       }
-      
+
       // Retrieve the payment intent to verify it's successful
       paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-  
+
       if (paymentIntent.status !== 'succeeded') {
         return res.status(400).json({
           error: `Payment is not successful. Status: ${paymentIntent.status}`,
@@ -397,10 +397,10 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
 
     // Get the registration data from the request body if this is a free registration,
     // otherwise from the payment intent metadata
-    
+
     // Log the metadata for debugging
     console.log('Payment intent metadata:', paymentIntent.metadata);
-    
+
     // Use the complete registration data from payment intent metadata
     const registrationData = {
       eventId,
@@ -422,15 +422,15 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       day2: paymentIntent.metadata.day2 === 'true',
       day3: paymentIntent.metadata.day3 === 'true',
     };
-    
+
     // Verify the registration data is complete
     console.log('Constructed registration data:', registrationData);
-    
+
     // Validate critical fields and provide meaningful error messages
     if (!registrationData.email || registrationData.email === 'Not provided') {
       console.error('Missing email in registration data. This will cause issues with Shopify orders.');
     }
-    
+
     if (!registrationData.firstName || registrationData.firstName === 'Not provided' ||
         !registrationData.lastName || registrationData.lastName === 'Not provided') {
       console.error('Missing name information in registration data. This will cause issues with Shopify orders.');
@@ -443,7 +443,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       event, 
       paymentIntent.amount / 100 // Convert cents to dollars
     );
-    
+
     // Create the complete registration entry - this is the MASTER record
     const completeRegistrationData = {
       eventId,
@@ -524,7 +524,7 @@ export const handleSuccessfulPayment = async (req: Request, res: Response) => {
       registration: completeRegistration,
       shopifyOrderId: shopifyOrder?.id || null
     });
-    
+
   } catch (error) {
     console.error('Error handling successful payment:', error);
     res.status(500).json({
@@ -558,13 +558,13 @@ async function sendRegistrationConfirmationEmail(data: {
       amountPaid: data.amount,
       registrationType: data.registrationType
     });
-    
+
     // Validate email
     if (!data.email || !data.email.includes('@')) {
       console.error('Invalid email address, cannot send confirmation:', data.email);
       return false;
     }
-    
+
     // Format email content
     const emailContent = `
       Subject: Registration Confirmation - ${data.eventName}
@@ -588,9 +588,9 @@ async function sendRegistrationConfirmationEmail(data: {
       Best regards,
       Rich Habits Team
     `;
-    
+
     console.log('Email content prepared for sending');
-    
+
     // This would be replaced with actual email sending code
     // Example using SendGrid:
     // 
@@ -609,7 +609,7 @@ async function sendRegistrationConfirmationEmail(data: {
     // } else {
     //   console.log('SENDGRID_API_KEY not configured, email would be sent with content:', emailContent);
     // }
-    
+
     return true;
   } catch (error) {
     console.error('Failed to send confirmation email:', error);
@@ -626,21 +626,21 @@ export async function createShopifyOrderFromRegistration(
   try {
     // Import the Shopify API functions
     const { createShopifyDraftOrder } = await import('./shopify');
-    
+
     console.log('Creating Shopify order for registration with complete data:', JSON.stringify(registration, null, 2));
-    
+
     // Enhanced validation for all required fields
     if (!registration.email || registration.email === 'Not provided') {
       console.error('Registration missing valid email address, cannot create Shopify order');
       return null;
     }
-    
+
     if (!registration.firstName || registration.firstName === 'Not provided' ||
         !registration.lastName || registration.lastName === 'Not provided') {
       console.error('Registration missing name information, cannot create Shopify order');
       return null;
     }
-    
+
     // Log details for debugging
     console.log(`Creating Shopify order with customer email: ${registration.email}`);
     console.log(`Customer Name: ${registration.firstName} ${registration.lastName}`);
@@ -648,7 +648,7 @@ export async function createShopifyOrderFromRegistration(
     console.log(`T-Shirt Size: ${registration.tShirtSize}`);
     console.log(`Grade: ${registration.grade}`);
     console.log(`School: ${registration.schoolName}`);
-    
+
     // Define line items for the Shopify order with more detailed description
     const lineItems = [
       {
@@ -657,21 +657,21 @@ export async function createShopifyOrderFromRegistration(
         price: amount
       }
     ];
-    
+
     // Create customer data with email validation
     const email = registration.email.trim();
     if (!email.includes('@')) {
       console.error('Invalid email format:', email);
       return null;
     }
-    
+
     const customer = {
       firstName: registration.contactName ? registration.contactName.split(' ')[0] : registration.firstName,
       lastName: registration.contactName ? registration.contactName.split(' ').slice(1).join(' ') || registration.lastName : registration.lastName,
       email: email,
       phone: registration.phone || ''
     };
-    
+
     // Create additional attributes for the order - ensure all registration data is included
     const attributes = [
       { key: "Event_Name", value: event.title },
@@ -690,7 +690,7 @@ export async function createShopifyOrderFromRegistration(
       { key: "Medical_Waiver_Accepted", value: registration.waiverAccepted ? 'Yes' : 'No' },
       { key: "Medical_Release_Accepted", value: registration.medicalReleaseAccepted ? 'Yes' : 'No' }
     ];
-    
+
     // Additional registration notes with all form fields including medical waiver
     const note = `
       Birmingham Slam Camp Registration Details:\n
@@ -709,7 +709,7 @@ export async function createShopifyOrderFromRegistration(
       Payment Method: Stripe\n
       Registration Date: ${new Date().toISOString()}\n
     `;
-    
+
     // If we have a function to create Shopify draft orders, use it
     if (typeof createShopifyDraftOrder === 'function') {
       const shopifyOrder = await createShopifyDraftOrder({
@@ -718,7 +718,7 @@ export async function createShopifyOrderFromRegistration(
         note,
         attributes
       });
-      
+
       console.log('Shopify order created:', shopifyOrder);
       return shopifyOrder;
     } else {
@@ -735,7 +735,7 @@ export async function createShopifyOrderFromRegistration(
 // Create a webhook handler for Stripe events
 export const handleStripeWebhook = async (req: Request, res: Response) => {
   trackWebhookReceived();
-  
+
   const sig = req.headers['stripe-signature'];
 
   if (!sig || typeof sig !== 'string') {
@@ -761,7 +761,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
       case 'payment_intent.succeeded':
         const paymentIntent = event.data.object;
         console.log('Payment succeeded:', paymentIntent.id);
-        
+
         // CRITICAL: Double-verify the payment status to prevent processing incorrectly submitted payments
         // Skip verification for test webhooks to allow testing
         let paymentStatus = true;
@@ -774,31 +774,31 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         } else {
           console.log(`Skipping verification for test payment intent ${paymentIntent.id}`);
         }
-        
+
         // CRITICAL SAFEGUARD: Check for duplicate payment processing
         const existingPayment = await storage.getPaymentByStripeId(paymentIntent.id);
         if (existingPayment) {
           console.log(`Payment ${paymentIntent.id} already processed - skipping duplicate webhook`);
           break;
         }
-        
+
         // Check if this is a retail cart payment or event registration
         const paymentType = paymentIntent.metadata?.type;
-        
+
         if (paymentType === 'retail_cart_checkout') {
           // Handle retail cart checkout
           console.log('Processing retail cart payment:', paymentIntent.id);
-          
+
           try {
             // Parse cart items from metadata
             const cartItemsData = JSON.parse(paymentIntent.metadata.cart_items || '[]');
             const customerEmail = paymentIntent.metadata.customer_email;
-            
+
             if (!customerEmail || !cartItemsData.length) {
               console.error('Missing customer info or cart items for retail payment:', paymentIntent.id);
               break;
             }
-            
+
             // Create customer info from payment intent
             const customer = {
               firstName: paymentIntent.metadata.customer_first_name || 'Customer',
@@ -806,11 +806,11 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               email: customerEmail,
               phone: paymentIntent.metadata.customer_phone || ''
             };
-            
+
             // Import and use the createShopifyOrderFromCart function
             const { createShopifyOrderFromCart } = await import('./shopify.js');
             const shopifyOrder = await createShopifyOrderFromCart(cartItemsData, customer, paymentIntent.id);
-            
+
             if (shopifyOrder.success) {
               console.log('Successfully created Shopify order from cart payment:', shopifyOrder.orderId);
               trackOrderCreated();
@@ -818,32 +818,32 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               console.error('Failed to create Shopify order from cart payment');
               trackOrderFailed();
             }
-            
+
           } catch (error) {
             console.error('Error processing retail cart payment:', error);
             trackOrderFailed();
           }
-          
+
           break;
         }
-        
+
         // Handle event registration payments (existing logic)
         const eventId = paymentIntent.metadata?.eventId;
         const eventName = paymentIntent.metadata?.eventName;
-        
+
         // CRITICAL: Reject payments with missing event UUID
         if (!eventId) {
           console.error(`🚨 CRITICAL: Missing eventId in payment metadata`);
           console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
           break;
         }
-        
+
         if (!eventName) {
           console.error(`🚨 CRITICAL: Missing eventName in payment metadata`);
           console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
           break;
         }
-        
+
         // Additional safeguard: Verify event exists in database using UUID
         let validatedEvent;
         try {
@@ -853,33 +853,33 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
             console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
             break;
           }
-          
+
           // Verify event name matches database
           if (validatedEvent.title !== eventName) {
             console.error(`🚨 CRITICAL: Event name mismatch - Database: ${validatedEvent.title}, Metadata: ${eventName}`);
             console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
             break;
           }
-          
+
           console.log(`✅ Payment metadata validated: Event ${eventId} (${eventName})`);
         } catch (error) {
           console.error(`🚨 CRITICAL: Error validating event ${eventId}:`, error);
           console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
           break;
         }
-        
+
         // Process the validated payment
         try {
           // Get registration data - CRITICAL: Only use metadata from payment intent
           const registrationData = paymentIntent.metadata;
-          
+
           // Validate all required fields are present
           if (!registrationData.firstName || !registrationData.lastName || !registrationData.email) {
             console.error(`🚨 CRITICAL: Missing required registration data in payment metadata`);
             console.error(`Payment Intent ID: ${paymentIntent.id} - REJECTED`);
             break;
           }
-          
+
           // Extract full registration information from metadata
           const registration = {
             eventId: eventId,
@@ -898,7 +898,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
             day3: registrationData.day3 === 'true' || registrationData.day3 === true,
             stripePaymentIntentId: paymentIntent.id
           };
-          
+
           // Create registration record in database
           const dbRegistration = await storage.createEventRegistration({
             eventId: eventId,
@@ -919,20 +919,20 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
             status: 'completed',
             stripePaymentIntentId: paymentIntent.id
           });
-          
+
           // Create Shopify order from the registration data
           console.log('Creating Shopify order with registration data:', registration);
           const shopifyOrder = await createShopifyOrderFromRegistration(registration, validatedEvent, paymentIntent.amount / 100);
-          
+
           if (shopifyOrder) {
             console.log('Successfully created Shopify order:', shopifyOrder.id);
             trackOrderCreated();
-            
+
             // Update registration with Shopify order ID
             await storage.updateEventRegistration(dbRegistration.id, {
               shopifyOrderId: shopifyOrder.id.toString()
             });
-            
+
             console.log(`✅ Shopify order created successfully for payment ${paymentIntent.id}: ${shopifyOrder.id}`);
           } else {
             console.error('Failed to create Shopify order from registration data');
@@ -943,9 +943,9 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               registrationData: registration 
             });
           }
-          
+
           console.log(`✅ Payment processed successfully for event ${eventId}: ${paymentIntent.id}`);
-          
+
           // Send confirmation email
           try {
             await sendRegistrationConfirmationEmail({

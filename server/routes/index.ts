@@ -74,4 +74,34 @@ export function setupRoutes(app: Express): void {
 
   // Stripe webhook endpoint - secure payment verification
   app.post("/api/stripe-webhook", express.raw({ type: 'application/json' }), handleStripeWebhook);
+
+  // Health check endpoint
+  app.get("/api/health", (req: Request, res: Response) => {
+    res.json({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || "development"
+    });
+  });
+
+  // Media validation endpoint
+  app.get("/api/media/validate/:filename", (req: Request, res: Response) => {
+    const filename = req.params.filename;
+    // Basic media validation logic
+    const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.mp4', '.webm', '.mov'];
+    const hasValidExtension = validExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+
+    res.json({
+      filename,
+      isValid: hasValidExtension,
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Analytics endpoint
+  app.post("/api/analytics/track", (req: Request, res: Response) => {
+    const { event, properties } = req.body;
+    console.log(`Analytics event: ${event}`, properties);
+    res.json({ tracked: true, event, timestamp: new Date().toISOString() });
+  });
 }
