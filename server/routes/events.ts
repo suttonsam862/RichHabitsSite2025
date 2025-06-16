@@ -606,15 +606,23 @@ export function setupEventRoutes(app: Express): void {
         });
       }
 
-      // Calculate amount with detailed logging
+      // Calculate amount with proper null/undefined handling
       let amount: number;
-      if (discountedAmount !== undefined && discountedAmount >= 0) {
+      console.log(`🔍 Discount amount received: ${discountedAmount} (type: ${typeof discountedAmount})`);
+      
+      if (discountedAmount !== undefined && discountedAmount !== null && typeof discountedAmount === 'number') {
         amount = discountedAmount;
         console.log(`💰 Using discounted amount: $${amount}`);
       } else {
         const basePrice = parseFloat(event.basePrice || "249");
         amount = option === "1day" ? basePrice * 0.5 : basePrice;
         console.log(`💰 Calculated amount: $${amount} (base: $${basePrice}, option: ${option})`);
+      }
+      
+      // Ensure minimum Stripe amount (50 cents)
+      if (amount > 0 && amount < 0.50) {
+        console.log(`⚠️ Amount too low for Stripe ($${amount}), setting to minimum $0.50`);
+        amount = 0.50;
       }
 
       // Handle free registrations
