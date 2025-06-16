@@ -19,6 +19,17 @@ if (!rootElement) {
     const root = createRoot(rootElement);
     
     console.log("Rendering React app...");
+    
+    // Add error boundary to catch React errors
+    window.addEventListener('error', (event) => {
+      console.error('JavaScript Error:', event.error);
+      console.error('Error details:', event.message, event.filename, event.lineno);
+    });
+    
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('Unhandled Promise Rejection:', event.reason);
+    });
+    
     root.render(
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>

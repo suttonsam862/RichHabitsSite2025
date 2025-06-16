@@ -74,8 +74,7 @@ export function CampSlideshow() {
         
         <div className="relative h-[500px] rounded-xl overflow-hidden shadow-2xl">
           {/* Background gradient overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-r ${currentCamp.color} opacity-80 z-10`}}
-            /></div>
+          <div className={`absolute inset-0 bg-gradient-to-r ${currentCamp.color} opacity-80 z-10`} />
           
           {/* Camp slideshow */}
           <AnimatePresence mode="wait">
@@ -101,7 +100,7 @@ export function CampSlideshow() {
                       img.dataset.fallbackAttempted = 'true';
                       img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMDAiIHk9IjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
                     }
-
+                  }}
                 />
               </div>
               
