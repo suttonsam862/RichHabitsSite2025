@@ -659,7 +659,31 @@ export function setupEventRoutes(app: Express): void {
         console.error('❌ Failed to import Stripe module:', importError);
         return res.status(500).json({
           error: "Payment system initialization failed",
-          userFriendlyMessage: "Payment processing is temporarily unavailable. Please try again in a few moments."
+          userFriendlyMessage: "Payment processing is temporarily unavailable. Please try again."
+        });
+      }
+
+      // Validate customer data before creating payment intent
+      const customerValidationErrors = [];
+      
+      if (!registrationData.email || !registrationData.email.includes('@')) {
+        customerValidationErrors.push('Valid email address is required');
+      }
+      if (!registrationData.firstName || registrationData.firstName.trim().length < 2) {
+        customerValidationErrors.push('First name is required');
+      }
+      if (!registrationData.lastName || registrationData.lastName.trim().length < 2) {
+        customerValidationErrors.push('Last name is required');
+      }
+
+      if (customerValidationErrors.length > 0) {
+        console.error('❌ Customer validation failed:', customerValidationErrors);
+        return res.status(400).json({
+          error: "Registration data validation failed",
+          validationErrors: customerValidationErrors,
+          userFriendlyMessage: "Please check your registration information and try again."
+        });
+      }n in a few moments."
         });
       }
 

@@ -81,175 +81,227 @@ export const verifyPaymentIntent = async (paymentIntentId: string): Promise<bool
 // Create a payment intent
 export const createPaymentIntent = async (req: Request, res: Response) => {
   try {
+    // Extract and validate basic parameters
     const { option = 'full' } = req.body;
     const eventSlug = req.params.eventSlug;
 
+    // Validate event slug
     if (!eventSlug || typeof eventSlug !== 'string') {
-      return res.status(400).json({ error: 'Invalid event slug' });
+      console.error('Invalid event slug provided:', eventSlug);
+      return res.status(400).json({ 
+        error: 'Invalid event slug',
+        userFriendlyMessage: 'Event not found. Please try again.'
+      });
     }
 
-    // Get the event by slug to retrieve its name and check if it exists
-    const event = await storage.getEventBySlug(eventSlug);
-    if (!event) {
-      return res.status(404).json({ error: `Event with slug '${eventSlug}' not found` });
+    // Get the event by slug
+    let event;
+    try {
+      event = await storage.getEventBySlug(eventSlug);
+      if (!event) {
+        console.error(`Event not found for slug: ${eventSlug}`);
+        return res.status(404).json({ 
+          error: `Event with slug '${eventSlug}' not found`,
+          userFriendlyMessage: 'Event not found. Please select a valid event.'
+        });
+      }
+    } catch (dbError) {
+      console.error('Database error fetching event:', dbError);
+      return res.status(500).json({
+        error: 'Database error fetching event',
+        userFriendlyMessage: 'Unable to load event details. Please try again.'
+      });
     }
 
-    let amount: number;
-    let clientSecret: string | null;
-    let stripeProductId: string | null = null;
-    let stripePriceId: string | null = null;
+    // Validate Stripe configuration
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('CRITICAL: Stripe secret key not configured');
+      return res.status(500).json({
+        error: 'Payment system not configured',
+        userFriendlyMessage: 'Payment processing is temporarily unavailable. Please contact support.'
+      });
+    }
 
     // Log Stripe mode for debugging
-    const isLiveMode = !process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+    const isLiveMode = !process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
     console.log(`Creating payment intent in ${isLiveMode ? 'LIVE' : 'TEST'} mode for event ${event.id} (${event.title})`);
 
-    // CRITICAL FIX: Always prioritize discountedAmount when provided
+    // Calculate amount with comprehensive validation
+    let amount: number;
     const discountedAmount = req.body.discountedAmount;
     
     if (discountedAmount !== null && discountedAmount !== undefined && typeof discountedAmount === 'number') {
-      // Use the final discounted price directly (already validated by discount system)
+      // Use discounted amount (already validated by discount system)
+      if (discountedAmount < 0) {
+        console.error('Invalid discounted amount (negative):', discountedAmount);
+        return res.status(400).json({
+          error: 'Invalid discounted amount: cannot be negative',
+          userFriendlyMessage: 'There was an issue with your discount. Please try again.'
+        });
+      }
+      
       amount = Math.round(discountedAmount * 100); // Convert to cents
-      console.log(`✅ Using provided discounted price: $${discountedAmount} (${amount} cents) for discount code: ${req.body.discountCode}`);
-      
-      // Additional validation for discounted amount
-      if (amount < 0) {
-        return res.status(400).json({
-          error: 'Invalid discounted amount: cannot be negative'
-        });
-      }
+      console.log(`✅ Using discounted price: $${discountedAmount} (${amount} cents) for discount code: ${req.body.discountCode}`);
     } else {
-      // CRITICAL FIX: Validate event exists and has valid UUID
+      // Use event's base price
       if (!event.id) {
-        console.error(`CRITICAL: Event missing ID - eventSlug: ${eventSlug}, event:`, event);
+        console.error('CRITICAL: Event missing ID:', { eventSlug, event });
         return res.status(400).json({
-          error: 'Event configuration error: missing event ID'
+          error: 'Event configuration error: missing event ID',
+          userFriendlyMessage: 'Event configuration issue. Please contact support.'
         });
       }
       
-      // Use event's base price directly from database - NO LEGACY PRICING CALCULATIONS
       const basePrice = parseFloat(event.basePrice) || 0;
       if (basePrice <= 0) {
-        console.error(`CRITICAL: Invalid base price for event ${event.id}: ${basePrice}`);
+        console.error('CRITICAL: Invalid base price for event:', { eventId: event.id, basePrice });
         return res.status(400).json({
-          error: 'Event pricing configuration error'
+          error: 'Event pricing configuration error',
+          userFriendlyMessage: 'Event pricing not configured. Please contact support.'
         });
       }
       
-      // Convert to cents for Stripe
-      amount = Math.round(basePrice * 100);
-      console.log(`💰 Using event base price: $${basePrice} (${amount} cents) for event ${event.id} (${option})`);
-      
-      if (!amount || isNaN(amount) || amount <= 0) {
-        console.error(`CRITICAL: Invalid amount calculated for event ${event.id}: ${amount}`);
-        return res.status(400).json({
-          error: 'Could not determine price for the event'
-        });
-      }
+      amount = Math.round(basePrice * 100); // Convert to cents
+      console.log(`💰 Using base price: $${basePrice} (${amount} cents) for event ${event.id}`);
     }
     
-    console.log(`Using calculated price of $${amount/100} for event ${event.id} (${event.title})`);
+    // Final amount validation
+    if (!amount || isNaN(amount) || amount <= 0) {
+      console.error('CRITICAL: Invalid final amount:', { eventId: event.id, amount, basePrice: event.basePrice });
+      return res.status(400).json({
+        error: 'Could not determine valid price for the event',
+        userFriendlyMessage: 'Pricing error. Please refresh the page and try again.'
+      });
+    }
+
+    // Validate customer information
+    const customerInfo = req.body;
+    const validationErrors = [];
+
+    if (!customerInfo.email || typeof customerInfo.email !== 'string' || !customerInfo.email.includes('@')) {
+      validationErrors.push('Valid email address is required');
+    }
+    if (!customerInfo.firstName || typeof customerInfo.firstName !== 'string' || customerInfo.firstName.trim().length < 2) {
+      validationErrors.push('First name is required (minimum 2 characters)');
+    }
+    if (!customerInfo.lastName || typeof customerInfo.lastName !== 'string' || customerInfo.lastName.trim().length < 2) {
+      validationErrors.push('Last name is required (minimum 2 characters)');
+    }
+
+    if (validationErrors.length > 0) {
+      console.error('Customer validation errors:', validationErrors);
+      return res.status(400).json({
+        error: 'Customer information validation failed',
+        validationErrors,
+        userFriendlyMessage: 'Please check your registration information and try again.'
+      });
+    }
+
+    // Create comprehensive metadata
+    const metadata: Record<string, string> = {
+      eventId: event.id.toString(),
+      eventName: event.title,
+      eventSlug: eventSlug,
+      option: option,
+      firstName: customerInfo.firstName.trim(),
+      lastName: customerInfo.lastName.trim(),
+      contactName: customerInfo.contactName ? customerInfo.contactName.trim() : `${customerInfo.firstName.trim()} ${customerInfo.lastName.trim()}`,
+      email: customerInfo.email.trim().toLowerCase(),
+      phone: customerInfo.phone ? customerInfo.phone.trim() : '',
+      tShirtSize: customerInfo.tShirtSize || '',
+      grade: customerInfo.grade || '',
+      schoolName: customerInfo.schoolName ? customerInfo.schoolName.trim() : '',
+      clubName: customerInfo.clubName ? customerInfo.clubName.trim() : '',
+      registrationType: customerInfo.registrationType || 'individual',
+      // Day selections (convert to strings for metadata)
+      day1: (customerInfo.day1 === true || customerInfo.day1 === 'true') ? 'true' : 'false',
+      day2: (customerInfo.day2 === true || customerInfo.day2 === 'true') ? 'true' : 'false',
+      day3: (customerInfo.day3 === true || customerInfo.day3 === 'true') ? 'true' : 'false',
+      // Additional tracking
+      createdAt: new Date().toISOString(),
+      source: 'website_registration'
+    };
+
+    // Log payment intent creation for audit trail
+    console.log('🚨 PAYMENT INTENT CREATION:');
+    console.log(`  Event: ${metadata.eventName} (${metadata.eventId})`);
+    console.log(`  Amount: $${amount/100} (${amount} cents)`);
+    console.log(`  Customer: ${metadata.firstName} ${metadata.lastName} (${metadata.email})`);
+    console.log(`  Registration Type: ${metadata.registrationType}`);
+    console.log(`  Timestamp: ${metadata.createdAt}`);
+
+    // Create Stripe payment intent with retry logic
+    let paymentIntent;
+    let clientSecret: string;
     
     try {
-      // CRITICAL VALIDATION: Ensure required metadata fields are present
-      const customerInfo = req.body;
-      
-      // Validate required fields before creating payment intent
-      if (!event.id || !event.title) {
-        console.error('CRITICAL: Missing event data for PaymentIntent creation:', { eventId: event.id, eventTitle: event.title });
-        return res.status(400).json({
-          error: 'Event configuration error: missing event ID or title'
-        });
-      }
-      
-      if (!customerInfo.email) {
-        console.error('CRITICAL: Missing customer email for PaymentIntent creation');
-        return res.status(400).json({
-          error: 'Customer email is required for payment processing'
-        });
-      }
-      
-      if (!customerInfo.firstName || !customerInfo.lastName) {
-        console.error('CRITICAL: Missing customer name for PaymentIntent creation');
-        return res.status(400).json({
-          error: 'Customer first and last name are required for payment processing'
-        });
-      }
-      
-      // Create metadata with all registration fields - NO EMPTY FALLBACKS
-      const metadata: Record<string, string> = {
-        eventId: event.id.toString(),
-        eventName: event.title,
-        option,
-        // Add all customer registration data from the request body
-        firstName: customerInfo.firstName,
-        lastName: customerInfo.lastName,
-        contactName: customerInfo.contactName || `${customerInfo.firstName} ${customerInfo.lastName}`,
-        email: customerInfo.email,
-        phone: customerInfo.phone || '',
-        tShirtSize: customerInfo.tShirtSize || '',
-        grade: customerInfo.grade || '',
-        schoolName: customerInfo.schoolName || '',
-        clubName: customerInfo.clubName || '',
-        // Convert boolean values to strings for metadata
-        day1: (customerInfo.day1 === true || customerInfo.day1 === 'true') ? 'true' : 'false',
-        day2: (customerInfo.day2 === true || customerInfo.day2 === 'true') ? 'true' : 'false',
-        day3: (customerInfo.day3 === true || customerInfo.day3 === 'true') ? 'true' : 'false',
-      };
-      
-      // CRITICAL LOGGING: Log every PaymentIntent creation for tracking
-      console.log('🚨 PAYMENT INTENT CREATION LOG:');
-      console.log(`  Event ID: ${metadata.eventId}`);
-      console.log(`  Event Name: ${metadata.eventName}`);
-      console.log(`  Amount: $${amount/100} (${amount} cents)`);
-      console.log(`  Customer Email: ${metadata.email}`);
-      console.log(`  Customer Name: ${metadata.firstName} ${metadata.lastName}`);
-      console.log(`  Option: ${metadata.option}`);
-      console.log(`  Timestamp: ${new Date().toISOString()}`);
-      console.log('🚨 END PAYMENT INTENT CREATION LOG');
-      
-      // Create a PaymentIntent with the calculated amount and all customer data
-      const paymentIntent = await stripe.paymentIntents.create({
+      paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
         metadata,
         automatic_payment_methods: {
           enabled: true,
         },
+        // Add description for better Stripe dashboard visibility
+        description: `${event.title} Registration - ${customerInfo.firstName} ${customerInfo.lastName}`,
+        // Set receipt email
+        receipt_email: customerInfo.email.trim().toLowerCase()
       });
 
       clientSecret = paymentIntent.client_secret;
       
       if (!clientSecret) {
-        throw new Error('Failed to get client secret from payment intent');
+        throw new Error('Payment intent created but no client secret returned');
       }
-    } catch (stripeError) {
-      console.error('Stripe error creating payment intent:', stripeError);
+
+      console.log(`✅ Payment intent created successfully: ${paymentIntent.id}`);
+      
+    } catch (stripeError: any) {
+      console.error('Stripe payment intent creation failed:', {
+        error: stripeError.message,
+        code: stripeError.code,
+        type: stripeError.type,
+        eventId: event.id,
+        amount: amount,
+        customerEmail: customerInfo.email
+      });
+
+      // Return user-friendly error messages based on Stripe error types
+      let userMessage = 'Payment setup failed. Please try again.';
+      
+      if (stripeError.code === 'parameter_invalid_empty') {
+        userMessage = 'Missing required payment information. Please check your details.';
+      } else if (stripeError.code === 'parameter_invalid_integer') {
+        userMessage = 'Invalid payment amount. Please refresh and try again.';
+      } else if (stripeError.type === 'authentication_error') {
+        userMessage = 'Payment system authentication error. Please contact support.';
+      }
+
       return res.status(400).json({
-        error: stripeError instanceof Error ? stripeError.message : 'Error creating payment intent with Stripe',
+        error: 'Payment intent creation failed',
+        stripeError: stripeError.message,
+        userFriendlyMessage: userMessage
       });
     }
-    
-    if (!clientSecret) {
-      return res.status(500).json({
-        error: 'Failed to obtain client secret from Stripe',
-      });
-    }
-    
-    // Return response with common structure
-    const response: Record<string, any> = {
+
+    // Success response
+    const response = {
       clientSecret,
       amount: amount / 100, // Convert back to dollars for display
+      paymentIntentId: paymentIntent.id,
+      eventId: event.id,
+      eventName: event.title
     };
     
-    // Add optional fields if they exist
-    if (stripePriceId) response.priceId = stripePriceId;
-    if (stripeProductId) response.productId = stripeProductId;
-    
+    console.log(`✅ Payment intent response prepared for ${customerInfo.email}`);
     res.json(response);
+
   } catch (error) {
-    console.error('Error creating payment intent:', error);
+    console.error('Unexpected error in createPaymentIntent:', error);
+    
     res.status(500).json({
-      error: error instanceof Error ? error.message : 'An unknown error occurred',
+      error: error instanceof Error ? error.message : 'An unexpected error occurred',
+      userFriendlyMessage: 'Something went wrong. Please refresh the page and try again.'
     });
   }
 };
