@@ -159,6 +159,7 @@ Changelog:
 - June 15, 2025. Restored original Birmingham Slam Camp page with authentic coaches Zahid Valencia (2x NCAA Champion), Michael McGee (NCAA All-American), Brandon Courtney (NCAA Finalist), and Josh Shields (NCAA All-American) from backup EventDetail.tsx.bak file; replaced mock data with comprehensive original content featuring loop video banner, secure registration blocks, team registration sections, professional flame-themed styling with heat wave animations, and complete biographical information for all coaching staff
 - June 15, 2025. Updated Events page to hide past events (National Champ Camp and Texas Recruiting Clinic) and display only current upcoming events: Birmingham Slam Camp (June 19-21, 2025) and Panther Train Tour (July 23-25, 2025); streamlined events display for better user experience
 - June 15, 2025. Restored authentic Birmingham Slam Camp content by removing incorrect photo gallery and video highlights, fixing loop video banner to use authentic slamcamp.webm/slamcamp.mov files, and correcting coach image paths to authentic assets: VALENCIA_Zahid-headshot.jpg, josh_shields.jpg, brandon_courtney.webp, and Michael_McGee_JouQS.jpg from attached_assets folder
+- June 15, 2025. Fixed black screen JavaScript error by recreating CampSlideshow component with correct JSX syntax; resolved corrupted markup that was preventing React from rendering properly, restoring full site functionality
 
 ## User Preferences
 
