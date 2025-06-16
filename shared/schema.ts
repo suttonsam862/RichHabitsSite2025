@@ -180,6 +180,35 @@ export const retailSaleRelations = relations(retailSales, ({ one, many }) => ({
 }));
 
 // =====================================================
+// MEDICAL WAIVER SYSTEM
+// =====================================================
+
+export const medicalWaivers = pgTable("medical_waivers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  registrationId: uuid("registration_id").notNull(),
+  
+  // Participant information
+  participantName: text("participant_name").notNull(),
+  participantAge: integer("participant_age").notNull(),
+  schoolName: text("school_name").notNull(),
+  
+  // Contact information
+  contactName: text("contact_name").notNull(),
+  contactEmail: text("contact_email").notNull(),
+  contactPhone: text("contact_phone").notNull(),
+  
+  // Waiver acceptance
+  waiverAccepted: boolean("waiver_accepted").notNull().default(false),
+  waiverAcceptedAt: timestamp("waiver_accepted_at"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  
+  // Audit trail
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// =====================================================
 // UNIVERSAL PAYMENT SYSTEM
 // =====================================================
 
@@ -410,6 +439,13 @@ export const eventPaymentRelations = relations(eventPayments, ({ one }) => ({
   payment: one(payments, {
     fields: [eventPayments.paymentId],
     references: [payments.id]
+  })
+}));
+
+export const medicalWaiverRelations = relations(medicalWaivers, ({ one }) => ({
+  registration: one(eventRegistrations, {
+    fields: [medicalWaivers.registrationId],
+    references: [eventRegistrations.id]
   })
 }));
 

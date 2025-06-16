@@ -281,25 +281,63 @@ async function startServer() {
                               </div>
                               
                               <form id="registrationForm" class="space-y-4">
-                                  <div>
-                                      <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                      <input type="text" id="firstName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div>
+                                          <label class="block text-sm font-medium text-gray-700 mb-1">Participant First Name</label>
+                                          <input type="text" id="firstName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                      </div>
+                                      <div>
+                                          <label class="block text-sm font-medium text-gray-700 mb-1">Participant Last Name</label>
+                                          <input type="text" id="lastName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                      </div>
                                   </div>
                                   <div>
-                                      <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                      <input type="text" id="lastName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                                  </div>
-                                  <div>
-                                      <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                      <input type="email" id="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                                  </div>
-                                  <div>
-                                      <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                                      <input type="tel" id="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                      <label class="block text-sm font-medium text-gray-700 mb-1">School Name</label>
+                                      <input type="text" id="schoolName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
                                   </div>
                                   <div>
                                       <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
                                       <input type="number" id="age" required min="10" max="18" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                  </div>
+                                  
+                                  <div class="border-t border-gray-200 pt-4">
+                                      <h4 class="font-semibold text-gray-800 mb-3">Contact Information</h4>
+                                      <div class="space-y-4">
+                                          <div>
+                                              <label class="block text-sm font-medium text-gray-700 mb-1">Contact Name (Parent/Guardian)</label>
+                                              <input type="text" id="contactName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                          </div>
+                                          <div>
+                                              <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                                              <input type="email" id="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                          </div>
+                                          <div>
+                                              <label class="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
+                                              <input type="tel" id="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Medical Waiver Section -->
+                                  <div class="border-t border-gray-200 pt-4">
+                                      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                                          <h4 class="font-semibold text-yellow-800 mb-2">Medical Waiver & Release</h4>
+                                          <div class="text-sm text-yellow-700 max-h-32 overflow-y-auto space-y-2">
+                                              <p><strong>ASSUMPTION OF RISK AND RELEASE OF LIABILITY:</strong></p>
+                                              <p>I acknowledge that participation in wrestling activities involves inherent risks including but not limited to: physical injury, bruising, cuts, sprains, fractures, concussions, and other serious injuries that may result in permanent disability or death.</p>
+                                              <p>I voluntarily assume all risks associated with participation in Birmingham Slam Camp wrestling activities.</p>
+                                              <p><strong>RELEASE:</strong> I hereby release, waive, discharge and covenant not to sue Rich Habits Wrestling, its officers, agents, coaches, and employees from any and all liability, claims, demands, actions and causes of action whatsoever arising out of or related to any loss, damage, or injury that may be sustained by the participant.</p>
+                                              <p><strong>MEDICAL CONSENT:</strong> I authorize Rich Habits Wrestling staff to secure emergency medical treatment for the participant if needed.</p>
+                                              <p><strong>MEDIA RELEASE:</strong> I consent to the use of the participant's name, voice, and likeness in photographs, videos, and other media for promotional purposes.</p>
+                                          </div>
+                                      </div>
+                                      
+                                      <div class="flex items-start space-x-3">
+                                          <input type="checkbox" id="waiverAccepted" required class="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                          <label for="waiverAccepted" class="text-sm text-gray-700">
+                                              I have read, understood, and agree to the Medical Waiver & Release terms above. I acknowledge that I am the parent/legal guardian of the participant and have the authority to sign this waiver on their behalf.
+                                          </label>
+                                      </div>
                                   </div>
                                   
                                   <button type="submit" id="registerBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
