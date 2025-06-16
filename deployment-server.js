@@ -78,6 +78,79 @@ if (!activeStaticPath) {
   console.warn("⚠️ No static directory found, creating fallback");
 }
 
+// Event API endpoints - always available for deployment
+app.get('/api/events', (req, res) => {
+  const events = [
+    {
+      id: 1,
+      slug: "birmingham-slam-camp",
+      title: "Birmingham Slam Camp",
+      date: "June 19-21, 2025",
+      location: "Birmingham, AL",
+      price: "$249",
+      description: "Elite wrestling techniques and training with top-tier coaches."
+    },
+    {
+      id: 4,
+      slug: "panther-train-tour",
+      title: "Panther Train Tour",
+      date: "July 23-25, 2025",
+      location: "Multiple Locations",
+      price: "$99",
+      description: "Intensive training tour focusing on championship-level techniques."
+    }
+  ];
+  res.json(events);
+});
+
+app.get('/api/events/:slug', (req, res) => {
+  const slug = req.params.slug;
+  
+  // Map numeric IDs to slugs for compatibility
+  const idToSlugMap = {
+    '1': 'birmingham-slam-camp',
+    '2': 'national-champ-camp',
+    '3': 'texas-recruiting-clinic',
+    '4': 'panther-train-tour'
+  };
+  
+  const actualSlug = idToSlugMap[slug] || slug;
+  
+  const events = {
+    "birmingham-slam-camp": {
+      id: 1,
+      slug: "birmingham-slam-camp",
+      title: "Birmingham Slam Camp",
+      description: "A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.",
+      basePrice: "249.00",
+      startDate: "2025-06-19",
+      endDate: "2025-06-21",
+      location: "Clay-Chalkville Middle School, Birmingham, AL",
+      status: "active",
+      features: ["NCAA champion instructors", "Specialized technique sessions", "Leadership workshops", "Custom gear included"]
+    },
+    "panther-train-tour": {
+      id: 4,
+      slug: "panther-train-tour",
+      title: "Panther Train Tour",
+      description: "Mobile wrestling clinic touring multiple locations, bringing elite training directly to your community.",
+      basePrice: "99.00",
+      startDate: "2025-07-23",
+      endDate: "2025-07-25",
+      location: "Various locations",
+      status: "active",
+      features: ["Multi-location tour", "Community instruction", "Accessible coaching", "Regional development"]
+    }
+  };
+  
+  const event = events[actualSlug];
+  if (!event) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+  
+  res.json(event);
+});
+
 // API route imports with error handling
 try {
   // Import routes dynamically to handle missing modules gracefully
@@ -101,79 +174,6 @@ try {
 } catch (error) {
   console.error("⚠️ Route loading error:", error.message);
   
-  // Event API endpoints for production deployment
-  app.get('/api/events', (req, res) => {
-    const events = [
-      {
-        id: 1,
-        slug: "birmingham-slam-camp",
-        title: "Birmingham Slam Camp",
-        date: "June 19-21, 2025",
-        location: "Birmingham, AL",
-        price: "$249",
-        description: "Elite wrestling techniques and training with top-tier coaches."
-      },
-      {
-        id: 4,
-        slug: "panther-train-tour",
-        title: "Panther Train Tour",
-        date: "July 23-25, 2025",
-        location: "Multiple Locations",
-        price: "$99",
-        description: "Intensive training tour focusing on championship-level techniques."
-      }
-    ];
-    res.json(events);
-  });
-
-  app.get('/api/events/:slug', (req, res) => {
-    const slug = req.params.slug;
-    
-    // Map numeric IDs to slugs for compatibility
-    const idToSlugMap = {
-      '1': 'birmingham-slam-camp',
-      '2': 'national-champ-camp',
-      '3': 'texas-recruiting-clinic',
-      '4': 'panther-train-tour'
-    };
-    
-    const actualSlug = idToSlugMap[slug] || slug;
-    
-    const events = {
-      "birmingham-slam-camp": {
-        id: 1,
-        slug: "birmingham-slam-camp",
-        title: "Birmingham Slam Camp",
-        description: "A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.",
-        basePrice: "249.00",
-        startDate: "2025-06-19",
-        endDate: "2025-06-21",
-        location: "Clay-Chalkville Middle School, Birmingham, AL",
-        status: "active",
-        features: ["NCAA champion instructors", "Specialized technique sessions", "Leadership workshops", "Custom gear included"]
-      },
-      "panther-train-tour": {
-        id: 4,
-        slug: "panther-train-tour",
-        title: "Panther Train Tour",
-        description: "Mobile wrestling clinic touring multiple locations, bringing elite training directly to your community.",
-        basePrice: "99.00",
-        startDate: "2025-07-23",
-        endDate: "2025-07-25",
-        location: "Various locations",
-        status: "active",
-        features: ["Multi-location tour", "Community instruction", "Accessible coaching", "Regional development"]
-      }
-    };
-    
-    const event = events[actualSlug];
-    if (!event) {
-      return res.status(404).json({ error: "Event not found" });
-    }
-    
-    res.json(event);
-  });
-
   // Fallback API endpoints for other routes
   app.get('/api/*', (req, res) => {
     res.status(503).json({
