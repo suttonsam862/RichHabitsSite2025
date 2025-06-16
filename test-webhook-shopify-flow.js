@@ -78,7 +78,7 @@ async function testWebhookToShopifyFlow() {
         'Content-Type': 'application/json',
         'stripe-signature': stripeSignature
       },
-      body: payloadString
+      body: Buffer.from(payloadString)
     });
     
     const responseText = await response.text();
