@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ChevronDown, Users, User, X  } from "../lib/icons";
+import finalXImage from "@assets/25OP_FINALX_RND2_2775_1750112376366.webp";
 
 export default function Home() {
   const [showEventSelector, setShowEventSelector] = useState(false);
@@ -61,6 +62,56 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {/* FINAL X CHAMPION ZAHID VALENCIA BANNER */}
+      <Link href="/events/birmingham-slam-camp">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group"
+          style={{
+            backgroundImage: `url(${finalXImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-all duration-500"></div>
+          
+          {/* Content overlay */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center text-white px-4 max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="space-y-4"
+              >
+                <div className="bg-red-600 inline-block px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider">
+                  Final X Champion
+                </div>
+                <h2 className="text-4xl md:text-6xl font-bold leading-tight">
+                  ZAHID VALENCIA
+                </h2>
+                <p className="text-xl md:text-2xl font-semibold text-yellow-300">
+                  Training in Birmingham This Week
+                </p>
+                <div className="bg-gradient-to-r from-orange-500 to-red-600 inline-block px-8 py-3 rounded-lg text-lg font-bold uppercase tracking-wider hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform group-hover:scale-105">
+                  Register for Birmingham Slam Camp →
+                </div>
+              </motion.div>
+            </div>
+          </div>
+          
+          {/* Animated border effect */}
+          <div className="absolute inset-0 border-4 border-transparent group-hover:border-red-500 transition-all duration-500"></div>
+          
+          {/* Shine effect on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+        </motion.div>
+      </Link>
 
       {/* COMPRESSED MOBILE-FOCUSED HERO */}
       <section className="w-full h-[70vh] md:h-[80vh] flex items-center justify-center relative overflow-hidden">
