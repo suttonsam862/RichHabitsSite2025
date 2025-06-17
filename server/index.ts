@@ -201,7 +201,7 @@ async function startServer() {
     });
 
     // Setup Vite middleware for development and when built files don't exist
-    const builtIndexExists = await import('fs').then(fs => fs.existsSync(path.resolve(process.cwd(), "dist/public/index.html")));
+    const builtIndexExists = existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
     
     if (process.env.NODE_ENV !== "production" || !builtIndexExists) {
       try {
