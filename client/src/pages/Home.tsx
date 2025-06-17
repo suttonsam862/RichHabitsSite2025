@@ -63,7 +63,7 @@ export default function Home() {
       </div>
 
       {/* FINAL X CHAMPION ZAHID VALENCIA BANNER */}
-      <Link href="/events/birmingham-slam-camp">
+      <Link href="/events/1">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
