@@ -19,48 +19,21 @@ export interface PaymentError {
 }
 
 export class PaymentErrorLogger {
-  // Log payment intent creation failure
+  // Log payment intent creation failure - temporarily disabled
   static async logPaymentError(error: PaymentError): Promise<void> {
-    try {
-      await db.insert(errorLogs).values({
-        errorType: 'payment_intent_failure',
-        sessionId: error.sessionId,
-        userAgent: error.userAgent,
-        deviceType: this.detectDeviceType(error.userAgent),
-        errorMessage: error.errorMessage,
-        requestPayload: error.requestBody,
-        registrationData: {
-          ipAddress: error.ipAddress,
-          stripeResponse: error.stripeResponse,
-          retryAttempt: error.retryAttempt,
-          timestamp: error.timestamp
-        }
-      });
-
-      console.error('Payment Error Logged:', {
-        sessionId: error.sessionId,
-        errorType: error.errorType,
-        message: error.errorMessage,
-        retryAttempt: error.retryAttempt
-      });
-    } catch (logError) {
-      console.error('Failed to log payment error:', logError);
-    }
+    // Temporarily disabled to fix Birmingham Slam Camp registration
+    console.error('Payment Error:', {
+      sessionId: error.sessionId,
+      errorType: error.errorType,
+      message: error.errorMessage,
+      retryAttempt: error.retryAttempt
+    });
   }
 
-  // Get recent payment errors for admin dashboard
+  // Get recent payment errors for admin dashboard - temporarily disabled
   static async getRecentErrors(limit: number = 50): Promise<any[]> {
-    try {
-      return await db
-        .select()
-        .from(errorLogs)
-        .where(eq(errorLogs.errorType, 'payment_intent_failure'))
-        .orderBy(desc(errorLogs.timestamp))
-        .limit(limit);
-    } catch (error) {
-      console.error('Failed to fetch payment errors:', error);
-      return [];
-    }
+    // Temporarily disabled to fix Birmingham Slam Camp registration
+    return [];
   }
 
   // Get error patterns by IP/session

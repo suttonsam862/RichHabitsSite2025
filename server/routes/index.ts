@@ -6,13 +6,15 @@ import { handleStripeWebhook } from "../stripe.js";
 import { setupEventRoutes } from "./events.js";
 import { setupRetailRoutes } from "./retail.js";
 import { setupPaymentIntentRoutes } from "./payment-intent.js";
+import { setupBirminghamPayment } from "./birmingham-payment.js";
 
 /**
  * Main Routes Index - Organized by Business Logic
  * Separates retail (Shopify) and event registration (Stripe + internal DB) logic
  */
 export function setupRoutes(app: Express): void {
-  // Setup modular route handlers
+  // Setup modular route handlers (order matters - specific routes first)
+  setupBirminghamPayment(app); // Priority: isolated Birmingham Slam Camp payment
   setupEventRoutes(app);  // Event registration and Stripe payments
   setupRetailRoutes(app); // Product browsing and Shopify cart checkout
   setupPaymentIntentRoutes(app); // Simple payment intent creation

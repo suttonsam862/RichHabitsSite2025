@@ -1,34 +1,23 @@
 import type { Express, Request, Response } from "express";
 
 /**
- * Simple Payment Intent Creation - Birmingham Slam Camp
- * Bypasses complex error logging to ensure registration works
+ * Isolated Payment Intent for Birmingham Slam Camp
+ * Completely standalone to avoid import conflicts
  */
-export function setupPaymentIntentRoutes(app: Express): void {
-  // Birmingham Slam Camp payment intent creation - priority route
+export function setupBirminghamPayment(app: Express): void {
   app.post("/api/events/1/create-payment-intent", async (req: Request, res: Response) => {
     try {
-      console.log(`Creating payment intent for event: ${req.params.eventId}`);
+      console.log('Creating payment intent for Birmingham Slam Camp');
       
-      const eventId = req.params.eventId;
       const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
 
-      // Handle Birmingham Slam Camp
-      let event;
-      if (eventId === '1' || eventId === 'birmingham-slam-camp') {
-        event = {
-          id: '1',
-          slug: 'birmingham-slam-camp',
-          title: 'Birmingham Slam Camp',
-          basePrice: '249.00'
-        };
-      } else {
-        return res.status(404).json({ 
-          error: "Event not found", 
-          eventId,
-          userFriendlyMessage: "The event you're trying to register for could not be found."
-        });
-      }
+      // Birmingham Slam Camp data
+      const event = {
+        id: '1',
+        slug: 'birmingham-slam-camp',
+        title: 'Birmingham Slam Camp',
+        basePrice: '249.00'
+      };
 
       // Validate registration data
       if (!registrationData?.email || !registrationData?.firstName || !registrationData?.lastName) {
@@ -71,12 +60,12 @@ export function setupPaymentIntentRoutes(app: Express): void {
         });
       }
 
-      // Create Stripe payment intent directly without importing complex modules
+      // Create Stripe payment intent
       const Stripe = (await import('stripe')).default;
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
+        amount: Math.round(amount * 100),
         currency: 'usd',
         automatic_payment_methods: {
           enabled: true,
@@ -109,7 +98,7 @@ export function setupPaymentIntentRoutes(app: Express): void {
         });
       }
 
-      console.log('Payment intent created successfully:', paymentIntent.id);
+      console.log('Payment intent created successfully for Birmingham Slam Camp:', paymentIntent.id);
       
       res.json({
         clientSecret: paymentIntent.client_secret,
@@ -121,7 +110,7 @@ export function setupPaymentIntentRoutes(app: Express): void {
       });
 
     } catch (error) {
-      console.error("Payment intent creation error:", error);
+      console.error("Birmingham Slam Camp payment intent error:", error);
       res.status(500).json({ 
         error: "Payment intent creation failed",
         message: error instanceof Error ? error.message : "Unknown error",
