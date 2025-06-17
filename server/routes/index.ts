@@ -72,7 +72,17 @@ export function setupRoutes(app: Express): void {
     }
   });
 
+  // Stripe webhook endpoint - secure payment verification
+  app.post("/api/stripe-webhook", express.raw({ type: 'application/json' }), handleStripeWebhook);
 
+  // Health check endpoint
+  app.get("/api/health", (req: Request, res: Response) => {
+    res.json({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || "development"
+    });
+  });
 
   // Media validation endpoint
   app.get("/api/media/validate/:filename", (req: Request, res: Response) => {
