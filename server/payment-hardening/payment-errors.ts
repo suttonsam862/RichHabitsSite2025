@@ -2,7 +2,7 @@
 // Comprehensive error tracking for all payment intent failures
 
 import { db } from '../db';
-import { errorLogs } from '@shared/schema';
+import { errorLogs } from '@shared/error-logging';
 import { eq, desc } from 'drizzle-orm';
 
 export interface PaymentError {
