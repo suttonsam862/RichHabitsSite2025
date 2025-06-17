@@ -10,6 +10,50 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+// Logo API endpoint - must be first before any middleware
+app.get("/api/logo", async (req, res) => {
+  console.log('Logo API request received');
+  
+  try {
+    const productionUrl = `https://rich-habits.com/Cursive-Logo.webp`;
+    console.log('Fetching logo from:', productionUrl);
+    const response = await fetch(productionUrl);
+    
+    if (response.ok) {
+      console.log('Successfully fetched logo from production');
+      const buffer = await response.arrayBuffer();
+      res.setHeader('Content-Type', 'image/webp');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      return res.send(Buffer.from(buffer));
+    } else {
+      console.log('Production logo fetch failed with status:', response.status);
+    }
+  } catch (error) {
+    console.log('Production logo fetch error:', error);
+  }
+  
+  // Fallback SVG logo
+  const logoSvg = `<svg width="140" height="40" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <style>
+        .logo-text { font-family: 'Brush Script MT', cursive; fill: #1f2937; }
+        .logo-accent { fill: #dc2626; }
+      </style>
+    </defs>
+    <text x="5" y="16" class="logo-text" font-size="14" font-style="italic">Rich</text>
+    <text x="5" y="32" class="logo-text" font-size="14" font-style="italic">Habits</text>
+    <line x1="50" y1="20" x2="135" y2="20" stroke="#dc2626" stroke-width="2" opacity="0.7"/>
+    <circle cx="125" cy="12" r="2" class="logo-accent"/>
+    <circle cx="132" cy="28" r="1.5" class="logo-accent"/>
+  </svg>`;
+  
+  console.log('Serving fallback SVG logo');
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.send(logoSvg);
+});
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
