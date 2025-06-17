@@ -712,33 +712,9 @@ export const siteSessionRelations = relations(siteSessions, ({ one }) => ({
 // ERROR LOGGING SYSTEM
 // =====================================================
 
-export const errorLogs = pgTable("error_logs", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  errorType: text("error_type").notNull(), // 'payment_intent_failure', 'mobile_crash', 'validation_error'
-  sessionId: text("session_id").notNull(),
-  userId: uuid("user_id"),
-  eventId: uuid("event_id"),
-  userAgent: text("user_agent"),
-  deviceType: deviceTypeEnum("device_type"), // 'mobile', 'desktop', 'tablet'
-  errorMessage: text("error_message").notNull(),
-  errorStack: text("error_stack"),
-  requestPayload: jsonb("request_payload"), // Full request data for debugging
-  registrationData: jsonb("registration_data"), // Form data at time of error
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
-  resolved: boolean("resolved").default(false),
-  notes: text("notes")
-});
-
-export const errorLogRelations = relations(errorLogs, ({ one }) => ({
-  user: one(users, {
-    fields: [errorLogs.userId],
-    references: [users.id]
-  }),
-  event: one(events, {
-    fields: [errorLogs.eventId],
-    references: [events.id]
-  })
-}));
+// Temporarily removed errorLogs table to fix Birmingham Slam Camp registration
+// The error logging system was causing module import conflicts
+// This will be re-added once the import issues are resolved
 
 // =====================================================
 // INSERT SCHEMAS AND TYPES
@@ -852,10 +828,10 @@ export const insertCartItemSchema = createInsertSchema(cartItems).omit({
 export type CartItemInsert = z.infer<typeof insertCartItemSchema>;
 export type CartItem = typeof cartItems.$inferSelect;
 
-// Error log schemas
-export const insertErrorLogSchema = createInsertSchema(errorLogs).omit({
-  id: true,
-  timestamp: true
-});
-export type ErrorLogInsert = z.infer<typeof insertErrorLogSchema>;
-export type ErrorLog = typeof errorLogs.$inferSelect;
+// Error log schemas - temporarily disabled to fix Birmingham registration
+// export const insertErrorLogSchema = createInsertSchema(errorLogs).omit({
+//   id: true,
+//   timestamp: true
+// });
+// export type ErrorLogInsert = z.infer<typeof insertErrorLogSchema>;
+// export type ErrorLog = typeof errorLogs.$inferSelect;

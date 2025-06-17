@@ -147,6 +147,15 @@ async function startServer() {
       });
     });
 
+    // Priority: Clean payment setup for Birmingham Slam Camp (bypasses all import issues)
+    try {
+      const { setupCleanPayment } = require("./clean-payment.js");
+      setupCleanPayment(app);
+      console.log("✅ Clean payment endpoint registered for Birmingham Slam Camp");
+    } catch (err) {
+      console.log("Clean payment setup failed:", err.message);
+    }
+
     // Register app routes
     setupRoutes(app);
 
