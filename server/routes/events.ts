@@ -270,18 +270,16 @@ export function setupEventRoutes(app: Express): void {
       const { PaymentValidator } = await import('../payment-hardening/payment-validator.js');
       const validationResult = PaymentValidator.validateCompletePaymentRequest(req.body, req.sessionID);
       
-      if (!validationResult.success) {
-        console.error("Validation errors:", validationResult.error.issues);
+      if (!validationResult.isValid) {
+        console.error("Validation errors:", validationResult.errors);
         return res.status(400).json({ 
           error: "Registration validation failed",
-          details: validationResult.error.issues.map(issue => ({
-            field: issue.path.join('.'),
-            message: issue.message
-          }))
+          details: validationResult.errors,
+          userFriendlyMessage: "Please check your registration information and try again."
         });
       }
 
-      const registrationData = validationResult.data;
+      const registrationData = validationResult.sanitizedData;
 
       // Handle Birmingham Slam Camp with proper UUID
       let event;
@@ -648,6 +646,15 @@ export function setupEventRoutes(app: Express): void {
         });
       }
 
+      // Validate Stripe key format
+      if (!process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
+        console.error('❌ Invalid Stripe secret key format');
+        return res.status(500).json({
+          error: "Payment system configuration error",
+          userFriendlyMessage: "Payment processing is temporarily unavailable. Please contact support."
+        });
+      }
+
       // Create Stripe payment intent with comprehensive error handling
       console.log('🔄 Creating Stripe payment intent...');
       
@@ -686,42 +693,65 @@ export function setupEventRoutes(app: Express): void {
         });
       }
 
+      // Import payment retry handler for better reliability
+      const { PaymentRetryHandler } = await import('../payment-hardening/payment-errors.js');
+      
       let paymentIntent;
       try {
-        paymentIntent = await stripe.paymentIntents.create({
-          amount: Math.round(amount * 100), // Convert to cents
-          currency: 'usd',
-          automatic_payment_methods: {
-            enabled: true,
+        // Use retry handler for payment intent creation
+        paymentIntent = await PaymentRetryHandler.retryPaymentIntent(
+          async () => {
+            return await stripe.paymentIntents.create({
+              amount: Math.round(amount * 100), // Convert to cents
+              currency: 'usd',
+              automatic_payment_methods: {
+                enabled: true,
+              },
+              metadata: {
+                eventId: event.id,
+                eventSlug: event.slug || 'birmingham-slam-camp',
+                eventTitle: event.title,
+                customerEmail: registrationData.email,
+                customerName: `${registrationData.firstName} ${registrationData.lastName}`,
+                participantFirstName: registrationData.firstName,
+                participantLastName: registrationData.lastName,
+                schoolName: registrationData.schoolName || '',
+                age: registrationData.age || registrationData.grade || '',
+                contactName: registrationData.contactName || '',
+                phone: registrationData.phone || '',
+                waiverAccepted: String(registrationData.medicalReleaseAccepted || registrationData.waiverAccepted || false),
+                registrationType: 'individual',
+                option: option,
+                discountCode: discountCode || '',
+                createShopifyOrder: 'true',
+                source: 'birmingham_slam_camp_registration'
+              }
+            });
           },
-          metadata: {
-            eventId: event.id,
-            eventSlug: event.slug || 'birmingham-slam-camp',
-            eventTitle: event.title,
-            customerEmail: registrationData.email,
-            customerName: `${registrationData.firstName} ${registrationData.lastName}`,
-            participantFirstName: registrationData.firstName,
-            participantLastName: registrationData.lastName,
-            schoolName: registrationData.schoolName || '',
-            age: registrationData.age || registrationData.grade || '',
-            contactName: registrationData.contactName || '',
-            phone: registrationData.phone || '',
-            waiverAccepted: String(registrationData.medicalReleaseAccepted || registrationData.waiverAccepted || false),
-            registrationType: 'individual',
-            option: option,
-            discountCode: discountCode || '',
-            createShopifyOrder: 'true',
-            source: 'birmingham_slam_camp_registration'
-          }
-        });
+          req.sessionID,
+          registrationData,
+          req.ip || 'unknown',
+          req.get('User-Agent') || 'unknown'
+        );
         
         console.log('✅ Payment intent created successfully:', paymentIntent.id);
       } catch (stripeError) {
-        console.error('❌ Stripe payment intent creation failed:', stripeError);
+        console.error('❌ Stripe payment intent creation failed after retries:', stripeError);
+        
+        // Provide specific error messages based on error type
+        let userMessage = "Unable to set up payment processing. Please try again.";
+        if (stripeError.code === 'parameter_invalid_empty') {
+          userMessage = "Missing required payment information. Please check all fields are filled out.";
+        } else if (stripeError.code === 'amount_too_small') {
+          userMessage = "Payment amount is too small. Please contact support.";
+        } else if (stripeError.type === 'card_error') {
+          userMessage = "There was an issue with your payment method. Please try a different card.";
+        }
+        
         return res.status(500).json({
           error: "Payment intent creation failed",
           message: stripeError instanceof Error ? stripeError.message : "Unknown Stripe error",
-          userFriendlyMessage: "Unable to set up payment processing. Please check your information and try again."
+          userFriendlyMessage: userMessage
         });
       }
 
