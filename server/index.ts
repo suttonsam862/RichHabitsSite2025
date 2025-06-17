@@ -57,16 +57,11 @@ async function startServer() {
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
 
-    // Enhanced logo serving with production fallback
+    // Priority logo route - must be before static middleware
     app.get("/Cursive-Logo.webp", async (req, res) => {
-      const localPath = path.join(publicPath, 'Cursive-Logo.webp');
+      console.log('Logo request received');
       
-      // Try local file first
-      if (existsSync(localPath)) {
-        return res.sendFile(localPath);
-      }
-      
-      // Fallback to production server
+      // Direct fetch from production server
       try {
         const productionUrl = `https://rich-habits.com/Cursive-Logo.webp`;
         const response = await fetch(productionUrl);
@@ -75,21 +70,27 @@ async function startServer() {
           console.log('Serving logo from production server');
           const buffer = await response.arrayBuffer();
           res.setHeader('Content-Type', 'image/webp');
-          res.setHeader('Cache-Control', 'public, max-age=31536000');
+          res.setHeader('Cache-Control', 'public, max-age=86400');
           return res.send(Buffer.from(buffer));
         }
       } catch (error) {
-        console.log('Production logo fallback failed:', error);
+        console.log('Production logo fetch failed:', error);
       }
       
-      // Last resort: serve a proper SVG logo instead of 404
-      const logoSvg = `
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-          <rect width="120" height="40" fill="#1f2937" rx="4"/>
-          <text x="60" y="16" font-family="serif" font-size="12" fill="#f3f4f6" text-anchor="middle" font-style="italic">Rich</text>
-          <text x="60" y="30" font-family="serif" font-size="12" fill="#f3f4f6" text-anchor="middle" font-style="italic">Habits</text>
-        </svg>
-      `;
+      // Fallback SVG logo
+      const logoSvg = `<svg width="140" height="40" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <style>
+            .logo-text { font-family: 'Brush Script MT', cursive; fill: #1f2937; }
+            .logo-accent { fill: #dc2626; }
+          </style>
+        </defs>
+        <text x="5" y="16" class="logo-text" font-size="14" font-style="italic">Rich</text>
+        <text x="5" y="32" class="logo-text" font-size="14" font-style="italic">Habits</text>
+        <line x1="50" y1="20" x2="135" y2="20" stroke="#dc2626" stroke-width="2" opacity="0.7"/>
+        <circle cx="125" cy="12" r="2" class="logo-accent"/>
+        <circle cx="132" cy="28" r="1.5" class="logo-accent"/>
+      </svg>`;
       
       res.setHeader('Content-Type', 'image/svg+xml');
       res.send(logoSvg);
@@ -252,8 +253,15 @@ async function startServer() {
     app.use('/coaches', express.static(path.join(publicPath, 'coaches')));
     app.use('/events', express.static(path.join(publicPath, 'events')));
 
-    // General static serving as fallback
-    app.use(express.static(publicPath));
+    // General static serving as fallback (but exclude logo files to allow custom handling)
+    app.use(express.static(publicPath, {
+      setHeaders: (res, path) => {
+        // Skip caching for logo files so our custom handler takes precedence
+        if (path.includes('Cursive-Logo.webp')) {
+          res.setHeader('Cache-Control', 'no-cache');
+        }
+      }
+    }));
     app.use('/assets', express.static(attachedAssetsPath));
 
     console.log(`Static files configured from: ${publicPath}`);
