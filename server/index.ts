@@ -57,44 +57,9 @@ async function startServer() {
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
 
-    // Priority logo route - must be before static middleware
-    app.get("/Cursive-Logo.webp", async (req, res) => {
-      console.log('Logo request received');
-      
-      // Direct fetch from production server
-      try {
-        const productionUrl = `https://rich-habits.com/Cursive-Logo.webp`;
-        const response = await fetch(productionUrl);
-        
-        if (response.ok) {
-          console.log('Serving logo from production server');
-          const buffer = await response.arrayBuffer();
-          res.setHeader('Content-Type', 'image/webp');
-          res.setHeader('Cache-Control', 'public, max-age=86400');
-          return res.send(Buffer.from(buffer));
-        }
-      } catch (error) {
-        console.log('Production logo fetch failed:', error);
-      }
-      
-      // Fallback SVG logo
-      const logoSvg = `<svg width="140" height="40" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <style>
-            .logo-text { font-family: 'Brush Script MT', cursive; fill: #1f2937; }
-            .logo-accent { fill: #dc2626; }
-          </style>
-        </defs>
-        <text x="5" y="16" class="logo-text" font-size="14" font-style="italic">Rich</text>
-        <text x="5" y="32" class="logo-text" font-size="14" font-style="italic">Habits</text>
-        <line x1="50" y1="20" x2="135" y2="20" stroke="#dc2626" stroke-width="2" opacity="0.7"/>
-        <circle cx="125" cy="12" r="2" class="logo-accent"/>
-        <circle cx="132" cy="28" r="1.5" class="logo-accent"/>
-      </svg>`;
-      
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.send(logoSvg);
-    });
+
+
+
 
     // Enhanced image serving with production fallback
     app.get("/images/*", async (req, res) => {
@@ -363,6 +328,50 @@ async function startServer() {
       );
       console.log(`🌐 Preview URL: http://0.0.0.0:${PORT}`);
       console.log(`🔗 Public URL: Available via Replit preview`);
+    });
+
+    // Logo API must be registered before Vite middleware to prevent interception
+    app.get("/api/logo", async (req, res) => {
+      console.log('Logo API request received');
+      
+      try {
+        const productionUrl = `https://rich-habits.com/Cursive-Logo.webp`;
+        console.log('Fetching logo from:', productionUrl);
+        const response = await fetch(productionUrl);
+        
+        if (response.ok) {
+          console.log('Successfully fetched logo from production');
+          const buffer = await response.arrayBuffer();
+          res.setHeader('Content-Type', 'image/webp');
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          return res.send(Buffer.from(buffer));
+        } else {
+          console.log('Production logo fetch failed with status:', response.status);
+        }
+      } catch (error) {
+        console.log('Production logo fetch error:', error);
+      }
+      
+      // Fallback SVG logo
+      const logoSvg = `<svg width="140" height="40" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <style>
+            .logo-text { font-family: 'Brush Script MT', cursive; fill: #1f2937; }
+            .logo-accent { fill: #dc2626; }
+          </style>
+        </defs>
+        <text x="5" y="16" class="logo-text" font-size="14" font-style="italic">Rich</text>
+        <text x="5" y="32" class="logo-text" font-size="14" font-style="italic">Habits</text>
+        <line x1="50" y1="20" x2="135" y2="20" stroke="#dc2626" stroke-width="2" opacity="0.7"/>
+        <circle cx="125" cy="12" r="2" class="logo-accent"/>
+        <circle cx="132" cy="28" r="1.5" class="logo-accent"/>
+      </svg>`;
+      
+      console.log('Serving fallback SVG logo');
+      res.setHeader('Content-Type', 'image/svg+xml');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.send(logoSvg);
     });
 
     // Setup Vite middleware for development and when built files don't exist

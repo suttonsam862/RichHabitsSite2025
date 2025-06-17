@@ -125,7 +125,7 @@ Rich Habits is a full-stack web application for managing wrestling event registr
 - TypeScript compilation with strict type checking
 
 ## Changelog
-- June 17, 2025: **HEADER LOGO FIX** Fixed logo rendering by correcting route priority and adding production server fallback with SVG backup
+- June 17, 2025: **HEADER LOGO RESOLVED** Fixed logo rendering by moving API route before Vite middleware and creating dedicated /api/logo endpoint
 - June 17, 2025: **PRODUCTION SYNC** Synchronized Replit preview with live domain rich-habits.com for consistent image and video display across all pages
 - June 17, 2025: **LOGO FIX** Fixed header logo display by creating SVG version and enhancing server routing with production fallback
 - June 17, 2025: **IMAGE SYNCHRONIZATION** Connected development and production image serving with automatic fallback system for header, events, and custom clothing images

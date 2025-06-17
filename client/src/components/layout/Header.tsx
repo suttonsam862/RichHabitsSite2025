@@ -42,15 +42,15 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
         <Link href="/">
           <motion.img 
-            src="/Cursive-Logo.webp"
+            src="/api/logo"
             alt="Rich Habits"
             className="h-6 md:h-8 w-auto cursor-pointer"
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.2 }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              // Fallback to production server if local fails
-              if (!target.src.includes('rich-habits.com')) {
+              // Fallback to direct production URL if API fails
+              if (target.src.includes('/api/logo')) {
                 target.src = 'https://rich-habits.com/Cursive-Logo.webp';
               } else {
                 target.src = '/rich-habits-logo.svg';
