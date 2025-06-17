@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import './styles/gradients.css';
 
 @tailwind base;
 @tailwind components;
@@ -26,16 +27,16 @@
   --font-display: 'Anton', 'Oswald', 'Impact', sans-serif;
   --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
   --font-accent: 'Playfair Display', serif;
-  
+
   /* Pure minimal colors */
   --color-white: #ffffff;
   --color-black: #000000;
-  
+
   /* Subtle gradients for depth */
   --gradient-chrome: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(200,200,255,0.05) 50%, rgba(255,200,255,0.1) 100%);
   --gradient-glow: linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(123,0,255,0.1) 100%);
   --gradient-border: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(123,123,255,0.2) 50%, rgba(255,123,255,0.1) 100%);
-  
+
   /* Shadows */
   --shadow-soft: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
   --shadow-glow: 0 0 0 1px rgba(0,0,0,0.05), 0 4px 8px rgba(0,0,0,0.02), 0 0 20px rgba(123,123,255,0.05);
@@ -339,11 +340,11 @@ h6 {
   .container-fluid {
     padding: 0 1rem;
   }
-  
+
   .section-spacing {
     padding: 4rem 0;
   }
-  
+
   .hero-title {
     font-size: 3rem;
   }
@@ -387,7 +388,7 @@ ul, ol {
   --gray-100: #f3f4f6;
   --gray-800: #1f2937;
   --gray-900: #111827;
-  
+
   /* Rich Habits Brand Colors */
   --brand-primary: var(--primary-red);
   --brand-secondary: var(--primary-blue);

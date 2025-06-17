@@ -36,7 +36,7 @@ export function Header() {
   return (
     <header 
       className={`fixed w-full top-0 z-40 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-md py-2 md:py-3' : 'bg-transparent py-4 md:py-6'
+        scrolled ? 'gradient-header-scrolled shadow-md py-2 md:py-3' : 'gradient-header-transparent py-4 md:py-6'
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">

@@ -1,0 +1,185 @@
+
+/* Gradient Animation System */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(123, 123, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(123, 123, 255, 0.3);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Base Gradient Classes */
+.gradient-animated {
+  background: linear-gradient(-45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+.gradient-hero {
+  background: linear-gradient(-45deg, #dc2626, #ea580c, #0369a1, #7c3aed);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+
+.gradient-valencia {
+  background: linear-gradient(-45deg, #dc2626, #ea580c, #f59e0b, #ef4444);
+  background-size: 400% 400%;
+  animation: gradientShift 18s ease infinite;
+}
+
+.gradient-camp {
+  background: linear-gradient(-45deg, #1f2937, #374151, #0369a1, #1e40af);
+  background-size: 400% 400%;
+  animation: gradientShift 22s ease infinite;
+}
+
+.gradient-summer {
+  background: linear-gradient(-45deg, #ffffff, #f9fafb, #e5e7eb, #f3f4f6);
+  background-size: 400% 400%;
+  animation: gradientShift 25s ease infinite;
+}
+
+.gradient-signup {
+  background: linear-gradient(-45deg, #f3f4f6, #e5e7eb, #d1d5db, #f9fafb);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+
+.gradient-fruit {
+  background: linear-gradient(-45deg, #7c3aed, #c084fc, #ec4899, #f472b6);
+  background-size: 400% 400%;
+  animation: gradientShift 16s ease infinite;
+}
+
+.gradient-newsletter {
+  background: linear-gradient(-45deg, #ffffff, #f8fafc, #f1f5f9, #ffffff);
+  background-size: 400% 400%;
+  animation: gradientShift 30s ease infinite;
+}
+
+/* Header Gradients */
+.gradient-header-scrolled {
+  background: linear-gradient(-45deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9), rgba(255, 255, 255, 0.95));
+  background-size: 400% 400%;
+  animation: gradientShift 25s ease infinite;
+  backdrop-filter: blur(12px);
+}
+
+.gradient-header-transparent {
+  background: linear-gradient(-45deg, rgba(0, 0, 0, 0.1), rgba(31, 41, 55, 0.15), rgba(55, 65, 81, 0.1), rgba(0, 0, 0, 0.05));
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+
+/* Overlay Effects */
+.gradient-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(123, 123, 255, 0.1) 0%, rgba(255, 123, 123, 0.1) 50%, rgba(123, 255, 123, 0.1) 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gradient-overlay:hover::before {
+  opacity: 1;
+}
+
+/* Shimmer Effect */
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
+}
+
+/* Glow Effects */
+.glow-pulse {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Responsive Adjustments */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-animated,
+  .gradient-hero,
+  .gradient-valencia,
+  .gradient-camp,
+  .gradient-summer,
+  .gradient-signup,
+  .gradient-fruit,
+  .gradient-newsletter,
+  .gradient-header-scrolled,
+  .gradient-header-transparent {
+    animation: none;
+  }
+  
+  .shimmer-effect::after {
+    animation: none;
+  }
+  
+  .glow-pulse {
+    animation: none;
+  }
+}
+
+/* Utility Classes */
+.gradient-text {
+  background: linear-gradient(-45deg, #dc2626, #ea580c, #0369a1, #7c3aed);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(-45deg, #dc2626, #ea580c, #0369a1, #7c3aed);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: subtract;
+}

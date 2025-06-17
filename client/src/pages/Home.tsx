@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* TOP-LEVEL TEAM DISCOUNT BANNER */}
-      <div className="bg-gradient-to-r from-black to-gray-800 text-white py-3 px-4 sticky top-0 z-50 shadow-lg">
+      <div className="gradient-animated text-white py-3 px-4 sticky top-0 z-50 shadow-lg glow-pulse">
         <div className="container mx-auto text-center">
           <button 
             onClick={scrollToSignup}
@@ -68,7 +68,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group bg-gradient-to-r from-red-600 to-orange-600"
+          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group gradient-valencia shimmer-effect"
           style={{
             backgroundImage: `url('/images/VALENCIA_Zahid-headshot.jpg')`,
             backgroundSize: 'cover',
@@ -117,7 +117,7 @@ export default function Home() {
       </Link>
 
       {/* COMPRESSED MOBILE-FOCUSED HERO */}
-      <section className="w-full h-[70vh] md:h-[80vh] flex items-center justify-center relative overflow-hidden">
+      <section className="w-full h-[70vh] md:h-[80vh] flex items-center justify-center relative overflow-hidden gradient-hero">
         {/* Hero background image */}
         <div className="absolute inset-0 w-full h-full">
           <img 
@@ -142,7 +142,7 @@ export default function Home() {
             transition={{ duration: 1.2, ease: "easeOut" }}
             className="max-w-4xl mx-auto text-center"
           >
-            <h1 className="text-4xl md:text-6xl mb-4 leading-tight tracking-tighter title-font">
+            <h1 className="text-4xl md:text-6xl mb-4 leading-tight tracking-tighter title-font gradient-text">
               Train with NCAA Champions
             </h1>
             <p className="text-lg md:text-xl mb-8 tracking-wide text-gray-200 subtitle-font">
@@ -153,14 +153,14 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
               <button
                 onClick={scrollToSignup}
-                className="bg-white text-gray-900 py-4 px-8 text-lg font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
+                className="bg-white text-gray-900 py-4 px-8 text-lg font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg gradient-border shimmer-effect"
               >
                 <User size={20} />
                 <span>Register as Individual</span>
               </button>
               <button
                 onClick={() => setShowEventSelector(true)}
-                className="bg-black text-white py-4 px-8 text-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg"
+                className="bg-black text-white py-4 px-8 text-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 rounded-lg shadow-lg gradient-border shimmer-effect"
               >
                 <Users size={20} />
                 <span>Register as Team</span>
@@ -184,7 +184,7 @@ export default function Home() {
       </section>
       
       {/* NATIONAL CHAMP CAMP DISCOUNT PROMOTION */}
-      <section className="py-12 relative bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url(/images/camp-background.webp)'}}>
+      <section className="py-12 relative bg-cover bg-center bg-no-repeat gradient-camp gradient-overlay" style={{backgroundImage: 'url(/images/camp-background.webp)'}}>
         {/* Black overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         <div className="container mx-auto px-4 relative z-10">
@@ -256,7 +256,7 @@ export default function Home() {
       </section>
 
       {/* SUMMER 2025 CAMPS VIDEO SECTION */}
-      <section className="py-24 relative h-96 overflow-hidden">
+      <section className="py-24 relative h-96 overflow-hidden gradient-summer gradient-overlay">
         {/* Background Video */}
         <video 
           autoPlay 
@@ -294,7 +294,7 @@ export default function Home() {
       </section>
       
       {/* SIGNUP PORTAL ANCHOR SECTION */}
-      <section id="signup-portal" className="py-20 bg-gray-100">
+      <section id="signup-portal" className="py-20 gradient-signup">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -345,7 +345,7 @@ export default function Home() {
       </section>
       
       {/* FRUIT HUNTERS PROMOTION SECTION */}
-      <section className="py-16 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-16 gradient-fruit shimmer-effect glow-pulse">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -385,7 +385,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter Section - Minimalist Approach */}
-      <section className="py-24 bg-white relative">
+      <section className="py-24 gradient-newsletter relative gradient-overlay">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0 }}
