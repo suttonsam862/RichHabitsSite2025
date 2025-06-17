@@ -1,6 +1,7 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
+import { existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { setupRoutes } from "./routes/index.js";
 import { setupVite } from "./vite";
@@ -200,7 +201,7 @@ async function startServer() {
     });
 
     // Setup Vite middleware for development and when built files don't exist
-    const builtIndexExists = require('fs').existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
+    const builtIndexExists = await import('fs').then(fs => fs.existsSync(path.resolve(process.cwd(), "dist/public/index.html")));
     
     if (process.env.NODE_ENV !== "production" || !builtIndexExists) {
       try {
