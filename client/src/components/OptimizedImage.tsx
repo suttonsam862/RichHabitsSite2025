@@ -93,12 +93,53 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     if (onLoad) onLoad();
   };
 
+  const [currentSrcIndex, setCurrentSrcIndex] = useState(0);
+  const [fallbackSources] = useState(() => {
+    // Generate multiple fallback paths
+    const fallbacks = [
+      src,
+      src.replace('/assets/', '/images/'),
+      src.replace('/images/', '/assets/'),
+      `/assets/${src.split('/').pop()}`,
+      `/images/${src.split('/').pop()}`,
+      `/designs/${src.split('/').pop()}`
+    ];
+    // Remove duplicates
+    return [...new Set(fallbacks)];
+  });
+
   const handleError = () => {
-    setIsError(true);
-    if (onError) onError();
+    console.error(`Failed to load image: ${fallbackSources[currentSrcIndex]}`);
     
-    // Log error for debugging
-    console.error(`Failed to load image: ${src}`);
+    // Try next fallback source
+    if (currentSrcIndex < fallbackSources.length - 1) {
+      setCurrentSrcIndex(prev => prev + 1);
+      setIsLoaded(false);
+    } else {
+      setIsError(true);
+      if (onError) onError();
+    }
+  };
+
+  // Reset when src changes
+  useEffect(() => {
+    setCurrentSrcIndex(0);
+    setIsLoaded(false);
+    setIsError(false);
+  }, [src]);
+
+  // Generate fallback image sources
+  const getFallbackSrc = (originalSrc: string) => {
+    // Try different path variations
+    const fallbacks = [
+      originalSrc,
+      originalSrc.replace('/assets/', '/images/'),
+      originalSrc.replace('/images/', '/assets/'),
+      `/assets/${originalSrc.split('/').pop()}`,
+      `/images/${originalSrc.split('/').pop()}`,
+      `/designs/${originalSrc.split('/').pop()}`
+    ];
+    return fallbacks;
   };
 
   // If there's an error, show a placeholder with alt text
@@ -109,6 +150,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         style={{
           width: width ? `${width}px` : '100%',
           height: height ? `${height}px` : '200px',
+          backgroundColor: placeholderColor,
           ...style,
         }}
       >
@@ -119,7 +161,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   return (
     <img
-      src={src}
+      src={fallbackSources[currentSrcIndex]}
       alt={alt}
       width={width}
       height={height}
