@@ -5,6 +5,7 @@ import { storage } from "../storage.js";
 import { handleStripeWebhook } from "../stripe.js";
 import { setupEventRoutes } from "./events.js";
 import { setupRetailRoutes } from "./retail.js";
+import { setupPaymentIntentRoutes } from "./payment-intent.js";
 
 /**
  * Main Routes Index - Organized by Business Logic
@@ -14,6 +15,7 @@ export function setupRoutes(app: Express): void {
   // Setup modular route handlers
   setupEventRoutes(app);  // Event registration and Stripe payments
   setupRetailRoutes(app); // Product browsing and Shopify cart checkout
+  setupPaymentIntentRoutes(app); // Simple payment intent creation
 
   // Stripe webhook endpoint for automatic Shopify order creation
   app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);

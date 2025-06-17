@@ -71,8 +71,8 @@ export function setupPaymentIntentRoutes(app: Express): void {
         });
       }
 
-      // Create Stripe payment intent
-      const { default: Stripe } = await import('stripe');
+      // Create Stripe payment intent directly without importing complex modules
+      const Stripe = (await import('stripe')).default;
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
       const paymentIntent = await stripe.paymentIntents.create({

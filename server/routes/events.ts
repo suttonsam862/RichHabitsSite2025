@@ -266,20 +266,22 @@ export function setupEventRoutes(app: Express): void {
   // Event registration submission endpoint with bulletproof field mapping
   app.post("/api/event-registration", async (req: Request, res: Response) => {
     try {
-      // Import centralized validator
-      const { PaymentValidator } = await import('../payment-hardening/payment-validator.js');
-      const validationResult = PaymentValidator.validateCompletePaymentRequest(req.body, req.sessionID);
+      // Basic validation for registration data
+      const validationResult = frontendRegistrationSchema.safeParse(req.body);
       
-      if (!validationResult.isValid) {
-        console.error("Validation errors:", validationResult.errors);
+      if (!validationResult.success) {
+        console.error("Registration validation errors:", validationResult.error.issues);
         return res.status(400).json({ 
           error: "Registration validation failed",
-          details: validationResult.errors,
+          details: validationResult.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          })),
           userFriendlyMessage: "Please check your registration information and try again."
         });
       }
 
-      const registrationData = validationResult.sanitizedData;
+      const registrationData = validationResult.data;
 
       // Handle Birmingham Slam Camp with proper UUID
       let event;
@@ -614,240 +616,5 @@ export function setupEventRoutes(app: Express): void {
     }
   });
 
-  // Event-specific payment intent creation endpoint that frontend expects
-  app.post("/api/events/:eventId/create-payment-intent", async (req: Request, res: Response) => {
-    try {
-      console.log(`🔥 Creating payment intent for event: ${req.params.eventId}`);
-      console.log('Request body:', JSON.stringify(req.body, null, 2));
-      
-      const eventId = req.params.eventId;
-      const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
-
-      // Handle numeric event ID for Birmingham Slam Camp
-      let event;
-      if (eventId === '1' || eventId === 'birmingham-slam-camp') {
-        // Birmingham Slam Camp hardcoded data
-        event = {
-          id: '1',
-          slug: 'birmingham-slam-camp',
-          title: 'Birmingham Slam Camp',
-          description: 'A high-energy wrestling camp featuring top coaches and intensive training sessions designed to elevate your wrestling skills and competitive edge.',
-          basePrice: '249.00',
-          startDate: '2025-06-19',
-          endDate: '2025-06-21',
-          location: 'Clay-Chalkville Middle School, Birmingham, AL',
-          status: 'active'
-        };
-        console.log('✅ Using hardcoded Birmingham Slam Camp data');
-      } else {
-        try {
-          event = await storage.getEventBySlug(eventId);
-          console.log('✅ Found event in database:', event?.title);
-        } catch (dbError) {
-          console.error('❌ Database lookup failed:', dbError);
-          event = null;
-        }
-      }
-      
-      if (!event) {
-        console.error(`❌ Event not found for ID: ${eventId}`);
-        return res.status(404).json({ 
-          error: "Event not found", 
-          eventId,
-          userFriendlyMessage: "The event you're trying to register for could not be found. Please try again or contact support."
-        });
-      }
-
-      // Validate registration data with detailed logging
-      if (!registrationData) {
-        console.error('❌ No registration data provided');
-        return res.status(400).json({
-          error: "No registration data provided",
-          userFriendlyMessage: "Registration information is missing. Please fill out the registration form completely."
-        });
-      }
-
-      const missingFields = [];
-      if (!registrationData.email) missingFields.push('email');
-      if (!registrationData.firstName) missingFields.push('firstName');
-      if (!registrationData.lastName) missingFields.push('lastName');
-
-      if (missingFields.length > 0) {
-        console.error('❌ Missing required fields:', missingFields);
-        return res.status(400).json({
-          error: "Missing required registration data",
-          required: ["email", "firstName", "lastName"],
-          missing: missingFields,
-          userFriendlyMessage: `Please complete all required fields: ${missingFields.join(', ')}`
-        });
-      }
-
-      // Calculate amount with proper null/undefined handling
-      let amount: number;
-      console.log(`🔍 Discount amount received: ${discountedAmount} (type: ${typeof discountedAmount})`);
-      
-      if (discountedAmount !== undefined && discountedAmount !== null && typeof discountedAmount === 'number') {
-        amount = discountedAmount;
-        console.log(`💰 Using discounted amount: $${amount}`);
-      } else {
-        const basePrice = parseFloat(event.basePrice || "249");
-        amount = option === "1day" ? basePrice * 0.5 : basePrice;
-        console.log(`💰 Calculated amount: $${amount} (base: $${basePrice}, option: ${option})`);
-      }
-      
-      // Ensure minimum Stripe amount (50 cents)
-      if (amount > 0 && amount < 0.50) {
-        console.log(`⚠️ Amount too low for Stripe ($${amount}), setting to minimum $0.50`);
-        amount = 0.50;
-      }
-
-      // Handle free registrations
-      if (amount === 0) {
-        console.log('🆓 Processing free registration');
-        return res.json({
-          clientSecret: 'free_registration',
-          amount: 0,
-          eventId: event.id,
-          eventTitle: event.title,
-          isFreeRegistration: true
-        });
-      }
-
-      // Validate Stripe configuration before creating payment intent
-      if (!process.env.STRIPE_SECRET_KEY) {
-        console.error('❌ Stripe secret key not configured');
-        return res.status(500).json({
-          error: "Payment system not configured",
-          userFriendlyMessage: "Payment processing is temporarily unavailable. Please contact support."
-        });
-      }
-
-      // Validate Stripe key format
-      if (!process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
-        console.error('❌ Invalid Stripe secret key format');
-        return res.status(500).json({
-          error: "Payment system configuration error",
-          userFriendlyMessage: "Payment processing is temporarily unavailable. Please contact support."
-        });
-      }
-
-      // Create Stripe payment intent with comprehensive error handling
-      console.log('🔄 Creating Stripe payment intent...');
-      
-      let stripe;
-      try {
-        const stripeModule = await import("../stripe.js");
-        stripe = stripeModule.stripe;
-        console.log('✅ Stripe module loaded successfully');
-      } catch (importError) {
-        console.error('❌ Failed to import Stripe module:', importError);
-        return res.status(500).json({
-          error: "Payment system initialization failed",
-          userFriendlyMessage: "Payment processing is temporarily unavailable. Please try again."
-        });
-      }
-
-      // Validate customer data before creating payment intent
-      const customerValidationErrors = [];
-      
-      if (!registrationData.email || !registrationData.email.includes('@')) {
-        customerValidationErrors.push('Valid email address is required');
-      }
-      if (!registrationData.firstName || registrationData.firstName.trim().length < 2) {
-        customerValidationErrors.push('First name is required');
-      }
-      if (!registrationData.lastName || registrationData.lastName.trim().length < 2) {
-        customerValidationErrors.push('Last name is required');
-      }
-
-      if (customerValidationErrors.length > 0) {
-        console.error('❌ Customer validation failed:', customerValidationErrors);
-        return res.status(400).json({
-          error: "Registration data validation failed",
-          validationErrors: customerValidationErrors,
-          userFriendlyMessage: "Please check your registration information and try again."
-        });
-      }
-
-      // Create payment intent directly (bypass error logging for now)
-      let paymentIntent;
-      try {
-        paymentIntent = await stripe.paymentIntents.create({
-          amount: Math.round(amount * 100), // Convert to cents
-          currency: 'usd',
-          automatic_payment_methods: {
-            enabled: true,
-          },
-          metadata: {
-            eventId: event.id,
-            eventSlug: event.slug || 'birmingham-slam-camp',
-            eventTitle: event.title,
-            customerEmail: registrationData.email,
-            customerName: `${registrationData.firstName} ${registrationData.lastName}`,
-            participantFirstName: registrationData.firstName,
-            participantLastName: registrationData.lastName,
-            schoolName: registrationData.schoolName || '',
-            age: registrationData.age || registrationData.grade || '',
-            contactName: registrationData.contactName || '',
-            phone: registrationData.phone || '',
-            waiverAccepted: String(registrationData.medicalReleaseAccepted || registrationData.waiverAccepted || false),
-            registrationType: 'individual',
-            option: option,
-            discountCode: discountCode || '',
-            createShopifyOrder: 'true',
-            source: 'birmingham_slam_camp_registration'
-          }
-        });
-        
-        console.log('✅ Payment intent created successfully:', paymentIntent.id);
-      } catch (stripeError) {
-        console.error('❌ Stripe payment intent creation failed after retries:', stripeError);
-        
-        // Provide specific error messages based on error type
-        let userMessage = "Unable to set up payment processing. Please try again.";
-        if (stripeError.code === 'parameter_invalid_empty') {
-          userMessage = "Missing required payment information. Please check all fields are filled out.";
-        } else if (stripeError.code === 'amount_too_small') {
-          userMessage = "Payment amount is too small. Please contact support.";
-        } else if (stripeError.type === 'card_error') {
-          userMessage = "There was an issue with your payment method. Please try a different card.";
-        }
-        
-        return res.status(500).json({
-          error: "Payment intent creation failed",
-          message: stripeError instanceof Error ? stripeError.message : "Unknown Stripe error",
-          userFriendlyMessage: userMessage
-        });
-      }
-
-      if (!paymentIntent || !paymentIntent.client_secret) {
-        console.error('❌ Invalid payment intent response from Stripe');
-        return res.status(500).json({
-          error: "Invalid payment intent response",
-          userFriendlyMessage: "Payment setup failed. Please try again or contact support."
-        });
-      }
-
-      console.log('✅ Payment intent setup complete, sending response');
-      
-      res.json({
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id,
-        amount: amount,
-        eventId: event.id,
-        eventTitle: event.title,
-        success: true
-      });
-
-    } catch (error) {
-      console.error("❌ Unexpected error in payment intent creation:", error);
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-      
-      res.status(500).json({ 
-        error: "Payment intent creation failed",
-        message: error instanceof Error ? error.message : "Unknown error",
-        userFriendlyMessage: "An unexpected error occurred while setting up your payment. Please try again or contact support if the issue persists."
-      });
-    }
-  });
+  // Payment intent creation is now handled by payment-intent.ts
 }

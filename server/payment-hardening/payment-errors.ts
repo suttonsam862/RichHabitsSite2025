@@ -1,9 +1,10 @@
 // Payment Error Logging and Recovery System
 // Comprehensive error tracking for all payment intent failures
 
-import { db } from '../db';
-import { errorLogs } from '@shared/schema';
-import { eq, desc } from 'drizzle-orm';
+// Temporarily disabled to fix Birmingham Slam Camp registration
+// import { db } from '../db';
+// import { errorLogs } from '@shared/schema';
+// import { eq, desc } from 'drizzle-orm';
 
 export interface PaymentError {
   timestamp: string;
