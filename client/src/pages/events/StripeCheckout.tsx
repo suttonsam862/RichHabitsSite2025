@@ -249,9 +249,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           },
           body: JSON.stringify({
             paymentIntentId: paymentIntent.id,
-            eventId: eventId,
-            amount: paymentIntent.amount,
-            ...registrationData
+            registrationData: registrationData
           }),
         });
 

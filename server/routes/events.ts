@@ -460,6 +460,82 @@ export function setupEventRoutes(app: Express): void {
     }
   });
 
+  // Payment success handler endpoint that frontend expects
+  app.post("/api/events/:eventId/stripe-payment-success", async (req: Request, res: Response) => {
+    try {
+      const { paymentIntentId, registrationData } = req.body;
+      const eventId = req.params.eventId;
+
+      if (!paymentIntentId) {
+        return res.status(400).json({ error: "Payment intent ID is required" });
+      }
+
+      // Verify payment with Stripe
+      const { stripe } = await import("../stripe.js");
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+      if (paymentIntent.status !== 'succeeded') {
+        return res.status(400).json({ error: "Payment not completed" });
+      }
+
+      // Get event details
+      let event;
+      if (eventId === '1' || eventId === 'birmingham-slam-camp') {
+        event = {
+          id: '1',
+          slug: 'birmingham-slam-camp',
+          title: 'Birmingham Slam Camp',
+          basePrice: '249.00',
+          startDate: '2025-06-19',
+          endDate: '2025-06-21',
+          location: 'Clay-Chalkville Middle School, Birmingham, AL'
+        };
+      } else {
+        event = await storage.getEventBySlug(eventId);
+      }
+
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+
+      // Create registration record
+      const registration = await storage.createEventRegistration({
+        eventId: event.id,
+        firstName: registrationData.firstName,
+        lastName: registrationData.lastName,
+        email: registrationData.email,
+        phone: registrationData.phone || null,
+        grade: registrationData.grade || null,
+        shirtSize: registrationData.tShirtSize || null,
+        parentName: registrationData.contactName || null,
+        schoolName: registrationData.schoolName || null,
+        clubName: registrationData.clubName || null,
+        registrationType: registrationData.registrationType || 'individual',
+        basePrice: (paymentIntent.amount / 100).toString(),
+        finalPrice: (paymentIntent.amount / 100).toString(),
+        waiverAccepted: true,
+        termsAccepted: true,
+        stripePaymentIntentId: paymentIntentId,
+        sessionId: req.sessionID,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent')
+      });
+
+      res.json({
+        success: true,
+        registrationId: registration.id,
+        eventTitle: event.title
+      });
+
+    } catch (error) {
+      console.error("Payment success handler error:", error);
+      res.status(500).json({ 
+        error: "Failed to process payment success",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Stripe payment intent creation endpoint - bulletproof security
   app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
     try {

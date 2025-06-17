@@ -26,7 +26,7 @@ localPort = 4000
 externalPort = 3001
 
 [workflows]
-runButton = "Start Dev Server"
+runButton = "Start Server"
 
 [[workflows.workflow]]
 name = "Start Dev Server"
@@ -40,3 +40,16 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Start Server"
+author = 41090967
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"node.*server\" || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
