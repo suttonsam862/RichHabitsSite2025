@@ -121,6 +121,8 @@ export default function Contact() {
                   <i className="icon ion-md-call text-2xl"></i>
                 </div>
                 <h3 className="text-xl font-medium mb-3">Phone</h3>
+                <p className="text-gray-700 mb-2">Call us at:</p>
+                <a href="tel:+15038191590" className="text-[hsl(var(--accent))] hover:underline">+1 (503) 819-1590</a>
                 <p className="text-gray-700 mb-2">Customer Service:</p>
                 <a href="tel:+14808104477" className="text-[hsl(var(--accent))] hover:underline">+1 (480) 810-4477</a>
                 

@@ -103,7 +103,7 @@ export function Footer() {
               </li>
               <li>
                 <p className="text-gray-600" style={{ fontFamily: "'Didact Gothic', sans-serif" }}>
-                  <span className="font-medium">Phone:</span> +1 (480) 810-4477
+                  <span className="font-medium">Phone:</span> +1 (503) 819-1590
                 </p>
               </li>
               <li>
