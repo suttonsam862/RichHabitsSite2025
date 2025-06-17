@@ -48,8 +48,13 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill -f \"node.*server\" || true"
+args = "node run-preview.js"
+
+[[workflows.workflow]]
+name = "Production Server"
+author = 41090967
+mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "node run-production.js"
