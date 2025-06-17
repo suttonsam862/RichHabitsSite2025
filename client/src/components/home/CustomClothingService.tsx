@@ -5,17 +5,17 @@ import Container from "../layout/Container";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-// Define design images with absolute URLs to attached_assets
+// Define design images pulling from production server to match live site
 const designImages = [
-  "/attached_assets/BrooksMockupFinal.png",
-  "/attached_assets/CaneNationMockup.png",
-  "/attached_assets/NormalChromeMockup1.png",
-  "/attached_assets/NickPoloMockupFinal.png",
-  "/attached_assets/ElevateMockup5.png",
-  "/attached_assets/BraggMockup.png",
-  "/attached_assets/BlueRashguardMockup.png",
-  "/attached_assets/BlackRashgaurdMockup.png",
-  "/attached_assets/ClassicRashguardMockup.png"
+  "https://rich-habits.com/attached_assets/BrooksMockupFinal.png",
+  "https://rich-habits.com/attached_assets/CaneNationMockup.png", 
+  "https://rich-habits.com/attached_assets/NormalChromeMockup1.png",
+  "https://rich-habits.com/attached_assets/NickPoloMockupFinal.png",
+  "https://rich-habits.com/attached_assets/ElevateMockup5.png",
+  "https://rich-habits.com/attached_assets/BraggMockup.png",
+  "https://rich-habits.com/attached_assets/BlueRashguardMockup.png",
+  "https://rich-habits.com/attached_assets/BlackRashgaurdMockup.png",
+  "https://rich-habits.com/attached_assets/ClassicRashguardMockup.png"
 ];
 
 export function CustomClothingService() {

@@ -42,18 +42,18 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
         <Link href="/">
           <motion.img 
-            src="/rich-habits-logo.svg"
+            src="/Cursive-Logo.webp"
             alt="Rich Habits"
             className="h-6 md:h-8 w-auto cursor-pointer"
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.2 }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              // Fallback to WebP logo, then to basic SVG if needed
-              if (target.src.includes('rich-habits-logo.svg')) {
-                target.src = '/Cursive-Logo.webp';
-              } else if (target.src.includes('Cursive-Logo.webp')) {
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgMTAwIDQwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmMzMzMzMiLz48dGV4dCB4PSI1MCIgeT0iMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlJIPC90ZXh0Pjwvc3ZnPg==';
+              // Fallback to production server if local fails
+              if (!target.src.includes('rich-habits.com')) {
+                target.src = 'https://rich-habits.com/Cursive-Logo.webp';
+              } else {
+                target.src = '/rich-habits-logo.svg';
               }
             }}
           />

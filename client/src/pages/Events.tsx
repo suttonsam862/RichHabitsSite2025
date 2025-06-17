@@ -33,8 +33,8 @@ export default function Events() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/videos/events-hero.webm" type="video/webm" />
-          <source src="/videos/events-hero.mp4" type="video/mp4" />
+          <source src="https://rich-habits.com/videos/events-hero.webm" type="video/webm" />
+          <source src="https://rich-habits.com/videos/events-hero.mp4" type="video/mp4" />
           {/* Fallback for browsers that don't support video */}
         </video>
         
