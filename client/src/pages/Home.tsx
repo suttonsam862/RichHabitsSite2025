@@ -256,20 +256,20 @@ export default function Home() {
       </section>
 
       {/* SUMMER 2025 CAMPS VIDEO SECTION */}
-      <section className="py-24 relative h-96 overflow-hidden gradient-summer gradient-overlay">
+      <section className="py-24 relative h-96 overflow-hidden gradient-summer gradient-overlay group cursor-pointer transition-all duration-500 hover:bg-gradient-to-br hover:from-red-600 hover:via-orange-500 hover:to-yellow-400">
         {/* Background Video */}
         <video 
           autoPlay 
           muted 
           loop 
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         >
           <source src="/videos/hero-video.mp4" type="video/mp4" />
         </video>
         
-        {/* Bright white overlay */}
-        <div className="absolute inset-0 bg-white bg-opacity-80"></div>
+        {/* Bright white overlay with hover effect */}
+        <div className="absolute inset-0 bg-white bg-opacity-80 group-hover:bg-opacity-20 transition-all duration-500"></div>
         
         {/* Content */}
         <div className="container mx-auto px-4 h-full flex items-center justify-center relative z-10">
@@ -278,14 +278,14 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center"
+            className="text-center group-hover:scale-105 transition-transform duration-500"
           >
-            <h2 className="text-5xl md:text-6xl font-bold mb-8 text-black title-font">
+            <h2 className="text-5xl md:text-6xl font-bold mb-8 text-black title-font group-hover:text-white transition-colors duration-500">
               Summer 2025 Camps
             </h2>
             
             <Link href="/events">
-              <span className="inline-block bg-black text-white px-12 py-4 text-xl font-bold hover:bg-gray-800 transition-colors cursor-pointer rounded-lg shadow-lg">
+              <span className="inline-block bg-black text-white px-12 py-4 text-xl font-bold hover:bg-white hover:text-black transition-colors cursor-pointer rounded-lg shadow-lg group-hover:shadow-2xl">
                 View Our Events
               </span>
             </Link>
