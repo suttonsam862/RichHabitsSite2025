@@ -68,34 +68,153 @@ async function startServer() {
       });
     });
 
-    app.get("/images/*", (req, res) => {
-      const filePath = path.join(publicPath, req.path);
-      res.sendFile(filePath, (err) => {
-        if (err) {
-          console.log(`Image not found: ${req.path}`);
-          res.status(404).send('Image not found');
+    // Enhanced image serving with production fallback
+    app.get("/images/*", async (req, res) => {
+      const localPath = path.join(publicPath, req.path);
+      
+      // Try local file first
+      if (existsSync(localPath)) {
+        return res.sendFile(localPath);
+      }
+      
+      // Fallback to production server
+      try {
+        const productionUrl = `https://rich-habits.com${req.path}`;
+        const response = await fetch(productionUrl);
+        
+        if (response.ok) {
+          console.log(`Serving from production: ${req.path}`);
+          response.headers.forEach((value, key) => {
+            res.setHeader(key, value);
+          });
+          const buffer = await response.arrayBuffer();
+          return res.send(Buffer.from(buffer));
         }
-      });
+      } catch (error) {
+        console.log(`Production fallback failed for ${req.path}`);
+      }
+      
+      res.status(404).send('Image not found');
     });
 
-    app.get("/assets/*", (req, res) => {
-      const filePath = path.join(publicPath, req.path);
-      res.sendFile(filePath, (err) => {
-        if (err) {
-          console.log(`Asset not found: ${req.path}`);
-          res.status(404).send('Asset not found');
+    app.get("/assets/*", async (req, res) => {
+      const localPath = path.join(publicPath, req.path);
+      
+      // Try local file first
+      if (existsSync(localPath)) {
+        return res.sendFile(localPath);
+      }
+      
+      // Fallback to production server
+      try {
+        const productionUrl = `https://rich-habits.com${req.path}`;
+        const response = await fetch(productionUrl);
+        
+        if (response.ok) {
+          console.log(`Serving asset from production: ${req.path}`);
+          const buffer = await response.arrayBuffer();
+          
+          // Set appropriate content type
+          const ext = req.path.split('.').pop()?.toLowerCase();
+          const contentType = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'svg': 'image/svg+xml'
+          }[ext || ''] || 'image/jpeg';
+          
+          res.setHeader('Content-Type', contentType);
+          return res.send(Buffer.from(buffer));
         }
-      });
+      } catch (error) {
+        console.log(`Production asset fallback failed for ${req.path}`);
+      }
+      
+      res.status(404).send('Asset not found');
     });
 
-    // Generic image file handler
-    app.get(/.*\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i, (req, res) => {
-      const filePath = path.join(publicPath, req.path);
-      res.sendFile(filePath, (err) => {
-        if (err) {
-          res.status(404).send('Image not found');
+    // Handle attached_assets requests with production fallback
+    app.get("/attached_assets/*", async (req, res) => {
+      const localPath = path.join(attachedAssetsPath, req.path.replace('/attached_assets/', ''));
+      
+      // Try local file first
+      if (existsSync(localPath)) {
+        return res.sendFile(localPath);
+      }
+      
+      // Fallback to production server
+      try {
+        const productionUrl = `https://rich-habits.com${req.path}`;
+        const response = await fetch(productionUrl);
+        
+        if (response.ok) {
+          console.log(`Serving attached asset from production: ${req.path}`);
+          const buffer = await response.arrayBuffer();
+          
+          // Set appropriate content type
+          const ext = req.path.split('.').pop()?.toLowerCase();
+          const contentType = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'svg': 'image/svg+xml'
+          }[ext || ''] || 'image/jpeg';
+          
+          res.setHeader('Content-Type', contentType);
+          return res.send(Buffer.from(buffer));
         }
-      });
+      } catch (error) {
+        console.log(`Production attached asset fallback failed for ${req.path}`);
+      }
+      
+      res.status(404).send('Attached asset not found');
+    });
+
+    // Generic image file handler with production fallback
+    app.get(/.*\.(jpg|jpeg|png|gif|svg|webp|ico|mp4|mov|webm)$/i, async (req, res) => {
+      const filePath = path.join(publicPath, req.path);
+      
+      // Try local file first
+      if (existsSync(filePath)) {
+        return res.sendFile(filePath);
+      }
+      
+      // Fallback to production server
+      try {
+        const productionUrl = `https://rich-habits.com${req.path}`;
+        const response = await fetch(productionUrl);
+        
+        if (response.ok) {
+          console.log(`Serving file from production: ${req.path}`);
+          const buffer = await response.arrayBuffer();
+          
+          // Set appropriate content type
+          const ext = req.path.split('.').pop()?.toLowerCase();
+          const contentType = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'svg': 'image/svg+xml',
+            'ico': 'image/x-icon',
+            'mp4': 'video/mp4',
+            'mov': 'video/quicktime',
+            'webm': 'video/webm'
+          }[ext || ''] || 'application/octet-stream';
+          
+          res.setHeader('Content-Type', contentType);
+          return res.send(Buffer.from(buffer));
+        }
+      } catch (error) {
+        console.log(`Production file fallback failed for ${req.path}`);
+      }
+      
+      res.status(404).send('File not found');
     });
 
     // Directory-specific routes
