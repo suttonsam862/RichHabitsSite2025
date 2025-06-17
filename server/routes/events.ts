@@ -769,46 +769,35 @@ export function setupEventRoutes(app: Express): void {
         });
       }
 
-      // Import payment retry handler for better reliability
-      const { PaymentRetryHandler } = await import('../payment-hardening/payment-errors.js');
-      
+      // Create payment intent directly (bypass error logging for now)
       let paymentIntent;
       try {
-        // Use retry handler for payment intent creation
-        paymentIntent = await PaymentRetryHandler.retryPaymentIntent(
-          async () => {
-            return await stripe.paymentIntents.create({
-              amount: Math.round(amount * 100), // Convert to cents
-              currency: 'usd',
-              automatic_payment_methods: {
-                enabled: true,
-              },
-              metadata: {
-                eventId: event.id,
-                eventSlug: event.slug || 'birmingham-slam-camp',
-                eventTitle: event.title,
-                customerEmail: registrationData.email,
-                customerName: `${registrationData.firstName} ${registrationData.lastName}`,
-                participantFirstName: registrationData.firstName,
-                participantLastName: registrationData.lastName,
-                schoolName: registrationData.schoolName || '',
-                age: registrationData.age || registrationData.grade || '',
-                contactName: registrationData.contactName || '',
-                phone: registrationData.phone || '',
-                waiverAccepted: String(registrationData.medicalReleaseAccepted || registrationData.waiverAccepted || false),
-                registrationType: 'individual',
-                option: option,
-                discountCode: discountCode || '',
-                createShopifyOrder: 'true',
-                source: 'birmingham_slam_camp_registration'
-              }
-            });
+        paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(amount * 100), // Convert to cents
+          currency: 'usd',
+          automatic_payment_methods: {
+            enabled: true,
           },
-          req.sessionID,
-          registrationData,
-          req.ip || 'unknown',
-          req.get('User-Agent') || 'unknown'
-        );
+          metadata: {
+            eventId: event.id,
+            eventSlug: event.slug || 'birmingham-slam-camp',
+            eventTitle: event.title,
+            customerEmail: registrationData.email,
+            customerName: `${registrationData.firstName} ${registrationData.lastName}`,
+            participantFirstName: registrationData.firstName,
+            participantLastName: registrationData.lastName,
+            schoolName: registrationData.schoolName || '',
+            age: registrationData.age || registrationData.grade || '',
+            contactName: registrationData.contactName || '',
+            phone: registrationData.phone || '',
+            waiverAccepted: String(registrationData.medicalReleaseAccepted || registrationData.waiverAccepted || false),
+            registrationType: 'individual',
+            option: option,
+            discountCode: discountCode || '',
+            createShopifyOrder: 'true',
+            source: 'birmingham_slam_camp_registration'
+          }
+        });
         
         console.log('✅ Payment intent created successfully:', paymentIntent.id);
       } catch (stripeError) {
