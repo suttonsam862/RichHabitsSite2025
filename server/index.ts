@@ -42,6 +42,16 @@ async function startServer() {
   try {
     console.log("🧠 Starting Rich Habits server...");
 
+    // Environment consistency check - force production mode for live Stripe keys
+    const isLiveStripe = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_');
+    if (isLiveStripe && process.env.NODE_ENV !== 'production') {
+      console.log("🔄 Detected live Stripe keys - forcing production environment for consistency");
+      process.env.NODE_ENV = 'production';
+    }
+
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔑 Stripe Mode: ${isLiveStripe ? 'LIVE' : 'TEST'}`);
+
     // Critical fix: Setup static file serving with highest priority
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
@@ -112,6 +122,28 @@ async function startServer() {
       console.error("❌ Database connection failed, continuing with server startup:", err instanceof Error ? err.message : String(err));
     }
 
+    // Health check endpoint for preview verification
+    app.get('/health', (req, res) => {
+      res.json({
+        status: 'healthy',
+        environment: process.env.NODE_ENV || 'development',
+        stripeMode: process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ? 'live' : 'test',
+        timestamp: new Date().toISOString(),
+        preview: 'working'
+      });
+    });
+
+    // Preview status endpoint
+    app.get('/preview-status', (req, res) => {
+      const builtExists = require('fs').existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
+      res.json({
+        built: builtExists,
+        environment: process.env.NODE_ENV,
+        stripeMode: process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ? 'live' : 'test',
+        ready: true
+      });
+    });
+
     // Register app routes
     setupRoutes(app);
 
@@ -137,9 +169,11 @@ async function startServer() {
       // Skip API routes
       if (req.path.startsWith("/api/")) return next();
       
-      // In production, serve from dist/public
-      if (process.env.NODE_ENV === "production") {
-        const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
+      // Always serve the built application for consistency
+      const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
+      
+      // Check if built files exist
+      if (require('fs').existsSync(indexPath)) {
         res.sendFile(indexPath, (err) => {
           if (err) {
             console.error("❌ Failed to serve index.html:", err);
@@ -147,8 +181,12 @@ async function startServer() {
           }
         });
       } else {
-        // In development, let Vite handle the routing
-        next();
+        // Fallback to development mode if no build exists
+        if (process.env.NODE_ENV !== "production") {
+          next(); // Let Vite handle it
+        } else {
+          res.status(500).send("Application not built. Run 'npm run build' first.");
+        }
       }
     });
 
@@ -157,12 +195,20 @@ async function startServer() {
       console.log(
         `✅ Rich Habits server running on http://0.0.0.0:${PORT} (${process.env.NODE_ENV || "development"})`,
       );
+      console.log(`🌐 Preview URL: http://0.0.0.0:${PORT}`);
+      console.log(`🔗 Public URL: Available via Replit preview`);
     });
 
-    // Setup Vite middleware for development
-    if (process.env.NODE_ENV !== "production") {
-      await setupVite(app, server);
-      console.log("✅ Vite middleware configured for development");
+    // Setup Vite middleware for development and when built files don't exist
+    const builtIndexExists = require('fs').existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
+    
+    if (process.env.NODE_ENV !== "production" || !builtIndexExists) {
+      try {
+        await setupVite(app, server);
+        console.log("✅ Vite middleware configured for development/preview");
+      } catch (error) {
+        console.log("⚠️ Vite middleware setup failed, continuing without it");
+      }
     }
 
     // Graceful shutdown

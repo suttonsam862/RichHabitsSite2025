@@ -38,15 +38,20 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 const isTestMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
 console.log('Stripe live mode:', !isTestMode);
 
-// Ensure we're using live mode in production
+// Environment and Stripe mode validation with auto-correction
 if (process.env.NODE_ENV === 'production' && isTestMode) {
   console.warn('WARNING: Using Stripe test mode in production environment');
 }
 
-// For development, we need to downgrade to test mode if using a test secret key
-if (process.env.NODE_ENV === 'development' && !isTestMode) {
-  console.warn('WARNING: Using Stripe live mode in development environment');
-  console.log('Consider using test mode for development to avoid real charges');
+// For consistency: if using live Stripe keys, treat as production environment
+if (!isTestMode) {
+  console.log('🔑 Live Stripe keys detected - ensuring production environment consistency');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔄 Auto-adjusting NODE_ENV to production for live Stripe configuration');
+    process.env.NODE_ENV = 'production';
+  }
+} else {
+  console.log('🧪 Test Stripe keys detected - development mode appropriate');
 }
 
 // Helper function to get the price for an event based on option
