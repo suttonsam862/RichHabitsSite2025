@@ -1,0 +1,54 @@
+X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.Understand this error
+index-QPkNqGqP.js:146 Stripe key available: true pk_live_51...
+index-QPkNqGqP.js:159 main.tsx executing
+index-QPkNqGqP.js:159 Root element found: <div id=​"root">​…​</div>​<div class=​"flex flex-col min-h-screen">​…​</div>​flex<header class=​"fixed w-full top-0 z-40 transition-all duration-300 bg-transparent py-4 md:​py-6">​…​</header>​<main class=​"flex-grow pt-16">​…​</main>​<div class=​"min-h-screen bg-gray-50 pt-24 pb-20">​…​</div>​<div class=​"container mx-auto px-6">​…​</div>​<div class=​"max-w-4xl mx-auto">​…​</div>​<div class=​"mb-12 text-center" style=​"opacity:​ 0;​ transform:​ translateY(15.5303px)​;​">​…​</div>​<div class=​"mb-12">​…​</div>​<div style=​"opacity:​ 0;​ transform:​ translateY(15.5303px)​;​">​…​</div>​<div class=​"bg-white border border-gray-200 p-8 mb-8">​…​</div>​<h2 class=​"text-2xl mb-6" style=​"font-family:​ "Bodoni FLF", serif;​">​Registration Options​</h2>​<div class=​"bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200 rounded-lg p-4 mb-6">​…​</div>​<div class=​"space-y-4 mb-8">​…​</div>​<hr class=​"my-8">​<h2 class=​"text-2xl mb-6" style=​"font-family:​ "Bodoni FLF", serif;​">​Personal Information​</h2>​<div class=​"grid grid-cols-1 md:​grid-cols-2 gap-6 mb-8">​…​</div>​grid<div>​…​</div>​<div>​…​</div>​<div>​…​</div>​<label for=​"email" class=​"block mb-2 text-gray-800" style=​"font-family:​ Sanchez, serif;​">​Email *​</label>​<input type=​"email" id=​"email" name=​"email" class=​"w-full p-3 border border-gray-300 focus:​outline-none focus:​border-gray-900" value style=​"font-family:​ Arial, sans-serif;​">​</div>​<div>​…​</div>​<label for=​"phone" class=​"block mb-2 text-gray-800" style=​"font-family:​ Sanchez, serif;​">​Phone Number *​</label>​<input type=​"tel" id=​"phone" name=​"phone" class=​"w-full p-3 border border-gray-300 focus:​outline-none focus:​border-gray-900" value style=​"font-family:​ Arial, sans-serif;​">​</div>​<div>​…​</div>​<div>​…​</div>​<div>​…​</div>​<div>​…​</div>​</div>​<hr class=​"my-8">​<h2 class=​"text-2xl mb-6" style=​"font-family:​ "Bodoni FLF", serif;​">​Emergency Contact​</h2>​<div class=​"grid grid-cols-1 md:​grid-cols-2 gap-6 mb-8">​…​</div>​grid<div class=​"mb-8">​…​</div>​<div class=​"mb-8">​…​</div>​<div class=​"flex justify-between">​…​</div>​flex</div>​</div>​</div>​</div>​</div>​</main>​<footer class=​"bg-gray-100 border-t border-gray-200">​…​</footer>​</div>​<div id=​"toaster" class=​"fixed top-0 right-0 z-50 p-4 space-y-4 w-full max-w-xs">​</div>​</div>​
+index-QPkNqGqP.js:159 Creating React root...
+index-QPkNqGqP.js:159 Rendering React app...
+index-QPkNqGqP.js:159 React app rendered successfully
+index-QPkNqGqP.js:159 
+            
+            
+           POST https://rich-habits.com/api/events/1/create-payment-intent 404 (Not Found)
+(anonymous) @ index-QPkNqGqP.js:159
+(anonymous) @ index-QPkNqGqP.js:159
+ol @ vendor-CMxOnrTY.js:32
+Gn @ vendor-CMxOnrTY.js:32
+id @ vendor-CMxOnrTY.js:32
+gn @ vendor-CMxOnrTY.js:32
+Ii @ vendor-CMxOnrTY.js:32
+mn @ vendor-CMxOnrTY.js:30
+(anonymous) @ vendor-CMxOnrTY.js:32Understand this error
+index-QPkNqGqP.js:159 Server response: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/events/1/create-payment-intent</pre>
+</body>
+</html>
+
+index-QPkNqGqP.js:159 Non-JSON response received: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/events/1/create-payment-intent</pre>
+</body>
+</html>
+
+(anonymous) @ index-QPkNqGqP.js:159
+await in (anonymous)
+(anonymous) @ index-QPkNqGqP.js:159
+ol @ vendor-CMxOnrTY.js:32
+Gn @ vendor-CMxOnrTY.js:32
+id @ vendor-CMxOnrTY.js:32
+gn @ vendor-CMxOnrTY.js:32
+Ii @ vendor-CMxOnrTY.js:32
+mn @ vendor-CMxOnrTY.js:30
+(anonymous) @ vendor-CMxOnrTY.js:32Understand this error
+index-QPkNqGqP.js:159 Failed to set up payment: Error: Payment system is temporarily unavailable. Please try again in a few moments.
+    at index-QPkNqGqP.js:159:15756
