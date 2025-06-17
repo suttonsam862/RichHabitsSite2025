@@ -117,4 +117,4 @@ const setupCleanPayment = (app) => {
   });
 };
 
-module.exports = { setupCleanPayment };
+export { setupCleanPayment };

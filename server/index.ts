@@ -149,11 +149,11 @@ async function startServer() {
 
     // Priority: Clean payment setup for Birmingham Slam Camp (bypasses all import issues)
     try {
-      const { setupCleanPayment } = require("./clean-payment.js");
-      setupCleanPayment(app);
+      const cleanPaymentModule = await import("./clean-payment.js");
+      cleanPaymentModule.setupCleanPayment(app);
       console.log("✅ Clean payment endpoint registered for Birmingham Slam Camp");
     } catch (err) {
-      console.log("Clean payment setup failed:", err.message);
+      console.log("Clean payment setup failed, using fallback routes");
     }
 
     // Register app routes
