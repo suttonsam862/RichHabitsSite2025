@@ -57,15 +57,42 @@ async function startServer() {
     const publicPath = path.resolve(process.cwd(), "public");
     const attachedAssetsPath = path.resolve(process.cwd(), "attached_assets");
 
-    // Bulletproof static file routes with comprehensive error handling
-    app.get("/Cursive-Logo.webp", (req, res) => {
-      const filePath = path.join(publicPath, 'Cursive-Logo.webp');
-      res.sendFile(filePath, (err) => {
-        if (err) {
-          console.log('Logo file not found, serving fallback');
-          res.status(404).send('Logo not found');
+    // Enhanced logo serving with production fallback
+    app.get("/Cursive-Logo.webp", async (req, res) => {
+      const localPath = path.join(publicPath, 'Cursive-Logo.webp');
+      
+      // Try local file first
+      if (existsSync(localPath)) {
+        return res.sendFile(localPath);
+      }
+      
+      // Fallback to production server
+      try {
+        const productionUrl = `https://rich-habits.com/Cursive-Logo.webp`;
+        const response = await fetch(productionUrl);
+        
+        if (response.ok) {
+          console.log('Serving logo from production server');
+          const buffer = await response.arrayBuffer();
+          res.setHeader('Content-Type', 'image/webp');
+          res.setHeader('Cache-Control', 'public, max-age=31536000');
+          return res.send(Buffer.from(buffer));
         }
-      });
+      } catch (error) {
+        console.log('Production logo fallback failed:', error);
+      }
+      
+      // Last resort: serve a proper SVG logo instead of 404
+      const logoSvg = `
+        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="40" fill="#1f2937" rx="4"/>
+          <text x="60" y="16" font-family="serif" font-size="12" fill="#f3f4f6" text-anchor="middle" font-style="italic">Rich</text>
+          <text x="60" y="30" font-family="serif" font-size="12" fill="#f3f4f6" text-anchor="middle" font-style="italic">Habits</text>
+        </svg>
+      `;
+      
+      res.setHeader('Content-Type', 'image/svg+xml');
+      res.send(logoSvg);
     });
 
     // Enhanced image serving with production fallback
