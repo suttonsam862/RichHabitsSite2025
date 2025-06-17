@@ -169,10 +169,10 @@ async function startServer() {
     app.get("*", (req, res, next) => {
       // Skip API routes
       if (req.path.startsWith("/api/")) return next();
-      
+
       // Always serve the built application for consistency
       const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
-      
+
       // Check if built files exist
       if (require('fs').existsSync(indexPath)) {
         res.sendFile(indexPath, (err) => {
@@ -202,7 +202,7 @@ async function startServer() {
 
     // Setup Vite middleware for development and when built files don't exist
     const builtIndexExists = existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
-    
+
     if (process.env.NODE_ENV !== "production" || !builtIndexExists) {
       try {
         await setupVite(app, server);

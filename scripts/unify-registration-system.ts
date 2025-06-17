@@ -1,3 +1,6 @@
+// Migrate all registration data to single table with event_type column
+// Drop fragmented event-specific tables
+// Implement proper foreign key constraints
 
 import { neon } from '@neondatabase/serverless';
 import { writeFileSync } from 'fs';

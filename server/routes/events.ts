@@ -266,8 +266,9 @@ export function setupEventRoutes(app: Express): void {
   // Event registration submission endpoint with bulletproof field mapping
   app.post("/api/event-registration", async (req: Request, res: Response) => {
     try {
-      // Validate and sanitize input using Zod
-      const validationResult = frontendRegistrationSchema.safeParse(req.body);
+      // Import centralized validator
+      const { PaymentValidator } = await import('../payment-hardening/payment-validator.js');
+      const validationResult = PaymentValidator.validateCompletePaymentRequest(req.body, req.sessionID);
       
       if (!validationResult.success) {
         console.error("Validation errors:", validationResult.error.issues);
