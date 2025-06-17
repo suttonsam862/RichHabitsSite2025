@@ -125,6 +125,7 @@ Rich Habits is a full-stack web application for managing wrestling event registr
 - TypeScript compilation with strict type checking
 
 ## Changelog
+- June 17, 2025: **PRODUCTION FIX** Fixed Birmingham Slam Camp payment error in deployed domain by converting CommonJS require() to ES module import() in dist/index.js
 - June 17, 2025: **RESOLVED** Birmingham Slam Camp registration error - implemented clean payment endpoint with ES module exports
 - June 17, 2025: Server successfully running with clean payment processing for event registrations
 - June 17, 2025: Fixed Birmingham Slam Camp registration error by resolving module import conflict with errorLogs schema
