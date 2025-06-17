@@ -130,13 +130,15 @@ async function startServer() {
         environment: process.env.NODE_ENV || 'development',
         stripeMode: process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') ? 'live' : 'test',
         timestamp: new Date().toISOString(),
-        preview: 'working'
+        preview: 'working',
+        port: PORT,
+        builtFiles: existsSync(path.resolve(process.cwd(), "dist/public/index.html"))
       });
     });
 
     // Preview status endpoint
     app.get('/preview-status', (req, res) => {
-      const builtExists = require('fs').existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
+      const builtExists = existsSync(path.resolve(process.cwd(), "dist/public/index.html"));
       res.json({
         built: builtExists,
         environment: process.env.NODE_ENV,
@@ -174,7 +176,7 @@ async function startServer() {
       const indexPath = path.resolve(process.cwd(), "dist/public/index.html");
 
       // Check if built files exist
-      if (require('fs').existsSync(indexPath)) {
+      if (existsSync(indexPath)) {
         res.sendFile(indexPath, (err) => {
           if (err) {
             console.error("❌ Failed to serve index.html:", err);
@@ -191,7 +193,7 @@ async function startServer() {
       }
     });
 
-    const PORT = parseInt(process.env.PORT || "5000", 10);
+    const PORT = parseInt(process.env.PORT || "3000", 10);
     const server = app.listen(PORT, "0.0.0.0", () => {
       console.log(
         `✅ Rich Habits server running on http://0.0.0.0:${PORT} (${process.env.NODE_ENV || "development"})`,
@@ -208,7 +210,8 @@ async function startServer() {
         await setupVite(app, server);
         console.log("✅ Vite middleware configured for development/preview");
       } catch (error) {
-        console.log("⚠️ Vite middleware setup failed, continuing without it");
+        console.error("❌ Vite middleware setup failed:", error);
+        console.log("⚠️ Continuing without Vite middleware - preview may not work");
       }
     }
 
