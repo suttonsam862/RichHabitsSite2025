@@ -55,7 +55,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group gradient-valencia shimmer-effect"
+          className="relative h-[300px] md:h-[400px] w-full overflow-hidden cursor-pointer group bg-gradient-to-r from-red-600 to-orange-600"
           style={{
             backgroundImage: `url('/images/VALENCIA_Zahid-headshot.jpg')`,
             backgroundSize: 'cover',
@@ -332,7 +332,7 @@ export default function Home() {
       </section>
       
       {/* FRUIT HUNTERS PROMOTION SECTION */}
-      <section className="py-16 gradient-fruit shimmer-effect glow-pulse">
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-pink-600">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

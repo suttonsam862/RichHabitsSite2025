@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useCart } from "../../contexts/CartContext";
@@ -36,36 +36,25 @@ export function Header() {
   return (
     <header 
       className={`fixed w-full top-0 z-40 transition-all duration-300 ${
-        scrolled ? 'gradient-header-scrolled shadow-md py-2 md:py-3' : 'gradient-header-transparent py-4 md:py-6'
+        scrolled ? 'bg-white/95 backdrop-blur-md shadow-md py-2 md:py-3' : 'bg-white/80 backdrop-blur-sm py-4 md:py-6'
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
         <Link href="/">
-          <motion.div
-            className="flex items-center h-6 md:h-8 cursor-pointer"
-            whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.2 }}
-          >
-            <svg 
-              width="140" 
-              height="32" 
-              viewBox="0 0 140 32" 
-              className="h-full w-auto"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <style>
-                  {`.logo-text { font-family: 'Brush Script MT', cursive, serif; fill: #1f2937; font-weight: bold; }
-                   .logo-accent { fill: #dc2626; }`}
-                </style>
-              </defs>
-              <text x="5" y="14" className="logo-text" fontSize="12" fontStyle="italic">Rich</text>
-              <text x="5" y="26" className="logo-text" fontSize="12" fontStyle="italic">Habits</text>
-              <line x1="50" y1="16" x2="130" y2="16" stroke="#dc2626" strokeWidth="2" opacity="0.7"/>
-              <circle cx="120" cy="10" r="1.5" className="logo-accent"/>
-              <circle cx="126" cy="22" r="1" className="logo-accent"/>
-            </svg>
-          </motion.div>
+          <div className="flex items-center h-8 md:h-10 cursor-pointer">
+            <img 
+              src="/images/rich-habits-logo-black.webp" 
+              alt="Rich Habits Wrestling" 
+              className="h-full w-auto object-contain"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                if (img.dataset.fallbackAttempted !== 'true') {
+                  img.dataset.fallbackAttempted = 'true';
+                  img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMTQwIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjUiIHk9IjE0IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMxZjI5MzciPkhCSDwvdGV4dD48dGV4dCB4PSI1IiB5PSIyNiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjMWYyOTM3Ij5XSEVTVFRBSU5HPC90ZXh0Pjwvc3ZnPg==';
+                }
+              }}
+            />
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
