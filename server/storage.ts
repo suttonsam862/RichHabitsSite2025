@@ -21,58 +21,58 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: UserInsert): Promise<User>;
   updateUser(id: string, data: Partial<UserInsert>): Promise<User | undefined>;
-  
+
   // Event methods
   getEvents(): Promise<Event[]>;
   getEvent(id: string): Promise<Event | undefined>;
   getEventBySlug(slug: string): Promise<Event | undefined>;
   createEvent(event: EventInsert): Promise<Event>;
   updateEvent(id: string, data: Partial<EventInsert>): Promise<Event | undefined>;
-  
+
   // Event registration methods
   createEventRegistration(data: EventRegistrationInsert): Promise<EventRegistration>;
   getEventRegistration(id: string): Promise<EventRegistration | undefined>;
   getEventRegistrationsByEvent(eventId: string): Promise<EventRegistration[]>;
   getEventRegistrationByEmail(email: string, eventId: string): Promise<EventRegistration | undefined>;
   updateEventRegistration(id: string, data: Partial<EventRegistrationInsert>): Promise<EventRegistration | undefined>;
-  
+
   // Payment methods
   createPayment(payment: PaymentInsert): Promise<Payment>;
   getPayment(id: string): Promise<Payment | undefined>;
   getPaymentByStripeId(stripePaymentIntentId: string): Promise<Payment | undefined>;
   getPaymentsByUser(userId: string): Promise<Payment[]>;
   updatePayment(id: string, data: Partial<PaymentInsert>): Promise<Payment | undefined>;
-  
+
   // Custom order methods
   createCustomOrder(order: CustomOrderInsert): Promise<CustomOrder>;
   getCustomOrder(id: string): Promise<CustomOrder | undefined>;
   getCustomOrdersByCustomer(customerId: string): Promise<CustomOrder[]>;
   updateCustomOrder(id: string, data: Partial<CustomOrderInsert>): Promise<CustomOrder | undefined>;
-  
+
   // Retail sales methods
   createRetailSale(sale: RetailSaleInsert): Promise<RetailSale>;
   getRetailSale(id: string): Promise<RetailSale | undefined>;
   getRetailSalesByCustomer(customerId: string): Promise<RetailSale[]>;
-  
+
   // Site session methods
   createSiteSession(session: SiteSessionInsert): Promise<SiteSession>;
   getSiteSession(id: string): Promise<SiteSession | undefined>;
   updateSiteSession(id: string, data: Partial<SiteSessionInsert>): Promise<SiteSession | undefined>;
-  
+
   // Event feedback methods
   createEventFeedback(feedback: EventFeedbackInsert): Promise<EventFeedback>;
   getEventFeedbackByEvent(eventId: string): Promise<EventFeedback[]>;
-  
+
   // Event gear methods
   createEventGear(gear: EventGearInsert): Promise<EventGear>;
   getEventGearByRegistration(registrationId: string): Promise<EventGear[]>;
   updateEventGear(id: string, data: Partial<EventGearInsert>): Promise<EventGear | undefined>;
-  
+
   // Event attendance methods
   createEventAttendance(attendance: EventAttendanceInsert): Promise<EventAttendance>;
   getEventAttendanceByEvent(eventId: string): Promise<EventAttendance[]>;
   updateEventAttendance(id: string, data: Partial<EventAttendanceInsert>): Promise<EventAttendance | undefined>;
-  
+
   // Cart methods
   addToCart(cartItem: CartItemInsert): Promise<CartItem>;
   getCartItems(sessionId: string, userId?: string): Promise<CartItem[]>;
@@ -207,6 +207,23 @@ export class DatabaseStorage implements IStorage {
       .from(payments)
       .where(eq(payments.stripePaymentIntentId, stripePaymentIntentId));
     return payment;
+  }
+
+  async getRegistrationByEmailAndEvent(email: string, eventId: string) {
+    if (!email || !eventId) return null;
+
+    const [registration] = await db
+      .select()
+      .from(eventRegistrations)
+      .where(
+        and(
+          eq(eventRegistrations.email, email.toLowerCase()),
+          eq(eventRegistrations.eventId, eventId)
+        )
+      )
+      .limit(1);
+
+    return registration;
   }
 
   async getPaymentsByUser(userId: string): Promise<Payment[]> {
@@ -408,7 +425,7 @@ export class DatabaseStorage implements IStorage {
           addedAt: new Date(),
           updatedAt: new Date()
         };
-        
+
         const [newItem] = await db
           .insert(cartItems)
           .values(insertData)
@@ -424,7 +441,7 @@ export class DatabaseStorage implements IStorage {
   async getCartItems(sessionId: string, userId?: string): Promise<CartItem[]> {
     try {
       const whereConditions = [eq(cartItems.sessionId, sessionId)];
-      
+
       if (userId) {
         whereConditions.push(eq(cartItems.userId, userId));
       }
@@ -475,7 +492,7 @@ export class DatabaseStorage implements IStorage {
   async clearCart(sessionId: string, userId?: string): Promise<boolean> {
     try {
       const whereConditions = [eq(cartItems.sessionId, sessionId)];
-      
+
       if (userId) {
         whereConditions.push(eq(cartItems.userId, userId));
       }

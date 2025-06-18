@@ -11,23 +11,23 @@ const frontendRegistrationSchema = z.object({
   lastName: z.string().min(1, "Last name is required").trim(),
   email: z.string().email("Valid email is required").trim(),
   phone: z.string().optional(),
-  
+
   // Handle frontend field name variations
   grade: z.string().optional(),
   age: z.string().optional(),
-  
+
   // Map frontend tShirtSize to database shirtSize
   tShirtSize: z.string().optional(),
   shirtSize: z.string().optional(),
-  
+
   // Map frontend contactName to database parentName
   contactName: z.string().optional(),
   parentName: z.string().optional(),
-  
+
   // Map frontend experienceLevel to database experience
   experienceLevel: z.string().optional(),
   experience: z.string().optional(),
-  
+
   // Other optional fields
   gender: z.string().optional(),
   schoolName: z.string().optional(),
@@ -46,27 +46,27 @@ const athleteSchema = z.object({
   firstName: z.string().min(1, "Athlete first name is required").trim(),
   lastName: z.string().min(1, "Athlete last name is required").trim(),
   email: z.string().email("Valid athlete email is required").trim(),
-  
+
   // Handle frontend field variations for team athletes
   age: z.string().optional(),
   grade: z.string().optional(),
-  
+
   // Map frontend shirtSize/tShirtSize to database shirtSize
   shirtSize: z.string().optional(),
   tShirtSize: z.string().optional(),
-  
+
   // Map frontend parentName/contactName to database parentName
   parentName: z.string().optional(),
   contactName: z.string().optional(),
-  
+
   // Map frontend parentPhoneNumber to database phone
   parentPhoneNumber: z.string().optional(),
   phone: z.string().optional(),
-  
+
   // Map frontend experienceLevel to database experience
   experienceLevel: z.string().optional(),
   experience: z.string().optional(),
-  
+
   // Other optional fields
   gender: z.string().optional(),
   schoolName: z.string().optional(),
@@ -78,7 +78,7 @@ const teamRegistrationSchema = z.object({
   eventId: z.union([z.string(), z.number()]).transform(val => String(val)),
   teamName: z.string().min(1, "Team name is required").trim(),
   schoolName: z.string().optional(),
-  
+
   // Team contact (coach) information - required for team registrations
   teamContact: z.object({
     firstName: z.string().min(1, "Coach first name is required").trim(),
@@ -86,16 +86,16 @@ const teamRegistrationSchema = z.object({
     email: z.string().email("Valid coach email is required").trim(),
     phone: z.string().optional()
   }),
-  
+
   // Registration option and pricing
   registrationType: z.enum(['team']).default('team'),
   option: z.enum(['full', '1day', '2day']).default('full'),
   numberOfDays: z.number().optional(),
   selectedDates: z.array(z.string()).optional(),
-  
+
   // Array of athletes with validation
   athletes: z.array(athleteSchema).min(1, "At least one athlete is required"),
-  
+
   // Optional team-level fields
   discountCode: z.string().optional(),
   basePrice: z.union([z.string(), z.number()]).optional(),
@@ -106,7 +106,7 @@ const teamRegistrationSchema = z.object({
 // Helper function to detect device type from user agent
 function detectDeviceType(userAgent: string | undefined): 'mobile' | 'tablet' | 'desktop' {
   if (!userAgent) return 'desktop';
-  
+
   const ua = userAgent.toLowerCase();
   if (ua.includes('mobile') || ua.includes('iphone') || ua.includes('android')) {
     return 'mobile';
@@ -180,7 +180,7 @@ export function setupEventRoutes(app: Express): void {
   app.get("/api/events/:slug", async (req: Request, res: Response) => {
     try {
       const slug = req.params.slug;
-      
+
       // Map numeric IDs to slugs for compatibility
       const idToSlugMap: Record<string, string> = {
         '1': 'birmingham-slam-camp',
@@ -188,9 +188,9 @@ export function setupEventRoutes(app: Express): void {
         '3': 'texas-recruiting-clinic',
         '4': 'panther-train-tour'
       };
-      
+
       const actualSlug = idToSlugMap[slug] || slug;
-      
+
       const events: Record<string, any> = {
         "birmingham-slam-camp": {
           id: 1,
@@ -241,12 +241,12 @@ export function setupEventRoutes(app: Express): void {
           features: ["Multi-location tour", "Community instruction", "Accessible coaching", "Regional development"]
         }
       };
-      
+
       const event = events[actualSlug];
       if (!event) {
         return res.status(404).json({ error: "Event not found" });
       }
-      
+
       res.json(event);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch event" });
@@ -268,7 +268,7 @@ export function setupEventRoutes(app: Express): void {
     try {
       // Basic validation for registration data
       const validationResult = frontendRegistrationSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
         console.error("Registration validation errors:", validationResult.error.issues);
         return res.status(400).json({ 
@@ -301,7 +301,7 @@ export function setupEventRoutes(app: Express): void {
       } else {
         event = await storage.getEventBySlug(registrationData.eventId);
       }
-      
+
       if (!event) {
         console.error(`Event not found for ID: ${registrationData.eventId}`);
         return res.status(400).json({ 
@@ -317,21 +317,21 @@ export function setupEventRoutes(app: Express): void {
         lastName: registrationData.lastName,
         email: registrationData.email,
         phone: registrationData.phone || null,
-        
+
         // Handle grade/age mapping
         grade: registrationData.grade || registrationData.age || null,
-        
+
         // Map tShirtSize -> shirtSize
         shirtSize: registrationData.tShirtSize || registrationData.shirtSize || null,
-        
+
         // Map contact information to parent fields
         parentName: registrationData.contactName || registrationData.parentName || null,
         parentEmail: registrationData.email, // Use same email for parent contact
         parentPhone: registrationData.phone || null,
-        
+
         // Map experienceLevel -> experience
         experience: registrationData.experienceLevel || registrationData.experience || null,
-        
+
         // Other fields
         gender: registrationData.gender || null,
         schoolName: registrationData.schoolName || null,
@@ -372,7 +372,7 @@ export function setupEventRoutes(app: Express): void {
     try {
       // Validate team registration data
       const validationResult = teamRegistrationSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
         console.error("Team registration validation errors:", validationResult.error.issues);
         return res.status(400).json({ 
@@ -398,7 +398,7 @@ export function setupEventRoutes(app: Express): void {
 
       // Create individual registrations for each athlete
       const registrations = [];
-      
+
       for (const athlete of teamData.athletes) {
         const mappedAthlete = {
           eventId: event.id,
@@ -406,19 +406,19 @@ export function setupEventRoutes(app: Express): void {
           lastName: athlete.lastName,
           email: athlete.email,
           phone: athlete.phone || athlete.parentPhoneNumber || null,
-          
+
           // Handle grade/age mapping
           grade: athlete.grade || athlete.age || null,
-          
+
           // Map shirt size fields
           shirtSize: athlete.shirtSize || athlete.tShirtSize || null,
-          
+
           // Map parent/contact name
           parentName: athlete.parentName || athlete.contactName || null,
-          
+
           // Map experience level
           experience: athlete.experience || athlete.experienceLevel || null,
-          
+
           // Other fields
           gender: athlete.gender || null,
           schoolName: athlete.schoolName || teamData.schoolName || null,
@@ -432,7 +432,7 @@ export function setupEventRoutes(app: Express): void {
           ipAddress: req.ip,
           userAgent: req.get('User-Agent'),
           deviceType: detectDeviceType(req.get('User-Agent')),
-          
+
           // Team-specific fields
           teamName: teamData.teamName,
           teamContactEmail: teamData.teamContact.email,
@@ -556,7 +556,7 @@ export function setupEventRoutes(app: Express): void {
       // Validate amount matches event pricing
       const eventBasePrice = parseFloat(event.basePrice);
       const requestedAmount = parseFloat(amount);
-      
+
       if (requestedAmount < eventBasePrice) {
         console.error(`Payment amount ${requestedAmount} is less than event base price ${eventBasePrice}`);
         return res.status(400).json({
@@ -568,7 +568,7 @@ export function setupEventRoutes(app: Express): void {
 
       // Create Stripe payment intent with secure metadata including all form fields
       const { stripe } = await import("../stripe.js");
-      
+
       try {
         const paymentIntent = await stripe.paymentIntents.create({
           amount: Math.round(requestedAmount * 100), // Convert to cents
@@ -590,7 +590,7 @@ export function setupEventRoutes(app: Express): void {
             createShopifyOrder: 'true'
           }
         });
-        
+
         if (!paymentIntent || !paymentIntent.client_secret) {
           throw new Error('Invalid payment intent response from Stripe');
         }

@@ -27,7 +27,7 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
 
   const handleFreeRegistration = async () => {
     setIsProcessing(true);
-    
+
     try {
       // Get comprehensive registration data from sessionStorage
       const registrationData = {
@@ -48,7 +48,7 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
 
       const appliedDiscountCode = sessionStorage.getItem('applied_discount_code');
       const option = sessionStorage.getItem('registration_option') || 'full';
-      
+
       // Process free registration using the stripe payment success endpoint
       const response = await fetch(`/api/events/${eventId}/stripe-payment-success`, {
         method: 'POST',
@@ -80,15 +80,15 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
         sessionStorage.removeItem(`registration_${field}`);
       });
       sessionStorage.removeItem('applied_discount_code');
-      
+
       toast({
         title: "Registration Complete!",
         description: `Your free registration has been processed successfully! You're now registered for ${eventName}.`,
       });
-      
+
       // Redirect to success page
       window.location.href = `/stripe-checkout?success=true&eventId=${eventId}&eventName=${encodeURIComponent(eventName)}&freeRegistration=true`;
-      
+
     } catch (error) {
       console.error('Free registration error:', error);
       toast({
@@ -108,7 +108,7 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
           Your discount code has been applied! This registration is completely free.
         </p>
       </div>
-      
+
       <div className="bg-green-50 border border-green-200 rounded-md p-4">
         <div className="flex items-center">
           <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
@@ -156,7 +156,7 @@ interface CheckoutFormProps {
 const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onDiscountApplied, onClientSecretUpdate, onAmountUpdate }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
-  
+
   // Get the registration option from URL params or sessionStorage
   const params = new URLSearchParams(window.location.search);
   const option = params.get('option') || sessionStorage.getItem('registration_option') || 'full';
@@ -168,13 +168,14 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const [discount, setDiscount] = useState<{ valid: boolean; amount: number; finalPrice?: number; code: string } | null>(null);
   const { toast } = useToast();
+  const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
 
   // Check for already completed payment on mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentSucceeded = urlParams.get('payment_intent_status') === 'succeeded';
     const paymentIntentId = urlParams.get('payment_intent');
-    
+
     if (paymentSucceeded && paymentIntentId) {
       setIsPaymentCompleted(true);
       toast({
@@ -220,7 +221,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           description: `Payment could not be processed: ${error.message || 'Please check your payment information and try again.'}`,
           variant: 'destructive',
         });
-        
+
         // Critical: Ensure no success states are triggered on payment failure
         console.error('Stripe payment failed:', error);
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
@@ -255,7 +256,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
 
         if (registrationResponse.ok) {
           setIsPaymentCompleted(true);
-          
+
           // Clear all session storage data
           const fields = [
             'firstName', 'lastName', 'contactName', 'email', 
@@ -266,12 +267,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           fields.forEach(field => {
             sessionStorage.removeItem(`registration_${field}`);
           });
-          
+
           toast({
             title: "Registration Complete!",
             description: "Your payment was successful and registration is confirmed. Redirecting...",
           });
-          
+
           // Redirect to registration page with success confirmation
           setTimeout(() => {
             window.location.href = `/event-registration/${eventId}?paymentSuccess=true&paymentIntentId=${paymentIntent.id}`;
@@ -305,12 +306,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       // For free registrations, no need to recreate payment intent
       return;
     }
-    
+
     try {
       const params = new URLSearchParams(window.location.search);
       const eventId = params.get('eventId') || '';
       const option = params.get('option') || 'full';
-      
+
       // Get registration data from sessionStorage
       const registrationData = {
         firstName: sessionStorage.getItem('registration_firstName') || '',
@@ -327,7 +328,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         day2: sessionStorage.getItem('registration_day2') === 'true',
         day3: sessionStorage.getItem('registration_day3') === 'true',
       };
-      
+
       // Create new payment intent with discounted amount
       const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
         method: 'POST',
@@ -341,12 +342,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           discountCode
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to create new payment intent with discount');
       }
-      
+
       const data = await response.json();
 
       if (data.clientSecret) {
@@ -354,7 +355,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         sessionStorage.setItem('payment_client_secret', data.clientSecret);
         sessionStorage.setItem('payment_amount', discountedAmount.toString());
         sessionStorage.setItem('discount_applied', 'true');
-        
+
         // Force page reload to reinitialize Stripe Elements with new payment intent
         window.location.reload();
       } else {
@@ -375,22 +376,22 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       });
       return;
     }
-    
+
     // Prevent multiple simultaneous discount applications
     if (isApplyingDiscount) {
 
       return;
     }
-    
+
     try {
       setIsApplyingDiscount(true);
       setError(null);
-      
+
       // Clear any existing discount state to prevent conflicts
       setDiscount(null);
       sessionStorage.removeItem('applied_discount_code');
       sessionStorage.removeItem('discounted_amount');
-      
+
       const response = await fetch(`/api/validate-discount`, {
         method: 'POST',
         headers: {
@@ -401,7 +402,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           originalPrice: amount
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.valid === false) {
@@ -417,9 +418,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         }
         throw new Error(errorData.error || errorData.message || 'Failed to validate discount code');
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success && data.valid && data.discount) {
         // Set discount state to update UI immediately
         setDiscount({
@@ -428,12 +429,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           finalPrice: data.discount.finalPrice,
           code: discountCode
         });
-        
+
         // Store discount information for persistence
         sessionStorage.setItem('applied_discount_code', discountCode);
         sessionStorage.setItem('discounted_amount', data.discount.finalPrice.toString());
         sessionStorage.setItem('discount_amount', data.discount.discountAmount.toString());
-        
+
         // Create new payment intent with discount applied
         try {
           const recreateResponse = await fetch(`/api/events/${eventId}/create-payment-intent`, {
@@ -466,14 +467,14 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
               forceNewIntent: true
             }),
           });
-          
+
           if (recreateResponse.ok) {
             const recreateData = await recreateResponse.json();
 
             // Update payment state via callbacks
             onClientSecretUpdate && onClientSecretUpdate(recreateData.clientSecret);
             onAmountUpdate && onAmountUpdate(data.discount.finalPrice);
-            
+
             // Show success message
             if (data.discount.finalPrice === 0) {
               toast({
@@ -515,12 +516,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       setIsApplyingDiscount(false);
     }
   };
-  
+
   // Calculate the final amount based on any applied discount
   const finalAmount = discount?.valid ? 
     (discount.finalPrice !== undefined ? discount.finalPrice : Math.max(0, amount - discount.amount)) : 
     amount;
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Discount Code Section */}
@@ -562,9 +563,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           </div>
         )}
       </div>
-      
+
       <PaymentElement />
-      
+
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
           <div className="flex items-center mb-1">
@@ -574,7 +575,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           <p>{error}</p>
         </div>
       )}
-      
+
       {/* Clear, obvious payment button that always shows */}
       <button
         type="submit"
@@ -592,7 +593,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
               const finalAmount = discount?.valid ? 
                 (discount.finalPrice !== undefined ? discount.finalPrice : (amount - discount.amount)) : 
                 amount;
-              
+
               if (finalAmount === 0) {
                 return "🎉 Complete FREE Registration";
               } else {
@@ -616,6 +617,7 @@ export default function StripeCheckout() {
   const [stripeProductDetails, setStripeProductDetails] = useState<any>(null);
   const [isSetupInProgress, setIsSetupInProgress] = useState(false);
   const { toast } = useToast();
+  const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
 
   // Get URL parameters
   const params = new URLSearchParams(window.location.search);
@@ -631,7 +633,7 @@ export default function StripeCheckout() {
       setLoading(false);
       return;
     }
-    
+
     // Store current path parameters in session storage to ensure 
     // we always have the option field available for free registrations
     sessionStorage.setItem('registration_option', option);
@@ -642,11 +644,11 @@ export default function StripeCheckout() {
       const handleTeamPayment = async () => {
         try {
           setLoading(true);
-          
+
           // Get client secret and amount from URL parameters (passed from team registration)
           const urlClientSecret = params.get('clientSecret');
           const urlAmount = params.get('amount');
-          
+
           if (urlClientSecret && urlAmount) {
 
             setClientSecret(urlClientSecret);
@@ -654,7 +656,7 @@ export default function StripeCheckout() {
             setLoading(false);
             return;
           }
-          
+
           // Fallback: check sessionStorage for team data
           const teamData = sessionStorage.getItem('team_registration_data');
           if (teamData) {
@@ -669,7 +671,7 @@ export default function StripeCheckout() {
               return;
             }
           }
-          
+
           setError('Team registration data not found. Please restart the registration process.');
           setLoading(false);
         } catch (error) {
@@ -678,7 +680,7 @@ export default function StripeCheckout() {
           setLoading(false);
         }
       };
-      
+
       handleTeamPayment();
       return;
     }
@@ -690,11 +692,11 @@ export default function StripeCheckout() {
 
         return;
       }
-      
+
       try {
         setIsSetupInProgress(true);
         setLoading(true);
-        
+
         // Comprehensive registration data collection from sessionStorage
         const registrationData = {
           firstName: sessionStorage.getItem('registration_firstName') || '',
@@ -718,13 +720,13 @@ export default function StripeCheckout() {
         if (!registrationData.firstName) missingFields.push('First Name');
         if (!registrationData.lastName) missingFields.push('Last Name');
         if (!registrationData.email) missingFields.push('Email');
-        
+
         if (missingFields.length > 0) {
           const errorMessage = `Please complete all required fields: ${missingFields.join(', ')}`;
           console.error('Validation failed:', errorMessage);
           throw new Error(errorMessage);
         }
-        
+
         // Check if there's a discount applied
         const appliedDiscountCode = sessionStorage.getItem('applied_discount_code');
         const discountData = sessionStorage.getItem('applied_discount');
@@ -763,7 +765,7 @@ export default function StripeCheckout() {
           try {
             const responseText = await response.text();
             console.log('Server response:', responseText);
-            
+
             if (responseText.trim().startsWith('{')) {
               errorData = JSON.parse(responseText);
             } else {
@@ -781,16 +783,16 @@ export default function StripeCheckout() {
               userFriendlyMessage: 'Payment system response error. Please refresh the page and try again.'
             };
           }
-          
+
           const errorMessage = errorData.userFriendlyMessage || errorData.error || `Payment setup failed (${response.status})`;
-          
+
           // Show user-friendly error message
           toast({
             title: 'Payment Setup Error',
             description: errorMessage,
             variant: 'destructive',
           });
-          
+
           throw new Error(errorMessage);
         }
 
@@ -799,7 +801,7 @@ export default function StripeCheckout() {
           const responseText = await response.text();
           console.log('Successful response:', responseText);
           data = JSON.parse(responseText);
-          
+
           // Validate response structure
           if (!data || typeof data !== 'object') {
             throw new Error('Invalid response format');
@@ -892,7 +894,7 @@ export default function StripeCheckout() {
             <p className="text-gray-500 text-sm mb-8 text-center">
               You'll receive a confirmation email shortly with all the event details.
             </p>
-            
+
             <div className="space-y-4">
               <a
                 href="/events"

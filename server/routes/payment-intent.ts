@@ -1,4 +1,30 @@
 import type { Express, Request, Response } from "express";
+import { paymentDeduplicationMiddleware, markPaymentIntentCreated } from "../middleware/paymentDeduplication.js";
+
+// In-memory store for payment intent deduplication
+const activePaymentIntents = new Map<string, {
+  paymentIntentId: string;
+  timestamp: number;
+  registrationHash: string;
+}>();
+
+// Cleanup expired entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  const expiredThreshold = 30 * 60 * 1000; // 30 minutes
+  
+  for (const [key, value] of activePaymentIntents.entries()) {
+    if (now - value.timestamp > expiredThreshold) {
+      activePaymentIntents.delete(key);
+    }
+  }
+}, 5 * 60 * 1000);
+
+// Create a unique hash for registration data to prevent duplicates
+function createRegistrationHash(registrationData: any, eventId: string): string {
+  const key = `${eventId}_${registrationData.email}_${registrationData.firstName}_${registrationData.lastName}`;
+  return Buffer.from(key).toString('base64');
+}
 
 /**
  * Simple Payment Intent Creation - Birmingham Slam Camp
@@ -6,12 +32,32 @@ import type { Express, Request, Response } from "express";
  */
 export function setupPaymentIntentRoutes(app: Express): void {
   // Birmingham Slam Camp payment intent creation - priority route
-  app.post("/api/events/1/create-payment-intent", async (req: Request, res: Response) => {
+  app.post("/api/events/1/create-payment-intent", paymentDeduplicationMiddleware, async (req: Request, res: Response) => {
     try {
       console.log(`Creating payment intent for event: ${req.params.eventId}`);
       
       const eventId = req.params.eventId;
       const { option = 'full', registrationData, discountedAmount, discountCode } = req.body;
+
+      // Generate session key and registration hash for deduplication
+      const sessionId = req.sessionID || `session_${Date.now()}_${Math.random()}`;
+      const registrationHash = createRegistrationHash(registrationData, eventId);
+      const deduplicationKey = `${sessionId}_${registrationHash}`;
+
+      // Check if we already have an active payment intent for this exact registration
+      const existingIntent = activePaymentIntents.get(deduplicationKey);
+      if (existingIntent) {
+        console.log(`Returning existing payment intent: ${existingIntent.paymentIntentId}`);
+        return res.json({
+          clientSecret: 'existing_intent',
+          paymentIntentId: existingIntent.paymentIntentId,
+          amount: discountedAmount || parseFloat(event?.basePrice || "249.00"),
+          eventId: eventId,
+          eventTitle: 'Birmingham Slam Camp',
+          isDuplicate: true,
+          message: 'Payment already in progress for this registration'
+        });
+      }
 
       // Handle Birmingham Slam Camp
       let event;
@@ -110,6 +156,18 @@ export function setupPaymentIntentRoutes(app: Express): void {
       }
 
       console.log('Payment intent created successfully:', paymentIntent.id);
+
+      // Store the payment intent to prevent duplicates
+      activePaymentIntents.set(deduplicationKey, {
+        paymentIntentId: paymentIntent.id,
+        timestamp: Date.now(),
+        registrationHash
+      });
+
+      // Mark in middleware tracking
+      if ((req as any).paymentHash) {
+        markPaymentIntentCreated((req as any).paymentHash, paymentIntent.id);
+      }
       
       res.json({
         clientSecret: paymentIntent.client_secret,
@@ -117,7 +175,8 @@ export function setupPaymentIntentRoutes(app: Express): void {
         amount: amount,
         eventId: event.id,
         eventTitle: event.title,
-        success: true
+        success: true,
+        sessionId: sessionId
       });
 
     } catch (error) {
