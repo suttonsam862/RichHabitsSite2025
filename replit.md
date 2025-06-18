@@ -125,6 +125,8 @@ Rich Habits is a full-stack web application for managing wrestling event registr
 - TypeScript compilation with strict type checking
 
 ## Changelog
+- June 18, 2025: **HEADER LOGO AND ANIMATIONS FIX** Replaced header logo with new Rich Habits branding image, removed all flickering animations (shimmer-effect, glow-pulse, gradient-animated) for cleaner user experience
+- June 18, 2025: **TEAM DISCOUNT BANNER REMOVED** Removed promotional team discount banner from top of homepage per user request
 - June 17, 2025: **HOVER EFFECTS** Added dynamic gradient hover effect to Summer 2025 Camps section with color transitions and scaling animations
 - June 17, 2025: **HEADER LOGO RESOLVED** Fixed logo rendering by replacing image element with styled SVG, eliminating browser fallback issues
 - June 17, 2025: **PRODUCTION SYNC** Synchronized Replit preview with live domain rich-habits.com for consistent image and video display across all pages

@@ -184,7 +184,7 @@ export default function Home() {
           >
             <div className="max-w-4xl mx-auto">
               <div className="mb-4">
-                <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-pulse">
+                <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">
                   LIMITED TIME OFFER
                 </span>
               </div>
@@ -243,7 +243,7 @@ export default function Home() {
       </section>
 
       {/* SUMMER 2025 CAMPS VIDEO SECTION */}
-      <section className="py-24 relative h-96 overflow-hidden gradient-summer gradient-overlay group cursor-pointer transition-all duration-500 hover:bg-gradient-to-br hover:from-red-600 hover:via-orange-500 hover:to-yellow-400">
+      <section className="py-24 relative h-96 overflow-hidden bg-gradient-to-br from-blue-600 to-purple-600 group cursor-pointer transition-all duration-500 hover:from-red-600 hover:via-orange-500 hover:to-yellow-400">
         {/* Background Video */}
         <video 
           autoPlay 
@@ -281,7 +281,7 @@ export default function Home() {
       </section>
       
       {/* SIGNUP PORTAL ANCHOR SECTION */}
-      <section id="signup-portal" className="py-20 gradient-signup">
+      <section id="signup-portal" className="py-20 bg-gray-100">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -372,7 +372,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter Section - Minimalist Approach */}
-      <section className="py-24 gradient-newsletter relative gradient-overlay">
+      <section className="py-24 bg-white relative">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0 }}
