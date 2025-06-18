@@ -48,7 +48,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node run-preview.js"
+args = "node run-production.js"
 
 [[workflows.workflow]]
 name = "Production Server"
@@ -58,3 +58,12 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node run-production.js"
+
+[[workflows.workflow]]
+name = "Development Server"
+author = 41090967
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node run-preview.js"
