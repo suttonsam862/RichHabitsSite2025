@@ -35,7 +35,8 @@ function startServer() {
     shell: true,
     env: {
       ...process.env,
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
+      VITE_NODE_ENV: 'production'
     }
   });
 
