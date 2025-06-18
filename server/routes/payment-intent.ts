@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { paymentDeduplicationMiddleware, markPaymentIntentCreated } from "../middleware/paymentDeduplication.js";
+import { duplicateTransactionPrevention, markTransactionProcessing, markTransactionCompleted } from "../middleware/duplicateTransactionPrevention.js";
 
 // In-memory store for payment intent deduplication
 const activePaymentIntents = new Map<string, {
@@ -32,7 +32,7 @@ function createRegistrationHash(registrationData: any, eventId: string): string 
  */
 export function setupPaymentIntentRoutes(app: Express): void {
   // Birmingham Slam Camp payment intent creation - priority route
-  app.post("/api/events/1/create-payment-intent", paymentDeduplicationMiddleware, async (req: Request, res: Response) => {
+  app.post("/api/events/1/create-payment-intent", duplicateTransactionPrevention, async (req: Request, res: Response) => {
     try {
       console.log(`Creating payment intent for event: ${req.params.eventId}`);
       
@@ -47,16 +47,34 @@ export function setupPaymentIntentRoutes(app: Express): void {
       // Check if we already have an active payment intent for this exact registration
       const existingIntent = activePaymentIntents.get(deduplicationKey);
       if (existingIntent) {
-        console.log(`Returning existing payment intent: ${existingIntent.paymentIntentId}`);
-        return res.json({
-          clientSecret: 'existing_intent',
-          paymentIntentId: existingIntent.paymentIntentId,
-          amount: discountedAmount || parseFloat(event?.basePrice || "249.00"),
-          eventId: eventId,
-          eventTitle: 'Birmingham Slam Camp',
-          isDuplicate: true,
-          message: 'Payment already in progress for this registration'
-        });
+        // Verify the existing payment intent with Stripe to ensure it's still valid
+        try {
+          const Stripe = (await import('stripe')).default;
+          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+          const stripeIntent = await stripe.paymentIntents.retrieve(existingIntent.paymentIntentId);
+          
+          if (stripeIntent.status === 'succeeded') {
+            return res.status(409).json({
+              error: 'Payment already completed',
+              message: 'This registration has already been paid for',
+              userFriendlyMessage: 'This registration has already been completed. Please check your email for confirmation.'
+            });
+          } else if (stripeIntent.status === 'requires_payment_method' || stripeIntent.status === 'requires_confirmation') {
+            console.log(`Returning existing valid payment intent: ${existingIntent.paymentIntentId}`);
+            return res.json({
+              clientSecret: stripeIntent.client_secret,
+              paymentIntentId: existingIntent.paymentIntentId,
+              amount: discountedAmount || parseFloat(event?.basePrice || "249.00"),
+              eventId: eventId,
+              eventTitle: 'Birmingham Slam Camp',
+              isDuplicate: true,
+              message: 'Continuing with existing payment intent'
+            });
+          }
+        } catch (stripeError) {
+          console.log(`Existing payment intent invalid, creating new one: ${stripeError}`);
+          // Continue to create new payment intent if existing one is invalid
+        }
       }
 
       // Handle Birmingham Slam Camp
@@ -164,9 +182,9 @@ export function setupPaymentIntentRoutes(app: Express): void {
         registrationHash
       });
 
-      // Mark in middleware tracking
-      if ((req as any).paymentHash) {
-        markPaymentIntentCreated((req as any).paymentHash, paymentIntent.id);
+      // Mark transaction as processing
+      if ((req as any).transactionFingerprint) {
+        markTransactionProcessing((req as any).transactionFingerprint, paymentIntent.id);
       }
       
       res.json({

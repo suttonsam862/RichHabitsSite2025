@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useToast } from '../../hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Container } from '../../components/ui/container';
 import { RegistrationProgress } from '../../components/events/RegistrationProgress';
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, Shield } from 'lucide-react';
+
 // Make sure to call loadStripe outside of a component's render to avoid
 // recreating the Stripe object on every render.
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
@@ -23,10 +25,16 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
   onDiscountApplied: (newAmount: number) => void;
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const { toast } = useToast();
 
   const handleFreeRegistration = async () => {
+    if (isProcessing || hasSubmitted) {
+      return; // Prevent multiple submissions
+    }
+
     setIsProcessing(true);
+    setHasSubmitted(true);
 
     try {
       // Get comprehensive registration data from sessionStorage
@@ -96,6 +104,7 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
         description: error instanceof Error ? error.message : "There was an error processing your free registration.",
         variant: "destructive",
       });
+      setHasSubmitted(false); // Allow retry on error
     } finally {
       setIsProcessing(false);
     }
@@ -123,13 +132,18 @@ const FreeRegistrationForm = ({ eventId, eventName, onSuccess, amount, onDiscoun
 
       <button
         onClick={handleFreeRegistration}
-        disabled={isProcessing}
+        disabled={isProcessing || hasSubmitted}
         className="w-full bg-green-600 text-white py-3 px-4 rounded-md font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isProcessing ? (
           <span className="flex items-center justify-center">
             <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
             Processing Free Registration...
+          </span>
+        ) : hasSubmitted ? (
+          <span className="flex items-center justify-center">
+            <Clock className="h-5 w-5 mr-2" />
+            Processing...
           </span>
         ) : (
           <span className="flex items-center justify-center">
@@ -156,6 +170,8 @@ interface CheckoutFormProps {
 const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onDiscountApplied, onClientSecretUpdate, onAmountUpdate }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
+  const submitAttemptedRef = useRef(false);
+  const paymentInProgressRef = useRef(false);
 
   // Get the registration option from URL params or sessionStorage
   const params = new URLSearchParams(window.location.search);
@@ -168,7 +184,7 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const [discount, setDiscount] = useState<{ valid: boolean; amount: number; finalPrice?: number; code: string } | null>(null);
   const { toast } = useToast();
-  const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
+  const [lastSubmissionTime, setLastSubmissionTime] = useState(0);
 
   // Check for already completed payment on mount
   useEffect(() => {
@@ -191,6 +207,18 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Comprehensive duplicate submission prevention
+    const now = Date.now();
+    if (submitAttemptedRef.current || paymentInProgressRef.current || (now - lastSubmissionTime) < 3000) {
+      console.log('Payment submission blocked - too recent attempt');
+      toast({
+        title: 'Please Wait',
+        description: 'Your payment is being processed. Please do not submit again.',
+        variant: 'default',
+      });
+      return;
+    }
+
     // Prevent multiple submissions
     if (isProcessing || isPaymentCompleted || paymentAttempted) {
       return;
@@ -200,11 +228,22 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       return;
     }
 
+    // Mark submission attempted
+    submitAttemptedRef.current = true;
+    paymentInProgressRef.current = true;
+    setLastSubmissionTime(now);
     setIsProcessing(true);
     setPaymentAttempted(true);
     setError(null);
 
     try {
+      // Show immediate feedback to user
+      toast({
+        title: 'Processing Payment',
+        description: 'Please wait while we process your payment. Do not close this window.',
+        duration: 5000,
+      });
+
       // Confirm payment with Stripe
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
@@ -222,7 +261,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           variant: 'destructive',
         });
 
-        // Critical: Ensure no success states are triggered on payment failure
+        // Reset submission flags on error
+        submitAttemptedRef.current = false;
+        paymentInProgressRef.current = false;
         console.error('Stripe payment failed:', error);
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
         // Payment succeeded - gather all registration data and call our API
@@ -295,74 +336,12 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
         description: `Payment failed: ${errorMessage}. Please check your card details and try again.`,
         variant: 'destructive',
       });
+
+      // Reset submission flags on error
+      submitAttemptedRef.current = false;
+      paymentInProgressRef.current = false;
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  // Recreate payment intent with discounted amount
-  const recreatePaymentIntentWithDiscount = async (discountedAmount: number, discountCode: string) => {
-    if (discountedAmount === 0) {
-      // For free registrations, no need to recreate payment intent
-      return;
-    }
-
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const eventId = params.get('eventId') || '';
-      const option = params.get('option') || 'full';
-
-      // Get registration data from sessionStorage
-      const registrationData = {
-        firstName: sessionStorage.getItem('registration_firstName') || '',
-        lastName: sessionStorage.getItem('registration_lastName') || '',
-        email: sessionStorage.getItem('registration_email') || '',
-        phone: sessionStorage.getItem('registration_phone') || '',
-        contactName: sessionStorage.getItem('registration_contactName') || '',
-        tShirtSize: sessionStorage.getItem('registration_tShirtSize') || '',
-        grade: sessionStorage.getItem('registration_grade') || '',
-        gender: sessionStorage.getItem('registration_gender') || '',
-        schoolName: sessionStorage.getItem('registration_schoolName') || '',
-        clubName: sessionStorage.getItem('registration_clubName') || '',
-        day1: sessionStorage.getItem('registration_day1') === 'true',
-        day2: sessionStorage.getItem('registration_day2') === 'true',
-        day3: sessionStorage.getItem('registration_day3') === 'true',
-      };
-
-      // Create new payment intent with discounted amount
-      const response = await fetch(`/api/events/${eventId}/create-payment-intent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          option,
-          registrationData,
-          discountedAmount,
-          discountCode
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create new payment intent with discount');
-      }
-
-      const data = await response.json();
-
-      if (data.clientSecret) {
-        // Store the new payment details for page reload
-        sessionStorage.setItem('payment_client_secret', data.clientSecret);
-        sessionStorage.setItem('payment_amount', discountedAmount.toString());
-        sessionStorage.setItem('discount_applied', 'true');
-
-        // Force page reload to reinitialize Stripe Elements with new payment intent
-        window.location.reload();
-      } else {
-        throw new Error('No client secret returned from discount payment intent creation');
-      }
-    } catch (error) {
-      console.error('Error recreating payment intent with discount:', error);
     }
   };
 
@@ -379,7 +358,6 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
 
     // Prevent multiple simultaneous discount applications
     if (isApplyingDiscount) {
-
       return;
     }
 
@@ -406,8 +384,6 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.valid === false) {
-          // This is a normal validation failure, not a server error
-          // Don't throw, just show the invalid code message
           toast({
             title: "Invalid Discount",
             description: errorData.message || 'This discount code is not valid',
@@ -422,7 +398,6 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
       const data = await response.json();
 
       if (data.success && data.valid && data.discount) {
-        // Set discount state to update UI immediately
         setDiscount({
           valid: true,
           amount: data.discount.discountAmount,
@@ -430,12 +405,10 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           code: discountCode
         });
 
-        // Store discount information for persistence
         sessionStorage.setItem('applied_discount_code', discountCode);
         sessionStorage.setItem('discounted_amount', data.discount.finalPrice.toString());
         sessionStorage.setItem('discount_amount', data.discount.discountAmount.toString());
 
-        // Create new payment intent with discount applied
         try {
           const recreateResponse = await fetch(`/api/events/${eventId}/create-payment-intent`, {
             method: 'POST',
@@ -471,11 +444,9 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
           if (recreateResponse.ok) {
             const recreateData = await recreateResponse.json();
 
-            // Update payment state via callbacks
             onClientSecretUpdate && onClientSecretUpdate(recreateData.clientSecret);
             onAmountUpdate && onAmountUpdate(data.discount.finalPrice);
 
-            // Show success message
             if (data.discount.finalPrice === 0) {
               toast({
                 title: "100% Discount Applied",
@@ -523,87 +494,122 @@ const CheckoutForm = ({ clientSecret, eventId, eventName, onSuccess, amount, onD
     amount;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Discount Code Section */}
-      <div className="mb-6 p-4 border rounded-md bg-gray-50">
-        <div className="font-medium text-gray-700 mb-2">Have a discount code?</div>
-        <div className="flex space-x-2">
-          <input 
-            type="text" 
-            value={discountCode}
-            onChange={(e) => setDiscountCode(e.target.value)}
-            placeholder="Enter code"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-            disabled={isApplyingDiscount || discount?.valid}
-          />
-          <button
-            type="button"
-            onClick={handleApplyDiscount}
-            disabled={isApplyingDiscount || discount?.valid || !discountCode.trim()}
-            className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isApplyingDiscount ? (
-              <span className="animate-pulse">Applying...</span>
-            ) : discount?.valid ? (
-              "Applied"
-            ) : (
-              "Apply"
-            )}
-          </button>
-        </div>
-        {discount?.valid && (
-          <div className="mt-2 text-sm text-green-600 flex items-center">
-            <span className="mr-1">✓</span> 
-            {discount.finalPrice === 0 
-              ? "100% discount applied. Your registration is free!" 
-              : discount.finalPrice !== undefined
-                ? `Price set to $${discount.finalPrice.toFixed(2)}!`
-                : `$${discount.amount.toFixed(2)} discount applied!`
-            }
+    <div className="space-y-6">
+      {/* Duplicate Prevention Warning */}
+      <div className="bg-amber-50 border border-amber-200 rounded-md p-4">
+        <div className="flex items-center">
+          <Shield className="h-5 w-5 text-amber-600 mr-2" />
+          <div>
+            <h3 className="text-sm font-medium text-amber-800">Secure Payment Protection</h3>
+            <p className="text-sm text-amber-700 mt-1">
+              Our system prevents duplicate charges. Please submit your payment only once and do not refresh the page during processing.
+            </p>
           </div>
-        )}
+        </div>
       </div>
 
-      <PaymentElement />
-
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
-          <div className="flex items-center mb-1">
-            <AlertCircle className="h-4 w-4 mr-2" />
-            <span className="font-medium">Payment Error</span>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Discount Code Section */}
+        <div className="mb-6 p-4 border rounded-md bg-gray-50">
+          <div className="font-medium text-gray-700 mb-2">Have a discount code?</div>
+          <div className="flex space-x-2">
+            <input 
+              type="text" 
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value)}
+              placeholder="Enter code"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+              disabled={isApplyingDiscount || discount?.valid}
+            />
+            <button
+              type="button"
+              onClick={handleApplyDiscount}
+              disabled={isApplyingDiscount || discount?.valid || !discountCode.trim()}
+              className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isApplyingDiscount ? (
+                <span className="animate-pulse">Applying...</span>
+              ) : discount?.valid ? (
+                "Applied"
+              ) : (
+                "Apply"
+              )}
+            </button>
           </div>
-          <p>{error}</p>
-        </div>
-      )}
-
-      {/* Clear, obvious payment button that always shows */}
-      <button
-        type="submit"
-        disabled={!stripe || !elements || isProcessing}
-        className="w-full px-6 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mt-4"
-      >
-        {isProcessing ? (
-          <span className="flex items-center justify-center">
-            <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-3"></div>
-            Processing Payment...
-          </span>
-        ) : (
-          <span className="flex items-center justify-center">
-            {(() => {
-              const finalAmount = discount?.valid ? 
-                (discount.finalPrice !== undefined ? discount.finalPrice : (amount - discount.amount)) : 
-                amount;
-
-              if (finalAmount === 0) {
-                return "🎉 Complete FREE Registration";
-              } else {
-                return `🔒 Complete Payment - $${finalAmount.toFixed(2)}`;
+          {discount?.valid && (
+            <div className="mt-2 text-sm text-green-600 flex items-center">
+              <span className="mr-1">✓</span> 
+              {discount.finalPrice === 0 
+                ? "100% discount applied. Your registration is free!" 
+                : discount.finalPrice !== undefined
+                  ? `Price set to $${discount.finalPrice.toFixed(2)}!`
+                  : `$${discount.amount.toFixed(2)} discount applied!`
               }
-            })()}
-          </span>
+            </div>
+          )}
+        </div>
+
+        <PaymentElement />
+
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
+            <div className="flex items-center mb-1">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              <span className="font-medium">Payment Error</span>
+            </div>
+            <p>{error}</p>
+          </div>
         )}
-      </button>
-    </form>
+
+        {/* Payment processing indicator */}
+        {isProcessing && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-md text-blue-800 text-sm">
+            <div className="flex items-center">
+              <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full mr-2"></div>
+              <span className="font-medium">Processing your payment - please do not close this window</span>
+            </div>
+          </div>
+        )}
+
+        {/* Clear, obvious payment button that always shows */}
+        <button
+          type="submit"
+          disabled={!stripe || !elements || isProcessing || paymentAttempted}
+          className="w-full px-6 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mt-4"
+        >
+          {isProcessing ? (
+            <span className="flex items-center justify-center">
+              <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-3"></div>
+              Processing Payment - Do Not Close Window
+            </span>
+          ) : paymentAttempted ? (
+            <span className="flex items-center justify-center">
+              <Clock className="h-5 w-5 mr-2" />
+              Payment Submitted - Please Wait
+            </span>
+          ) : (
+            <span className="flex items-center justify-center">
+              {(() => {
+                const finalAmount = discount?.valid ? 
+                  (discount.finalPrice !== undefined ? discount.finalPrice : (amount - discount.amount)) : 
+                  amount;
+
+                if (finalAmount === 0) {
+                  return "🎉 Complete FREE Registration";
+                } else {
+                  return `🔒 Complete Payment - $${finalAmount.toFixed(2)}`;
+                }
+              })()}
+            </span>
+          )}
+        </button>
+
+        {/* Additional warning below button */}
+        <div className="text-center text-sm text-gray-600">
+          <p>Click the payment button only once. Our system will prevent duplicate charges.</p>
+        </div>
+      </form>
+    </div>
   );
 };
 
@@ -617,7 +623,7 @@ export default function StripeCheckout() {
   const [stripeProductDetails, setStripeProductDetails] = useState<any>(null);
   const [isSetupInProgress, setIsSetupInProgress] = useState(false);
   const { toast } = useToast();
-  const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
+  const setupAttemptedRef = useRef(false);
 
   // Get URL parameters
   const params = new URLSearchParams(window.location.search);
@@ -634,8 +640,12 @@ export default function StripeCheckout() {
       return;
     }
 
-    // Store current path parameters in session storage to ensure 
-    // we always have the option field available for free registrations
+    // Prevent multiple setup attempts
+    if (setupAttemptedRef.current) {
+      return;
+    }
+
+    // Store current path parameters in session storage
     sessionStorage.setItem('registration_option', option);
     sessionStorage.setItem('registration_eventId', eventId);
 
@@ -644,25 +654,22 @@ export default function StripeCheckout() {
       const handleTeamPayment = async () => {
         try {
           setLoading(true);
+          setupAttemptedRef.current = true;
 
-          // Get client secret and amount from URL parameters (passed from team registration)
           const urlClientSecret = params.get('clientSecret');
           const urlAmount = params.get('amount');
 
           if (urlClientSecret && urlAmount) {
-
             setClientSecret(urlClientSecret);
             setAmount(parseFloat(urlAmount));
             setLoading(false);
             return;
           }
 
-          // Fallback: check sessionStorage for team data
           const teamData = sessionStorage.getItem('team_registration_data');
           if (teamData) {
             try {
               const parsedTeamData = JSON.parse(teamData);
-
               setAmount(parsedTeamData.totalAmount || 0);
             } catch (parseError) {
               console.error('Failed to parse team registration data from sessionStorage:', parseError);
@@ -685,16 +692,15 @@ export default function StripeCheckout() {
       return;
     }
 
-    // Optimized payment setup for individual registrations - single API call to reduce mobile loading time
+    // Optimized payment setup for individual registrations
     const fetchPaymentIntent = async () => {
-      // Prevent duplicate calls
-      if (isSetupInProgress) {
-
+      if (isSetupInProgress || setupAttemptedRef.current) {
         return;
       }
 
       try {
         setIsSetupInProgress(true);
+        setupAttemptedRef.current = true;
         setLoading(true);
 
         // Comprehensive registration data collection from sessionStorage
@@ -715,7 +721,7 @@ export default function StripeCheckout() {
           day3: sessionStorage.getItem('registration_day3') === 'true',
         };
 
-        // Enhanced validation - check for essential fields
+        // Enhanced validation
         const missingFields = [];
         if (!registrationData.firstName) missingFields.push('First Name');
         if (!registrationData.lastName) missingFields.push('Last Name');
@@ -743,7 +749,7 @@ export default function StripeCheckout() {
           formSessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
         };
 
-        // Only include discount fields if they exist (avoid sending null)
+        // Only include discount fields if they exist
         if (appliedDiscount?.finalPrice !== undefined) {
           requestBody.discountedAmount = appliedDiscount.finalPrice;
         }
@@ -759,7 +765,6 @@ export default function StripeCheckout() {
           body: JSON.stringify(requestBody),
         });
 
-        // Enhanced error handling with better server response processing
         if (!response.ok) {
           let errorData;
           try {
@@ -769,7 +774,6 @@ export default function StripeCheckout() {
             if (responseText.trim().startsWith('{')) {
               errorData = JSON.parse(responseText);
             } else {
-              // Handle HTML error responses (common cause of JSON parsing errors)
               console.error('Non-JSON response received:', responseText.substring(0, 200));
               errorData = {
                 error: 'Server configuration error',
@@ -786,7 +790,6 @@ export default function StripeCheckout() {
 
           const errorMessage = errorData.userFriendlyMessage || errorData.error || `Payment setup failed (${response.status})`;
 
-          // Show user-friendly error message
           toast({
             title: 'Payment Setup Error',
             description: errorMessage,
@@ -802,7 +805,6 @@ export default function StripeCheckout() {
           console.log('Successful response:', responseText);
           data = JSON.parse(responseText);
 
-          // Validate response structure
           if (!data || typeof data !== 'object') {
             throw new Error('Invalid response format');
           }
@@ -811,21 +813,16 @@ export default function StripeCheckout() {
           throw new Error('Payment system returned invalid data. Please refresh the page and try again.');
         }
 
-        // Handle free registrations (100% discount codes) - don't auto-process, show button
+        // Handle free registrations
         if (data.isFreeRegistration || (data.success && data.registrationId)) {
-
-          // Set special clientSecret to trigger free registration UI
           setClientSecret('free_registration');
           setAmount(0);
           return;
         } else if (data.clientSecret) {
           try {
             setClientSecret(data.clientSecret);
-            // Set the amount for display on the button - use amount from response or calculate from event
-            const responseAmount = data.amount || 249; // Default to $249 for full event
+            const responseAmount = data.amount || 249;
             setAmount(responseAmount);
-
-            // Clear any existing errors since payment setup was successful
             setError(null);
           } catch (setupError) {
             console.error('Error during payment setup state updates:', setupError);
@@ -835,7 +832,6 @@ export default function StripeCheckout() {
           throw new Error('No client secret returned from payment setup');
         }
       } catch (err) {
-        // Only show error if we don't have a valid client secret
         if (!clientSecret) {
           console.error('Failed to set up payment:', err);
           setError(err instanceof Error ? err.message : 'Failed to set up payment');
@@ -845,8 +841,6 @@ export default function StripeCheckout() {
             variant: 'destructive',
           });
         } else {
-          // We have a valid client secret, so ignore this error
-
           setError(null);
         }
       } finally {
@@ -957,12 +951,12 @@ export default function StripeCheckout() {
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
           {loading ? (
             <>
-              <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Setting Up Payment</h1>
+              <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Setting Up Secure Payment</h1>
               <div className="flex justify-center mb-6">
                 <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
               </div>
               <p className="text-gray-600 text-center mb-6">
-                Please wait while we prepare your secure payment...
+                Please wait while we prepare your secure payment with duplicate protection...
               </p>
             </>
           ) : (
@@ -982,7 +976,6 @@ export default function StripeCheckout() {
                 </div>
               )}
               {clientSecret && clientSecret === 'free_registration' ? (
-                // Handle free registrations (100% discount codes)
                 <FreeRegistrationForm 
                   eventId={eventId} 
                   eventName={decodeURIComponent(eventName)}

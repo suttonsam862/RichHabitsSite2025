@@ -1,8 +1,10 @@
+
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
 import { storage } from "../storage.js";
 import { insertEventRegistrationSchema } from "../../shared/schema.js";
 import { randomUUID } from "crypto";
+import { markTransactionCompleted } from "../middleware/duplicateTransactionPrevention.js";
 
 // Frontend-to-Database field mapping validation schema
 const frontendRegistrationSchema = z.object({
@@ -116,6 +118,9 @@ function detectDeviceType(userAgent: string | undefined): 'mobile' | 'tablet' | 
   }
   return 'desktop';
 }
+
+// In-memory store for completed payment intents to prevent duplicate processing
+const processedPaymentIntents = new Set<string>();
 
 /**
  * Event Registration Routes - Stripe Payment Integration
@@ -462,22 +467,43 @@ export function setupEventRoutes(app: Express): void {
     }
   });
 
-  // Payment success handler endpoint that frontend expects
+  // Payment success handler endpoint with comprehensive duplicate prevention
   app.post("/api/events/:eventId/stripe-payment-success", async (req: Request, res: Response) => {
     try {
-      const { paymentIntentId, registrationData } = req.body;
+      const { paymentIntentId, registrationData, freeRegistration } = req.body;
       const eventId = req.params.eventId;
 
-      if (!paymentIntentId) {
-        return res.status(400).json({ error: "Payment intent ID is required" });
+      if (!freeRegistration && !paymentIntentId) {
+        return res.status(400).json({ error: "Payment intent ID is required for paid registrations" });
       }
 
-      // Verify payment with Stripe
-      const { stripe } = await import("../stripe.js");
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      // Check if this payment intent has already been processed
+      if (paymentIntentId && processedPaymentIntents.has(paymentIntentId)) {
+        console.log(`Payment intent ${paymentIntentId} already processed - blocking duplicate`);
+        return res.status(409).json({ 
+          error: "Payment already processed",
+          message: "This payment has already been completed",
+          userFriendlyMessage: "This registration has already been completed. Please check your email for confirmation."
+        });
+      }
 
-      if (paymentIntent.status !== 'succeeded') {
-        return res.status(400).json({ error: "Payment not completed" });
+      let paymentIntent = null;
+
+      // Verify payment with Stripe for paid registrations
+      if (!freeRegistration && paymentIntentId) {
+        const { stripe } = await import("../stripe.js");
+        paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+        if (paymentIntent.status !== 'succeeded') {
+          return res.status(400).json({ 
+            error: "Payment not completed",
+            message: `Payment status: ${paymentIntent.status}`,
+            userFriendlyMessage: "Your payment was not successfully completed. Please try again."
+          });
+        }
+
+        // Mark this payment intent as processed immediately
+        processedPaymentIntents.add(paymentIntentId);
       }
 
       // Get event details
@@ -500,6 +526,17 @@ export function setupEventRoutes(app: Express): void {
         return res.status(404).json({ error: "Event not found" });
       }
 
+      // Check for existing registration with this email and event to prevent duplicates
+      const existingRegistration = await storage.getEventRegistrationByEmail(registrationData.email, event.id);
+      if (existingRegistration) {
+        console.log(`Duplicate registration attempt detected for ${registrationData.email} in event ${event.id}`);
+        return res.status(409).json({
+          error: "Registration already exists",
+          message: "A registration for this email and event already exists",
+          userFriendlyMessage: "You have already registered for this event. Please check your email for confirmation."
+        });
+      }
+
       // Create registration record
       const registration = await storage.createEventRegistration({
         eventId: event.id,
@@ -513,20 +550,26 @@ export function setupEventRoutes(app: Express): void {
         schoolName: registrationData.schoolName || null,
         clubName: registrationData.clubName || null,
         registrationType: registrationData.registrationType || 'individual',
-        basePrice: (paymentIntent.amount / 100).toString(),
-        finalPrice: (paymentIntent.amount / 100).toString(),
+        basePrice: freeRegistration ? "0" : (paymentIntent ? (paymentIntent.amount / 100).toString() : "0"),
+        finalPrice: freeRegistration ? "0" : (paymentIntent ? (paymentIntent.amount / 100).toString() : "0"),
         waiverAccepted: true,
         termsAccepted: true,
-        stripePaymentIntentId: paymentIntentId,
+        stripePaymentIntentId: paymentIntentId || null,
         sessionId: req.sessionID,
         ipAddress: req.ip,
         userAgent: req.get('User-Agent')
       });
 
+      // Mark transaction as completed in our tracking system
+      if ((req as any).transactionFingerprint) {
+        markTransactionCompleted((req as any).transactionFingerprint);
+      }
+
       res.json({
         success: true,
         registrationId: registration.id,
-        eventTitle: event.title
+        eventTitle: event.title,
+        freeRegistration: freeRegistration || false
       });
 
     } catch (error) {
