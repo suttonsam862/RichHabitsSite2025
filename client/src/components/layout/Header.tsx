@@ -96,12 +96,10 @@ export function Header() {
               ))}
             </ul>
           </nav>
-          
+
           <Link href="/cart">
             <motion.div
-              className={`relative p-2 rounded-full transition-all duration-300 cursor-pointer ${
-                scrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-800 hover:bg-white/20'
-              }`}
+              className="relative p-2 rounded-full transition-all duration-300 cursor-pointer text-gray-800 hover:bg-gray-100"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
@@ -125,9 +123,7 @@ export function Header() {
         <div className="lg:hidden flex items-center space-x-3">
           <Link href="/cart">
             <motion.div
-              className={`relative p-2 rounded-full transition-all duration-300 cursor-pointer ${
-                scrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-gray-800 hover:bg-white/20'
-              }`}
+              className="relative p-2 rounded-full transition-all duration-300 cursor-pointer text-gray-800 hover:bg-gray-100"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
@@ -145,7 +141,7 @@ export function Header() {
               )}
             </motion.div>
           </Link>
-          
+
           <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`p-2 rounded-lg transition-all duration-300 ${
