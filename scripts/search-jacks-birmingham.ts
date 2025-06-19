@@ -7,6 +7,16 @@ async function searchJacksBirmingham() {
   try {
     console.log('🔍 Searching for last name "Jacks" in Birmingham Slam Camp registrations...');
     
+    // First, test database connectivity
+    console.log('🔗 Testing database connection...');
+    try {
+      const connectionTest = await sql`SELECT 1 as test`;
+      console.log('✅ Database connection successful');
+    } catch (error) {
+      console.error('❌ Database connection failed:', error);
+      return;
+    }
+    
     // Search across all possible registration tables
     const searchResults = [];
     
@@ -197,25 +207,40 @@ async function searchJacksBirmingham() {
       console.log('⚠️ atomic_registrations table not accessible');
     }
 
-    // 6. Search all tables that might contain registration data
+    // 6. Discover all available tables
+    console.log('\n📋 Discovering available tables...');
+    let allTables = [];
     try {
-      const allTables = await sql`
-        SELECT table_name 
-        FROM information_schema.tables 
+      allTables = await sql`
+        SELECT table_name, 
+               (SELECT COUNT(*) FROM information_schema.columns 
+                WHERE table_name = t.table_name AND table_schema = 'public') as column_count
+        FROM information_schema.tables t
         WHERE table_schema = 'public' 
-        AND (
-          table_name LIKE '%registration%' 
-          OR table_name LIKE '%customer%'
-          OR table_name LIKE '%event%'
-          OR table_name LIKE '%birmingham%'
-        )
         ORDER BY table_name
       `;
+      
+      console.log(`📊 Found ${allTables.length} total tables in database`);
+      
+      // Show relevant tables
+      const relevantTables = allTables.filter(t => 
+        t.table_name.includes('registration') || 
+        t.table_name.includes('customer') || 
+        t.table_name.includes('event') ||
+        t.table_name.includes('birmingham') ||
+        t.table_name.includes('payment') ||
+        t.table_name.includes('stripe')
+      );
+      
+      console.log(`🎯 Found ${relevantTables.length} potentially relevant tables:`);
+      relevantTables.forEach(table => {
+        console.log(`  - ${table.table_name} (${table.column_count} columns)`);
+      });
 
-      console.log(`\n🔍 Searching ${allTables.length} additional tables...`);
+      console.log(`\n🔍 Searching ${relevantTables.length} relevant tables...`);
 
-      for (const table of allTables) {
-        const tableName = table.table_name;
+      for (const tableInfo of relevantTables) {
+        const tableName = tableInfo.table_name;
         
         // Skip tables we already checked
         if (eventTableNames.includes(tableName) || 
@@ -226,48 +251,115 @@ async function searchJacksBirmingham() {
         }
 
         try {
-          // Get column structure
-          const columns = await sql`
-            SELECT column_name 
+          // Get all columns for this table
+          const allColumns = await sql`
+            SELECT column_name, data_type
             FROM information_schema.columns 
             WHERE table_name = ${tableName}
-            AND (
-              column_name LIKE '%last%name%' 
-              OR column_name LIKE '%customer%name%'
-              OR column_name LIKE '%email%'
-              OR column_name = 'last_name'
-              OR column_name = 'lastName'
-            )
+            AND table_schema = 'public'
+            ORDER BY ordinal_position
           `;
 
-          if (columns.length > 0) {
-            const nameColumn = columns.find(c => 
-              c.column_name === 'last_name' || 
-              c.column_name === 'lastName'
-            )?.column_name || columns[0].column_name;
+          console.log(`🔍 Checking table ${tableName} (${allColumns.length} columns)`);
 
-            const results = await sql`
-              SELECT * 
-              FROM ${sql(tableName)} 
-              WHERE LOWER(${sql(nameColumn)}) LIKE '%jacks%'
-              LIMIT 10
-            `;
+          // Look for name-related columns
+          const nameColumns = allColumns.filter(c => 
+            c.column_name.toLowerCase().includes('name') ||
+            c.column_name.toLowerCase().includes('customer') ||
+            c.column_name.toLowerCase().includes('email')
+          );
 
-            if (results.length > 0) {
-              results.forEach(result => {
-                result.source_table = tableName;
-                result.search_column = nameColumn;
-              });
-              searchResults.push(...results);
-              console.log(`✅ Found ${results.length} matches in ${tableName}`);
+          if (nameColumns.length > 0) {
+            console.log(`  Found potential search columns: ${nameColumns.map(c => c.column_name).join(', ')}`);
+            
+            // Try searching each name column
+            for (const column of nameColumns) {
+              if (column.data_type === 'text' || column.data_type.includes('varchar')) {
+                try {
+                  const results = await sql`
+                    SELECT * 
+                    FROM ${sql(tableName)} 
+                    WHERE LOWER(${sql(column.column_name)}) LIKE '%jacks%'
+                    LIMIT 5
+                  `;
+
+                  if (results.length > 0) {
+                    results.forEach(result => {
+                      result.source_table = tableName;
+                      result.search_column = column.column_name;
+                    });
+                    searchResults.push(...results);
+                    console.log(`✅ Found ${results.length} matches in ${tableName}.${column.column_name}`);
+                    break; // Found matches, move to next table
+                  }
+                } catch (searchError) {
+                  console.log(`  ⚠️ Could not search ${tableName}.${column.column_name}`);
+                }
+              }
             }
+          } else {
+            console.log(`  No searchable name columns found`);
           }
         } catch (error) {
-          // Silently continue to next table
+          console.log(`  ⚠️ Could not access table ${tableName}`);
         }
       }
     } catch (error) {
-      console.log('⚠️ Could not search additional tables');
+      console.log('⚠️ Could not search additional tables:', error);
+    }
+
+    // 7. Try alternative search strategies if no results found
+    if (searchResults.length === 0) {
+      console.log('\n🔄 Trying alternative search strategies...');
+      
+      // Search for similar names
+      const similarNames = ['Jack', 'Jackson', 'Jacques'];
+      for (const name of similarNames) {
+        try {
+          console.log(`🔍 Searching for similar name: "${name}"`);
+          
+          for (const tableInfo of allTables.slice(0, 5)) { // Check first 5 tables
+            const tableName = tableInfo.table_name;
+            try {
+              const columns = await sql`
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = ${tableName}
+                AND (column_name LIKE '%name%' OR column_name LIKE '%email%')
+                AND data_type IN ('text', 'varchar', 'character varying')
+                LIMIT 3
+              `;
+
+              for (const column of columns) {
+                try {
+                  const results = await sql`
+                    SELECT * 
+                    FROM ${sql(tableName)} 
+                    WHERE LOWER(${sql(column.column_name)}) LIKE ${'%' + name.toLowerCase() + '%'}
+                    LIMIT 3
+                  `;
+
+                  if (results.length > 0) {
+                    console.log(`📍 Found ${results.length} matches for "${name}" in ${tableName}.${column.column_name}`);
+                    results.forEach(result => {
+                      result.source_table = tableName;
+                      result.search_column = column.column_name;
+                      result.search_term = name;
+                    });
+                    searchResults.push(...results);
+                  }
+                } catch (e) {
+                  // Continue to next column
+                }
+              }
+            } catch (e) {
+              // Continue to next table
+            }
+          }
+        } catch (error) {
+          console.log(`⚠️ Could not search for ${name}`);
+        }
+      }
     }
 
     // Display results
