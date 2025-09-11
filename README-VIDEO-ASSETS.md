@@ -46,6 +46,8 @@ Videos are embedded in the event pages using the `EventVideo` component:
 4. Provide a meaningful `title` attribute for accessibility
 5. Enable `controls` when users need to control playback
 
+# Diagnostics Test Trigger
+
 ## Troubleshooting
 If videos stop working in the future:
 1. Check that the server is serving the correct MIME types (test with `curl -I http://localhost:5000/assets/video-name.mp4`)
